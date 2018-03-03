@@ -52,6 +52,8 @@ namespace cyy::compiler {
 
 
 
+
+
       state_type get_start_state() const {return start_state;}
 
       auto get_alphabet() const -> auto const  & {
@@ -103,6 +105,16 @@ namespace cyy::compiler {
 	return epsilon_closure(direct_reachable);
       }
 
+      bool simulate( symbol_type * str, size_t str_len) {
+	auto s=epsilon_closure({start_state});
+
+	for(size_t i=0;i<str_len;i++) {
+	      s= move(s,str[i]);
+	}
+	return contain_final_state(s);
+
+      }
+
     public:
       static constexpr symbol_type epsilon=0;
 
@@ -148,6 +160,15 @@ namespace cyy::compiler {
 	return transition_table[{s,a}];
       }
 
+      bool simulate( symbol_type * str, size_t str_len) {
+	auto s=start_state;
+
+	for(size_t i=0;i<str_len;i++) {
+	      s= move(s,str[i]);
+	}
+	return contain_final_state({s});
+
+      }
     private:
       std::map<std::pair<state_type,symbol_type>,state_type> transition_table;
   };
