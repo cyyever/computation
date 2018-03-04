@@ -2,7 +2,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.9)
 
 PROJECT(MyCompilerLib)
 
-INCLUDE(../cmake/compiler.cmake)
+INCLUDE(cmake/compiler.cmake)
 
 FILE(GLOB SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 FILE(GLOB HRDS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp)
