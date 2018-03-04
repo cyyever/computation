@@ -11,37 +11,37 @@ namespace cyy::lang {
 
 /*
  * 	regex -> regex "|" a | a
- * 	a -> ab | b
+ * 	a -> a "" b | b
  * 	b -> b "*" | c
  * 	c -> (regex) | symbol
  * =>
  * 	regex -> ax
  * 	x -> "|" ax | epsilon
- * 	a -> ba | b
+ * 	a -> b "" a | b
  * 	b -> cy
  * 	y -> "*" y | epsilon
  * 	c -> (regex) | symbol
  */
 namespace {
 
-std::unique_ptr<regex::syntax_node> nonterminal_regex(const ALPHABET &alphabet,
+std::shared_ptr<regex::syntax_node> nonterminal_regex(const ALPHABET &alphabet,
                                                       symbol_string_view &view);
 
-std::unique_ptr<regex::syntax_node> nonterminal_c(const ALPHABET &alphabet,
+std::shared_ptr<regex::syntax_node> nonterminal_c(const ALPHABET &alphabet,
                                                   symbol_string_view &view) {
   if (view.empty()) {
-    return std::make_unique<regex::syntax_node>(alphabet.get_epsilon());
+    return std::make_shared<regex::syntax_node>(alphabet.get_epsilon());
   }
 
   switch (view[0]) {
   case '(': {
     view.remove_prefix(1);
-    auto sub_expr = nonterminal_regex(alphabet, view);
+    auto sub_node = nonterminal_regex(alphabet, view);
     if (view.empty() || view[0] != ')') {
       throw std::invalid_argument("lack ')'");
     }
     view.remove_prefix(1);
-    return sub_expr;
+    return sub_node;
     break;
   }
   case '|':
@@ -60,56 +60,54 @@ std::unique_ptr<regex::syntax_node> nonterminal_c(const ALPHABET &alphabet,
     throw std::invalid_argument(std::string("invalid symbol ") +
                                 std::to_string(view[0]));
   }
-  auto sub_expr = std::make_unique<regex::syntax_node>(view[0]);
+  auto sub_node = std::make_shared<regex::syntax_node>(view[0]);
   view.remove_prefix(1);
-  return sub_expr;
+  return sub_node;
 }
 
-std::unique_ptr<regex::syntax_node>
-nonterminal_y(std::unique_ptr<regex::syntax_node> &sub_expr,
+std::shared_ptr<regex::syntax_node>
+nonterminal_y(std::shared_ptr<regex::syntax_node> && sub_node,
               symbol_string_view &view) {
   if (!view.empty() && view[0] == '*') {
-    sub_expr = std::make_unique<regex::syntax_node>(sub_expr);
     view.remove_prefix(1);
-    return nonterminal_y(sub_expr, view);
+    return nonterminal_y( std::make_shared<regex::syntax_node>(sub_node) , view);
   }
-  return std::move(sub_expr);
+  return sub_node;
 }
 
-/*
-std::unique_ptr<regex::syntax_node>
+std::shared_ptr<regex::syntax_node>
 nonterminal_b(const ALPHABET &alphabet, symbol_string_view & view) {
-        return nonterminal_y( nonterminal_c(alphabet,view) ,view);
+  return nonterminal_y( nonterminal_c(alphabet,view) ,view);
 }
 
-std::unique_ptr<regex::syntax_node>
+std::shared_ptr<regex::syntax_node>
 nonterminal_a(const ALPHABET &alphabet, symbol_string_view & view) {
-  nonterminal_b(alphabet,view);
+  auto left_node= nonterminal_b(alphabet,view);
   if(!view.empty() && view[0]!='|' && view[0] !='*') {
-    nonterminal_a(alphabet,view);
+    return std::make_shared<regex::syntax_node>( regex::syntax_node::TYPE::CONCAT, left_node, nonterminal_a(alphabet,view) );
   }
+  return left_node;
 }
 
-std::unique_ptr<regex::syntax_node>
-nonterminal_x(const ALPHABET &alphabet, symbol_string_view & view) {
+std::shared_ptr<regex::syntax_node>
+nonterminal_x( std::shared_ptr<regex::syntax_node> &&left_node, const ALPHABET &alphabet, symbol_string_view & view) {
   if(!view.empty() && view[0]=='|') {
     view.remove_prefix(1);
-    nonterminal_a(alphabet,view);
-    nonterminal_x(alphabet,view);
+    return std::make_shared<regex::syntax_node>( regex::syntax_node::TYPE::UNION, left_node,
+      nonterminal_x(  nonterminal_a(alphabet,view), alphabet,view));
+  } else {
+    return left_node;
   }
 }
 
-std::unique_ptr<regex::syntax_node>
+std::shared_ptr<regex::syntax_node>
 nonterminal_regex(const ALPHABET &alphabet, symbol_string_view & view) {
-    nonterminal_a(alphabet,view);
-    nonterminal_x(alphabet,view);
+  return nonterminal_x(   nonterminal_a(alphabet,view), alphabet,view);
 }
-*/
 
 } // namespace
-std::unique_ptr<regex::syntax_node> regex::parse(symbol_string_view view) {
+std::shared_ptr<regex::syntax_node> regex::parse(symbol_string_view view)  const {
 
-  return {};
-  // return nonterminal_regex(this->alphabet,view);
+   return nonterminal_regex(*alphabet,view);
 }
 } // namespace cyy::lang

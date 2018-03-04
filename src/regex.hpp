@@ -18,28 +18,26 @@ public:
     enum struct TYPE { BASIC, UNION, CONCAT, KLEENE_CLOSURE };
 
     syntax_node(symbol_type symbol_) : type(TYPE::BASIC), symbol(symbol_) {}
-    syntax_node(std::unique_ptr<syntax_node> &left_)
-        : type(TYPE::KLEENE_CLOSURE) {
-      left.swap(left_);
+    syntax_node(const std::shared_ptr<syntax_node> &left_node_)
+        : type(TYPE::KLEENE_CLOSURE),left_node(left_node_) {
     }
 
-    syntax_node(TYPE type_, std::unique_ptr<syntax_node> &left_,
-                std::unique_ptr<syntax_node> &right_)
-        : type(type_) {
-      left.swap(left_);
-      right.swap(right_);
+    syntax_node(TYPE type_,
+	const  std::shared_ptr<syntax_node> &left_node_,
+	const  std::shared_ptr<syntax_node> &right_node_) 
+        : type(type_),left_node(left_node_),right_node(right_node_) {
     }
 
     TYPE type;
     symbol_type symbol;
-    std::unique_ptr<syntax_node> left, right;
+    std::shared_ptr<syntax_node> left_node, right_node;
   };
 
 public:
   regex(const std::string &alphabet_name) {
     alphabet = make_alphabet(alphabet_name);
   }
-  std::unique_ptr<syntax_node> parse(symbol_string_view view);
+  std::shared_ptr<syntax_node> parse(symbol_string_view view) const;
 
 private:
   std::unique_ptr<ALPHABET> alphabet;
