@@ -13,29 +13,21 @@
 
 namespace cyy::lang {
 
-class alphabet {
+class ALPHABET {
 public:
   using symbol_type = uint64_t;
 
-  virtual symbol_type get_epsilon()=0;
+  virtual ~ALPHABET() = default;
 
-  virtual void foreach_symbol( void(* callback)(const symbol_type & )   )=0;
-  virtual bool contain(symbol_type s)=0;
-  virtual size_t size()=0;
+  virtual symbol_type get_epsilon() = 0;
+
+  virtual void foreach_symbol(
+      const std::function<void(const symbol_type &)> &callback) const = 0;
+  virtual bool contain(symbol_type s) const = 0;
+  virtual size_t size() const = 0;
+  virtual std::string name() const = 0;
 };
 
-class ASCII final:public alphabet {
-  public:
-  symbol_type get_epsilon() override {return 128;}
+std::unique_ptr<ALPHABET> make_alphabet(const std::string &name);
 
-  void foreach_symbol( void(* callback)(const symbol_type & )   ) override {
-    for(symbol_type i=0;i<128;i++) {
-      callback(i);
-    }
-  }
-  bool contain(symbol_type s) override {return s<128;}
-  size_t size() override  {return 128;}
-
-};
-
-} 
+} // namespace cyy::lang
