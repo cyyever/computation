@@ -179,4 +179,8 @@ NFA regex::to_NFA(const std::shared_ptr<syntax_node> &tree,uint64_t start_state)
 
 }
 
+NFA regex::to_NFA() const  {
+  return to_NFA(syntax_tree,0);
+}
+
 } // namespace cyy::lang
