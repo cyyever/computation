@@ -12,7 +12,6 @@
 namespace cyy::lang {
 
 DFA NFA_to_DFA(const NFA &nfa) {
-  // using symbol_type = NFA::symbol_type;
   std::vector<std::set<uint64_t>> subsets{
       nfa.epsilon_closure({nfa.get_start_state()})};
   std::vector<bool> flags{false};

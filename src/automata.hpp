@@ -16,8 +16,6 @@ namespace cyy::lang {
 
 class NFA {
 public:
-  // using symbol_type = ALPHABET::symbol_type;
-
   NFA(const std::set<uint64_t> &states_, const std::string &alphabet_name,
       uint64_t start_state_,
       const std::map<std::pair<uint64_t, symbol_type>, std::set<uint64_t>>
@@ -47,9 +45,12 @@ public:
   NFA(NFA &&) noexcept = default;
   NFA &operator=(NFA &&) noexcept = default;
 
+  auto get_states() const -> auto const & { return states; }
+  auto get_alphabet() const -> auto const & { return *alphabet; }
+  auto get_transition_table() const -> auto const & { return transition_table; }
+  auto get_final_states() const -> auto const & { return final_states; }
   uint64_t get_start_state() const { return start_state; }
 
-  auto get_alphabet() const -> auto const & { return *alphabet; }
 
   bool contain_final_state(const std::set<uint64_t> &T) const {
     for (const auto &f : final_states) {

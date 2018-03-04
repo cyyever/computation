@@ -107,7 +107,76 @@ nonterminal_regex(const ALPHABET &alphabet, symbol_string_view & view) {
 
 } // namespace
 std::shared_ptr<regex::syntax_node> regex::parse(symbol_string_view view)  const {
-
    return nonterminal_regex(*alphabet,view);
 }
+
+NFA regex::to_NFA(const std::shared_ptr<syntax_node> &tree,uint64_t start_state) const  {
+  if(tree->type==syntax_node::TYPE::BASIC) {
+    return {{start_state,start_state+1}, alphabet->name(),start_state,{{  {start_state,tree->symbol}   ,{start_state+1}  }},{start_state+1}};
+  } else if(tree->type==syntax_node::TYPE::UNION) {
+    auto left_NFA=to_NFA(tree->left_node,start_state+1);
+    auto left_states=left_NFA.get_states();
+    auto left_final_states=left_NFA.get_final_states();
+    auto left_start_state=left_NFA.get_start_state();
+    auto left_transition_table=left_NFA.get_transition_table();
+
+    auto right_NFA=to_NFA(tree->right_node, start_state+left_states.size()+1);
+    auto right_states=right_NFA.get_states();
+    auto right_final_states=right_NFA.get_final_states();
+    auto right_start_state=right_NFA.get_start_state();
+    auto right_transition_table=right_NFA.get_transition_table();
+
+    left_states.merge(right_states);
+    left_transition_table.merge(right_transition_table);
+    
+    left_states.insert(start_state);
+    auto final_state= start_state+left_states.size()+1;
+    left_states.insert(final_state);
+
+    left_transition_table[{start_state,alphabet->get_epsilon()}]={left_start_state,right_start_state};
+    for(auto const &left_final_state:left_final_states) {
+      left_transition_table[{left_final_state,alphabet->get_epsilon()}]={final_state};
+    }
+    for(auto const &right_final_state:right_final_states) {
+      left_transition_table[{right_final_state,alphabet->get_epsilon()}]={final_state};
+    }
+
+    return {left_states, alphabet->name(),start_state,left_transition_table,{final_state}};
+
+  } else if(tree->type==syntax_node::TYPE::CONCAT) {
+    auto left_NFA=to_NFA(tree->left_node,start_state);
+    auto left_states=left_NFA.get_states();
+    auto left_final_states=left_NFA.get_final_states();
+    auto left_transition_table=left_NFA.get_transition_table();
+
+    auto right_NFA=to_NFA(tree->right_node, *(left_final_states.begin()));
+    auto right_states=right_NFA.get_states();
+    auto right_transition_table=right_NFA.get_transition_table();
+
+    left_states.merge(right_states);
+    left_transition_table.merge(right_transition_table);
+    
+    return {left_states, alphabet->name(),start_state,left_transition_table,right_NFA.get_final_states()};
+
+  } else {
+    
+    auto inner_start_state=start_state+1;
+    auto inner_NFA=to_NFA(tree->left_node,inner_start_state);
+    auto inner_states=inner_NFA.get_states();
+    auto inner_final_states=inner_NFA.get_final_states();
+    auto inner_transition_table=inner_NFA.get_transition_table();
+    inner_states.insert(start_state);
+    auto final_state= inner_start_state+inner_states.size();
+    inner_states.insert(final_state);
+
+    inner_transition_table[{    start_state ,alphabet->get_epsilon()  }]={inner_start_state,final_state};
+    for(auto const & inner_final_state:inner_final_states) {
+      inner_transition_table[{    inner_final_state,alphabet->get_epsilon()  }]={inner_start_state,final_state};
+    }
+
+    return {inner_states, alphabet->name(),start_state,inner_transition_table,{final_state}};
+  }
+
+}
+
 } // namespace cyy::lang
