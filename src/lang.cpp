@@ -11,7 +11,7 @@ namespace cyy::lang {
 
 class ASCII final : public ALPHABET {
 public:
-  symbol_type get_epsilon() override { return 128; }
+  symbol_type get_epsilon() const override { return 128; }
 
   // void foreach_symbol(void (*callback)(const symbol_type &)) override {
   void foreach_symbol(

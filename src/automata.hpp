@@ -16,7 +16,7 @@ namespace cyy::lang {
 
 class NFA {
 public:
-  using symbol_type = ALPHABET::symbol_type;
+  // using symbol_type = ALPHABET::symbol_type;
 
   NFA(const std::set<uint64_t> &states_, const std::string &alphabet_name,
       uint64_t start_state_,

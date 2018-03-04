@@ -10,16 +10,16 @@
 #include <map>
 #include <set>
 #include <string>
+#include <string_view>
 
 namespace cyy::lang {
 
+using symbol_type = uint64_t;
 class ALPHABET {
 public:
-  using symbol_type = uint64_t;
-
   virtual ~ALPHABET() = default;
 
-  virtual symbol_type get_epsilon() = 0;
+  virtual symbol_type get_epsilon() const = 0;
 
   virtual void foreach_symbol(
       const std::function<void(const symbol_type &)> &callback) const = 0;
@@ -30,4 +30,5 @@ public:
 
 std::unique_ptr<ALPHABET> make_alphabet(const std::string &name);
 
+using symbol_string_view = std::basic_string_view<symbol_type>;
 } // namespace cyy::lang
