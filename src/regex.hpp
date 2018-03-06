@@ -20,20 +20,35 @@ public:
 
     syntax_node()=delete;
 
-    syntax_node(symbol_type symbol_) : type(TYPE::BASIC), symbol(symbol_) {}
+    syntax_node(symbol_type symbol_,bool is_epsilon) : type(TYPE::BASIC), symbol(symbol_) {
+      nullable=is_epsilon;
+      if(!is_epsilon) {
+	position=next_position;
+	next_position++;
+      }
+    }
     syntax_node(const std::shared_ptr<syntax_node> &left_node_)
         : type(TYPE::KLEENE_CLOSURE),left_node(left_node_) {
+	  nullable=true;
     }
 
     syntax_node(TYPE type_,
 	const  std::shared_ptr<syntax_node> &left_node_,
 	const  std::shared_ptr<syntax_node> &right_node_) 
         : type(type_),left_node(left_node_),right_node(right_node_) {
+	  if(type==TYPE::UNION) {
+	    nullable=(left_node->nullable || right_node->nullable);
+	  } else {
+	    nullable=(left_node->nullable && right_node->nullable);
+	  }
     }
 
     TYPE type;
     symbol_type symbol;
     std::shared_ptr<syntax_node> left_node, right_node;
+    bool nullable;
+    uint64_t position{};
+    static  inline uint64_t next_position{};
   };
 
 public:

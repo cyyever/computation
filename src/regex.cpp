@@ -30,7 +30,7 @@ std::shared_ptr<regex::syntax_node> nonterminal_regex(const ALPHABET &alphabet,
 std::shared_ptr<regex::syntax_node> nonterminal_c(const ALPHABET &alphabet,
                                                   symbol_string_view &view) {
   if (view.empty()) {
-    return std::make_shared<regex::syntax_node>(alphabet.get_epsilon());
+    return std::make_shared<regex::syntax_node>(alphabet.get_epsilon(),true);
   }
 
   switch (view[0]) {
@@ -56,11 +56,13 @@ std::shared_ptr<regex::syntax_node> nonterminal_c(const ALPHABET &alphabet,
   default:
     break;
   }
-  if (!alphabet.contain(view[0])) {
+
+  auto is_epsilon=(view[0]==alphabet.get_epsilon());
+  if(!is_epsilon&& !alphabet.contain(view[0])) {
     throw std::invalid_argument(std::string("invalid symbol ") +
                                 std::to_string(view[0]));
   }
-  auto sub_node = std::make_shared<regex::syntax_node>(view[0]);
+  auto sub_node = std::make_shared<regex::syntax_node>(view[0],is_epsilon);
   view.remove_prefix(1);
   return sub_node;
 }
