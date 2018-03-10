@@ -46,6 +46,8 @@ public:
     TYPE type;
     symbol_type symbol;
     std::shared_ptr<syntax_node> left_node, right_node;
+
+    private:
     bool nullable;
     uint64_t position{};
     static  inline uint64_t next_position{};
