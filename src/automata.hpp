@@ -39,11 +39,6 @@ public:
     alphabet = make_alphabet(alphabet_name);
   }
 
-  NFA(const NFA &) = default;
-  NFA &operator=(const NFA &) = default;
-
-  NFA(NFA &&) noexcept = default;
-  NFA &operator=(NFA &&) noexcept = default;
 
   auto get_states() const -> auto const & { return states; }
   auto get_alphabet() const -> auto const & { return *alphabet; }
@@ -78,7 +73,7 @@ public:
           }
         }
       }
-      stack = next_stack;
+      stack = std::move(next_stack);
     }
     return res;
   }
@@ -124,7 +119,7 @@ public:
           &transition_table_,
       const std::set<uint64_t> &final_states_)
       : NFA(states_, alphabet_name, start_state_, {}, final_states_),
-        transition_table{transition_table_} {
+        transition_table(transition_table_) {
 
     for (auto const &s : states) {
       alphabet->foreach_symbol([this, s](auto const &a) {
@@ -140,11 +135,7 @@ public:
     }
   }
 
-  DFA(const DFA &) = default;
-  DFA &operator=(const DFA &) = default;
 
-  DFA(DFA &&) noexcept = default;
-  DFA &operator=(DFA &&) noexcept = default;
 
   uint64_t move(uint64_t s, symbol_type a) { return transition_table[{s, a}]; }
 
