@@ -13,9 +13,14 @@ namespace cyy::lang {
     return {{start_state,start_state+1}, alphabet.name(),start_state,{{  {start_state,symbol}   ,{start_state+1}  }},{start_state+1}};
   }
 
-  uint64_t regex::basic_node::assign_position(uint64_t position) {
-    this->position=position;
-    return position+1;
+  void regex::basic_node::assign_position( std::map<uint64_t,symbol_type> &position_to_symbol) {
+    if(position_to_symbol.empty()) {
+      position=0;
+    } else {
+      position=position_to_symbol.end()->first+1;
+    }
+    position_to_symbol.insert({position,symbol});
+    return;
   }
 
   std::set<uint64_t> regex::basic_node::first_pos() const {
@@ -29,8 +34,8 @@ namespace cyy::lang {
     return {{start_state,start_state+1}, alphabet.name(),start_state,{{  {start_state,alphabet.get_epsilon()}   ,{start_state+1}  }},{start_state+1}};
   }
 
-  uint64_t regex::epsilon_node::assign_position(uint64_t position) {
-    return position;
+  void regex::epsilon_node::assign_position( std::map<uint64_t,symbol_type> &position_to_symbol) {
+    return;
   }
 
   std::set<uint64_t> regex::epsilon_node::first_pos() const {
@@ -71,8 +76,10 @@ namespace cyy::lang {
     return {left_states, alphabet.name(),start_state,left_transition_table,{final_state}};
   }
 
-  uint64_t regex::union_node::assign_position(uint64_t position) {
-    return right_node->assign_position(left_node->assign_position(position));
+  void regex::union_node::assign_position( std::map<uint64_t,symbol_type> &position_to_symbol) {
+    left_node->assign_position(position_to_symbol);
+    right_node->assign_position(position_to_symbol);
+    return;
   }
 
   std::set<uint64_t> regex::union_node::first_pos() const {
@@ -107,8 +114,10 @@ namespace cyy::lang {
     return {left_states, alphabet.name(),start_state,left_transition_table,right_NFA.get_final_states()};
 }
 
-  uint64_t regex::concat_node::assign_position(uint64_t position) {
-    return right_node->assign_position(left_node->assign_position(position));
+  void regex::concat_node::assign_position( std::map<uint64_t,symbol_type> &position_to_symbol) {
+    left_node->assign_position(position_to_symbol);
+    right_node->assign_position(position_to_symbol);
+    return;
   }
 
   std::set<uint64_t> regex::concat_node::first_pos() const {
@@ -160,8 +169,9 @@ NFA regex::kleene_closure_node::to_NFA( const ALPHABET &alphabet,uint64_t start_
     return {inner_states, alphabet.name(),start_state,inner_transition_table,{final_state}};
 }
 
-  uint64_t regex::kleene_closure_node::assign_position(uint64_t position) {
-    return inner_node->assign_position(position);
+  void regex::kleene_closure_node::assign_position( std::map<uint64_t,symbol_type> &position_to_symbol) {
+    inner_node->assign_position(position_to_symbol);
+    return;
   }
 
   std::set<uint64_t> regex::kleene_closure_node::first_pos() const {

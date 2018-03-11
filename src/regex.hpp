@@ -20,7 +20,7 @@ namespace cyy::lang {
 	virtual ~syntax_node();
 	virtual NFA to_NFA(const ALPHABET &alphabet,uint64_t start_state) const =0; 
 	virtual bool nullable()const =0;
-	virtual uint64_t assign_position(uint64_t position)=0;
+	virtual void assign_position(std::map<uint64_t,symbol_type> &position_to_symbol)=0;
 	virtual std::set<uint64_t> first_pos()const =0;
 	virtual std::set<uint64_t> last_pos()const =0;
 	virtual std::map<uint64_t,std::set<uint64_t>> follow_pos()const =0;
@@ -34,7 +34,7 @@ namespace cyy::lang {
 	  bool nullable()const override {
 	    return true;
 	  }
-	  uint64_t assign_position(uint64_t position) override;
+	  void assign_position(std::map<uint64_t,symbol_type> &position_to_symbol) override;
 	  std::set<uint64_t> first_pos() const override;
 	  std::set<uint64_t> last_pos() const override;
 	  std::map<uint64_t,std::set<uint64_t>> follow_pos()const override {
@@ -49,7 +49,7 @@ namespace cyy::lang {
 	bool nullable()const override {
 	  return false;
 	}
-	uint64_t assign_position(uint64_t position) override;
+	void assign_position(std::map<uint64_t,symbol_type> &position_to_symbol) override;
 	std::set<uint64_t> first_pos() const override;
 	std::set<uint64_t> last_pos() const override;
 	  std::map<uint64_t,std::set<uint64_t>> follow_pos()const override {
@@ -68,7 +68,7 @@ private:
 	  bool nullable()const override {
 	  return left_node->nullable() || right_node->nullable();
 	}
-	uint64_t assign_position(uint64_t position) override;
+	void assign_position(std::map<uint64_t,symbol_type> &position_to_symbol) override;
 	std::set<uint64_t> first_pos() const override;
 	std::set<uint64_t> last_pos() const override;
 	std::map<uint64_t,std::set<uint64_t>> follow_pos()const override;
@@ -84,7 +84,7 @@ private:
 	  bool nullable()const override {
 	  return left_node->nullable() && right_node->nullable();
 	}
-	uint64_t assign_position(uint64_t position) override;
+	void assign_position(std::map<uint64_t,symbol_type> &position_to_symbol) override;
 	std::set<uint64_t> first_pos() const override;
 	std::set<uint64_t> last_pos() const override;
 	std::map<uint64_t,std::set<uint64_t>> follow_pos()const override;
@@ -100,7 +100,7 @@ private:
 	  bool nullable()const override {
 	  return true;
 	}
-	uint64_t assign_position(uint64_t position) override;
+	void assign_position(std::map<uint64_t,symbol_type> &position_to_symbol) override;
 	std::set<uint64_t> first_pos() const override;
 	std::set<uint64_t> last_pos() const override;
 private:
@@ -119,11 +119,14 @@ private:
 	return syntax_tree->to_NFA(*alphabet,0);
       }
 
+      //基于McNaughton-Yamada算法
+      DFA to_DFA() const ;
+
     private:
       std::shared_ptr<syntax_node> parse(symbol_string_view view) const;
     private:
       std::unique_ptr<ALPHABET> alphabet;
-      std::shared_ptr<regex::syntax_node> syntax_tree;
+      mutable std::shared_ptr<regex::syntax_node> syntax_tree;
   };
 
 

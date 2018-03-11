@@ -136,8 +136,13 @@ public:
   }
 
 
-
-  uint64_t move(uint64_t s, symbol_type a) { return transition_table[{s, a}]; }
+  uint64_t move(uint64_t s, symbol_type a) const { 
+    auto it= transition_table.find({s, a}); 
+    if(it!=transition_table.end()) {
+      return it->second;
+    }
+    return alphabet->get_epsilon();
+  }
 
   bool simulate(symbol_type *str, size_t str_len) {
     auto s = start_state;
@@ -147,6 +152,8 @@ public:
     }
     return contain_final_state({s});
   }
+
+  DFA minimize() const;
 
 private:
   std::map<std::pair<uint64_t, symbol_type>, uint64_t> transition_table;
