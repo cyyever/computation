@@ -12,63 +12,119 @@
 
 namespace cyy::lang {
 
-class regex {
+  class regex {
 
-public:
-  struct syntax_node {
-    enum struct TYPE { BASIC, UNION, CONCAT, KLEENE_CLOSURE };
+    public:
+      class syntax_node {
+	public:
+	virtual ~syntax_node();
+	virtual NFA to_NFA(const ALPHABET &alphabet,uint64_t start_state) const =0; 
+	virtual bool nullable()const =0;
+	virtual uint64_t assign_position(uint64_t position)=0;
+	virtual std::set<uint64_t> first_pos()const =0;
+	virtual std::set<uint64_t> last_pos()const =0;
+	virtual std::map<uint64_t,std::set<uint64_t>> follow_pos()const =0;
+      };
 
-    syntax_node()=delete;
-
-    syntax_node(symbol_type symbol_,bool is_epsilon) : type(TYPE::BASIC), symbol(symbol_) {
-      nullable=is_epsilon;
-      if(!is_epsilon) {
-	position=next_position;
-	next_position++;
-      }
-    }
-    syntax_node(const std::shared_ptr<syntax_node> &left_node_)
-        : type(TYPE::KLEENE_CLOSURE),left_node(left_node_) {
-	  nullable=true;
-    }
-
-    syntax_node(TYPE type_,
-	const  std::shared_ptr<syntax_node> &left_node_,
-	const  std::shared_ptr<syntax_node> &right_node_) 
-        : type(type_),left_node(left_node_),right_node(right_node_) {
-	  if(type==TYPE::UNION) {
-	    nullable=(left_node->nullable || right_node->nullable);
-	  } else {
-	    nullable=(left_node->nullable && right_node->nullable);
+      class epsilon_node:public syntax_node {
+	public:
+	  epsilon_node() {
 	  }
-    }
+	  NFA to_NFA(const ALPHABET &alphabet,uint64_t start_state) const override; 
+	  bool nullable()const override {
+	    return true;
+	  }
+	  uint64_t assign_position(uint64_t position) override;
+	  std::set<uint64_t> first_pos() const override;
+	  std::set<uint64_t> last_pos() const override;
+	  std::map<uint64_t,std::set<uint64_t>> follow_pos()const override {
+	    return {};
+	  }
+      };
 
-    TYPE type;
-    symbol_type symbol;
-    std::shared_ptr<syntax_node> left_node, right_node;
+      class basic_node:public syntax_node {
+	public:
+	  basic_node(symbol_type symbol_) :  symbol(symbol_) { }
+	  NFA to_NFA(const ALPHABET &alphabet,uint64_t start_state) const override; 
+	bool nullable()const override {
+	  return false;
+	}
+	uint64_t assign_position(uint64_t position) override;
+	std::set<uint64_t> first_pos() const override;
+	std::set<uint64_t> last_pos() const override;
+	  std::map<uint64_t,std::set<uint64_t>> follow_pos()const override {
+	    return {};
+	  }
+private:
+	  symbol_type symbol;
+	  uint64_t position{0};
+      };
+      class union_node:public syntax_node {
+	public:
+	  union_node(const std::shared_ptr<syntax_node> &left_node_,const std::shared_ptr<syntax_node> &right_node_)
+	    : left_node(left_node_),right_node(right_node_) {
+	    }
+	  NFA to_NFA(const ALPHABET &alphabet,uint64_t start_state) const override; 
+	  bool nullable()const override {
+	  return left_node->nullable() || right_node->nullable();
+	}
+	uint64_t assign_position(uint64_t position) override;
+	std::set<uint64_t> first_pos() const override;
+	std::set<uint64_t> last_pos() const override;
+	std::map<uint64_t,std::set<uint64_t>> follow_pos()const override;
+private:
+	  std::shared_ptr<syntax_node> left_node, right_node;
+      };
+      class concat_node:public syntax_node {
+	public:
+	  concat_node(const std::shared_ptr<syntax_node> &left_node_,const std::shared_ptr<syntax_node> &right_node_)
+	    : left_node(left_node_),right_node(right_node_) {
+	    }
+	  NFA to_NFA(const ALPHABET &alphabet,uint64_t start_state) const override; 
+	  bool nullable()const override {
+	  return left_node->nullable() && right_node->nullable();
+	}
+	uint64_t assign_position(uint64_t position) override;
+	std::set<uint64_t> first_pos() const override;
+	std::set<uint64_t> last_pos() const override;
+	std::map<uint64_t,std::set<uint64_t>> follow_pos()const override;
+private:
+	  std::shared_ptr<syntax_node> left_node, right_node;
+      };
+      class kleene_closure_node:public syntax_node {
+	public:
+	kleene_closure_node(const std::shared_ptr<syntax_node> &inner_node_)
+	  : inner_node(inner_node_) {
+	  }
+	NFA to_NFA(const ALPHABET &alphabet,uint64_t start_state) const override; 
+	  bool nullable()const override {
+	  return true;
+	}
+	uint64_t assign_position(uint64_t position) override;
+	std::set<uint64_t> first_pos() const override;
+	std::set<uint64_t> last_pos() const override;
+private:
+	std::shared_ptr<syntax_node> inner_node;
+	std::map<uint64_t,std::set<uint64_t>> follow_pos()const override;
+      };
+
+    public:
+      regex(const std::string &alphabet_name,symbol_string_view  view) {
+	alphabet = make_alphabet(alphabet_name);
+	syntax_tree=parse(view);
+      }
+      auto get_alphabet() const -> auto const & { return *alphabet; }
+
+      NFA to_NFA() const  {
+	return syntax_tree->to_NFA(*alphabet,0);
+      }
 
     private:
-    bool nullable;
-    uint64_t position{};
-    static  inline uint64_t next_position{};
+      std::shared_ptr<syntax_node> parse(symbol_string_view view) const;
+    private:
+      std::unique_ptr<ALPHABET> alphabet;
+      std::shared_ptr<regex::syntax_node> syntax_tree;
   };
-
-public:
-  regex(const std::string &alphabet_name,symbol_string_view  view) {
-    alphabet = make_alphabet(alphabet_name);
-    syntax_tree=parse(view);
-  }
-  auto get_alphabet() const -> auto const & { return *alphabet; }
-
-  NFA to_NFA() const ; 
-private:
-  NFA to_NFA(const std::shared_ptr<syntax_node> &tree,uint64_t start_state) const ;
-  std::shared_ptr<syntax_node> parse(symbol_string_view view) const;
-
-private:
-  std::unique_ptr<ALPHABET> alphabet;
-  std::shared_ptr<regex::syntax_node> syntax_tree;
-};
 
 
 } // namespace cyy::lang
