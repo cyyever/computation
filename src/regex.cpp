@@ -5,6 +5,7 @@
  * \date 2018-03-04
  */
 
+#include <vector>
 #include "regex.hpp"
 
 namespace cyy::lang {
