@@ -39,13 +39,11 @@ public:
     alphabet = make_alphabet(alphabet_name);
   }
 
-
   auto get_states() const -> auto const & { return states; }
   auto get_alphabet() const -> auto const & { return *alphabet; }
   auto get_transition_table() const -> auto const & { return transition_table; }
   auto get_final_states() const -> auto const & { return final_states; }
   uint64_t get_start_state() const { return start_state; }
-
 
   bool contain_final_state(const std::set<uint64_t> &T) const {
     for (const auto &f : final_states) {
@@ -135,10 +133,9 @@ public:
     }
   }
 
-
-  uint64_t move(uint64_t s, symbol_type a) const { 
-    auto it= transition_table.find({s, a}); 
-    if(it!=transition_table.end()) {
+  uint64_t move(uint64_t s, symbol_type a) const {
+    auto it = transition_table.find({s, a});
+    if (it != transition_table.end()) {
       return it->second;
     }
     return alphabet->get_epsilon();
