@@ -112,8 +112,8 @@ public:
   };
 
 public:
-  regex(const std::string &alphabet_name, symbol_string_view view) {
-    alphabet = make_alphabet(alphabet_name);
+  regex(const std::string &alphabet_name, symbol_string_view view)
+      : alphabet(make_alphabet(alphabet_name)) {
     syntax_tree = parse(view);
   }
   auto get_alphabet() const -> auto const & { return *alphabet; }
