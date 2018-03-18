@@ -9,6 +9,96 @@
 
 namespace cyy::lang {
 
+  void CFG::eliminate_useless_symbols() {
+    if(productions.empty()) {
+      return;
+    }
+
+    enum class nonterminal_state {
+      checking,
+      useless,
+      non_useless
+    };
+
+    auto check_nonterminal=[](auto && self,const nonterminal_type &head,CFG & cfg,std::map<nonterminal_type,nonterminal_state>& states) ->void {
+      states[head]=nonterminal_state::checking;
+
+      while(true) {
+	auto prev_states=states;
+
+	auto &bodies=cfg.productions[head];
+	for(auto &body:bodies) {
+	  bool useless=false;
+	  for(auto const &symbol:body) {
+	    if(!std::holds_alternative<nonterminal_type>(symbol)) {
+	      continue;
+	    }
+	    auto nonterminal=std::get<nonterminal_type>(symbol);
+	    auto it=states.find(nonterminal);
+	    if(it==states.end()) {
+	      self(self,nonterminal,cfg,states);
+	      it=states.find(nonterminal);
+	    }
+	    if(it->second==nonterminal_state::useless) {
+	      body.clear();
+	      useless=true;
+	      break;
+	    }else if(it->second==nonterminal_state::checking) {
+	      useless=true;
+	    }
+	  }
+	  if(!useless) {
+	    states[head]=nonterminal_state::non_useless;
+	  }
+	}
+	bodies.erase(std::remove_if(bodies.begin(), bodies.end(), [](const auto& body){return body.empty();}), bodies.end());
+	if(bodies.empty()) {
+	    states[head]=nonterminal_state::useless;
+	}
+	if(prev_states==states) {
+	  return;
+	}
+      }
+    };
+
+    std::map<nonterminal_type,nonterminal_state> states;
+    check_nonterminal(check_nonterminal,start_symbol,*this,states);
+
+    auto add_nonterminal=[](auto && self,const nonterminal_type &head,CFG & cfg,const std::map<nonterminal_type,nonterminal_state>& states,decltype(CFG::productions) & new_productions  ) ->void {
+	auto &bodies=cfg.productions[head];
+	for(auto &body:bodies) {
+	  bool add=true;
+	  for(auto const &symbol:body) {
+	    if(!std::holds_alternative<nonterminal_type>(symbol)) {
+	      continue;
+	    }
+	    auto nonterminal=std::get<nonterminal_type>(symbol);
+	    auto it=states.find(nonterminal);
+	    if(it==states.end() || it->second!=nonterminal_state::non_useless) {
+	      add=false;
+	      break;
+	    }
+	  }
+	  if(!add) {
+	    continue;
+	  }
+	  for(auto const &symbol:body) {
+	    if(!std::holds_alternative<nonterminal_type>(symbol)) {
+	      continue;
+	    }
+	    auto nonterminal=std::get<nonterminal_type>(symbol);
+	    self(self,nonterminal,cfg,states,new_productions);
+	  }
+	  new_productions[head].emplace_back(std::move(body));
+	}
+    };
+
+    decltype(productions) new_productions;
+
+    add_nonterminal(add_nonterminal,start_symbol,*this,states,new_productions);
+    productions=new_productions;
+  }
+
 void CFG::eliminate_left_recursion() {
 
   auto eliminate_immediate_left_recursion=[this](const nonterminal_type & head) {
