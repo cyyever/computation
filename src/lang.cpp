@@ -12,8 +12,19 @@ namespace cyy::lang {
 class ASCII final : public ALPHABET {
 public:
   symbol_type get_epsilon() const override { return 128; }
+  symbol_type get_endmarker() const override {return 129;}
 
-  // void foreach_symbol(void (*callback)(const symbol_type &)) override {
+    void print(std::ostream& os,symbol_type symbol) const override {
+    if(symbol==get_epsilon()) {
+	os<<"'epsilon'";
+    } else if(symbol==get_endmarker()) {
+	os<<"$";
+    } else {
+	os<<'\''<<static_cast<char>(symbol)<<'\'';
+    }
+    return;
+  }
+
   void foreach_symbol(
       const std::function<void(const symbol_type &)> &callback) const override {
     for (symbol_type i = 0; i < 128; i++) {
