@@ -14,15 +14,20 @@ void CFG::eliminate_useless_symbols() {
     return;
   }
 
-  enum class nonterminal_state { checking, useless, non_useless };
+  enum class nonterminal_state {unchecked, checking, useless, non_useless };
+
+  std::map<nonterminal_type, nonterminal_state> states;
+  std::map<nonterminal_type, std::set<nonterminal_type>> depedency_heads;
+
+  for(const auto &[head,_]:productions) {
+    states[head]=nonterminal_state::unchecked;
+  }
 
   auto check_nonterminal =
-      [](auto &&self, const nonterminal_type &head, CFG &cfg,
-         std::map<nonterminal_type, nonterminal_state> &states) -> void {
-    states[head] = nonterminal_state::checking;
+      [&](auto &&self, const nonterminal_type &head, CFG &cfg
+	) ->void{
 
-    while (true) {
-      auto prev_states = states;
+	states[head] = nonterminal_state::checking;
 
       auto &bodies = cfg.productions[head];
       for (auto &body : bodies) {
@@ -34,14 +39,20 @@ void CFG::eliminate_useless_symbols() {
           auto nonterminal = std::get<nonterminal_type>(symbol);
           auto it = states.find(nonterminal);
           if (it == states.end()) {
-            self(self, nonterminal, cfg, states);
-            it = states.find(nonterminal);
+            body.clear();
+            useless = true;
+            break;
+	  }
+          if (it->second == nonterminal_state::unchecked) {
+	    self(self,nonterminal,cfg);
+	    it = states.find(nonterminal);
           }
           if (it->second == nonterminal_state::useless) {
             body.clear();
             useless = true;
             break;
           } else if (it->second == nonterminal_state::checking) {
+	    depedency_heads[nonterminal].insert(head);
             useless = true;
           }
         }
@@ -56,52 +67,53 @@ void CFG::eliminate_useless_symbols() {
       if (bodies.empty()) {
         states[head] = nonterminal_state::useless;
       }
-      if (prev_states == states) {
-        return;
+
+      if(states[head]!=nonterminal_state::checking) {
+	for(auto const &depedency_head:depedency_heads[head]) {
+	  if(states[depedency_head]==nonterminal_state::checking) {
+	  states[depedency_head]=nonterminal_state::unchecked;
+	  self(self,depedency_head,cfg);
+	  }
+	}
       }
-    }
   };
 
-  std::map<nonterminal_type, nonterminal_state> states;
-  check_nonterminal(check_nonterminal, start_symbol, *this, states);
+  decltype(productions) new_productions;
+  check_nonterminal(check_nonterminal, start_symbol, *this);
 
   auto add_nonterminal =
-      [](auto &&self, const nonterminal_type &head, CFG &cfg,
-         const std::map<nonterminal_type, nonterminal_state> &states,
-         decltype(CFG::productions) &new_productions) -> void {
+      [&](auto &&self, const nonterminal_type &head, CFG &cfg 
+	 )->void {
     auto &bodies = cfg.productions[head];
     for (auto &body : bodies) {
+      if(body.empty()) {
+	continue;
+      }
       bool add = true;
+      std::set<nonterminal_type> nonterminals;
       for (auto const &symbol : body) {
         if (!std::holds_alternative<nonterminal_type>(symbol)) {
           continue;
         }
         auto nonterminal = std::get<nonterminal_type>(symbol);
-        auto it = states.find(nonterminal);
-        if (it == states.end() ||
-            it->second != nonterminal_state::non_useless) {
+	if(states[nonterminal] != nonterminal_state::non_useless) {
           add = false;
           break;
         }
+	nonterminals.insert(nonterminal);
       }
       if (!add) {
         continue;
       }
-      for (auto const &symbol : body) {
-        if (!std::holds_alternative<nonterminal_type>(symbol)) {
-          continue;
-        }
-        auto nonterminal = std::get<nonterminal_type>(symbol);
-        self(self, nonterminal, cfg, states, new_productions);
-      }
       new_productions[head].emplace_back(std::move(body));
+      body.clear();
+      for (auto const &nonterminal:nonterminals) {
+        self(self, nonterminal, cfg);
+      }
     }
   };
 
-  decltype(productions) new_productions;
-
-  add_nonterminal(add_nonterminal, start_symbol, *this, states,
-                  new_productions);
+  add_nonterminal(add_nonterminal, start_symbol, *this);
   productions = new_productions;
 }
 

@@ -64,6 +64,10 @@ public:
     }
   }
 
+  bool operator==(const CFG &rhs) const {
+    return (this == &rhs) || ( alphabet->name()==rhs.alphabet->name() && start_symbol == rhs.start_symbol && productions == rhs.productions);
+
+  }
   void  print(std::ostream& os) const {
     //by convention,we print start symbol first.
     auto it=productions.find(start_symbol);
@@ -77,13 +81,8 @@ public:
     for(auto const & body:bodys) {
       print(os,head,body);
     }
-
     }
-   
-
-
   }
-
 
 
   auto get_alphabet() const -> auto const & { return *alphabet; }
