@@ -99,9 +99,13 @@ private:
 
       os<<head<<" -> ";
     for(const auto &grammal_symbol:body) {
-       std::visit(
-	               [&](auto const & value) { os << value <<' ';},grammal_symbol);
-       
+
+      if(auto ptr = std::get_if<terminal_type>(&grammal_symbol))
+	alphabet->print(os,*ptr);
+      else {
+	os << std::get<nonterminal_type>(grammal_symbol);
+      }
+      os<<' ';
     }
       os<<'\n';
     return;

@@ -2,7 +2,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.9)
 
 PROJECT(MyCompilerLib)
 
-INCLUDE(cmake/compiler.cmake)
+INCLUDE(cmake/all.cmake)
 
 FILE(GLOB SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 FILE(GLOB HRDS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp)
@@ -12,7 +12,7 @@ ADD_LIBRARY(MyCompilerLib SHARED ${SOURCE})
 SET_TARGET_PROPERTIES(MyCompilerLib PROPERTIES PUBLIC_HEADER "${HRDS}")
 
 # test
-#INCLUDE(test/CMakeLists.txt)
+add_subdirectory(test)
 
 # install lib
 INSTALL(TARGETS MyCompilerLib EXPORT ${PROJECT_NAME}Targets
