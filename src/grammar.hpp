@@ -30,6 +30,12 @@ public:
           productions_)
       : alphabet(make_alphabet(alphabet_name)), start_symbol(start_symbol_),
         productions(productions_) {
+
+	  /*
+	  eliminate_useless_symbols();
+
+
+
     bool has_start_symbol = false;
     for (auto const &[head, bodies] : productions) {
       if (!has_start_symbol && head == start_symbol) {
@@ -56,6 +62,10 @@ public:
         }
       }
     }
+    if(!has_start_symbol) {
+        throw std::invalid_argument("no productions for start symbol");
+	}
+	*/
   }
   auto get_alphabet() const -> auto const & { return *alphabet; }
 
@@ -76,6 +86,8 @@ private:
     }
     return new_head;
   }
+
+ // std::map <grammar_symbol_type, std::set<terminal_type> first() const;
 
 private:
   std::unique_ptr<ALPHABET> alphabet;
