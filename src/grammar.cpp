@@ -118,61 +118,67 @@ void CFG::eliminate_useless_symbols() {
 }
 
 void CFG::eliminate_left_recursion() {
-  if (productions.empty()) {
-    return;
+
+  std::vector<nonterminal_type> old_heads{start_symbol};
+
+  for(const auto &[head,_]:productions) {
+    if(head!=start_symbol) {
+    old_heads.push_back(head);
+    }
   }
 
   auto eliminate_immediate_left_recursion =
       [this](const nonterminal_type &head) {
-        auto &this_bodies = productions[head];
-        auto bodies = std::move(this_bodies);
-        this_bodies.clear();
 
         auto new_head = get_new_head(head);
-        auto &new_bodies = productions[new_head];
+	std::vector<production_body_type> new_bodies;
+        auto &bodies =productions[head];
 
-        for (auto &body : bodies) {
-          if (std::holds_alternative<nonterminal_type>(body.front()) &&
-              std::get<nonterminal_type>(body.front()) == head) {
+        for (auto &body :bodies) {
+
+	  if (std::holds_alternative<nonterminal_type>(body.front()) && std::get<nonterminal_type>(body.front()) == head) {
             body.erase(body.begin());
             body.emplace_back(new_head);
-            new_bodies.push_back(body);
-          } else {
-            body.emplace_back(new_head);
-            this_bodies.push_back(body);
-          }
+            new_bodies.emplace_back(std::move(body));
+	    body.clear();
+	  }
         }
+
+	if(new_bodies.empty()) {
+	  return;
+	}
+	new_bodies.emplace_back(  1,symbol_type( alphabet->get_epsilon()) );
+	productions[new_head]=new_bodies;
+
+        for (auto &body :bodies) {
+	  if(!body.empty()) {
+	    body.push_back(new_head);
+	  }
+
+	}
       };
 
-  for (auto &[head, bodies] : productions) {
-    auto this_bodies = std::move(bodies);
-    bodies.clear();
-    for (auto &body : this_bodies) {
+  for(size_t i=0;i<old_heads.size();i++) {
+    for(size_t j=0;j<i;j++) {
+      std::vector<production_body_type> new_bodies;
+    for (auto &body :productions[old_heads[i]]) {
 
-      // Ai -> Aj
-      if (std::holds_alternative<terminal_type>(body.front())) {
-        bodies.emplace_back(std::move(body));
-        continue;
+      if (!(std::holds_alternative<nonterminal_type>(body.front()) && std::get<nonterminal_type>(body.front()) ==old_heads[j]) ) {
+	new_bodies.emplace_back(std::move(body));
+	continue;
       }
-
-      auto first_nonterminal = std::get<nonterminal_type>(body.front());
-      if (first_nonterminal >= head) {
-        bodies.emplace_back(std::move(body));
-        continue;
-      }
-      auto it = productions.find(first_nonterminal);
-      if (it == productions.end()) {
-        bodies.emplace_back(std::move(body));
-        continue;
-      }
-
-      for (auto const &first_nonterminal_body : it->second) {
-        bodies.push_back(first_nonterminal_body);
-        bodies.back().insert(bodies.back().end(), body.begin() + 1, body.end());
+      // Ai -> Aj，替换
+      for(const auto & head_j_body:productions[old_heads[j]]) {
+	auto new_body=head_j_body;
+	  new_body.insert(new_body.end(), body.begin() + 1, body.end());
+	new_bodies.push_back(new_body);
       }
     }
-    eliminate_immediate_left_recursion(head);
+    productions[old_heads[i]]=std::move(new_bodies);
+    }
+    eliminate_immediate_left_recursion(old_heads[i]);
   }
+    normalize_productions();
   return;
 }
 

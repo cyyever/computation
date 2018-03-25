@@ -26,6 +26,10 @@ public:
   virtual void foreach_symbol(
       const std::function<void(const symbol_type &)> &callback) const = 0;
   virtual bool contain(symbol_type s) const = 0;
+  bool is_epsilon(symbol_type s) const {
+  return get_epsilon()==s;
+  }
+ 
   virtual size_t size() const = 0;
   virtual std::string name() const = 0;
   virtual  void print(std::ostream& os,symbol_type symbol) const =0;

@@ -11,6 +11,7 @@
 #include <string>
 #include <variant>
 #include <vector>
+#include <iterator>
 
 #include "automata.hpp"
 #include "lang.hpp"
@@ -31,10 +32,11 @@ public:
       : alphabet(make_alphabet(alphabet_name)), start_symbol(start_symbol_),
         productions(productions_) {
 
+
 	  eliminate_useless_symbols();
 
     bool has_start_symbol = false;
-    for (auto const &[head, bodies] : productions) {
+    for (auto &[head, bodies] : productions) {
       if (!has_start_symbol && head == start_symbol) {
         has_start_symbol = true;
       }
@@ -44,24 +46,26 @@ public:
       }
 
       for (auto const &body : bodies) {
-        if (body.empty()) {
-          throw std::invalid_argument(std::string("an empty body for head ") +
-                                      head);
-        }
-        for (auto const &symbol : body) {
-          if (std::holds_alternative<terminal_type>(symbol)) {
-            auto terminal = std::get<terminal_type>(symbol);
-            if (!alphabet->contain(terminal)) {
-              throw std::invalid_argument(std::string("invalid terminal ") +
-                                          std::to_string(terminal));
-            }
-          }
-        }
+	if (body.empty()) {
+	  throw std::invalid_argument(std::string("an empty body for head ") +
+	      head);
+	}
+	for (auto const &symbol : body) {
+	  auto terminal_ptr = std::get_if<terminal_type>(&symbol);
+	  if (terminal_ptr && !alphabet->is_epsilon(*terminal_ptr) &&  !alphabet->contain(*terminal_ptr)) {
+	    throw std::invalid_argument(std::string("invalid terminal ") +
+		std::to_string(*terminal_ptr));
+	  }
+	}
       }
     }
     if(!has_start_symbol) {
         throw std::invalid_argument("no productions for start symbol");
     }
+
+
+	  normalize_productions();
+
   }
 
   bool operator==(const CFG &rhs) const {
@@ -84,9 +88,56 @@ public:
     }
   }
 
-
   auto get_alphabet() const -> auto const & { return *alphabet; }
 
+  void normalize_productions() {
+  decltype(productions) new_productions;
+    for (auto &[head, bodies] : productions) {
+      std::set<production_body_type> bodies_set;
+      for (auto &body:bodies) {
+	if(body.empty()) {
+	  continue;
+	}
+	auto it=body.begin();
+	auto it2=body.end();
+	while(it<it2) {
+	  if( std::holds_alternative<terminal_type>(*it) && alphabet->is_epsilon(
+		std::get<terminal_type>(*it))) {
+	    it++;
+	    continue;
+	  }
+	  if(std::holds_alternative<terminal_type>(*(it2-1)) && alphabet->is_epsilon(
+		std::get<terminal_type>(*(it2-1)))) {
+	    it2--;
+	    continue;
+	  }
+	  break;
+	}
+
+	/*
+	while(!body.empty() && std::holds_alternative<terminal_type>(body.back()) && alphabet->is_epsilon(
+	      std::get<terminal_type>(body.back()))) {
+	  body.pop_back();
+	}
+	while(body.size()>1 && std::holds_alternative<terminal_type>(body.front()) && alphabet->is_epsilon(
+	      std::get<terminal_type>(body.front()))) {
+	  body.pop_front();
+	}
+	*/
+	if(it<it2) {
+	  bodies_set.emplace(std::move_iterator(it),std::move_iterator(it2));
+	}
+	else {
+	  bodies_set.emplace(  1,symbol_type( alphabet->get_epsilon()) );
+	}
+      }
+      if(!bodies_set.empty()) {
+	new_productions[head]=                  
+	{std::move_iterator(bodies_set.begin()),std::move_iterator(bodies_set.end())};
+      }
+    }
+    productions=std::move(new_productions);
+  }
   void eliminate_useless_symbols();
 
   void eliminate_left_recursion();
@@ -114,12 +165,13 @@ private:
   std::set<nonterminal_type>
   left_factoring_nonterminal(const nonterminal_type &head);
 
-  nonterminal_type get_new_head(const nonterminal_type &head) {
-    auto new_head = head + "'";
-    while (productions.find(new_head) != productions.end()) {
-      new_head += "'";
+  nonterminal_type get_new_head(nonterminal_type head) {
+    head.push_back('\'');
+
+    while (productions.find(head) != productions.end()) {
+      head.push_back( '\'');
     }
-    return new_head;
+    return head;
   }
 
  // std::map <grammar_symbol_type, std::set<terminal_type> first() const;
