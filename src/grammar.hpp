@@ -114,16 +114,6 @@ public:
 	  break;
 	}
 
-	/*
-	while(!body.empty() && std::holds_alternative<terminal_type>(body.back()) && alphabet->is_epsilon(
-	      std::get<terminal_type>(body.back()))) {
-	  body.pop_back();
-	}
-	while(body.size()>1 && std::holds_alternative<terminal_type>(body.front()) && alphabet->is_epsilon(
-	      std::get<terminal_type>(body.front()))) {
-	  body.pop_front();
-	}
-	*/
 	if(it<it2) {
 	  bodies_set.emplace(std::move_iterator(it),std::move_iterator(it2));
 	}
