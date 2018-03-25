@@ -12,15 +12,15 @@ namespace cyy::lang {
 class ASCII final : public ALPHABET {
 public:
   symbol_type get_epsilon() const override { return 128; }
-  symbol_type get_endmarker() const override {return 129;}
+  symbol_type get_endmarker() const override { return 129; }
 
-    void print(std::ostream& os,symbol_type symbol) const override {
-    if(symbol==get_epsilon()) {
-	os<<"'epsilon'";
-    } else if(symbol==get_endmarker()) {
-	os<<"$";
+  void print(std::ostream &os, symbol_type symbol) const override {
+    if (symbol == get_epsilon()) {
+      os << "'epsilon'";
+    } else if (symbol == get_endmarker()) {
+      os << "$";
     } else {
-	os<<'\''<<static_cast<char>(symbol)<<'\'';
+      os << '\'' << static_cast<char>(symbol) << '\'';
     }
     return;
   }

@@ -17,7 +17,7 @@ class regex {
 public:
   class syntax_node {
   public:
-    virtual ~syntax_node()=default;
+    virtual ~syntax_node() = default;
     virtual NFA to_NFA(const ALPHABET &alphabet,
                        uint64_t start_state) const = 0;
     virtual bool nullable() const = 0;
