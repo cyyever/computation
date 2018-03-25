@@ -169,7 +169,7 @@ private:
     return head;
   }
 
- // std::map <grammar_symbol_type, std::set<terminal_type> first() const;
+  std::map <nonterminal_type, std::set<terminal_type>> first() const;
 
 private:
   std::unique_ptr<ALPHABET> alphabet;

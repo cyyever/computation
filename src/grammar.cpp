@@ -256,53 +256,71 @@ void CFG::left_factoring() {
   normalize_productions();
 }
 
-/*
-std::map < CFG::grammar_symbol_type,
-    std::set<CFG::terminal_type>> CFG::first() const {
+std::map < CFG::nonterminal_type,
+  std::set<CFG::terminal_type>> CFG::first() const {
 
 
-  std::map < CFG::grammar_symbol_type, std::set<CFG::terminal_type> first_sets;
-  auto  first_of_grammar_symbol=
-      [](auto &&self, const grammar_symbol_type &grammar_symbol, CFG &cfg,
-  std::map < CFG::grammar_symbol_type, std::set<CFG::terminal_type> &first_sets
-	 ) {
+    std::map < CFG::nonterminal_type, std::set<CFG::terminal_type>> first_sets;
+    auto  first_of_nonterminal= [&](auto &&self, const  nonterminal_type &head,const CFG &cfg
+	) -> bool {
 
-	if (std::holds_alternative<terminal_type>(grammar_symbol)) {
-	  first_sets[grammar_symbol].insert(std::get<terminal_type>(grammar_symbol));
-	  return;
+	  bool add_new_terminal=false;
+	while (true) {
+	  bool loop_add_new_terminal=false;
+	  auto it =cfg.productions.find(head);
+	  if(it==cfg.productions.end()) {
+	    continue;
+	  }
+	  for (auto const &body : it->second) {
+	    size_t i=0;
+	    for (; i < body.size(); i++) {
+	      if (std::holds_alternative<terminal_type>(body[i])) {
+		if(
+		  first_sets[head].insert(std::get<terminal_type>(body[i])).second
+		    ) {
+		  loop_add_new_terminal=true;
+		}
+		break;
+	      }
+	      auto nonterminal = std::get<nonterminal_type>(body[i]);
+	      if(
+		self(self,nonterminal,cfg)
+		  ) {
+		loop_add_new_terminal=true;
+	      }
+	      for(auto const &terminal:first_sets[nonterminal]) {
+		if(
+		  first_sets[head].insert(terminal).second
+		    ) {
+		  loop_add_new_terminal=true;
+		}
+	      }
+	      if (first_sets[nonterminal].count(alphabet->get_epsilon()) == 0) {
+		break;
+	      }
+	    }
+	    if (i == body.size()) {
+	      if(
+		first_sets[head].insert(alphabet->get_epsilon()).second
+		  ) 
+		loop_add_new_terminal=true;
+	    }
+	  }
+	  if (!loop_add_new_terminal) {
+	    break;
+	  }
 	}
 
-  auto nonterminal = std::get<nonterminal_type>(grammar_symbol);
-  auto it=productions.find(nonterminal);
-  if(it==productions.end()) {
-    return;
-  }
-
-  while (true) {
-    auto cur_first_sets = first_sets;
-      for (auto &body : *it) {
-        for (size_t i = 0; i < body.size(); i++) {
-          if (std::holds_alternative<terminal_type>(body[i])) {
-            cur_first_sets[head].insert(std::get<terminal_type>(body[i]));
-            break;
-          }
-          auto nonterminal = std::get<nonterminal_type>(symbol);
-          if (cur_first_sets[nonterminal].count(alphabet->get_epsilon()) == 0) {
-            break;
-          }
-        }
-        if (i == body.size()) {
-          cur_first_sets[nonterminal].insert(alphabet->get_epsilon());
-        }
-      }
-    if (cur_first_sets == first_sets) {
-      break;
+	return add_new_terminal;
+      };
+    
+    for(auto const &[head,_]:productions) {
+      first_of_nonterminal(first_of_nonterminal,head,*this);
     }
-  }
+    return first_sets;
 
-return first_sets;
-} // namespace cyy::lang
-*/
+
+  }
 
 CFG NFA_to_CFG(const NFA &nfa) {
   std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
