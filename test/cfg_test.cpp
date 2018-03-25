@@ -93,3 +93,31 @@ TEST_CASE("eliminate_left_recursion") {
 
   CHECK( cfg== CFG("ASCII","S",reduced_productions)); 
 }
+
+TEST_CASE("left_factoring") {
+  std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>> productions;
+  productions["S"]={
+    {'i',"E",'t',"S"},
+    {'i',"E",'t',"S",'e',"S"},
+    {'a'},
+  };
+  productions["E"]={
+    {'b'}
+  };
+
+  CFG cfg("ASCII","S",productions);
+  cfg.left_factoring();
+  std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>> reduced_productions;
+  reduced_productions["S"]={
+    {'i',"E",'t',"S","S'"},
+    {'a'},
+  };
+  reduced_productions["S'"]={
+    {'e',"S"},
+    {make_alphabet("ASCII")->get_epsilon() },
+  };
+  reduced_productions["E"]={
+    {'b'}
+  };
+  CHECK( cfg== CFG("ASCII","S",reduced_productions)); 
+}

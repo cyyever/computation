@@ -90,6 +90,14 @@ public:
 
   auto get_alphabet() const -> auto const & { return *alphabet; }
 
+  std::vector<nonterminal_type> get_heads() const {
+    std::vector<nonterminal_type> heads;
+  for (auto const &[head, _] : productions) {
+    heads.push_back(head);
+  }
+  return heads;
+  }
+
   void normalize_productions() {
   decltype(productions) new_productions;
     for (auto &[head, bodies] : productions) {
@@ -151,9 +159,6 @@ private:
     return;
 
   }
-
-  std::set<nonterminal_type>
-  left_factoring_nonterminal(const nonterminal_type &head);
 
   nonterminal_type get_new_head(nonterminal_type head) {
     head.push_back('\'');

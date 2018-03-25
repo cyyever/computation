@@ -182,77 +182,78 @@ void CFG::eliminate_left_recursion() {
   return;
 }
 
-std::set<CFG::nonterminal_type>
-CFG::left_factoring_nonterminal(const nonterminal_type &head) {
-  if (productions.empty()) {
-    return {};
-  }
-
-  auto it=productions.find(head);
-  if(it==productions.end()) {
-    return {};
-  }
-
-  auto &bodies = it->second;
-  if (bodies.size() < 2) {
-    return {};
-  }
-  std::sort(bodies.begin(), bodies.end());
-  auto common_prefix = bodies.front();
-  bool is_common_prefix = false;
-  std::vector<decltype(bodies.begin())> iterators;
-  for (auto it = bodies.begin() + 1; it != bodies.end(); it++) {
-    size_t i = 0;
-    for (; i < common_prefix.size() && i < it->size(); i++) {
-      if (common_prefix[i] != (*it)[i]) {
-        break;
-      }
-    }
-    if (i > 0) {
-      is_common_prefix = true;
-      common_prefix.resize(i);
-      iterators.push_back(it);
-      continue;
-    }
-    break;
-  }
-  if (is_common_prefix) {
-    auto new_head = get_new_head(head);
-    for (auto &it : iterators) {
-      productions[new_head].emplace_back(it->begin() + common_prefix.size(),
-                                         it->end());
-      it->clear();
-    }
-
-    bodies.erase(std::remove_if(bodies.begin(), bodies.end(),
-                                [](const auto &body) { return body.empty(); }),
-                 bodies.end());
-    common_prefix.push_back(new_head);
-    bodies.push_back(common_prefix);
-    auto res = left_factoring_nonterminal(head);
-    res.insert(new_head);
-    return res;
-  }
-  return {};
-}
 
 void CFG::left_factoring() {
-  if (productions.empty()) {
-    return;
-  }
 
-  std::set<nonterminal_type> new_nonterminals;
-  for (auto const &[head, _] : productions) {
-    new_nonterminals.insert(head);
-  }
+  normalize_productions();
+  auto left_factoring_nonterminal=[this](const nonterminal_type &head) ->nonterminal_type {
 
-  while (!new_nonterminals.empty()) {
-    auto nonterminals = std::move(new_nonterminals);
-    new_nonterminals.clear();
-    for (auto const &nonterminal : nonterminals) {
-      new_nonterminals.merge(left_factoring_nonterminal(nonterminal));
+    auto &bodies =  productions[head];
+    if (bodies.size() < 2) {
+      return {};
     }
+    auto common_prefix = bodies.front();
+    bool is_common_prefix = false;
+    std::vector<size_t> indexes{0};
+    for (size_t j=1;j<bodies.size();j++) {
+      size_t i = 0;
+      for (; i < common_prefix.size() && i < bodies[j].size(); i++) {
+	if (common_prefix[i] != bodies[j][i]) {
+	  break;
+	}
+      }
+      std::cout<<"i="<<i;
+      if (i > 0) {
+	is_common_prefix = true;
+	common_prefix.resize(i);
+	indexes.push_back(j);
+	continue;
+      }
+      
+      if(is_common_prefix) {
+	break;
+      }
+      common_prefix =bodies[j];
+      indexes={j};
+    }
+    if (is_common_prefix) {
+      puts("is_common_prefix");
+      std::cout<<common_prefix.size()<<std::endl;
+      auto new_head = get_new_head(head);
+      for (auto &index:indexes) {
+	auto &body=bodies[index];
+
+	productions[new_head].emplace_back(std::move_iterator(body.begin() + common_prefix.size()),
+	    std::move_iterator(body.end()));
+	    if(productions[new_head].back().empty()) {
+	      productions[new_head].back().emplace_back(   alphabet->get_epsilon() );
+	    }
+	
+	body.erase(
+	    body.begin() + common_prefix.size(),
+	    body.end()
+	    );
+
+	body.push_back(new_head);
+      }
+
+      return new_head;
+    }
+    return {};
+  };
+
+  for(auto head:get_heads()) {
+      while(true) {
+	head=left_factoring_nonterminal(head);
+	if(head.empty()) {
+	  break;
+	}
+
+      }
+
   }
+
+  normalize_productions();
 }
 
 /*
