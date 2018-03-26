@@ -180,6 +180,13 @@ private:
   std::map<nonterminal_type, std::set<terminal_type>> 
     follow( const std::map<nonterminal_type, std::set<terminal_type>>
             &nonterminal_first_sets) const;
+ 
+   bool is_LL1( const std::map<nonterminal_type, std::set<terminal_type>>
+            &nonterminal_first_sets , 
+  const std::map<nonterminal_type, std::set<terminal_type>> &follow_sets
+	) const;
+
+
 
 private:
   std::unique_ptr<ALPHABET> alphabet;
