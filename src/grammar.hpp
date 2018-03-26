@@ -10,6 +10,7 @@
 #include <iterator>
 #include <map>
 #include <string>
+#include <string_view>
 #include <variant>
 #include <vector>
 
@@ -24,6 +25,8 @@ public:
   using terminal_type = symbol_type;
   using nonterminal_type = std::string;
   using grammar_symbol_type = std::variant<terminal_type, nonterminal_type>;
+  using grammar_symbol_string_view =
+      std::basic_string_view<grammar_symbol_type>;
   using production_body_type = std::vector<grammar_symbol_type>;
 
   CFG(const std::string &alphabet_name, const nonterminal_type &start_symbol_,
@@ -169,10 +172,14 @@ private:
 
   std::map<nonterminal_type, std::set<terminal_type>> first() const;
 
+  std::set<terminal_type>
+  first(grammar_symbol_string_view alpha,
+        const std::map<nonterminal_type, std::set<terminal_type>>
+            &nonterminal_first_sets) const;
+
 private:
   std::unique_ptr<ALPHABET> alphabet;
   nonterminal_type start_symbol;
   std::map<nonterminal_type, std::vector<production_body_type>> productions;
 };
-
 } // namespace cyy::lang

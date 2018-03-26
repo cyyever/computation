@@ -275,12 +275,18 @@ CFG::first() const {
           if (self(self, nonterminal, cfg)) {
             loop_add_new_terminal = true;
           }
+
+          bool has_epsilon = false;
           for (auto const &terminal : first_sets[nonterminal]) {
+            if (alphabet->is_epsilon(terminal)) {
+              has_epsilon = true;
+              continue;
+            }
             if (first_sets[head].insert(terminal).second) {
               loop_add_new_terminal = true;
             }
           }
-          if (first_sets[nonterminal].count(alphabet->get_epsilon()) == 0) {
+          if (!has_epsilon) {
             break;
           }
         }
@@ -301,6 +307,37 @@ CFG::first() const {
     first_of_nonterminal(first_of_nonterminal, head, *this);
   }
   return first_sets;
+}
+
+std::set<CFG::terminal_type>
+CFG::first(grammar_symbol_string_view alpha,
+           const std::map<nonterminal_type, std::set<terminal_type>>
+               &nonterminal_first_sets) const {
+  std::set<terminal_type> first_set;
+  for (auto const &symbol : alpha) {
+
+    if (std::holds_alternative<terminal_type>(symbol)) {
+      return {std::get<terminal_type>(symbol)};
+    }
+    auto nonterminal = std::get<nonterminal_type>(symbol);
+
+    bool has_epsilon = false;
+    ;
+    auto it = nonterminal_first_sets.find(nonterminal);
+    for (auto const &terminal : it->second) {
+      if (alphabet->is_epsilon(terminal)) {
+        has_epsilon = true;
+      } else {
+        first_set.insert(terminal);
+      }
+    }
+    if (!has_epsilon) {
+      return first_set;
+    }
+  }
+  first_set.insert(alphabet->get_epsilon());
+
+  return first_set;
 }
 
 CFG NFA_to_CFG(const NFA &nfa) {
@@ -333,5 +370,4 @@ CFG NFA_to_CFG(const NFA &nfa) {
   return {nfa.get_alphabet().name(),
           state_to_nonterminal(nfa.get_start_state()), productions};
 }
-
 } // namespace cyy::lang
