@@ -310,7 +310,7 @@ CFG::first() const {
 }
 
 std::set<CFG::terminal_type>
-CFG::first(grammar_symbol_string_view alpha,
+CFG::first(const grammar_symbol_string_view &alpha,
            const std::map<nonterminal_type, std::set<terminal_type>>
                &nonterminal_first_sets) const {
   std::set<terminal_type> first_set;
@@ -338,6 +338,57 @@ CFG::first(grammar_symbol_string_view alpha,
   first_set.insert(alphabet->get_epsilon());
 
   return first_set;
+}
+
+std::map<CFG::nonterminal_type, std::set<CFG::terminal_type>>
+CFG::follow(const std::map<nonterminal_type, std::set<terminal_type>>
+                &nonterminal_first_sets) const {
+
+  std::map<nonterminal_type, std::set<terminal_type>> follow_sets;
+
+  follow_sets[start_symbol].insert(alphabet->get_endmarker());
+
+  bool has_add = false;
+  do {
+    has_add = false;
+    for (const auto &[head, bodies] : productions) {
+      for (const auto &body : bodies) {
+        for (size_t i = 0; i < body.size(); i++) {
+          if (std::holds_alternative<terminal_type>(body[i])) {
+            continue;
+          }
+
+          auto nonterminal = std::get<nonterminal_type>(body[i]);
+
+          auto first_set =
+              first({body.data() + i, body.size() - i}, nonterminal_first_sets);
+
+          bool has_epsilon = false;
+
+          auto &follow_set = follow_sets[nonterminal];
+          for (auto const &terminal : first_set) {
+            if (alphabet->is_epsilon(terminal)) {
+              has_epsilon = true;
+            } else {
+              if (follow_set.insert(terminal).second) {
+                has_add = true;
+              }
+            }
+          }
+
+          if (has_epsilon) {
+            for (auto const &terminal : follow_sets[head]) {
+              if (follow_set.insert(terminal).second) {
+                has_add = true;
+              }
+            }
+          }
+        }
+      }
+    }
+  } while (has_add);
+
+  return follow_sets;
 }
 
 CFG NFA_to_CFG(const NFA &nfa) {

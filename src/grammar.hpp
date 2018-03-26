@@ -173,8 +173,12 @@ private:
   std::map<nonterminal_type, std::set<terminal_type>> first() const;
 
   std::set<terminal_type>
-  first(grammar_symbol_string_view alpha,
+    first(const grammar_symbol_string_view &alpha,
         const std::map<nonterminal_type, std::set<terminal_type>>
+            &nonterminal_first_sets) const;
+
+  std::map<nonterminal_type, std::set<terminal_type>> 
+    follow( const std::map<nonterminal_type, std::set<terminal_type>>
             &nonterminal_first_sets) const;
 
 private:
