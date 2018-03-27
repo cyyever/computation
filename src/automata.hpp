@@ -157,5 +157,4 @@ private:
 };
 
 DFA NFA_to_DFA(const NFA &nfa);
-
 } // namespace cyy::lang

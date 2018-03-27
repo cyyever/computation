@@ -113,11 +113,9 @@ std::shared_ptr<regex::syntax_node>
 nonterminal_regex(const ALPHABET &alphabet, symbol_string_view &view) {
   return nonterminal_x(nonterminal_a(alphabet, view), alphabet, view);
 }
-
 } // namespace
 std::shared_ptr<regex::syntax_node>
 regex::parse(symbol_string_view view) const {
   return nonterminal_regex(*alphabet, view);
 }
-
 } // namespace cyy::lang

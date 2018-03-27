@@ -6,6 +6,7 @@
  */
 
 #include "grammar.hpp"
+#include <stack>
 
 namespace cyy::lang {
 
@@ -249,43 +250,65 @@ void CFG::left_factoring() {
 
 bool CFG::recursive_descent_parse(symbol_string_view view) const {
 
-  size_t start_pos = 0;
   auto match_nonterminal = [&](auto &&self, const nonterminal_type &nonterminal,
-                               size_t &pos, const CFG &cfg) -> bool {
+                               size_t &pos, size_t &production_index,
+                               const CFG &cfg) -> bool {
     if (pos >= view.size()) {
       return false;
     }
 
     auto it = cfg.productions.find(nonterminal);
+    std::vector<std::pair<size_t, size_t>> production_index_stack;
+    while (production_index < it->second.size()) {
+      auto &body = it->second[production_index];
+      production_index_stack.emplace_back(pos, 0);
+      // auto local_pos = pos;
+      // bool succ = true;
+      while (true) {
+        auto grammal_symbol_idx = production_index_stack.size() - 1;
+        if (grammal_symbol_idx > body.size()) {
+          break;
+        }
+        auto const &grammal_symbol = body[grammal_symbol_idx];
+        auto &[local_pos, local_production_index] =
+            production_index_stack[grammal_symbol_idx];
 
-    for (auto const &body : it->second) {
-      auto local_pos = pos;
-      bool succ = true;
-      for (auto const &grammal_symbol : body) {
         if (std::holds_alternative<terminal_type>(grammal_symbol)) {
           auto terminal = std::get<terminal_type>(grammal_symbol);
           if (terminal == view[local_pos]) {
-            local_pos++;
+            production_index_stack.emplace_back(local_pos + 1, 0);
             continue;
           }
-          return false;
+        } else {
+          auto this_nonterminal = std::get<nonterminal_type>(grammal_symbol);
+          auto next_pos = local_pos;
+          if (self(self, this_nonterminal, next_pos, local_production_index,
+                   cfg)) {
+            production_index_stack.emplace_back(next_pos, 0);
+            continue;
+          }
         }
 
-        if (!self(self, std::get<nonterminal_type>(grammal_symbol), local_pos,
-                  cfg)) {
-          succ = false;
+        if (!production_index_stack.empty()) {
+          production_index_stack.pop_back();
+          production_index_stack.back().second++;
+          continue;
+        } else {
           break;
         }
       }
-      if (succ) {
-        pos = local_pos;
+      if (!production_index_stack.empty()) {
+        pos = production_index_stack.back().first;
         return true;
       }
     }
     return false;
   };
 
-  return match_nonterminal(match_nonterminal, start_symbol, start_pos, *this);
+  size_t start_pos = 0;
+  size_t production_index = 0;
+  return match_nonterminal(match_nonterminal, start_symbol, start_pos,
+                           production_index, *this);
 }
 
 std::map<CFG::nonterminal_type, std::set<CFG::terminal_type>>

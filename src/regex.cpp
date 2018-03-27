@@ -68,5 +68,4 @@ DFA regex::to_DFA() const {
   return {DFA_states, alphabet->name(), 0, DFA_transition_table,
           DFA_final_states};
 }
-
 } // namespace cyy::lang
