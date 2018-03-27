@@ -31,7 +31,7 @@ public:
 
   CFG(const std::string &alphabet_name, const nonterminal_type &start_symbol_,
       std::map<nonterminal_type, std::vector<production_body_type>>
-          productions_)
+          &productions_)
       : alphabet(make_alphabet(alphabet_name)), start_symbol(start_symbol_),
         productions(productions_) {
 
@@ -108,6 +108,7 @@ public:
         if (body.empty()) {
           continue;
         }
+        // remove epsilon prefix and suffix
         auto it = body.begin();
         auto it2 = body.end();
         while (it < it2) {
@@ -170,23 +171,23 @@ private:
     return head;
   }
 
+  bool recursive_descent_parse(symbol_string_view view) const;
+
   std::map<nonterminal_type, std::set<terminal_type>> first() const;
 
   std::set<terminal_type>
-    first(const grammar_symbol_string_view &alpha,
+  first(const grammar_symbol_string_view &alpha,
         const std::map<nonterminal_type, std::set<terminal_type>>
             &nonterminal_first_sets) const;
 
-  std::map<nonterminal_type, std::set<terminal_type>> 
-    follow( const std::map<nonterminal_type, std::set<terminal_type>>
-            &nonterminal_first_sets) const;
- 
-   bool is_LL1( const std::map<nonterminal_type, std::set<terminal_type>>
-            &nonterminal_first_sets , 
-  const std::map<nonterminal_type, std::set<terminal_type>> &follow_sets
-	) const;
+  std::map<nonterminal_type, std::set<terminal_type>>
+  follow(const std::map<nonterminal_type, std::set<terminal_type>>
+             &nonterminal_first_sets) const;
 
-
+  bool is_LL1(const std::map<nonterminal_type, std::set<terminal_type>>
+                  &nonterminal_first_sets,
+              const std::map<nonterminal_type, std::set<terminal_type>>
+                  &follow_sets) const;
 
 private:
   std::unique_ptr<ALPHABET> alphabet;

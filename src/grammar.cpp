@@ -247,6 +247,47 @@ void CFG::left_factoring() {
   normalize_productions();
 }
 
+bool CFG::recursive_descent_parse(symbol_string_view view) const {
+
+  size_t start_pos = 0;
+  auto match_nonterminal = [&](auto &&self, const nonterminal_type &nonterminal,
+                               size_t &pos, const CFG &cfg) -> bool {
+    if (pos >= view.size()) {
+      return false;
+    }
+
+    auto it = cfg.productions.find(nonterminal);
+
+    for (auto const &body : it->second) {
+      auto local_pos = pos;
+      bool succ = true;
+      for (auto const &grammal_symbol : body) {
+        if (std::holds_alternative<terminal_type>(grammal_symbol)) {
+          auto terminal = std::get<terminal_type>(grammal_symbol);
+          if (terminal == view[local_pos]) {
+            local_pos++;
+            continue;
+          }
+          return false;
+        }
+
+        if (!self(self, std::get<nonterminal_type>(grammal_symbol), local_pos,
+                  cfg)) {
+          succ = false;
+          break;
+        }
+      }
+      if (succ) {
+        pos = local_pos;
+        return true;
+      }
+    }
+    return false;
+  };
+
+  return match_nonterminal(match_nonterminal, start_symbol, start_pos, *this);
+}
+
 std::map<CFG::nonterminal_type, std::set<CFG::terminal_type>>
 CFG::first() const {
 
@@ -391,23 +432,21 @@ CFG::follow(const std::map<nonterminal_type, std::set<terminal_type>>
   return follow_sets;
 }
 
+bool CFG::is_LL1(const std::map<nonterminal_type, std::set<terminal_type>>
+                     &nonterminal_first_sets,
+                 const std::map<nonterminal_type, std::set<terminal_type>>
+                     &follow_sets) const {
 
-
-bool CFG::is_LL1( const std::map<nonterminal_type, std::set<terminal_type>>
-    &nonterminal_first_sets , 
-    const std::map<nonterminal_type, std::set<terminal_type>> &follow_sets
-    ) const {
-
-  auto has_intersection=[](const auto &set1,const auto &set2) {
-    auto it1=set1.begin();
-    auto it2=set2.begin();
-    while(it1!=set1.end() &&it2!=set2.end()) {
-      if(*it1<*it2) {
-	it1++;
-      } else if(*it1==*it2) {
-	return true;
-      }  else {
-	*it2++;
+  auto has_intersection = [](const auto &set1, const auto &set2) {
+    auto it1 = set1.begin();
+    auto it2 = set2.begin();
+    while (it1 != set1.end() && it2 != set2.end()) {
+      if (*it1 < *it2) {
+        it1++;
+      } else if (*it1 == *it2) {
+        return true;
+      } else {
+        it2++;
       }
     }
     return false;
@@ -416,32 +455,29 @@ bool CFG::is_LL1( const std::map<nonterminal_type, std::set<terminal_type>>
   for (const auto &[head, bodies] : productions) {
 
     std::vector<std::set<CFG::terminal_type>> first_sets;
-    auto follow_it=follow_sets.find(head);
-    for(size_t i=0;i<bodies.size();i++) {
+    auto follow_it = follow_sets.find(head);
+    for (size_t i = 0; i < bodies.size(); i++) {
       first_sets.emplace_back(
-	  first(  { bodies[i].data(),bodies[i].size()},nonterminal_first_sets)
-	  );
-      for(size_t j=0;j<i;j++) {
-	if(has_intersection( first_sets[i], first_sets[j] )) {
-	  return false;
-	} 
+          first({bodies[i].data(), bodies[i].size()}, nonterminal_first_sets));
+      for (size_t j = 0; j < i; j++) {
+        if (has_intersection(first_sets[i], first_sets[j])) {
+          return false;
+        }
 
-	if(first_sets[i].count(alphabet->get_epsilon())!=0 &&
-	    has_intersection(follow_it->second,first_sets[j])) {
-	  return false;
-	}
+        if (first_sets[i].count(alphabet->get_epsilon()) != 0 &&
+            has_intersection(follow_it->second, first_sets[j])) {
+          return false;
+        }
 
-	if(first_sets[j].count(alphabet->get_epsilon())!=0 &&
-	    has_intersection(follow_it->second,first_sets[i])) {
-	  return false;
-	}
+        if (first_sets[j].count(alphabet->get_epsilon()) != 0 &&
+            has_intersection(follow_it->second, first_sets[i])) {
+          return false;
+        }
       }
     }
   }
-    return true;
-
-  }
-
+  return true;
+}
 
 CFG NFA_to_CFG(const NFA &nfa) {
   std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
