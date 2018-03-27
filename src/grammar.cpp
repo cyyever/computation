@@ -259,11 +259,10 @@ bool CFG::recursive_descent_parse(symbol_string_view view) const {
 
     auto it = cfg.productions.find(nonterminal);
     std::vector<std::pair<size_t, size_t>> production_index_stack;
-    while (production_index < it->second.size()) {
+    for(;production_index < it->second.size(); production_index++) {
       auto &body = it->second[production_index];
+      production_index_stack.clear();
       production_index_stack.emplace_back(pos, 0);
-      // auto local_pos = pos;
-      // bool succ = true;
       while (true) {
         auto grammal_symbol_idx = production_index_stack.size() - 1;
         if (grammal_symbol_idx > body.size()) {
