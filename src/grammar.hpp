@@ -144,6 +144,7 @@ public:
 
   void left_factoring();
 
+  bool recursive_descent_parse(symbol_string_view view) const;
 private:
   void print(std::ostream &os, const nonterminal_type &head,
              const production_body_type &body) const {
@@ -171,7 +172,6 @@ private:
     return head;
   }
 
-  bool recursive_descent_parse(symbol_string_view view) const;
 
   std::map<nonterminal_type, std::set<terminal_type>> first() const;
 

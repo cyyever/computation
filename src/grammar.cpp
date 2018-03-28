@@ -198,7 +198,6 @@ void CFG::left_factoring() {
           break;
         }
       }
-      std::cout << "i=" << i;
       if (i > 0) {
         is_common_prefix = true;
         common_prefix.resize(i);
@@ -213,8 +212,6 @@ void CFG::left_factoring() {
       indexes = {j};
     }
     if (is_common_prefix) {
-      puts("is_common_prefix");
-      std::cout << common_prefix.size() << std::endl;
       auto new_head = get_new_head(head);
       for (auto &index : indexes) {
         auto &body = bodies[index];
@@ -250,6 +247,7 @@ void CFG::left_factoring() {
 
 bool CFG::recursive_descent_parse(symbol_string_view view) const {
 
+  puts("aaaaaa");
   auto match_nonterminal = [&](auto &&self, const nonterminal_type &nonterminal,
                                size_t &pos, size_t &production_index,
                                const CFG &cfg) -> bool {
@@ -261,11 +259,13 @@ bool CFG::recursive_descent_parse(symbol_string_view view) const {
     std::vector<std::pair<size_t, size_t>> production_index_stack;
     for(;production_index < it->second.size(); production_index++) {
       auto &body = it->second[production_index];
+	print(std::cout,nonterminal,body);
       production_index_stack.clear();
       production_index_stack.emplace_back(pos, 0);
       while (true) {
+
         auto grammal_symbol_idx = production_index_stack.size() - 1;
-        if (grammal_symbol_idx > body.size()) {
+        if (grammal_symbol_idx >= body.size()) {
           break;
         }
         auto const &grammal_symbol = body[grammal_symbol_idx];
@@ -288,7 +288,7 @@ bool CFG::recursive_descent_parse(symbol_string_view view) const {
           }
         }
 
-        if (!production_index_stack.empty()) {
+        if (production_index_stack.size()>1) {
           production_index_stack.pop_back();
           production_index_stack.back().second++;
           continue;
@@ -298,6 +298,9 @@ bool CFG::recursive_descent_parse(symbol_string_view view) const {
       }
       if (!production_index_stack.empty()) {
         pos = production_index_stack.back().first;
+	if(nonterminal==start_symbol && pos<view.size()) {
+	  continue;
+	}
         return true;
       }
     }

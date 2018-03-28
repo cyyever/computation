@@ -115,3 +115,16 @@ TEST_CASE("left_factoring") {
   reduced_productions["E"] = {{'b'}};
   CHECK(cfg == CFG("ASCII", "S", reduced_productions));
 }
+
+TEST_CASE("recursive_descent_parse") {
+  std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
+      productions;
+  productions["S"] = {
+      {'a', "S", 'a'},
+      {'a','a'},
+  };
+
+  CFG cfg("ASCII", "S", productions);
+  std::vector<symbol_type> terminals(4,'a');
+ CHECK( cfg.recursive_descent_parse({terminals.data(),terminals.size()}));
+}
