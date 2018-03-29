@@ -121,10 +121,10 @@ TEST_CASE("recursive_descent_parse") {
       productions;
   productions["S"] = {
       {'a', "S", 'a'},
-      {'a','a'},
+      {'a', 'a'},
   };
 
   CFG cfg("ASCII", "S", productions);
-  std::vector<symbol_type> terminals(4,'a');
- CHECK( cfg.recursive_descent_parse({terminals.data(),terminals.size()}));
+  std::vector<symbol_type> terminals(4, 'a');
+  CHECK(cfg.recursive_descent_parse({terminals.data(), terminals.size()}));
 }
