@@ -416,7 +416,7 @@ CFG::follow(const std::map<nonterminal_type, std::set<terminal_type>>
           auto nonterminal = std::get<nonterminal_type>(body[i]);
 
           auto first_set =
-              first({body.data() + i, body.size() - i}, nonterminal_first_sets);
+              first({body.data() + i+1, body.size() - i-1}, nonterminal_first_sets);
 
           bool has_epsilon = false;
 
@@ -491,6 +491,22 @@ bool CFG::is_LL1(const std::map<nonterminal_type, std::set<terminal_type>>
     }
   }
   return true;
+}
+
+std::map<CFG::nonterminal_type, std::set<CFG::terminal_type>>
+CFG::follow()
+                const {
+
+  auto first_sets=first();
+
+  return follow(first_sets);
+}
+
+bool CFG::is_LL1() const {
+  auto first_sets=first();
+  auto follow_sets=follow(first_sets);
+
+  return is_LL1(first_sets,follow_sets);
 }
 
 CFG NFA_to_CFG(const NFA &nfa) {
