@@ -36,4 +36,11 @@ public:
 std::unique_ptr<ALPHABET> make_alphabet(const std::string &name);
 
 using symbol_string_view = std::basic_string_view<symbol_type>;
+
+//enum class example_token:symbol_type {
+enum example_token{
+  epsilon=256,
+  id,
+  endmark,
+};
 } // namespace cyy::lang

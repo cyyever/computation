@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.9)
 
 ENABLE_TESTING()
-INCLUDE(${CMAKE_CURRENT_LIST_DIR}/../cmake/all.cmake)
+INCLUDE(${CMAKE_CURRENT_LIST_DIR}/../cmake/test.cmake)
 
 IF (NOT WIN32)
   add_compile_options("-g")
