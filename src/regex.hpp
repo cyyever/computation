@@ -127,7 +127,7 @@ private:
   std::shared_ptr<syntax_node> parse(symbol_string_view view) const;
 
 private:
-  std::unique_ptr<ALPHABET> alphabet;
+  std::shared_ptr<ALPHABET > alphabet;
   mutable std::shared_ptr<regex::syntax_node> syntax_tree;
 };
 } // namespace cyy::lang

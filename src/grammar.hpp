@@ -196,7 +196,7 @@ private:
                   &follow_sets) const;
 
 private:
-  std::unique_ptr<ALPHABET> alphabet;
+  std::shared_ptr<ALPHABET>alphabet;
   nonterminal_type start_symbol;
   std::map<nonterminal_type, std::vector<production_body_type>> productions;
 };

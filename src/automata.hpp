@@ -100,7 +100,7 @@ public:
 
 protected:
   std::set<uint64_t> states;
-  std::unique_ptr<ALPHABET> alphabet;
+  std::shared_ptr< ALPHABET > alphabet;
   uint64_t start_state;
   std::set<uint64_t> final_states;
 

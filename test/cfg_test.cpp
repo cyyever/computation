@@ -8,6 +8,7 @@
 #include <iostream>
 
 #include "../src/grammar.hpp"
+#include "../src/common_tokens.hpp"
 
 using namespace cyy::lang;
 TEST_CASE("eliminate_useless_symbols") {
@@ -34,8 +35,8 @@ TEST_CASE("eliminate_useless_symbols") {
     };
     reduced_productions["C"] = {{"S"}};
 
-    CHECK(CFG("ASCII", "S", productions) ==
-          CFG("ASCII", "S", reduced_productions));
+    CHECK(CFG("common_tokens", "S", productions) ==
+          CFG("common_tokens", "S", reduced_productions));
   }
 
   SUBCASE("no production after eliminate") {
@@ -47,7 +48,7 @@ TEST_CASE("eliminate_useless_symbols") {
 
     bool has_exception = false;
     try {
-      CFG("ASCII", "S", productions);
+      CFG("common_tokens", "S", productions);
     } catch (...) {
       has_exception = true;
     }
@@ -65,10 +66,10 @@ TEST_CASE("eliminate_left_recursion") {
   productions["A"] = {
       {"A", 'c'},
       {"S", 'd'},
-      {make_alphabet("ASCII")->get_epsilon()},
+      {make_alphabet("common_tokens")->get_epsilon()},
   };
 
-  CFG cfg("ASCII", "S", productions);
+  CFG cfg("common_tokens", "S", productions);
   cfg.eliminate_left_recursion();
 
   std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
@@ -84,10 +85,10 @@ TEST_CASE("eliminate_left_recursion") {
   reduced_productions["A'"] = {
       {'c', "A'"},
       {'a', 'd', "A'"},
-      {make_alphabet("ASCII")->get_epsilon()},
+      {make_alphabet("common_tokens")->get_epsilon()},
   };
 
-  CHECK(cfg == CFG("ASCII", "S", reduced_productions));
+  CHECK(cfg == CFG("common_tokens", "S", reduced_productions));
 }
 
 TEST_CASE("left_factoring") {
@@ -100,7 +101,7 @@ TEST_CASE("left_factoring") {
   };
   productions["E"] = {{'b'}};
 
-  CFG cfg("ASCII", "S", productions);
+  CFG cfg("common_tokens", "S", productions);
   cfg.left_factoring();
   std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
       reduced_productions;
@@ -110,10 +111,10 @@ TEST_CASE("left_factoring") {
   };
   reduced_productions["S'"] = {
       {'e', "S"},
-      {make_alphabet("ASCII")->get_epsilon()},
+      {make_alphabet("common_tokens")->get_epsilon()},
   };
   reduced_productions["E"] = {{'b'}};
-  CHECK(cfg == CFG("ASCII", "S", reduced_productions));
+  CHECK(cfg == CFG("common_tokens", "S", reduced_productions));
 }
 
 TEST_CASE("recursive_descent_parse") {
@@ -124,7 +125,7 @@ TEST_CASE("recursive_descent_parse") {
       {'a', 'a'},
   };
 
-  CFG cfg("ASCII", "S", productions);
+  CFG cfg("common_tokens", "S", productions);
   std::vector<symbol_type> terminals(4, 'a');
   CHECK(cfg.recursive_descent_parse({terminals.data(), terminals.size()}));
 }
@@ -133,8 +134,8 @@ TEST_CASE("recursive_descent_parse") {
 TEST_CASE("first_and_follow") {
   std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
       productions;
-  auto epsilon=make_alphabet("example_tokens")->get_epsilon();
-  auto endmarker=make_alphabet("example_tokens")->get_endmarker();
+  auto epsilon=make_alphabet("common_tokens")->get_epsilon();
+  auto endmarker=make_alphabet("common_tokens")->get_endmarker();
   productions["E"] = {
       {"T", "E'"},
   };
@@ -151,15 +152,15 @@ TEST_CASE("first_and_follow") {
   };
   productions["F"] = {
       {'(',"E", ')'},
-      {example_token::id}	//i for id
+      {common_tokens::token::id}	//i for id
   };
 
-  CFG cfg("example_tokens", "E", productions);
+  CFG cfg("common_tokens", "E", productions);
   auto first_sets=cfg.first();
 
-  CHECK( first_sets["F"]==std::set<CFG::terminal_type>{'(',example_token::id});
-  CHECK( first_sets["T"]==std::set<CFG::terminal_type>{'(',example_token::id});
-  CHECK( first_sets["E"]==std::set<CFG::terminal_type>{'(',example_token::id});
+  CHECK( first_sets["F"]==std::set<CFG::terminal_type>{'(',common_tokens::token::id});
+  CHECK( first_sets["T"]==std::set<CFG::terminal_type>{'(',common_tokens::token::id});
+  CHECK( first_sets["E"]==std::set<CFG::terminal_type>{'(',common_tokens::token::id});
   CHECK( first_sets["E'"]==std::set<CFG::terminal_type>{'+',epsilon});
   CHECK( first_sets["T'"]==std::set<CFG::terminal_type>{'*',epsilon});
   auto follow_sets=cfg.follow();
