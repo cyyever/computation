@@ -11,7 +11,7 @@
 
 namespace cyy::lang {
 
-  std::shared_ptr<ALPHABET> make_alphabet(const std::string &name) {
+  std::shared_ptr<ALPHABET> get_alphabet(const std::string &name) {
   static std::map<std::string,std::shared_ptr<ALPHABET>> factory= {
     {"common_tokens",std::make_shared<common_tokens>()}
   };

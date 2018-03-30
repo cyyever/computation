@@ -36,7 +36,7 @@ public:
                                     std::to_string(final_state));
       }
     }
-    alphabet = make_alphabet(alphabet_name);
+    alphabet = ::cyy::lang::get_alphabet(alphabet_name);
   }
 
   auto get_states() const -> auto const & { return states; }

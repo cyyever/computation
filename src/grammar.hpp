@@ -32,7 +32,7 @@ public:
   CFG(const std::string &alphabet_name, const nonterminal_type &start_symbol_,
       std::map<nonterminal_type, std::vector<production_body_type>>
           &productions_)
-      : alphabet(make_alphabet(alphabet_name)), start_symbol(start_symbol_),
+      : alphabet(get_alphabet(alphabet_name)), start_symbol(start_symbol_),
         productions(productions_) {
 
     eliminate_useless_symbols();
@@ -90,7 +90,6 @@ public:
     }
   }
 
-  auto get_alphabet() const -> auto const & { return *alphabet; }
 
   std::vector<nonterminal_type> get_heads() const {
     std::vector<nonterminal_type> heads;

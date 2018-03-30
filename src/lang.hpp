@@ -33,7 +33,7 @@ public:
   virtual void print(std::ostream &os, symbol_type symbol) const = 0;
 };
 
-std::shared_ptr<ALPHABET> make_alphabet(const std::string &name);
+std::shared_ptr<ALPHABET> get_alphabet(const std::string &name);
 
 using symbol_string_view = std::basic_string_view<symbol_type>;
 

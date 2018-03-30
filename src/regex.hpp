@@ -113,10 +113,9 @@ public:
 
 public:
   regex(const std::string &alphabet_name, symbol_string_view view)
-      : alphabet(make_alphabet(alphabet_name)) {
+      : alphabet(get_alphabet(alphabet_name)) {
     syntax_tree = parse(view);
   }
-  auto get_alphabet() const -> auto const & { return *alphabet; }
 
   NFA to_NFA() const { return syntax_tree->to_NFA(*alphabet, 0); }
 
