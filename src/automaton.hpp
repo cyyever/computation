@@ -1,5 +1,5 @@
 /*!
- * \file automata.hpp
+ * \file automaton.hpp
  *
  * \author cyy
  * \date 2018-03-03
@@ -13,6 +13,114 @@
 #include <string>
 
 namespace cyy::lang {
+
+class finite_automaton {
+  public:
+  finite_automaton(const std::set<uint64_t> &states_, const std::string &alphabet_name,
+      uint64_t start_state_,
+      const std::set<uint64_t> &final_states_)
+      :
+    alphabet (::cyy::lang::get_alphabet(alphabet_name)),
+	states(states_), start_state(start_state_), final_states(final_states_) {
+
+	  if (states.empty()) {
+	    throw std::invalid_argument("no state");
+	  }
+	  if (!states.count(start_state)) {
+	    throw std::invalid_argument("unexisted start state");
+	  }
+	  for (auto const &final_state : final_states) {
+	    if (!states.count(final_state)) {
+	      throw std::invalid_argument(std::string("unexisted start state ") +
+		  std::to_string(final_state));
+	    }
+	  }
+
+      }
+
+
+  protected:
+  bool contain_final_state(const std::set<uint64_t> &T) const {
+    for (const auto &f : final_states) {
+      if (T.count(f) == 1) {
+	return true;
+      }
+    }
+    return false;
+  }
+
+  protected:
+    std::shared_ptr< ALPHABET > alphabet;
+    std::set<uint64_t> states;
+    uint64_t start_state;
+    std::set<uint64_t> final_states;
+};
+
+class DFA final:public finite_automaton {
+public:
+  DFA(const std::set<uint64_t> &states_, const std::string &alphabet_name,
+      uint64_t start_state_,
+      const std::map<std::pair<uint64_t, symbol_type>, uint64_t>
+          &transition_table_,
+      const std::set<uint64_t> &final_states_)
+    : finite_automaton(states_,alphabet_name,start_state_,final_states_),
+        transition_table(transition_table_) {
+
+	  /*
+    for (auto const &s : states) {
+      alphabet->foreach_symbol([this, s](auto const &a) {
+        if (transition_table.find({s, a}) == transition_table.end()) {
+          throw std::invalid_argument(std::string("no transition for state ") +
+                                      std::to_string(s) + " and symbol " +
+                                      std::to_string(a));
+        }
+      });
+    }
+    if (transition_table.size() != states.size() * alphabet->size()) {
+      throw std::invalid_argument("invalid transition table");
+    }
+    */
+  }
+
+  /*
+  bool contain_final_state(const std::set<uint64_t> &T) const {
+    for (const auto &f : final_states) {
+      if (T.count(f) == 1) {
+        return true;
+      }
+    }
+    return false;
+  }
+  */
+
+  bool simulate(symbol_string_view view ) const {
+    auto s = start_state;
+
+    for (auto const &symbol:view) {
+      s = move(s, symbol);
+    }
+    return contain_final_state({s});
+  }
+
+  DFA minimize() const;
+private:
+  uint64_t move(uint64_t s, symbol_type a) const {
+    auto it = transition_table.find({s, a});
+    if (it != transition_table.end()) {
+      return it->second;
+    }
+    return alphabet->get_epsilon();
+  }
+
+private:
+ // std::shared_ptr< ALPHABET > alphabet;
+//  std::set<uint64_t> states;
+//  uint64_t start_state;
+//  std::set<uint64_t> final_states;
+  std::map<std::pair<uint64_t, symbol_type>, uint64_t> transition_table;
+};
+
+
 
 class NFA {
 public:
@@ -109,52 +217,6 @@ private:
       transition_table;
 };
 
-class DFA final : public NFA {
-public:
-  DFA(const std::set<uint64_t> &states_, const std::string &alphabet_name,
-      uint64_t start_state_,
-      const std::map<std::pair<uint64_t, symbol_type>, uint64_t>
-          &transition_table_,
-      const std::set<uint64_t> &final_states_)
-      : NFA(states_, alphabet_name, start_state_, {}, final_states_),
-        transition_table(transition_table_) {
-
-    for (auto const &s : states) {
-      alphabet->foreach_symbol([this, s](auto const &a) {
-        if (transition_table.find({s, a}) == transition_table.end()) {
-          throw std::invalid_argument(std::string("no transition for state ") +
-                                      std::to_string(s) + " and symbol " +
-                                      std::to_string(a));
-        }
-      });
-    }
-    if (transition_table.size() != states.size() * alphabet->size()) {
-      throw std::invalid_argument("invalid transition table");
-    }
-  }
-
-  uint64_t move(uint64_t s, symbol_type a) const {
-    auto it = transition_table.find({s, a});
-    if (it != transition_table.end()) {
-      return it->second;
-    }
-    return alphabet->get_epsilon();
-  }
-
-  bool simulate(symbol_type *str, size_t str_len) {
-    auto s = start_state;
-
-    for (size_t i = 0; i < str_len; i++) {
-      s = move(s, str[i]);
-    }
-    return contain_final_state({s});
-  }
-
-  DFA minimize() const;
-
-private:
-  std::map<std::pair<uint64_t, symbol_type>, uint64_t> transition_table;
-};
 
 DFA NFA_to_DFA(const NFA &nfa);
 } // namespace cyy::lang

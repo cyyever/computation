@@ -8,12 +8,14 @@
 #include <map>
 #include "lang.hpp"
 #include "common_tokens.hpp"
+#include "ascii.hpp"
 
 namespace cyy::lang {
 
   std::shared_ptr<ALPHABET> get_alphabet(const std::string &name) {
   static std::map<std::string,std::shared_ptr<ALPHABET>> factory= {
-    {"common_tokens",std::make_shared<common_tokens>()}
+    {"common_tokens",std::make_shared<common_tokens>()},
+    {"ASCII",std::make_shared<ASCII>()},
   };
 
   auto ptr=factory[name];

@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "automata.hpp"
+#include "automaton.hpp"
 #include "lang.hpp"
 
 namespace cyy::lang {

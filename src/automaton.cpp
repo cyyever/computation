@@ -1,5 +1,5 @@
 /*!
- * \file automata.cpp
+ * \file automaton.cpp
  *
  * \author cyy
  * \date 2018-03-03
@@ -7,7 +7,7 @@
 
 #include <vector>
 
-#include "automata.hpp"
+#include "automaton.hpp"
 
 namespace cyy::lang {
 

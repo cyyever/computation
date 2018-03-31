@@ -35,6 +35,7 @@ public:
 
 std::shared_ptr<ALPHABET> get_alphabet(const std::string &name);
 
+using symbol_string = std::basic_string<symbol_type>;
 using symbol_string_view = std::basic_string_view<symbol_type>;
 
 } // namespace cyy::lang

@@ -14,7 +14,7 @@
 #include <variant>
 #include <vector>
 
-#include "automata.hpp"
+#include "automaton.hpp"
 #include "lang.hpp"
 
 namespace cyy::lang {
