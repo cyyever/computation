@@ -11,21 +11,42 @@
 
 using namespace cyy::lang;
 TEST_CASE("KMP") {
-  SUBCASE("KMP match") {
+  SUBCASE("match") {
 
     auto str="abababaab";
     auto word="ababaa";
 
     auto p=KMP<char>(word,str);
-    CHECK(!p.empty());
+    REQUIRE(!p.empty());
     CHECK(p==word);
   }
 
-  SUBCASE("KMP mismatch") {
+  SUBCASE("dismatch") {
     auto str="abababbaa";
     auto word="ababaa";
     auto p=KMP<char>(word,str);
     CHECK(p.empty());
 }
+}
+
+TEST_CASE("Aho_Corasick") {
+  /*
+  SUBCASE("dismatch") {
+    auto str="abababaab";
+    std::vector<std::string_view> words={"aaa","abaaa","ababaaa"};
+
+    CHECK(Aho_Corasick<char>(words,str).empty());
+  }
+  */
+
+  SUBCASE("match") {
+    auto str="abaa";
+    std::vector<std::string_view> words={"aa","abaaa"};
+
+    auto p=Aho_Corasick<char>(words,str);
+    REQUIRE(!p.empty());
+    CHECK(p==words[0]);
+  }
+
 }
 

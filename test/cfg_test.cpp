@@ -88,6 +88,7 @@ TEST_CASE("eliminate_left_recursion") {
       {get_alphabet("common_tokens")->get_epsilon()},
   };
 
+  cfg.print(std::cout);
   CHECK(cfg == CFG("common_tokens", "S", reduced_productions));
 }
 
