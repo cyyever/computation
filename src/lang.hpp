@@ -11,6 +11,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <map>
 #include <string_view>
 
 namespace cyy::lang {
@@ -29,11 +30,19 @@ public:
   bool is_epsilon(symbol_type s) const { return get_epsilon() == s; }
 
   virtual size_t size() const = 0;
-  virtual std::string name() const = 0;
   virtual void print(std::ostream &os, symbol_type symbol) const = 0;
+
+  virtual std::string name() const = 0;
+  static void regist(const std::string &name);
+  static std::shared_ptr<ALPHABET> get(const std::string &name);
+
+protected:
+  std::string alternative_name;
+
+private:
+  static std::map<std::string,std::shared_ptr<ALPHABET>> factory;
 };
 
-std::shared_ptr<ALPHABET> get_alphabet(const std::string &name);
 
 using symbol_string = std::basic_string<symbol_type>;
 using symbol_string_view = std::basic_string_view<symbol_type>;

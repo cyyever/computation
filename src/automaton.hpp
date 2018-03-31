@@ -20,7 +20,7 @@ class finite_automaton {
       uint64_t start_state_,
       const std::set<uint64_t> &final_states_)
       :
-    alphabet (::cyy::lang::get_alphabet(alphabet_name)),
+    alphabet (::cyy::lang::ALPHABET::get(alphabet_name)),
 	states(states_), start_state(start_state_), final_states(final_states_) {
 
 	  if (states.empty()) {

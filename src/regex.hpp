@@ -113,7 +113,7 @@ public:
 
 public:
   regex(const std::string &alphabet_name, symbol_string_view view)
-      : alphabet(get_alphabet(alphabet_name)) {
+      : alphabet(ALPHABET::get(alphabet_name)) {
     syntax_tree = parse(view);
   }
 

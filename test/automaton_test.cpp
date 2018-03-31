@@ -8,11 +8,12 @@
 #include <iostream>
 
 #include "../src/automaton.hpp"
+#include "../src/set_alphabet.hpp"
 
 using namespace cyy::lang;
 TEST_CASE("simulate DFA") {
 
-  DFA dfa({0,1,2,3},"ASCII",0,{
+  DFA dfa({0,1,2,3},"ab_set",0,{
 
       { {0,'a'},1 }, 
       { {0,'b'},0 }, 
@@ -48,9 +49,9 @@ TEST_CASE("simulate DFA") {
   }
 
 TEST_CASE("simulate NFA") {
-  auto epsilon=get_alphabet("ASCII")->get_epsilon();
+  auto epsilon=ALPHABET::get("ab_set")->get_epsilon();
 
-  NFA nfa({0,1,2,3,4},"ASCII",0,{
+  NFA nfa({0,1,2,3,4},"ab_set",0,{
 
       { {0,epsilon},{1,3} }, 
 
@@ -87,9 +88,9 @@ TEST_CASE("simulate NFA") {
 }
 
 TEST_CASE("NFA to DFA") {
-  auto epsilon=get_alphabet("ASCII")->get_epsilon();
+  auto epsilon=ALPHABET::get("ab_set")->get_epsilon();
 
-  NFA nfa({0,1,2,3,4,5,6,7,8,9,10},"ASCII",0,{
+  NFA nfa({0,1,2,3,4,5,6,7,8,9,10},"ab_set",0,{
 
       { {0,epsilon},{1,7} }, 
       { {1,epsilon},{2,4} }, 
@@ -103,7 +104,7 @@ TEST_CASE("NFA to DFA") {
       { {9,'b'},{10} }, 
       },{10});
 
-  DFA dfa({0,1,2,3,4},"ASCII",0,{
+  DFA dfa({0,1,2,3,4},"ab_set",0,{
 
       { {0,'a'},1 }, 
       { {0,'b'},2 }, 
@@ -112,13 +113,12 @@ TEST_CASE("NFA to DFA") {
       { {1,'b'},3 }, 
       { {2,'a'},1 }, 
       { {2,'b'},2 }, 
-      { {3,'a'},2 }, 
+      { {3,'a'},1 }, 
       { {3,'b'},4 }, 
       { {4,'a'},1 }, 
       { {4,'b'},2 }, 
       },{4});
 
- // CHECK(dfa.equivalent_with(nfa.to_DFA()));
+  CHECK(dfa.equivalent_with(nfa.to_DFA()));
 
-  //auto dfa=nfa.to_DFA();
 }

@@ -66,7 +66,7 @@ TEST_CASE("eliminate_left_recursion") {
   productions["A"] = {
       {"A", 'c'},
       {"S", 'd'},
-      {get_alphabet("common_tokens")->get_epsilon()},
+      {ALPHABET::get("common_tokens")->get_epsilon()},
   };
 
   CFG cfg("common_tokens", "S", productions);
@@ -85,7 +85,7 @@ TEST_CASE("eliminate_left_recursion") {
   reduced_productions["A'"] = {
       {'c', "A'"},
       {'a', 'd', "A'"},
-      {get_alphabet("common_tokens")->get_epsilon()},
+      {ALPHABET::get("common_tokens")->get_epsilon()},
   };
 
   cfg.print(std::cout);
@@ -112,7 +112,7 @@ TEST_CASE("left_factoring") {
   };
   reduced_productions["S'"] = {
       {'e', "S"},
-      {get_alphabet("common_tokens")->get_epsilon()},
+      {ALPHABET::get("common_tokens")->get_epsilon()},
   };
   reduced_productions["E"] = {{'b'}};
   CHECK(cfg == CFG("common_tokens", "S", reduced_productions));
@@ -135,8 +135,8 @@ TEST_CASE("recursive_descent_parse") {
 TEST_CASE("first_and_follow") {
   std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
       productions;
-  auto epsilon=get_alphabet("common_tokens")->get_epsilon();
-  auto endmarker=get_alphabet("common_tokens")->get_endmarker();
+  auto epsilon=ALPHABET::get("common_tokens")->get_epsilon();
+  auto endmarker=ALPHABET::get("common_tokens")->get_endmarker();
   productions["E"] = {
       {"T", "E'"},
   };
