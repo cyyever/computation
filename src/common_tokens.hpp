@@ -14,7 +14,7 @@ class common_tokens final : public ALPHABET {
 public:
   //enum class common_token:symbol_type {
   enum token{
-    epsilon=128,
+    epsilon=256,
     id,
     endmark,
   };

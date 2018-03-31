@@ -107,25 +107,12 @@ public:
         if (body.empty()) {
           continue;
         }
-        // remove epsilon prefix and suffix
-        auto it = body.begin();
-        auto it2 = body.end();
-        while (it < it2) {
-          if (std::holds_alternative<terminal_type>(*it) &&
-              alphabet->is_epsilon(std::get<terminal_type>(*it))) {
-            it++;
-            continue;
-          }
-          if (std::holds_alternative<terminal_type>(*(it2 - 1)) &&
-              alphabet->is_epsilon(std::get<terminal_type>(*(it2 - 1)))) {
-            it2--;
-            continue;
-          }
-          break;
-        }
 
-        if (it < it2) {
-          bodies_set.emplace(std::move_iterator(it), std::move_iterator(it2));
+
+
+	auto it=std::remove_if(body.begin(),body.end(),[this](const auto &grammal_symbol) {return is_epsilon(grammal_symbol); });
+        if (it >body.begin()) {
+          bodies_set.emplace(std::move_iterator(body.begin()), std::move_iterator(it));
         } else {
           bodies_set.emplace(1, symbol_type(alphabet->get_epsilon()));
         }
@@ -179,6 +166,11 @@ private:
     return head;
   }
 
+  bool is_epsilon(const grammar_symbol_type &grammal_symbol) const {
+          auto terminal_ptr = std::get_if<terminal_type>(&grammal_symbol);
+	  return terminal_ptr &&  alphabet->is_epsilon(*terminal_ptr);
+
+  }
 
   std::set<terminal_type>
   first(const grammar_symbol_string_view &alpha,
