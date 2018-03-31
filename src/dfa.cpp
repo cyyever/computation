@@ -10,47 +10,76 @@
 #include "automaton.hpp"
 
 namespace cyy::lang {
+  bool DFA::equivalent_with(const DFA rhs) {
 
-DFA NFA_to_DFA(const NFA &nfa) {
-  std::vector<std::set<uint64_t>> subsets{
-      nfa.epsilon_closure({nfa.get_start_state()})};
-  std::vector<bool> flags{false};
-  std::set<uint64_t> DFA_states;
-  std::map<std::pair<uint64_t, symbol_type>, uint64_t> DFA_transition_table;
-  std::set<uint64_t> DFA_final_states;
-  for (size_t i = 0; i < flags.size(); i++) {
-    if (flags[i]) {
-      continue;
+    if(alphabet!=rhs.alphabet) {
+      puts("aa");
+      return false;
     }
-    flags[i] = true;
-    nfa.get_alphabet().foreach_symbol([&](auto const &a) {
-      auto res = nfa.move(subsets[i], a);
+    if(states.size()!=rhs.states.size()) {
+      std::cout<<"size1 "<<states.size()<<" size2="<<rhs.states.size()<<std::endl;
+      puts("bb");
+      return false;
+    }
+    if(final_states.size()!=rhs.final_states.size()) {
+      puts("cc");
+      return false;
+    }
 
-      size_t j = 0;
-      for (j = 0; j < flags.size(); j++) {
-        if (subsets[j] == res) {
-          break;
-        }
+    if(transition_table.size()!=rhs.transition_table.size()) {
+      puts("dd");
+      return false;
+    }
+
+    std::map<uint64_t,uint64_t> state_map{{start_state,rhs.start_state}};
+    std::map<uint64_t,bool> check_flags{{start_state,false}};
+    while(true) {
+	
+      bool new_mapping=false;
+
+      for(auto const &[pair,my_next_state]:transition_table) {
+	auto const & [my_state,my_next_symbol]=pair;
+	auto it=state_map.find(my_state);
+	if(it==state_map.end()) {
+	  continue;
+	}
+
+	auto it2=rhs.transition_table.find({it->second,my_next_symbol});
+	if(it2==rhs.transition_table.end()) {
+      puts("ff");
+	  return false;
+	}
+	auto rhs_next_state=it2->second;
+
+	auto [it3,has_insert]=state_map.insert({my_next_state,rhs_next_state});
+	if(has_insert) {
+	  new_mapping=true;
+	} else {
+	  if(it3->second !=rhs_next_state) {
+      puts("zz");
+	    return false;
+	  }
+	}
       }
 
-      // new state
-      if (j == flags.size()) {
-        subsets.push_back(res);
-        flags.push_back(false);
-        DFA_states.insert(j);
-
-        if (nfa.contain_final_state(res)) {
-          DFA_final_states.insert(j);
-        }
+      if(!new_mapping) {
+	break;
       }
+    }
+    if(state_map.size()!=states.size()) {
+      puts("xx");
+      return false;
+    }
 
-      DFA_transition_table[{i, a}] = j;
-    });
+    for(auto const &final_state:final_states) {
+      if(!rhs.final_states.count(state_map[final_state])) {
+      puts("ifdis");
+	return false;
+      }
+    }
+    return true;
+
   }
-
-  return {DFA_states, nfa.get_alphabet().name(), 0, DFA_transition_table,
-          DFA_final_states};
-}
 
 DFA DFA::minimize() const {
   std::set<uint64_t> non_final_states;
