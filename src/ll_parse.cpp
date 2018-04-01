@@ -7,6 +7,7 @@
 
 #include "grammar.hpp"
 #include <stack>
+#include <stack>
 
 namespace cyy::lang {
 
@@ -64,7 +65,7 @@ bool CFG::is_LL1() const {
   return is_LL1(first_sets, follow_sets);
 }
 
-std::optional<CFG::parse_node_ptr> CFG::LL1_parse(
+CFG::parse_node_ptr CFG::LL1_parse(
       symbol_string_view view
     ) const {
 
@@ -91,6 +92,7 @@ std::optional<CFG::parse_node_ptr> CFG::LL1_parse(
 		    );
 	      //not LL1 
 	      if(!has_inserted) {
+	  puts("not LL1 grammar");
 		return {};
 	      }
 	    }
@@ -105,6 +107,7 @@ std::optional<CFG::parse_node_ptr> CFG::LL1_parse(
 
 	//not LL1 
 	if(!has_inserted) {
+	  puts("not LL1 grammar");
 	  return {};
 	}
       }
@@ -112,6 +115,7 @@ std::optional<CFG::parse_node_ptr> CFG::LL1_parse(
     }
   }
 
+  puts("begin parse");
     
   auto tree=std::make_shared<parse_node>(start_symbol);
 
@@ -122,23 +126,30 @@ std::optional<CFG::parse_node_ptr> CFG::LL1_parse(
     auto top=std::move(stack.back());
     stack.pop_back();
 
-    if (auto ptr=std::get_if<terminal_type>(&(top->grammal_symbol))) {
-      if(terminal!=*ptr) {
+    if (auto ptr=std::get_if<terminal_type>(&(top->grammar_symbol))) {
+      if(!is_epsilon(*ptr) ) {
+	if(terminal!=*ptr) {
+	  puts("terminal is not ptr ");
+	  alphabet->print(std::cout,terminal);
+	  alphabet->print(std::cout,*ptr);
 	  return {};
+	}
+	view.remove_prefix(1);
       }
-      view.remove_prefix(1);
+      top->grammar_symbol=terminal;
       continue;
     }
 
-    auto it=parsing_table.find({  terminal   , std::get<nonterminal_type>(top->grammal_symbol)   });
+    auto it=parsing_table.find({  terminal   , std::get<nonterminal_type>(top->grammar_symbol)   });
 
     if(it==parsing_table.end()) {
+	  puts("no rule for parsing");
       return {};
     }
 
-    for(auto const &grammal_symbol:it->second) {
+    for(auto const &grammar_symbol:it->second) {
       top->children.push_back(
-	  std::make_shared<parse_node>(grammal_symbol)
+	  std::make_shared<parse_node>(grammar_symbol)
 	  );
     }
 
@@ -152,6 +163,6 @@ std::optional<CFG::parse_node_ptr> CFG::LL1_parse(
     return {};
   }
 
-  return {tree};
+  return tree;
 }
 }

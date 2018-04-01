@@ -33,10 +33,10 @@ public:
   struct parse_node;
   using parse_node_ptr=std::shared_ptr<parse_node>;
   struct parse_node {
-    parse_node(grammar_symbol_type grammal_symbol_):grammal_symbol(std::move(grammal_symbol_)){
+    parse_node(grammar_symbol_type grammar_symbol_):grammar_symbol(std::move(grammar_symbol_)){
     }
 
-    grammar_symbol_type grammal_symbol;
+    grammar_symbol_type grammar_symbol;
 
     //nonterminal_type nonterminal{};
     std::vector<parse_node_ptr> children;
@@ -169,7 +169,7 @@ public:
 
   bool is_LL1() const;
 
-  std::optional<parse_node_ptr> LL1_parse(
+    parse_node_ptr LL1_parse(
       symbol_string_view view
       ) const;
 
