@@ -159,6 +159,11 @@ void CFG::eliminate_left_recursion() {
       std::vector<production_body_type> new_bodies;
       for (auto &body : productions[old_heads[i]]) {
 
+	if(body.empty()) {
+	  continue;
+	  //std::cout<<"body is  empty for old_heads" <<old_heads[i]<<'\n';
+	}
+
         if (!(std::holds_alternative<nonterminal_type>(body.front()) &&
               std::get<nonterminal_type>(body.front()) == old_heads[j])) {
           new_bodies.emplace_back(std::move(body));

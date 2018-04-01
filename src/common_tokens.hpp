@@ -15,6 +15,8 @@ public:
   // enum class common_token:symbol_type {
   enum token {
     epsilon = 256,
+    ascii_char,
+    escape_sequence,
     id,
     endmark,
   };
@@ -24,10 +26,15 @@ public:
 
   void print(std::ostream &os, symbol_type symbol) const override {
     if (symbol == get_epsilon()) {
-      os << "'epsilon'";
+      os << "epsilon";
     } else if (symbol == get_endmarker()) {
       os << "$";
-    } else {
+    } else  if (symbol==token::ascii_char){
+      os << "'ascii char'";
+    } else  if (symbol==token::escape_sequence){
+      os << "'escape sequence'";
+      }
+      else {
       os << '\'' << static_cast<char>(symbol) << '\'';
     }
     return;
