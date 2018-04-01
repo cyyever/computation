@@ -114,12 +114,12 @@ void CFG::eliminate_useless_symbols() {
   productions = new_productions;
 }
 
-void CFG::eliminate_left_recursion() {
+void CFG::eliminate_left_recursion(std::vector<nonterminal_type> old_heads) {
 
-  std::vector<nonterminal_type> old_heads{start_symbol};
+ // std::vector<nonterminal_type> old_heads{start_symbol};
 
-  for (const auto &[head, _] : productions) {
-    if (head != start_symbol) {
+  if(old_heads.empty()) {
+    for (const auto &[head, _] : productions) {
       old_heads.push_back(head);
     }
   }

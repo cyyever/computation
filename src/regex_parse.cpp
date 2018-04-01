@@ -6,116 +6,166 @@
  */
 
 #include "regex.hpp"
+#include "grammar.hpp"
+#include "common_tokens.hpp"
 
 namespace cyy::lang {
 
-/*
- * 	regex -> regex "|" a | a
- * 	a -> a "" b | b
- * 	b -> b "*" | c
- * 	c -> (regex) | symbol
- * =>
- * 	regex -> ax
- * 	x -> "|" ax | epsilon
- * 	a -> b "" a | b
- * 	b -> cy
- * 	y -> "*" y | epsilon
- * 	c -> (regex) | symbol
- */
-namespace {
-
-std::shared_ptr<regex::syntax_node> nonterminal_regex(const ALPHABET &alphabet,
-                                                      symbol_string_view &view);
-
-std::shared_ptr<regex::syntax_node> nonterminal_c(const ALPHABET &alphabet,
-                                                  symbol_string_view &view) {
-  if (view.empty()) {
-    return std::make_shared<regex::basic_node>(alphabet.get_epsilon());
-  }
-
-  switch (view[0]) {
-  case '(': {
-    view.remove_prefix(1);
-    auto sub_node = nonterminal_regex(alphabet, view);
-    if (view.empty() || view[0] != ')') {
-      throw std::invalid_argument("lack ')'");
-    }
-    view.remove_prefix(1);
-    return sub_node;
-    break;
-  }
-  case '|':
-  case '*':
-    throw std::invalid_argument("lack symbol");
-  case '\\':
-    if (view.size() < 2) {
-      throw std::invalid_argument("incomplete escape sequence");
-    }
-    view.remove_prefix(1);
-    [[fallthrough]];
-  default:
-    break;
-  }
-
-  auto c = view[0];
-  view.remove_prefix(1);
-  auto is_epsilon = (c == alphabet.get_epsilon());
-  if (!is_epsilon && !alphabet.contain(c)) {
-    throw std::invalid_argument(std::string("invalid symbol ") +
-                                std::to_string(c));
-  }
-  if (is_epsilon) {
-    return std::make_shared<regex::epsilon_node>();
-  }
-  return std::make_shared<regex::basic_node>(c);
-}
-
-std::shared_ptr<regex::syntax_node>
-nonterminal_y(std::shared_ptr<regex::syntax_node> &&sub_node,
-              symbol_string_view &view) {
-  if (!view.empty() && view[0] == '*') {
-    view.remove_prefix(1);
-    return nonterminal_y(std::make_shared<regex::kleene_closure_node>(sub_node),
-                         view);
-  }
-  return sub_node;
-}
-
-std::shared_ptr<regex::syntax_node> nonterminal_b(const ALPHABET &alphabet,
-                                                  symbol_string_view &view) {
-  return nonterminal_y(nonterminal_c(alphabet, view), view);
-}
-
-std::shared_ptr<regex::syntax_node> nonterminal_a(const ALPHABET &alphabet,
-                                                  symbol_string_view &view) {
-  auto left_node = nonterminal_b(alphabet, view);
-  if (!view.empty() && view[0] != '|' && view[0] != '*') {
-    return std::make_shared<regex::concat_node>(left_node,
-                                                nonterminal_a(alphabet, view));
-  }
-  return left_node;
-}
-
-std::shared_ptr<regex::syntax_node>
-nonterminal_x(std::shared_ptr<regex::syntax_node> &&left_node,
-              const ALPHABET &alphabet, symbol_string_view &view) {
-  if (!view.empty() && view[0] == '|') {
-    view.remove_prefix(1);
-    return std::make_shared<regex::union_node>(
-        left_node,
-        nonterminal_x(nonterminal_a(alphabet, view), alphabet, view));
-  } else {
-    return left_node;
-  }
-}
-
-std::shared_ptr<regex::syntax_node>
-nonterminal_regex(const ALPHABET &alphabet, symbol_string_view &view) {
-  return nonterminal_x(nonterminal_a(alphabet, view), alphabet, view);
-}
-} // namespace
 std::shared_ptr<regex::syntax_node>
 regex::parse(symbol_string_view view) const {
-  return nonterminal_regex(*alphabet, view);
+
+/*
+   rexpr -> rexpr '|' rterm
+   rexpr -> rterm
+
+   rterm -> rterm rfactor
+   rterm -> rfactor
+
+   rfactor -> rfactor '*'
+   rfactor -> rprimary
+
+   rprimary -> '(' rexpr ')'
+   rprimary -> '\' 'ascii char'
+ //  rprimary -> '[' 'ascii char' ']'
+   rprimary -> 'ascii char'
+
+   => 
+
+   rexpr -> rterm rexpr' 
+   rexpr' -> '|' rterm rexpr' 
+   rexpr' -> epsilon 
+
+   rterm -> rfactor rterm' 
+   rterm' -> rfactor rterm' 
+   rterm' -> epsilon 
+
+   rfactor -> rprimary rfactor' 
+   rfactor' -> '*' rfactor' 
+   rfactor' -> epsilon 
+
+   rprimary -> '(' rexpr ')' 
+   rprimary -> '\' 'ascii char' 
+   rprimary -> 'ascii char' 
+
+*/
+
+  std::set<CFG::terminal_type> operators{'|','*','(','\\',')'};
+
+  std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
+      productions;
+  productions["rexpr"] = {
+      {"rexpr", '|',"rterm"},
+      {"rterm"},
+  };
+  productions["rterm"] = {
+      {"rterm", "rfactor"},
+      {"rfactor"},
+  };
+  productions["rfactor"] = {
+      {"rfactor",'*'},
+      {"rprimary"},
+  };
+  productions["rprimary"] = {
+      {'(',"rexpr",')'},
+  };
+
+  alphabet->foreach_symbol([&](auto const &a) {
+      productions["rprimary"] .emplace_back(
+	CFG::production_body_type
+      	{ '\\',   a} );
+	  
+      if(!operators.count(a)) {
+      productions["rprimary"] 
+      .emplace_back( 
+	  
+	CFG::production_body_type
+	  {a} );
+      }
+
+
+      });
+ 	
+  CFG cfg("ASCII", "rexpr", productions);
+  cfg.eliminate_left_recursion({"rexpr","rterm","rfactor","rprimary"});
+
+
+  auto parse_tree=cfg.LL1_parse(view);
+  if(!parse_tree) {
+    throw std::runtime_error( "regex grammar is not LL(1) grammar");
+  }
+  cfg.print(std::cout);
+
+
+  using syntax_node_ptr=std::shared_ptr<regex::syntax_node>;
+
+  auto construct_syntex_tree=[](auto && self ,const CFG::parse_node_ptr &root_parse_node,syntax_node_ptr left_node)->syntax_node_ptr {
+    std::shared_ptr<regex::syntax_node> root_syntax_node;
+
+    if (auto ptr=std::get_if<CFG::nonterminal_type>(&(root_parse_node->grammar_symbol))) {
+      if(*ptr=="rexpr") {
+	left_node=self(self,root_parse_node->children[0],nullptr)  ;
+	return self(self,root_parse_node->children[1],left_node);
+      } else if(*ptr=="rexpr'") {
+	if(root_parse_node->children.size()==3) { //  rexpr' -> '|' rterm rexpr' 
+	  return self(  
+	      self,
+	      root_parse_node->children[2],
+	      std::make_shared<regex::union_node>(
+		left_node, 
+		self(self,root_parse_node->children[1],nullptr)));
+	} else {
+	  return left_node;
+	}
+      }
+      else if(*ptr=="rterm") {
+	left_node=self(self,root_parse_node->children[0],nullptr)  ;
+	return self(self,root_parse_node->children[1],left_node);
+      }else if(*ptr=="rterm'") {
+	if(root_parse_node->children.size()==2) { // rterm' -> rfactor rterm' 
+	  return self(  
+	      self,
+	      root_parse_node->children[1],
+	      std::make_shared<regex::concat_node>(
+		left_node, 
+		self(self,root_parse_node->children[0],nullptr)));
+	} else {
+	  return left_node;
+	}
+      } else if(*ptr=="rfactor") {
+	left_node=self(self,root_parse_node->children[0],nullptr)  ;
+	return self(self,root_parse_node->children[1],left_node);
+      } else if(*ptr=="rfactor'") {
+	if(root_parse_node->children.size()==2) { // rfactor' -> '*' rfactor' 
+	  return self(  
+	      self,
+	      root_parse_node->children[1],
+	      std::make_shared<regex::kleene_closure_node>(
+		left_node)); 
+	} else {
+	  return left_node;
+	}
+      } else if(*ptr=="rprimary") {
+	auto first_terminal=std::get<CFG::terminal_type>( root_parse_node->children[0]->grammar_symbol);
+	switch(first_terminal) {
+case '(':
+	  return self(self,root_parse_node->children[1],nullptr);
+case '\\':
+	  {
+	  auto second_terminal=std::get<CFG::terminal_type>( root_parse_node->children[1]->grammar_symbol);
+	  return std::make_shared<regex::basic_node>(second_terminal);
+	  }
+default:
+	  return std::make_shared<regex::basic_node>(first_terminal);
+	}
+      }
+    } 
+    throw std::runtime_error("should no go here");
+  };
+
+  return construct_syntex_tree(construct_syntex_tree,parse_tree,nullptr);
+
+
+
+
 }
 } // namespace cyy::lang

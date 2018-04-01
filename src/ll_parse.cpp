@@ -6,8 +6,6 @@
  */
 
 #include "grammar.hpp"
-#include <stack>
-#include <stack>
 
 namespace cyy::lang {
 
@@ -85,7 +83,7 @@ CFG::parse_node_ptr CFG::LL1_parse(
 	  if(it!=follow_sets.end()) {
 	    for(auto const &follow_terminal:it->second) {
 
-	      auto [_,has_inserted]=
+	      auto [it,has_inserted]=
 		parsing_table.emplace( 
 		    std::pair{follow_terminal, head  },
 		    body
@@ -93,13 +91,17 @@ CFG::parse_node_ptr CFG::LL1_parse(
 	      //not LL1 
 	      if(!has_inserted) {
 	  puts("not LL1 grammar");
+
+		
+	  print(std::cout,head,it->second);
+
 		return {};
 	      }
 	    }
 	  }
 	  continue;
 	}
-	auto [_,has_inserted]=
+	auto [it,has_inserted]=
 	  parsing_table.emplace( 
 	    std::pair{terminal, head  },
 	    body
@@ -108,6 +110,9 @@ CFG::parse_node_ptr CFG::LL1_parse(
 	//not LL1 
 	if(!has_inserted) {
 	  puts("not LL1 grammar");
+	  print(std::cout,head,it->second);
+	  puts("confict LL1 grammar");
+	  print(std::cout,head,body);
 	  return {};
 	}
       }

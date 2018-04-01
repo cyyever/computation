@@ -157,7 +157,7 @@ public:
   }
   void eliminate_useless_symbols();
 
-  void eliminate_left_recursion();
+  void eliminate_left_recursion(    std::vector<nonterminal_type> old_heads={});
 
   void left_factoring();
 

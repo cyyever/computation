@@ -29,13 +29,15 @@ using namespace cyy::lang;
       {"rprimary"},
   };
   productions["rprimary"] = {
-      {'(',"rexpr",')'},
-      {common_tokens::token::ascii_char},
-      {common_tokens::token::escape_sequence},
+    {'(',"rexpr",')'},
+    {'\\',common_tokens::token::ascii_char},
+    {'[',common_tokens::token::ascii_char,']'},
+    {common_tokens::token::ascii_char},
   };
 
   CFG cfg("common_tokens", "rexpr", productions);
-  cfg.eliminate_left_recursion();
+  cfg.eliminate_left_recursion({"rexpr","rterm","rfactor","rprimary"});
+
   if(cfg.is_LL1()) {
     std::cout<<"regex grammar is LL(1) grammar\n";
   } else {
