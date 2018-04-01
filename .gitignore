@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+# Vim backups
+*~
+
+# build dir
+build

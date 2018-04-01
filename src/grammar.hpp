@@ -29,6 +29,18 @@ public:
       std::basic_string_view<grammar_symbol_type>;
   using production_body_type = std::vector<grammar_symbol_type>;
 
+  struct parse_node {
+  };
+
+  struct nonterminal_node : public parse_node{
+    nonterminal_type nonterminal;
+    std::vector<std::shared_ptr<parse_node>> children;
+  };
+
+  struct terminal_node : public  parse_node{
+    terminal_type terminal;
+  };
+
   CFG(const std::string &alphabet_name, const nonterminal_type &start_symbol_,
       std::map<nonterminal_type, std::vector<production_body_type>>
           &productions_)
@@ -138,6 +150,8 @@ public:
   std::map<nonterminal_type, std::set<terminal_type>> follow() const;
 
   bool is_LL1() const;
+
+
 
 private:
   void print(std::ostream &os, const nonterminal_type &head,
