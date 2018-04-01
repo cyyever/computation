@@ -10,76 +10,77 @@
 #include "automaton.hpp"
 
 namespace cyy::lang {
-  bool DFA::equivalent_with(const DFA rhs) {
+bool DFA::equivalent_with(const DFA rhs) {
 
-    if(alphabet!=rhs.alphabet) {
-      puts("aa");
-      return false;
-    }
-    if(states.size()!=rhs.states.size()) {
-      std::cout<<"size1 "<<states.size()<<" size2="<<rhs.states.size()<<std::endl;
-      puts("bb");
-      return false;
-    }
-    if(final_states.size()!=rhs.final_states.size()) {
-      puts("cc");
-      return false;
-    }
-
-    if(transition_table.size()!=rhs.transition_table.size()) {
-      puts("dd");
-      return false;
-    }
-
-    std::map<uint64_t,uint64_t> state_map{{start_state,rhs.start_state}};
-    std::map<uint64_t,bool> check_flags{{start_state,false}};
-    while(true) {
-	
-      bool new_mapping=false;
-
-      for(auto const &[pair,my_next_state]:transition_table) {
-	auto const & [my_state,my_next_symbol]=pair;
-	auto it=state_map.find(my_state);
-	if(it==state_map.end()) {
-	  continue;
-	}
-
-	auto it2=rhs.transition_table.find({it->second,my_next_symbol});
-	if(it2==rhs.transition_table.end()) {
-      puts("ff");
-	  return false;
-	}
-	auto rhs_next_state=it2->second;
-
-	auto [it3,has_insert]=state_map.insert({my_next_state,rhs_next_state});
-	if(has_insert) {
-	  new_mapping=true;
-	} else {
-	  if(it3->second !=rhs_next_state) {
-      puts("zz");
-	    return false;
-	  }
-	}
-      }
-
-      if(!new_mapping) {
-	break;
-      }
-    }
-    if(state_map.size()!=states.size()) {
-      puts("xx");
-      return false;
-    }
-
-    for(auto const &final_state:final_states) {
-      if(!rhs.final_states.count(state_map[final_state])) {
-      puts("ifdis");
-	return false;
-      }
-    }
-    return true;
-
+  if (alphabet != rhs.alphabet) {
+    puts("aa");
+    return false;
   }
+  if (states.size() != rhs.states.size()) {
+    std::cout << "size1 " << states.size() << " size2=" << rhs.states.size()
+              << std::endl;
+    puts("bb");
+    return false;
+  }
+  if (final_states.size() != rhs.final_states.size()) {
+    puts("cc");
+    return false;
+  }
+
+  if (transition_table.size() != rhs.transition_table.size()) {
+    puts("dd");
+    return false;
+  }
+
+  std::map<uint64_t, uint64_t> state_map{{start_state, rhs.start_state}};
+  std::map<uint64_t, bool> check_flags{{start_state, false}};
+  while (true) {
+
+    bool new_mapping = false;
+
+    for (auto const &[pair, my_next_state] : transition_table) {
+      auto const &[my_state, my_next_symbol] = pair;
+      auto it = state_map.find(my_state);
+      if (it == state_map.end()) {
+        continue;
+      }
+
+      auto it2 = rhs.transition_table.find({it->second, my_next_symbol});
+      if (it2 == rhs.transition_table.end()) {
+        puts("ff");
+        return false;
+      }
+      auto rhs_next_state = it2->second;
+
+      auto [it3, has_insert] =
+          state_map.insert({my_next_state, rhs_next_state});
+      if (has_insert) {
+        new_mapping = true;
+      } else {
+        if (it3->second != rhs_next_state) {
+          puts("zz");
+          return false;
+        }
+      }
+    }
+
+    if (!new_mapping) {
+      break;
+    }
+  }
+  if (state_map.size() != states.size()) {
+    puts("xx");
+    return false;
+  }
+
+  for (auto const &final_state : final_states) {
+    if (!rhs.final_states.count(state_map[final_state])) {
+      puts("ifdis");
+      return false;
+    }
+  }
+  return true;
+}
 
 DFA DFA::minimize() const {
   std::set<uint64_t> non_final_states;

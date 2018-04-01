@@ -11,8 +11,7 @@
 
 namespace cyy::lang {
 DFA NFA::to_DFA() const {
-  std::vector<std::set<uint64_t>> subsets{
-      epsilon_closure({start_state})};
+  std::vector<std::set<uint64_t>> subsets{epsilon_closure({start_state})};
 
   std::vector<bool> flags{false};
   std::set<uint64_t> DFA_states{0};
@@ -39,7 +38,7 @@ DFA NFA::to_DFA() const {
         flags.push_back(false);
         DFA_states.insert(j);
 
-	std::cout<<"new_state="<<j<<std::endl;
+        std::cout << "new_state=" << j << std::endl;
 
         if (contain_final_state(res)) {
           DFA_final_states.insert(j);
@@ -50,7 +49,7 @@ DFA NFA::to_DFA() const {
     });
   }
 
-  return {DFA_states,alphabet->name(), 0, DFA_transition_table,
+  return {DFA_states, alphabet->name(), 0, DFA_transition_table,
           DFA_final_states};
 }
 } // namespace cyy::lang

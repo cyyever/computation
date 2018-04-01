@@ -90,7 +90,6 @@ public:
     }
   }
 
-
   std::vector<nonterminal_type> get_heads() const {
     std::vector<nonterminal_type> heads;
     for (auto const &[head, _] : productions) {
@@ -108,11 +107,13 @@ public:
           continue;
         }
 
-
-
-	auto it=std::remove_if(body.begin(),body.end(),[this](const auto &grammal_symbol) {return is_epsilon(grammal_symbol); });
-        if (it >body.begin()) {
-          bodies_set.emplace(std::move_iterator(body.begin()), std::move_iterator(it));
+        auto it = std::remove_if(body.begin(), body.end(),
+                                 [this](const auto &grammal_symbol) {
+                                   return is_epsilon(grammal_symbol);
+                                 });
+        if (it > body.begin()) {
+          bodies_set.emplace(std::move_iterator(body.begin()),
+                             std::move_iterator(it));
         } else {
           bodies_set.emplace(1, symbol_type(alphabet->get_epsilon()));
         }
@@ -134,8 +135,7 @@ public:
 
   std::map<nonterminal_type, std::set<terminal_type>> first() const;
 
-  std::map<nonterminal_type, std::set<terminal_type>>
-  follow() const;
+  std::map<nonterminal_type, std::set<terminal_type>> follow() const;
 
   bool is_LL1() const;
 
@@ -167,9 +167,8 @@ private:
   }
 
   bool is_epsilon(const grammar_symbol_type &grammal_symbol) const {
-          auto terminal_ptr = std::get_if<terminal_type>(&grammal_symbol);
-	  return terminal_ptr &&  alphabet->is_epsilon(*terminal_ptr);
-
+    auto terminal_ptr = std::get_if<terminal_type>(&grammal_symbol);
+    return terminal_ptr && alphabet->is_epsilon(*terminal_ptr);
   }
 
   std::set<terminal_type>
@@ -187,7 +186,7 @@ private:
                   &follow_sets) const;
 
 private:
-  std::shared_ptr<ALPHABET>alphabet;
+  std::shared_ptr<ALPHABET> alphabet;
   nonterminal_type start_symbol;
   std::map<nonterminal_type, std::vector<production_body_type>> productions;
 };

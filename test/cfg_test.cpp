@@ -7,8 +7,8 @@
 #include <doctest.h>
 #include <iostream>
 
-#include "../src/grammar.hpp"
 #include "../src/common_tokens.hpp"
+#include "../src/grammar.hpp"
 
 using namespace cyy::lang;
 TEST_CASE("eliminate_useless_symbols") {
@@ -131,45 +131,46 @@ TEST_CASE("recursive_descent_parse") {
   CHECK(cfg.recursive_descent_parse({terminals.data(), terminals.size()}));
 }
 
-
 TEST_CASE("first_and_follow") {
   std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
       productions;
-  auto epsilon=ALPHABET::get("common_tokens")->get_epsilon();
-  auto endmarker=ALPHABET::get("common_tokens")->get_endmarker();
+  auto epsilon = ALPHABET::get("common_tokens")->get_epsilon();
+  auto endmarker = ALPHABET::get("common_tokens")->get_endmarker();
   productions["E"] = {
       {"T", "E'"},
   };
   productions["E'"] = {
-      {'+',"T", "E'"},
+      {'+', "T", "E'"},
       {epsilon},
   };
   productions["T"] = {
       {"F", "T'"},
   };
   productions["T'"] = {
-      {'*',"F", "T'"},
+      {'*', "F", "T'"},
       {epsilon},
   };
   productions["F"] = {
-      {'(',"E", ')'},
-      {common_tokens::token::id}	//i for id
+      {'(', "E", ')'}, {common_tokens::token::id} // i for id
   };
 
   CFG cfg("common_tokens", "E", productions);
-  auto first_sets=cfg.first();
+  auto first_sets = cfg.first();
 
-  CHECK( first_sets["F"]==std::set<CFG::terminal_type>{'(',common_tokens::token::id});
-  CHECK( first_sets["T"]==std::set<CFG::terminal_type>{'(',common_tokens::token::id});
-  CHECK( first_sets["E"]==std::set<CFG::terminal_type>{'(',common_tokens::token::id});
-  CHECK( first_sets["E'"]==std::set<CFG::terminal_type>{'+',epsilon});
-  CHECK( first_sets["T'"]==std::set<CFG::terminal_type>{'*',epsilon});
-  auto follow_sets=cfg.follow();
-    
-  CHECK(follow_sets["E"]==std::set<CFG::terminal_type>{')',endmarker});
-  CHECK(follow_sets["E'"]==std::set<CFG::terminal_type>{')',endmarker});
-  CHECK(follow_sets["T"]==std::set<CFG::terminal_type>{'+',')',endmarker});
-  CHECK(follow_sets["T'"]==std::set<CFG::terminal_type>{'+',')',endmarker});
-  CHECK(follow_sets["F"]==std::set<CFG::terminal_type>{'+','*',')',endmarker});
+  CHECK(first_sets["F"] ==
+        std::set<CFG::terminal_type>{'(', common_tokens::token::id});
+  CHECK(first_sets["T"] ==
+        std::set<CFG::terminal_type>{'(', common_tokens::token::id});
+  CHECK(first_sets["E"] ==
+        std::set<CFG::terminal_type>{'(', common_tokens::token::id});
+  CHECK(first_sets["E'"] == std::set<CFG::terminal_type>{'+', epsilon});
+  CHECK(first_sets["T'"] == std::set<CFG::terminal_type>{'*', epsilon});
+  auto follow_sets = cfg.follow();
+
+  CHECK(follow_sets["E"] == std::set<CFG::terminal_type>{')', endmarker});
+  CHECK(follow_sets["E'"] == std::set<CFG::terminal_type>{')', endmarker});
+  CHECK(follow_sets["T"] == std::set<CFG::terminal_type>{'+', ')', endmarker});
+  CHECK(follow_sets["T'"] == std::set<CFG::terminal_type>{'+', ')', endmarker});
+  CHECK(follow_sets["F"] ==
+        std::set<CFG::terminal_type>{'+', '*', ')', endmarker});
 }
-

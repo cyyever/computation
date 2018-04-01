@@ -9,9 +9,9 @@
 
 #include <functional>
 #include <iostream>
+#include <map>
 #include <memory>
 #include <string>
-#include <map>
 #include <string_view>
 
 namespace cyy::lang {
@@ -40,9 +40,8 @@ protected:
   std::string alternative_name;
 
 private:
-  static std::map<std::string,std::shared_ptr<ALPHABET>> factory;
+  static std::map<std::string, std::shared_ptr<ALPHABET>> factory;
 };
-
 
 using symbol_string = std::basic_string<symbol_type>;
 using symbol_string_view = std::basic_string_view<symbol_type>;

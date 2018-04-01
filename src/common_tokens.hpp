@@ -12,9 +12,9 @@ namespace cyy::lang {
 
 class common_tokens final : public ALPHABET {
 public:
-  //enum class common_token:symbol_type {
-  enum token{
-    epsilon=256,
+  // enum class common_token:symbol_type {
+  enum token {
+    epsilon = 256,
     id,
     endmark,
   };
@@ -35,15 +35,19 @@ public:
 
   void foreach_symbol(
       const std::function<void(const symbol_type &)> &callback) const override {
-    for (symbol_type i = 0; i <256; i++) {
+    for (symbol_type i = 0; i < 256; i++) {
       callback(i);
     }
-    for (symbol_type i = token::epsilon+1; i <token::endmark; i++) {
+    for (symbol_type i = token::epsilon + 1; i < token::endmark; i++) {
       callback(i);
     }
   }
-  bool contain(symbol_type s) const override { return s <256 || s>token::epsilon && s<token::endmark; }
-  size_t size() const override { return 256+token::endmark-token::epsilon-1; }
+  bool contain(symbol_type s) const override {
+    return s < 256 || s > token::epsilon && s < token::endmark;
+  }
+  size_t size() const override {
+    return 256 + token::endmark - token::epsilon - 1;
+  }
   std::string name() const override { return "common_tokens"; }
 };
 
