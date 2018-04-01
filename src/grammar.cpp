@@ -451,52 +451,6 @@ CFG::follow(const std::map<nonterminal_type, std::set<terminal_type>>
   return follow_sets;
 }
 
-bool CFG::is_LL1(const std::map<nonterminal_type, std::set<terminal_type>>
-                     &nonterminal_first_sets,
-                 const std::map<nonterminal_type, std::set<terminal_type>>
-                     &follow_sets) const {
-
-  auto has_intersection = [](const auto &set1, const auto &set2) {
-    auto it1 = set1.begin();
-    auto it2 = set2.begin();
-    while (it1 != set1.end() && it2 != set2.end()) {
-      if (*it1 < *it2) {
-        it1++;
-      } else if (*it1 == *it2) {
-        return true;
-      } else {
-        it2++;
-      }
-    }
-    return false;
-  };
-
-  for (const auto &[head, bodies] : productions) {
-
-    std::vector<std::set<CFG::terminal_type>> first_sets;
-    auto follow_it = follow_sets.find(head);
-    for (size_t i = 0; i < bodies.size(); i++) {
-      first_sets.emplace_back(
-          first({bodies[i].data(), bodies[i].size()}, nonterminal_first_sets));
-      for (size_t j = 0; j < i; j++) {
-        if (has_intersection(first_sets[i], first_sets[j])) {
-          return false;
-        }
-
-        if (first_sets[i].count(alphabet->get_epsilon()) != 0 &&
-            has_intersection(follow_it->second, first_sets[j])) {
-          return false;
-        }
-
-        if (first_sets[j].count(alphabet->get_epsilon()) != 0 &&
-            has_intersection(follow_it->second, first_sets[i])) {
-          return false;
-        }
-      }
-    }
-  }
-  return true;
-}
 
 std::map<CFG::nonterminal_type, std::set<CFG::terminal_type>>
 CFG::follow() const {
@@ -506,12 +460,6 @@ CFG::follow() const {
   return follow(first_sets);
 }
 
-bool CFG::is_LL1() const {
-  auto first_sets = first();
-  auto follow_sets = follow(first_sets);
-
-  return is_LL1(first_sets, follow_sets);
-}
 
 CFG NFA_to_CFG(const NFA &nfa) {
   std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
