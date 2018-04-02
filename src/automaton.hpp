@@ -41,6 +41,10 @@ public:
   auto get_final_states() const -> auto const & { return final_states; }
   uint64_t get_start_state() const { return start_state; }
 
+  bool operator == (const finite_automaton &rhs) const {
+    return (this == &rhs) || (alphabet==rhs.alphabet &&states==rhs.states 
+	&&  start_state== rhs.start_state && final_states==rhs.final_states);
+  }
 protected:
   bool contain_final_state(const std::set<uint64_t> &T) const {
     for (const auto &f : final_states) {
@@ -121,6 +125,9 @@ public:
   // use subset construction
   DFA to_DFA() const;
 
+  bool operator == (const NFA &rhs) const {
+    return (this == &rhs) || (finite_automaton::operator==(rhs) &&  transition_table==rhs.transition_table);
+  }
 private:
   std::set<uint64_t> epsilon_closure(const std::set<uint64_t> &T) const ;
 

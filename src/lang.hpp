@@ -16,7 +16,7 @@
 
 namespace cyy::lang {
 
-using symbol_type = uint64_t;
+using symbol_type = char32_t;
 class ALPHABET {
 public:
   virtual ~ALPHABET() = default;

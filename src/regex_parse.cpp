@@ -154,6 +154,7 @@ case '(':
 case '\\':
 	  return self(self,root_parse_node->children[1],nullptr);
 default:
+	  std::cout<<"basic_node is "<<first_terminal<<std::endl;
 	  return std::make_shared<regex::basic_node>(first_terminal);
 	}
       } else if(*ptr=="ASCII-char") {

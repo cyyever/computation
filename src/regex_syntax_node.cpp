@@ -11,6 +11,7 @@ namespace cyy::lang {
 
 NFA regex::basic_node::to_NFA(const ALPHABET &alphabet,
                               uint64_t start_state) const {
+  puts("basic_node to_NFA");
   return {{start_state, start_state + 1},
           alphabet.name(),
           start_state,
@@ -34,6 +35,7 @@ std::set<uint64_t> regex::basic_node::last_pos() const { return {position}; }
 
 NFA regex::epsilon_node::to_NFA(const ALPHABET &alphabet,
                                 uint64_t start_state) const {
+  puts("epsilon_node to_NFA");
   return {{start_state, start_state + 1},
           alphabet.name(),
           start_state,
@@ -51,23 +53,27 @@ std::set<uint64_t> regex::epsilon_node::last_pos() const { return {}; }
 
 NFA regex::union_node::to_NFA(const ALPHABET &alphabet,
                               uint64_t start_state) const {
+  puts("union_node to_NFA");
+  std::cout<<"start_state="<<start_state<<std::endl;
   auto left_NFA = left_node->to_NFA(alphabet, start_state + 1);
   auto left_states = left_NFA.get_states();
   auto left_final_states = left_NFA.get_final_states();
   auto left_start_state = left_NFA.get_start_state();
+  std::cout<<"left_start_state="<<left_start_state<<std::endl;
   auto left_transition_table = left_NFA.get_transition_table();
 
-  auto right_NFA = right_node->to_NFA(alphabet, start_state + 1);
+  auto right_NFA = right_node->to_NFA(alphabet, *(left_final_states.begin())+1);
   auto right_states = right_NFA.get_states();
   auto right_final_states = right_NFA.get_final_states();
   auto right_start_state = right_NFA.get_start_state();
+  std::cout<<"right_start_state="<<right_start_state<<std::endl;
   auto right_transition_table = right_NFA.get_transition_table();
+  auto final_state = (*right_final_states.begin())+1;
 
   left_states.merge(right_states);
   left_transition_table.merge(right_transition_table);
 
   left_states.insert(start_state);
-  auto final_state = start_state + left_states.size() + 1;
   left_states.insert(final_state);
 
   left_transition_table[{start_state, alphabet.get_epsilon()}] = {
@@ -80,6 +86,9 @@ NFA regex::union_node::to_NFA(const ALPHABET &alphabet,
     left_transition_table[{right_final_state, alphabet.get_epsilon()}] = {
         final_state};
   }
+
+  std::cout<<"union_node states size="<<left_states.size()<<std::endl;
+
 
   return {left_states,
           alphabet.name(),
@@ -113,6 +122,8 @@ std::map<uint64_t, std::set<uint64_t>> regex::union_node::follow_pos() const {
 
 NFA regex::concat_node::to_NFA(const ALPHABET &alphabet,
                                uint64_t start_state) const {
+
+  puts("concat_node to_NFA");
   auto left_NFA = left_node->to_NFA(alphabet, start_state);
   auto left_states = left_NFA.get_states();
   auto left_final_states = left_NFA.get_final_states();
@@ -168,13 +179,21 @@ std::map<uint64_t, std::set<uint64_t>> regex::concat_node::follow_pos() const {
 
 NFA regex::kleene_closure_node::to_NFA(const ALPHABET &alphabet,
                                        uint64_t start_state) const {
+  puts("kleene_closure_node to_NFA");
   auto inner_start_state = start_state + 1;
   auto inner_NFA = inner_node->to_NFA(alphabet, inner_start_state);
   auto inner_states = inner_NFA.get_states();
   auto inner_final_states = inner_NFA.get_final_states();
   auto inner_transition_table = inner_NFA.get_transition_table();
+  auto final_state =  (*inner_final_states.begin())+1;
+  std::cout<<"start_state="<<start_state<<std::endl;
+  for(auto const &a:inner_states) {
+  std::cout<<"inner_state is "<<a<<std::endl;
+  }
+  std::cout<<"final_state="<<final_state<<std::endl;
+  std::cout<<"inner_states size="<<inner_states.size()<<std::endl;
   inner_states.insert(start_state);
-  auto final_state = inner_start_state + inner_states.size();
+
   inner_states.insert(final_state);
 
   inner_transition_table[{start_state, alphabet.get_epsilon()}] = {
