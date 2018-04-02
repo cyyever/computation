@@ -25,9 +25,9 @@ regex::parse(symbol_string_view view) const {
    rfactor -> rprimary
 
    rprimary -> '(' rexpr ')'
-   rprimary -> '\' 'ascii char'
- //  rprimary -> '[' 'ascii char' ']'
-   rprimary -> 'ascii char'
+   rprimary -> '\' ASCII-char 
+   rprimary -> 'non-operator-char' 
+   ASCII-char -> 'any-ASCII-char'
 
    => 
 
@@ -44,8 +44,9 @@ regex::parse(symbol_string_view view) const {
    rfactor' -> epsilon 
 
    rprimary -> '(' rexpr ')' 
-   rprimary -> '\' 'ascii char' 
-   rprimary -> 'ascii char' 
+   rprimary -> '\' ASCII-char 
+   rprimary -> 'non-operator-char' 
+   ASCII-char -> 'any-ASCII-char'
 
 */
 
@@ -67,12 +68,13 @@ regex::parse(symbol_string_view view) const {
   };
   productions["rprimary"] = {
       {'(',"rexpr",')'},
+      {'\\',"ASCII-char"},
   };
 
   alphabet->foreach_symbol([&](auto const &a) {
-      productions["rprimary"] .emplace_back(
+      productions["ASCII-char"] .emplace_back(
 	CFG::production_body_type
-      	{ '\\',   a} );
+      	{  a} );
 	  
       if(!operators.count(a)) {
       productions["rprimary"] 
@@ -150,13 +152,13 @@ regex::parse(symbol_string_view view) const {
 case '(':
 	  return self(self,root_parse_node->children[1],nullptr);
 case '\\':
-	  {
-	  auto second_terminal=std::get<CFG::terminal_type>( root_parse_node->children[1]->grammar_symbol);
-	  return std::make_shared<regex::basic_node>(second_terminal);
-	  }
+	  return self(self,root_parse_node->children[1],nullptr);
 default:
 	  return std::make_shared<regex::basic_node>(first_terminal);
 	}
+      } else if(*ptr=="ASCII-char") {
+	auto first_terminal=std::get<CFG::terminal_type>( root_parse_node->children[0]->grammar_symbol);
+	  return std::make_shared<regex::basic_node>(first_terminal);
       }
     } 
     throw std::runtime_error("should no go here");
