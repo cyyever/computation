@@ -160,5 +160,5 @@ TEST_CASE("minimize DFA") {
           },
           {3});
 
- // CHECK(dfa.minimize()==minimized_dfa);
+  CHECK(dfa.minimize()==minimized_dfa);
 }

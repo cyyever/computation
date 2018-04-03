@@ -102,9 +102,6 @@ DFA DFA::minimize() const {
 
     decltype(groups) new_groups;
     for (auto const &group : groups) {
-      if (group.empty()) {
-        continue;
-      }
       if (group.size() <= 1) {
         new_groups.push_back(group);
         continue;
@@ -114,11 +111,11 @@ DFA DFA::minimize() const {
 
       auto it = group.begin();
       sub_groups.push_back({*it});
-      while (it != group.end()) {
+      it++;
+      for(;it != group.end();it++) {
         auto state = *it;
         bool in_new_group = true;
         for (auto &sub_group : sub_groups) {
-
           bool in_group = true;
           alphabet->foreach_symbol([&](auto const &a) {
             if (in_group && state_location[move(*(sub_group.begin()), a)] !=
@@ -136,11 +133,15 @@ DFA DFA::minimize() const {
           sub_groups.push_back({state});
         }
       }
-      new_groups.insert(new_groups.end(), sub_groups.begin(), sub_groups.end());
+	std::cout<<"sub_groups size="<<sub_groups.size()<<std::endl;
+      new_groups.insert(new_groups.end(),std::move_iterator( sub_groups.begin()),
+	 
+	 std::move_iterator( sub_groups.end()));
     }
     if (groups == new_groups) {
       break;
     }
+    groups=std::move(new_groups);
   }
   uint64_t minimize_DFA_start_state{};
   std::set<uint64_t> minimize_DFA_states;
