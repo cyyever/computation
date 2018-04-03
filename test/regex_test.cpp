@@ -97,3 +97,26 @@ TEST_CASE("parse regex and to NFA") {
     std::cout << reg.to_NFA().get_states().size();
   }
 }
+TEST_CASE("parse regex and to DFA") {
+    symbol_string expr = U"(a|b)*abb";
+    regex reg("ab_set", expr);
+
+    puts("aaaaaa");
+    DFA dfa({0, 1, 2, 3 }, "ab_set", 0,
+            {
+
+                {{0,'a'}, 1},
+                {{0,'b'}, 0},
+                {{1,'a'}, 1},
+                {{1,'b'}, 2},
+                {{2,'a'}, 1},
+                {{2,'b'}, 3},
+                {{3,'a'}, 1},
+                {{3,'b'}, 0},
+            },
+            {3});
+    puts("bbbb");
+
+    std::cout << reg.to_DFA().get_states().size();
+    CHECK(dfa== reg.to_DFA());
+  }

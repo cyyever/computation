@@ -14,17 +14,16 @@ namespace cyy::lang {
 DFA regex::to_DFA() const {
   std::map<uint64_t, symbol_type> position_to_symbol;
   syntax_tree->assign_position(position_to_symbol);
-  // endmark
+  // endmarker
   auto final_position = position_to_symbol.end()->first + 1;
   auto follow_pos_table = syntax_tree->follow_pos();
   for (auto pos : syntax_tree->last_pos()) {
     follow_pos_table.insert({pos, {final_position}});
   }
 
-  std::vector<std::set<uint64_t>> position_sets{syntax_tree->first_pos()};
-
   std::vector<bool> flags{false};
-  std::set<uint64_t> DFA_states;
+  std::vector<std::set<uint64_t>> position_sets{syntax_tree->first_pos()};
+  std::set<uint64_t> DFA_states{0};
   std::map<std::pair<uint64_t, symbol_type>, uint64_t> DFA_transition_table;
   std::set<uint64_t> DFA_final_states;
   for (size_t i = 0; i < flags.size(); i++) {

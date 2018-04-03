@@ -22,7 +22,7 @@ NFA regex::basic_node::to_NFA(const ALPHABET &alphabet,
 void regex::basic_node::assign_position(
     std::map<uint64_t, symbol_type> &position_to_symbol) {
   if (position_to_symbol.empty()) {
-    position = 0;
+    position = 1;
   } else {
     position = position_to_symbol.end()->first + 1;
   }
@@ -108,12 +108,13 @@ std::set<uint64_t> regex::union_node::first_pos() const {
 std::set<uint64_t> regex::union_node::last_pos() const {
   auto tmp = left_node->last_pos();
   tmp.merge(right_node->last_pos());
+  std::cout<<"tmp size is "<<tmp.size()<<std::endl;
   return tmp;
 }
 std::map<uint64_t, std::set<uint64_t>> regex::union_node::follow_pos() const {
-  auto tmp = left_node->follow_pos();
-  tmp.merge(right_node->follow_pos());
-  return tmp;
+  auto res = left_node->follow_pos();
+  res.merge(right_node->follow_pos());
+  return res;
 }
 
 NFA regex::concat_node::to_NFA(const ALPHABET &alphabet,
@@ -161,13 +162,17 @@ std::set<uint64_t> regex::concat_node::last_pos() const {
 }
 
 std::map<uint64_t, std::set<uint64_t>> regex::concat_node::follow_pos() const {
+  auto res = left_node->follow_pos();
+  res.merge(right_node->follow_pos());
+
   auto tmp = right_node->first_pos();
   if (tmp.empty()) {
-    return {};
+    return res;
   }
-  std::map<uint64_t, std::set<uint64_t>> res;
   for (auto pos : left_node->last_pos()) {
-    res.insert({pos, tmp});
+    std::cout<<"concat pos is "<<pos <<std::endl;
+    std::cout<<"tmp size is "<<tmp.size()<<std::endl;
+    res[pos].insert(tmp.begin(),tmp.end());
   }
   return res;
 }
@@ -219,13 +224,16 @@ std::set<uint64_t> regex::kleene_closure_node::last_pos() const {
 
 std::map<uint64_t, std::set<uint64_t>>
 regex::kleene_closure_node::follow_pos() const {
+  auto res= inner_node->follow_pos();
+    puts("kleene_closure_node follow_pos");
   auto tmp = inner_node->first_pos();
   if (tmp.empty()) {
-    return {};
+    return res;
   }
-  std::map<uint64_t, std::set<uint64_t>> res;
   for (auto pos : inner_node->last_pos()) {
-    res.insert({pos, tmp});
+    puts("first pos is empty");
+    //res[pos].merge(tmp);
+    res[pos].insert(tmp.begin(),tmp.end());
   }
   return res;
 }
