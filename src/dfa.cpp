@@ -100,6 +100,7 @@ DFA DFA::minimize() const {
       }
     }
 
+    bool has_new_group=false;
     decltype(groups) new_groups;
     for (auto const &group : groups) {
       if (group.size() <= 1) {
@@ -130,15 +131,15 @@ DFA DFA::minimize() const {
           }
         }
         if (in_new_group) {
+	  has_new_group=true;
           sub_groups.push_back({state});
         }
       }
-	std::cout<<"sub_groups size="<<sub_groups.size()<<std::endl;
       new_groups.insert(new_groups.end(),std::move_iterator( sub_groups.begin()),
 	 
 	 std::move_iterator( sub_groups.end()));
     }
-    if (groups == new_groups) {
+    if (!has_new_group) {
       break;
     }
     groups=std::move(new_groups);
