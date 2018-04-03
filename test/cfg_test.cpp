@@ -136,6 +136,7 @@ TEST_CASE("first_and_follow") {
       productions;
   auto epsilon = ALPHABET::get("common_tokens")->get_epsilon();
   auto endmarker = ALPHABET::get("common_tokens")->get_endmarker();
+  auto id=static_cast<CFG::terminal_type>(common_tokens::token::id);
   productions["E"] = {
       {"T", "E'"},
   };
@@ -151,18 +152,18 @@ TEST_CASE("first_and_follow") {
       {epsilon},
   };
   productions["F"] = {
-      {'(', "E", ')'}, {common_tokens::token::id} // i for id
+      {'(', "E", ')'}, {id} // i for id
   };
 
   CFG cfg("common_tokens", "E", productions);
   auto first_sets = cfg.first();
 
   CHECK(first_sets["F"] ==
-        std::set<CFG::terminal_type>{'(', common_tokens::token::id});
+        std::set<CFG::terminal_type>{'(', id});
   CHECK(first_sets["T"] ==
-        std::set<CFG::terminal_type>{'(', common_tokens::token::id});
+        std::set<CFG::terminal_type>{'(', id});
   CHECK(first_sets["E"] ==
-        std::set<CFG::terminal_type>{'(', common_tokens::token::id});
+        std::set<CFG::terminal_type>{'(', id});
   CHECK(first_sets["E'"] == std::set<CFG::terminal_type>{'+', epsilon});
   CHECK(first_sets["T'"] == std::set<CFG::terminal_type>{'*', epsilon});
   auto follow_sets = cfg.follow();

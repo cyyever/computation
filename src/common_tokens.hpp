@@ -12,30 +12,36 @@ namespace cyy::lang {
 
 class common_tokens final : public ALPHABET {
 public:
-  // enum class common_token:symbol_type {
-  enum token {
+   enum class token:symbol_type {
     epsilon = 256,
     ascii_char,
     escape_sequence,
     id,
-    endmark,
+    endmarker,
   };
 
-  symbol_type get_epsilon() const override { return token::epsilon; }
-  symbol_type get_endmarker() const override { return token::endmark; }
+   symbol_type get_epsilon() const override { return static_cast<symbol_type>(token::epsilon); }
+   symbol_type get_endmarker() const override { return static_cast<symbol_type>(token::endmarker); }
 
   void print(std::ostream &os, symbol_type symbol) const override {
-    if (symbol == get_epsilon()) {
+	  switch(static_cast<token>(symbol)) {
+	case	  token::epsilon:
       os << "epsilon";
-    } else if (symbol == get_endmarker()) {
+      break;
+	case token::endmarker:
       os << "$";
-    } else if (symbol == token::ascii_char) {
+      break;
+      case token::ascii_char:
       os << "'ascii char'";
-    } else if (symbol == token::escape_sequence) {
+      break;
+      case token::escape_sequence:
       os << "'escape sequence'";
-    } else {
+      break;
+      default:
       os << '\'' << static_cast<char>(symbol) << '\'';
-    }
+	  }
+
+
     return;
   }
 
@@ -44,15 +50,15 @@ public:
     for (symbol_type i = 0; i < 256; i++) {
       callback(i);
     }
-    for (symbol_type i = token::epsilon + 1; i < token::endmark; i++) {
+    for (symbol_type i = static_cast<symbol_type>(token::epsilon) + 1; i < static_cast<symbol_type>(token::endmarker); i++) {
       callback(i);
     }
   }
   bool contain(symbol_type s) const override {
-    return s < 256 || (s > token::epsilon && s < token::endmark);
+    return s < 256 || (s > static_cast<symbol_type>(token::epsilon) && s <  static_cast<symbol_type>( token::endmarker));
   }
   size_t size() const override {
-    return 256 + token::endmark - token::epsilon - 1;
+	  return 256 + static_cast<symbol_type>(token::endmarker) -static_cast<symbol_type> (token::epsilon) - 1;
   }
   std::string name() const override { return "common_tokens"; }
 };
