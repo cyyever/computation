@@ -63,111 +63,105 @@ bool CFG::is_LL1() const {
   return is_LL1(first_sets, follow_sets);
 }
 
-CFG::parse_node_ptr CFG::LL1_parse(
-      symbol_string_view view
-    ) const {
+CFG::parse_node_ptr CFG::LL1_parse(symbol_string_view view) const {
 
-  std::map<std::pair<CFG::terminal_type,CFG::nonterminal_type> , const production_body_type &> parsing_table;
+  std::map<std::pair<CFG::terminal_type, CFG::nonterminal_type>,
+           const production_body_type &>
+      parsing_table;
 
   {
-    auto  nonterminal_first_sets= first();
-    auto follow_sets=follow(nonterminal_first_sets);
+    auto nonterminal_first_sets = first();
+    auto follow_sets = follow(nonterminal_first_sets);
     for (const auto &[head, bodies] : productions) {
-      for(auto const & body:bodies) {
-      auto first_set= first({body.data(), body.size()}, nonterminal_first_sets);
+      for (auto const &body : bodies) {
+        auto first_set =
+            first({body.data(), body.size()}, nonterminal_first_sets);
 
-      for(auto const &terminal:first_set) {
+        for (auto const &terminal : first_set) {
 
-	if(is_epsilon(terminal)) {
-	  auto it=follow_sets.find(head);
-	  if(it!=follow_sets.end()) {
-	    for(auto const &follow_terminal:it->second) {
+          if (is_epsilon(terminal)) {
+            auto it = follow_sets.find(head);
+            if (it != follow_sets.end()) {
+              for (auto const &follow_terminal : it->second) {
 
-	      auto [it,has_inserted]=
-		parsing_table.emplace( 
-		    std::pair{follow_terminal, head  },
-		    body
-		    );
-	      //not LL1 
-	      if(!has_inserted) {
-	  puts("not LL1 grammar");
+                auto [it, has_inserted] = parsing_table.emplace(
+                    std::pair{follow_terminal, head}, body);
+                // not LL1
+                if (!has_inserted) {
+                  puts("not LL1 grammar");
 
-		
-	  print(std::cout,head,it->second);
+                  print(std::cout, head, it->second);
 
-		return {};
-	      }
-	    }
-	  }
-	  continue;
-	}
-	auto [it,has_inserted]=
-	  parsing_table.emplace( 
-	    std::pair{terminal, head  },
-	    body
-	    );
+                  return {};
+                }
+              }
+            }
+            continue;
+          }
+          auto [it, has_inserted] =
+              parsing_table.emplace(std::pair{terminal, head}, body);
 
-	//not LL1 
-	if(!has_inserted) {
-	  puts("not LL1 grammar");
-	  print(std::cout,head,it->second);
-	  puts("confict LL1 grammar");
-	  print(std::cout,head,body);
-	  return {};
-	}
+          // not LL1
+          if (!has_inserted) {
+            puts("not LL1 grammar");
+            print(std::cout, head, it->second);
+            puts("confict LL1 grammar");
+            print(std::cout, head, body);
+            return {};
+          }
+        }
       }
-    }
     }
   }
 
   puts("begin parse");
-    
-  auto tree=std::make_shared<parse_node>(start_symbol);
+
+  auto tree = std::make_shared<parse_node>(start_symbol);
 
   std::vector<parse_node_ptr> stack{tree};
-  auto endmarker=alphabet->get_endmarker();
-  while(!stack.empty()) {
-    auto terminal=view.empty()?endmarker:view.front();
-    auto top=std::move(stack.back());
+  auto endmarker = alphabet->get_endmarker();
+  while (!stack.empty()) {
+    auto terminal = view.empty() ? endmarker : view.front();
+    auto top = std::move(stack.back());
     stack.pop_back();
 
-    if (auto ptr=std::get_if<terminal_type>(&(top->grammar_symbol))) {
-      if(!is_epsilon(*ptr) ) {
-	if(terminal!=*ptr) {
-	  puts("terminal is not ptr ");
-	  alphabet->print(std::cout,terminal);
-	  alphabet->print(std::cout,*ptr);
-	  return {};
-	}
-	view.remove_prefix(1);
+    if (auto ptr = std::get_if<terminal_type>(&(top->grammar_symbol))) {
+      if (!is_epsilon(*ptr)) {
+        if (terminal != *ptr) {
+          puts("terminal is not ptr ");
+          alphabet->print(std::cout, terminal);
+          alphabet->print(std::cout, *ptr);
+          return {};
+        }
+        view.remove_prefix(1);
       }
-      top->grammar_symbol=terminal;
+      top->grammar_symbol = terminal;
       continue;
     }
 
-    auto it=parsing_table.find({  terminal   , std::get<nonterminal_type>(top->grammar_symbol)   });
+    auto it = parsing_table.find(
+        {terminal, std::get<nonterminal_type>(top->grammar_symbol)});
 
-    if(it==parsing_table.end()) {
-	  puts("no rule for parsing");
+    if (it == parsing_table.end()) {
+      puts("no rule for parsing");
       return {};
     }
 
-    for(auto const &grammar_symbol:it->second) {
-      top->children.push_back(
-	  std::make_shared<parse_node>(grammar_symbol)
-	  );
+    for (auto const &grammar_symbol : it->second) {
+      top->children.push_back(std::make_shared<parse_node>(grammar_symbol));
     }
 
-    for(auto rit=top->children.rbegin();rit!=top->children.rend();rit++) {
+    for (auto rit = top->children.rbegin(); rit != top->children.rend();
+         rit++) {
       stack.push_back(*rit);
     }
   }
 
-  if(!view.empty()) {
+  if (!view.empty()) {
     puts("have symbols remain after parse.");
     return {};
   }
 
   return tree;
 }
-}
+} // namespace cyy::lang

@@ -16,7 +16,7 @@ TEST_CASE("LL1 parse") {
   std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
       productions;
   auto epsilon = ALPHABET::get("common_tokens")->get_epsilon();
-  auto id=common_tokens::token::id;
+  auto id = common_tokens::token::id;
   productions["E"] = {
       {"T", "E'"},
   };
@@ -37,8 +37,7 @@ TEST_CASE("LL1 parse") {
 
   CFG cfg("common_tokens", "E", productions);
 
-  auto parse_tree=cfg.LL1_parse(symbol_string{id,'+',id,'*',id});
+  auto parse_tree = cfg.LL1_parse(symbol_string{id, '+', id, '*', id});
   CHECK(parse_tree);
-  CHECK(parse_tree->children.size()==2);
-
+  CHECK(parse_tree->children.size() == 2);
 }

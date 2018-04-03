@@ -9,11 +9,11 @@
 
 #include <iterator>
 #include <map>
+#include <optional>
 #include <string>
 #include <string_view>
 #include <variant>
 #include <vector>
-#include <optional>
 
 #include "automaton.hpp"
 #include "lang.hpp"
@@ -31,21 +31,21 @@ public:
   using production_body_type = std::vector<grammar_symbol_type>;
 
   struct parse_node;
-  using parse_node_ptr=std::shared_ptr<parse_node>;
+  using parse_node_ptr = std::shared_ptr<parse_node>;
   struct parse_node {
-    parse_node(grammar_symbol_type grammar_symbol_):grammar_symbol(std::move(grammar_symbol_)){
-    }
+    parse_node(grammar_symbol_type grammar_symbol_)
+        : grammar_symbol(std::move(grammar_symbol_)) {}
 
     grammar_symbol_type grammar_symbol;
 
-    //nonterminal_type nonterminal{};
+    // nonterminal_type nonterminal{};
     std::vector<parse_node_ptr> children;
   };
 
-
   /*
   struct nonterminal_node : public parse_node{
-    nonterminal_node(nonterminal_type nonterminal_):nonterminal(std::move(nonterminal_)){
+    nonterminal_node(nonterminal_type
+  nonterminal_):nonterminal(std::move(nonterminal_)){
     }
 
 
@@ -83,8 +83,7 @@ public:
         }
         for (auto const &symbol : body) {
           auto terminal_ptr = std::get_if<terminal_type>(&symbol);
-          if (terminal_ptr && 
-	      !alphabet->is_epsilon(*terminal_ptr) &&
+          if (terminal_ptr && !alphabet->is_epsilon(*terminal_ptr) &&
               !alphabet->contain(*terminal_ptr)) {
             throw std::invalid_argument(std::string("invalid terminal ") +
                                         std::to_string(*terminal_ptr));
@@ -157,7 +156,7 @@ public:
   }
   void eliminate_useless_symbols();
 
-  void eliminate_left_recursion(    std::vector<nonterminal_type> old_heads={});
+  void eliminate_left_recursion(std::vector<nonterminal_type> old_heads = {});
 
   void left_factoring();
 
@@ -169,9 +168,7 @@ public:
 
   bool is_LL1() const;
 
-    parse_node_ptr LL1_parse(
-      symbol_string_view view
-      ) const;
+  parse_node_ptr LL1_parse(symbol_string_view view) const;
 
 private:
   void print(std::ostream &os, const nonterminal_type &head,

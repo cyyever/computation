@@ -10,7 +10,7 @@
 #include "automaton.hpp"
 
 namespace cyy::lang {
-bool DFA::equivalent_with(const DFA rhs) {
+bool DFA::equivalent_with(const DFA &rhs) {
 
   if (alphabet != rhs.alphabet) {
     puts("aa");

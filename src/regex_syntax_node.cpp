@@ -27,7 +27,6 @@ void regex::basic_node::assign_position(
     position = position_to_symbol.end()->first + 1;
   }
   position_to_symbol.insert({position, symbol});
-  return;
 }
 
 std::set<uint64_t> regex::basic_node::first_pos() const { return {position}; }
@@ -44,9 +43,7 @@ NFA regex::epsilon_node::to_NFA(const ALPHABET &alphabet,
 }
 
 void regex::epsilon_node::assign_position(
-    std::map<uint64_t, symbol_type> &position_to_symbol[[maybe_unused]]) {
-  return;
-}
+    std::map<uint64_t, symbol_type> &position_to_symbol [[maybe_unused]]) {}
 
 std::set<uint64_t> regex::epsilon_node::first_pos() const { return {}; }
 std::set<uint64_t> regex::epsilon_node::last_pos() const { return {}; }
@@ -54,21 +51,22 @@ std::set<uint64_t> regex::epsilon_node::last_pos() const { return {}; }
 NFA regex::union_node::to_NFA(const ALPHABET &alphabet,
                               uint64_t start_state) const {
   puts("union_node to_NFA");
-  std::cout<<"start_state="<<start_state<<std::endl;
+  std::cout << "start_state=" << start_state << std::endl;
   auto left_NFA = left_node->to_NFA(alphabet, start_state + 1);
   auto left_states = left_NFA.get_states();
   auto left_final_states = left_NFA.get_final_states();
   auto left_start_state = left_NFA.get_start_state();
-  std::cout<<"left_start_state="<<left_start_state<<std::endl;
+  std::cout << "left_start_state=" << left_start_state << std::endl;
   auto left_transition_table = left_NFA.get_transition_table();
 
-  auto right_NFA = right_node->to_NFA(alphabet, *(left_final_states.begin())+1);
+  auto right_NFA =
+      right_node->to_NFA(alphabet, *(left_final_states.begin()) + 1);
   auto right_states = right_NFA.get_states();
   auto right_final_states = right_NFA.get_final_states();
   auto right_start_state = right_NFA.get_start_state();
-  std::cout<<"right_start_state="<<right_start_state<<std::endl;
+  std::cout << "right_start_state=" << right_start_state << std::endl;
   auto right_transition_table = right_NFA.get_transition_table();
-  auto final_state = (*right_final_states.begin())+1;
+  auto final_state = (*right_final_states.begin()) + 1;
 
   left_states.merge(right_states);
   left_transition_table.merge(right_transition_table);
@@ -87,8 +85,7 @@ NFA regex::union_node::to_NFA(const ALPHABET &alphabet,
         final_state};
   }
 
-  std::cout<<"union_node states size="<<left_states.size()<<std::endl;
-
+  std::cout << "union_node states size=" << left_states.size() << std::endl;
 
   return {left_states,
           alphabet.name(),
@@ -101,7 +98,6 @@ void regex::union_node::assign_position(
     std::map<uint64_t, symbol_type> &position_to_symbol) {
   left_node->assign_position(position_to_symbol);
   right_node->assign_position(position_to_symbol);
-  return;
 }
 
 std::set<uint64_t> regex::union_node::first_pos() const {
@@ -126,7 +122,7 @@ NFA regex::concat_node::to_NFA(const ALPHABET &alphabet,
   puts("concat_node to_NFA");
   auto left_NFA = left_node->to_NFA(alphabet, start_state);
   auto left_states = left_NFA.get_states();
-  auto left_final_states = left_NFA.get_final_states();
+  const auto &left_final_states = left_NFA.get_final_states();
   auto left_transition_table = left_NFA.get_transition_table();
 
   auto right_NFA = right_node->to_NFA(alphabet, *(left_final_states.begin()));
@@ -144,7 +140,6 @@ void regex::concat_node::assign_position(
     std::map<uint64_t, symbol_type> &position_to_symbol) {
   left_node->assign_position(position_to_symbol);
   right_node->assign_position(position_to_symbol);
-  return;
 }
 
 std::set<uint64_t> regex::concat_node::first_pos() const {
@@ -185,13 +180,13 @@ NFA regex::kleene_closure_node::to_NFA(const ALPHABET &alphabet,
   auto inner_states = inner_NFA.get_states();
   auto inner_final_states = inner_NFA.get_final_states();
   auto inner_transition_table = inner_NFA.get_transition_table();
-  auto final_state =  (*inner_final_states.begin())+1;
-  std::cout<<"start_state="<<start_state<<std::endl;
-  for(auto const &a:inner_states) {
-  std::cout<<"inner_state is "<<a<<std::endl;
+  auto final_state = (*inner_final_states.begin()) + 1;
+  std::cout << "start_state=" << start_state << std::endl;
+  for (auto const &a : inner_states) {
+    std::cout << "inner_state is " << a << std::endl;
   }
-  std::cout<<"final_state="<<final_state<<std::endl;
-  std::cout<<"inner_states size="<<inner_states.size()<<std::endl;
+  std::cout << "final_state=" << final_state << std::endl;
+  std::cout << "inner_states size=" << inner_states.size() << std::endl;
   inner_states.insert(start_state);
 
   inner_states.insert(final_state);
@@ -213,7 +208,6 @@ NFA regex::kleene_closure_node::to_NFA(const ALPHABET &alphabet,
 void regex::kleene_closure_node::assign_position(
     std::map<uint64_t, symbol_type> &position_to_symbol) {
   inner_node->assign_position(position_to_symbol);
-  return;
 }
 
 std::set<uint64_t> regex::kleene_closure_node::first_pos() const {

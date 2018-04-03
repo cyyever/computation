@@ -10,31 +10,31 @@
 #include "automaton.hpp"
 
 namespace cyy::lang {
-  std::set<uint64_t> NFA::epsilon_closure(const std::set<uint64_t> &T) const {
+std::set<uint64_t> NFA::epsilon_closure(const std::set<uint64_t> &T) const {
 
-    auto stack = T;
-    auto res = T;
-    auto epsilon = alphabet->get_epsilon();
+  auto stack = T;
+  auto res = T;
+  auto epsilon = alphabet->get_epsilon();
 
-    while (!stack.empty()) {
-      decltype(stack) next_stack;
-      for (auto const &t : stack) {
-        auto it = transition_table.find({t, epsilon});
-        if (it == transition_table.end()) {
-          continue;
-        }
-        for (auto const &u : it->second) {
-          std::cout << "u=" << u << std::endl;
-          if (res.count(u) == 0) {
-            next_stack.insert(u);
-            res.insert(u);
-          }
+  while (!stack.empty()) {
+    decltype(stack) next_stack;
+    for (auto const &t : stack) {
+      auto it = transition_table.find({t, epsilon});
+      if (it == transition_table.end()) {
+        continue;
+      }
+      for (auto const &u : it->second) {
+        std::cout << "u=" << u << std::endl;
+        if (res.count(u) == 0) {
+          next_stack.insert(u);
+          res.insert(u);
         }
       }
-      stack = std::move(next_stack);
     }
-    return res;
+    stack = std::move(next_stack);
   }
+  return res;
+}
 DFA NFA::to_DFA() const {
   std::vector<std::set<uint64_t>> subsets{epsilon_closure({start_state})};
 

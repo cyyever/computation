@@ -50,7 +50,8 @@ void CFG::eliminate_useless_symbols() {
           body.clear();
           useless = true;
           break;
-        } else if (it->second == nonterminal_state::checking) {
+        }
+        if (it->second == nonterminal_state::checking) {
           depedency_heads[nonterminal].insert(head);
           useless = true;
         }
@@ -92,7 +93,7 @@ void CFG::eliminate_useless_symbols() {
         if (!std::holds_alternative<nonterminal_type>(symbol)) {
           continue;
         }
-        auto nonterminal = std::get<nonterminal_type>(symbol);
+        const auto &nonterminal = std::get<nonterminal_type>(symbol);
         if (states[nonterminal] != nonterminal_state::non_useless) {
           add = false;
           break;
@@ -116,9 +117,9 @@ void CFG::eliminate_useless_symbols() {
 
 void CFG::eliminate_left_recursion(std::vector<nonterminal_type> old_heads) {
 
- // std::vector<nonterminal_type> old_heads{start_symbol};
+  // std::vector<nonterminal_type> old_heads{start_symbol};
 
-  if(old_heads.empty()) {
+  if (old_heads.empty()) {
     for (const auto &[head, _] : productions) {
       old_heads.push_back(head);
     }
@@ -149,7 +150,7 @@ void CFG::eliminate_left_recursion(std::vector<nonterminal_type> old_heads) {
 
         for (auto &body : bodies) {
           if (!body.empty()) {
-            body.push_back(new_head);
+            body.emplace_back(new_head);
           }
         }
       };
@@ -159,10 +160,10 @@ void CFG::eliminate_left_recursion(std::vector<nonterminal_type> old_heads) {
       std::vector<production_body_type> new_bodies;
       for (auto &body : productions[old_heads[i]]) {
 
-	if(body.empty()) {
-	  continue;
-	  //std::cout<<"body is  empty for old_heads" <<old_heads[i]<<'\n';
-	}
+        if (body.empty()) {
+          continue;
+          // std::cout<<"body is  empty for old_heads" <<old_heads[i]<<'\n';
+        }
 
         if (!(std::holds_alternative<nonterminal_type>(body.front()) &&
               std::get<nonterminal_type>(body.front()) == old_heads[j])) {
@@ -181,7 +182,6 @@ void CFG::eliminate_left_recursion(std::vector<nonterminal_type> old_heads) {
     eliminate_immediate_left_recursion(old_heads[i]);
   }
   normalize_productions();
-  return;
 }
 
 void CFG::left_factoring() {
@@ -230,7 +230,7 @@ void CFG::left_factoring() {
 
         body.erase(body.begin() + common_prefix.size(), body.end());
 
-        body.push_back(new_head);
+        body.emplace_back(new_head);
       }
 
       return new_head;
@@ -280,10 +280,9 @@ bool CFG::recursive_descent_parse(symbol_string_view view) const {
           if (self(self, this_nonterminal,
                    check_endmark && (i == body.size() - 1), local_pos, cfg)) {
             continue;
-          } else {
-            match = false;
-            break;
           }
+          match = false;
+          break;
         }
       }
 
@@ -351,8 +350,9 @@ CFG::first() const {
           }
         }
         if (i == body.size()) {
-          if (first_sets[head].insert(alphabet->get_epsilon()).second)
+          if (first_sets[head].insert(alphabet->get_epsilon()).second) {
             loop_add_new_terminal = true;
+          }
         }
       }
       if (!loop_add_new_terminal) {
@@ -379,7 +379,7 @@ CFG::first(const grammar_symbol_string_view &alpha,
     if (std::holds_alternative<terminal_type>(symbol)) {
       return {std::get<terminal_type>(symbol)};
     }
-    auto nonterminal = std::get<nonterminal_type>(symbol);
+    const auto &nonterminal = std::get<nonterminal_type>(symbol);
 
     bool has_epsilon = false;
     ;
@@ -418,7 +418,7 @@ CFG::follow(const std::map<nonterminal_type, std::set<terminal_type>>
             continue;
           }
 
-          auto nonterminal = std::get<nonterminal_type>(body[i]);
+          const auto &nonterminal = std::get<nonterminal_type>(body[i]);
 
           auto first_set = first({body.data() + i + 1, body.size() - i - 1},
                                  nonterminal_first_sets);
@@ -451,7 +451,6 @@ CFG::follow(const std::map<nonterminal_type, std::set<terminal_type>>
   return follow_sets;
 }
 
-
 std::map<CFG::nonterminal_type, std::set<CFG::terminal_type>>
 CFG::follow() const {
 
@@ -459,7 +458,6 @@ CFG::follow() const {
 
   return follow(first_sets);
 }
-
 
 CFG NFA_to_CFG(const NFA &nfa) {
   std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>

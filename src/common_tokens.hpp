@@ -29,12 +29,11 @@ public:
       os << "epsilon";
     } else if (symbol == get_endmarker()) {
       os << "$";
-    } else  if (symbol==token::ascii_char){
+    } else if (symbol == token::ascii_char) {
       os << "'ascii char'";
-    } else  if (symbol==token::escape_sequence){
+    } else if (symbol == token::escape_sequence) {
       os << "'escape sequence'";
-      }
-      else {
+    } else {
       os << '\'' << static_cast<char>(symbol) << '\'';
     }
     return;
@@ -50,7 +49,7 @@ public:
     }
   }
   bool contain(symbol_type s) const override {
-    return s < 256 || s > token::epsilon && s < token::endmark;
+    return s < 256 || (s > token::epsilon && s < token::endmark);
   }
   size_t size() const override {
     return 256 + token::endmark - token::epsilon - 1;

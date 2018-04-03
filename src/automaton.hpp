@@ -41,10 +41,12 @@ public:
   auto get_final_states() const -> auto const & { return final_states; }
   uint64_t get_start_state() const { return start_state; }
 
-  bool operator == (const finite_automaton &rhs) const {
-    return (this == &rhs) || (alphabet==rhs.alphabet &&states==rhs.states 
-	&&  start_state== rhs.start_state && final_states==rhs.final_states);
+  bool operator==(const finite_automaton &rhs) const {
+    return (this == &rhs) ||
+           (alphabet == rhs.alphabet && states == rhs.states &&
+            start_state == rhs.start_state && final_states == rhs.final_states);
   }
+
 protected:
   bool contain_final_state(const std::set<uint64_t> &T) const {
     for (const auto &f : final_states) {
@@ -72,7 +74,7 @@ public:
       : finite_automaton(states_, alphabet_name, start_state_, final_states_),
         transition_table(transition_table_) {}
 
-  bool equivalent_with(const DFA rhs);
+  bool equivalent_with(const DFA &rhs);
 
   bool simulate(symbol_string_view view) const {
     auto s = start_state;
@@ -125,11 +127,13 @@ public:
   // use subset construction
   DFA to_DFA() const;
 
-  bool operator == (const NFA &rhs) const {
-    return (this == &rhs) || (finite_automaton::operator==(rhs) &&  transition_table==rhs.transition_table);
+  bool operator==(const NFA &rhs) const {
+    return (this == &rhs) || (finite_automaton::operator==(rhs) &&
+                              transition_table == rhs.transition_table);
   }
+
 private:
-  std::set<uint64_t> epsilon_closure(const std::set<uint64_t> &T) const ;
+  std::set<uint64_t> epsilon_closure(const std::set<uint64_t> &T) const;
 
   std::set<uint64_t> move(const std::set<uint64_t> &T, symbol_type a) const {
     std::set<uint64_t> direct_reachable;

@@ -70,7 +70,7 @@ TEST_CASE("eliminate_left_recursion") {
   };
 
   CFG cfg("common_tokens", "S", productions);
-  cfg.eliminate_left_recursion({"S","A"});
+  cfg.eliminate_left_recursion({"S", "A"});
 
   std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
       reduced_productions;
