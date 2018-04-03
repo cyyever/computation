@@ -24,7 +24,6 @@ std::set<uint64_t> NFA::epsilon_closure(const std::set<uint64_t> &T) const {
         continue;
       }
       for (auto const &u : it->second) {
-        std::cout << "u=" << u << std::endl;
         if (res.count(u) == 0) {
           next_stack.insert(u);
           res.insert(u);
@@ -62,8 +61,6 @@ DFA NFA::to_DFA() const {
         subsets.push_back(res);
         flags.push_back(false);
         DFA_states.insert(j);
-
-        std::cout << "new_state=" << j << std::endl;
 
         if (contain_final_state(res)) {
           DFA_final_states.insert(j);

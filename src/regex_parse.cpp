@@ -88,7 +88,6 @@ regex::parse(symbol_string_view view) const {
   if (!parse_tree) {
     throw std::runtime_error("regex grammar is not LL(1) grammar");
   }
-  cfg.print(std::cout);
 
   using syntax_node_ptr = std::shared_ptr<regex::syntax_node>;
 
@@ -144,7 +143,6 @@ regex::parse(symbol_string_view view) const {
         case '\\':
           return self(self, root_parse_node->children[1], nullptr);
         default:
-          std::cout << "basic_node is " << first_terminal << std::endl;
           return std::make_shared<regex::basic_node>(first_terminal);
         }
       } else if (*ptr == "ASCII-char") {
