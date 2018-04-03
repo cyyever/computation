@@ -5,6 +5,8 @@
  * \date 2018-03-03
  */
 
+#include <algorithm>
+#include <iterator>
 #include <vector>
 
 #include "automaton.hpp"

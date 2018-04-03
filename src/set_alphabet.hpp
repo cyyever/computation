@@ -7,8 +7,10 @@
  */
 #pragma once
 
-#include "lang.hpp"
+#include <algorithm>
 #include <set>
+
+#include "lang.hpp"
 
 namespace cyy::lang {
 
