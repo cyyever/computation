@@ -1,14 +1,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.9)
 
-ENABLE_TESTING()
 INCLUDE(${CMAKE_CURRENT_LIST_DIR}/../cmake/test.cmake)
-
-IF (NOT WIN32)
-  add_compile_options("-g")
-#  add_compile_options("-fsanitize=leak")
-#  add_compile_options("-fsanitize=undefined")
-#  add_compile_options("-fsanitize=address")
-ENDIF()
 
 FIND_PACKAGE(doctest REQUIRED)
 
@@ -20,4 +12,3 @@ FOREACH(test_prog ${test_progs})
   TARGET_LINK_LIBRARIES(${test_prog} PRIVATE doctest::doctest)
   add_test_with_runtime_analysis(${test_prog} ${test_prog})
 ENDFOREACH()
-ADD_CUSTOM_TARGET(check ALL COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure -C $<CONFIGURATION> DEPENDS ${test_progs})
