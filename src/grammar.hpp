@@ -39,65 +39,12 @@ public:
 
     grammar_symbol_type grammar_symbol;
 
-    // nonterminal_type nonterminal{};
     std::vector<parse_node_ptr> children;
   };
-
-  /*
-  struct nonterminal_node : public parse_node{
-    nonterminal_node(nonterminal_type
-  nonterminal_):nonterminal(std::move(nonterminal_)){
-    }
-
-
-    nonterminal_type nonterminal{};
-    std::vector<parse_node_ptr> children;
-  };
-
-  struct terminal_node : public  parse_node{
-    terminal_type terminal{};
-  };
-  */
 
   CFG(const std::string &alphabet_name, const nonterminal_type &start_symbol_,
       std::map<nonterminal_type, std::vector<production_body_type>>
-          &productions_)
-      : alphabet(ALPHABET::get(alphabet_name)), start_symbol(start_symbol_),
-        productions(productions_) {
-
-    eliminate_useless_symbols();
-
-    bool has_start_symbol = false;
-    for (auto &[head, bodies] : productions) {
-      if (!has_start_symbol && head == start_symbol) {
-        has_start_symbol = true;
-      }
-
-      if (bodies.empty()) {
-        throw std::invalid_argument(std::string("no body for head ") + head);
-      }
-
-      for (auto const &body : bodies) {
-        if (body.empty()) {
-          throw std::invalid_argument(std::string("an empty body for head ") +
-                                      head);
-        }
-        for (auto const &symbol : body) {
-          auto terminal_ptr = std::get_if<terminal_type>(&symbol);
-          if (terminal_ptr && !alphabet->is_epsilon(*terminal_ptr) &&
-              !alphabet->contain(*terminal_ptr)) {
-            throw std::invalid_argument(std::string("invalid terminal ") +
-                                        std::to_string(*terminal_ptr));
-          }
-        }
-      }
-    }
-    if (!has_start_symbol) {
-      throw std::invalid_argument("no productions for start symbol");
-    }
-
-    normalize_productions();
-  }
+          &productions_);
 
   bool operator==(const CFG &rhs) const {
     return (this == &rhs) ||
@@ -120,10 +67,10 @@ public:
     }
   }
 
-  std::vector<nonterminal_type> get_heads() const {
-    std::vector<nonterminal_type> heads;
+  std::set<nonterminal_type> get_heads() const {
+    std::set<nonterminal_type> heads;
     for (auto const &[head, _] : productions) {
-      heads.push_back(head);
+      heads.insert(head);
     }
     return heads;
   }
@@ -159,6 +106,10 @@ public:
 
   void eliminate_left_recursion(std::vector<nonterminal_type> old_heads = {});
 
+  void eliminate_epsilon_productions();
+
+  void eliminate_single_productions();
+
   void left_factoring();
 
   bool recursive_descent_parse(symbol_string_view view) const;
@@ -170,6 +121,8 @@ public:
   bool is_LL1() const;
 
   parse_node_ptr LL1_parse(symbol_string_view view) const;
+
+  std::set<nonterminal_type> nullable() const;
 
 private:
   void print(std::ostream &os, const nonterminal_type &head,

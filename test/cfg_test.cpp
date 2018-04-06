@@ -88,7 +88,6 @@ TEST_CASE("eliminate_left_recursion") {
       {ALPHABET::get("common_tokens")->get_epsilon()},
   };
 
-  cfg.print(std::cout);
   CHECK(cfg == CFG("common_tokens", "S", reduced_productions));
 }
 
@@ -174,4 +173,41 @@ TEST_CASE("first_and_follow") {
   CHECK(follow_sets["T'"] == std::set<CFG::terminal_type>{'+', ')', endmarker});
   CHECK(follow_sets["F"] ==
         std::set<CFG::terminal_type>{'+', '*', ')', endmarker});
+}
+
+TEST_CASE("eliminate_epsilon_productions") {
+  std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
+      productions;
+  auto epsilon = ALPHABET::get("ab_set")->get_epsilon();
+  productions["S"] = {
+      {'a',"S",'b',"S"},
+      {'b',"S",'a',"S"},
+      {epsilon},
+  };
+    CFG cfg("ab_set", "S", productions) ;
+    SUBCASE("nullable") {
+      auto nullable_nonterminals=cfg.nullable();
+      CHECK(nullable_nonterminals==std::set<CFG::nonterminal_type>{"S"});
+    }
+    SUBCASE("eliminate_epsilon_productions") {
+      cfg.eliminate_epsilon_productions();
+      cfg.print(std::cout);
+  std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
+      new_productions;
+  new_productions["S"] = {
+      {'a',"S","S'"},
+      {'a',"S'"},
+      {'b',"S","S''"},
+      {'b',"S''"},
+  };
+  new_productions["S'"] = {
+      {'b',"S"},
+      {'b'},
+  };
+  new_productions["S''"] = {
+      {'a',"S"},
+      {'a'},
+  };
+    CHECK(cfg==CFG("ab_set", "S",new_productions)) ;
+    }
 }

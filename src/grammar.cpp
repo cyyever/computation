@@ -1,6 +1,13 @@
 /*!
  * \file grammar.cpp
  *
+ * \brief
+ * \author cyy
+ * \date 2018-04-06
+ */
+/*!
+ * \file grammar.cpp
+ *
  * \author cyy
  * \date 2018-03-04
  */
@@ -10,6 +17,45 @@
 
 namespace cyy::lang {
 
+CFG::CFG(
+    const std::string &alphabet_name, const nonterminal_type &start_symbol_,
+    std::map<nonterminal_type, std::vector<production_body_type>> &productions_)
+    : alphabet(ALPHABET::get(alphabet_name)), start_symbol(start_symbol_),
+      productions(productions_) {
+
+  eliminate_useless_symbols();
+
+  bool has_start_symbol = false;
+  for (auto &[head, bodies] : productions) {
+    if (!has_start_symbol && head == start_symbol) {
+      has_start_symbol = true;
+    }
+
+    if (bodies.empty()) {
+      throw std::invalid_argument(std::string("no body for head ") + head);
+    }
+
+    for (auto const &body : bodies) {
+      if (body.empty()) {
+        throw std::invalid_argument(std::string("an empty body for head ") +
+                                    head);
+      }
+      for (auto const &symbol : body) {
+        auto terminal_ptr = std::get_if<terminal_type>(&symbol);
+        if (terminal_ptr && !alphabet->is_epsilon(*terminal_ptr) &&
+            !alphabet->contain(*terminal_ptr)) {
+          throw std::invalid_argument(std::string("invalid terminal ") +
+                                      std::to_string(*terminal_ptr));
+        }
+      }
+    }
+  }
+  if (!has_start_symbol) {
+    throw std::invalid_argument("no productions for start symbol");
+  }
+
+  normalize_productions();
+}
 void CFG::eliminate_useless_symbols() {
   if (productions.empty()) {
     return;
@@ -180,6 +226,60 @@ void CFG::eliminate_left_recursion(std::vector<nonterminal_type> old_heads) {
       productions[old_heads[i]] = std::move(new_bodies);
     }
     eliminate_immediate_left_recursion(old_heads[i]);
+  }
+  normalize_productions();
+}
+
+void CFG::eliminate_epsilon_productions() {
+  auto nullable_nonterminals = nullable();
+
+  production_body_type epsilon_production{alphabet->get_epsilon()};
+
+  auto heads = get_heads();
+  while (!heads.empty()) {
+    auto checking_heads = std::move(heads);
+    heads.clear();
+    for (auto const &head : checking_heads) {
+
+      std::vector<production_body_type> new_bodies;
+      for (auto &body : productions[head]) {
+        if (body.empty()) {
+          continue;
+        }
+        if (body.size() == 1 && body == epsilon_production) {
+          body.clear();
+          continue;
+        }
+        for (size_t i = 0; i < body.size(); i++) {
+          auto ptr = std::get_if<nonterminal_type>(&(body[i]));
+          if (ptr && nullable_nonterminals.count(*ptr)) {
+            nonterminal_type new_head;
+            if (i + 1 < body.size()) {
+              new_head = get_new_head(head);
+              productions[new_head].emplace_back(
+                  std::move_iterator(body.begin() + i + 1),
+                  std::move_iterator(body.end()));
+              body.erase(body.begin() + i + 1, body.end());
+              body.push_back(new_head);
+              heads.insert(new_head);
+            }
+
+            if (i > 0) {
+              new_bodies.emplace_back(body.begin(), body.begin() + i);
+
+              if (!new_head.empty()) {
+                new_bodies.back().push_back(new_head);
+              }
+            }
+            break;
+          }
+        }
+      }
+      if (!new_bodies.empty()) {
+        productions[head].insert(productions[head].end(), new_bodies.begin(),
+                                 new_bodies.end());
+      }
+    }
   }
   normalize_productions();
 }
@@ -420,8 +520,10 @@ CFG::follow(const std::map<nonterminal_type, std::set<terminal_type>>
 
           const auto &nonterminal = std::get<nonterminal_type>(body[i]);
 
-          auto first_set = first({body.data() + i + 1, body.size() - i - 1},
-                                 nonterminal_first_sets);
+          auto first_set =
+              first(grammar_symbol_string_view{body.data() + i + 1,
+                                               body.size() - i - 1},
+                    nonterminal_first_sets);
 
           bool has_epsilon = false;
 
@@ -489,4 +591,62 @@ CFG NFA_to_CFG(const NFA &nfa) {
   return {nfa.get_alphabet().name(),
           state_to_nonterminal(nfa.get_start_state()), productions};
 }
+
+std::set<CFG::nonterminal_type> CFG::nullable() const {
+  std::set<CFG::nonterminal_type> res;
+  while (true) {
+    bool has_insert = false;
+
+    for (auto &[head, bodies] : productions) {
+      if (res.count(head)) {
+        continue;
+      }
+      for (auto const &body : bodies) {
+        bool body_nullable = true;
+        for (auto const &symbol : body) {
+          auto terminal_ptr = std::get_if<terminal_type>(&symbol);
+          if (terminal_ptr) {
+            if (!alphabet->is_epsilon(*terminal_ptr)) {
+              body_nullable = false;
+              break;
+            }
+            continue;
+          }
+
+          if (res.count(std::get<nonterminal_type>(symbol)) == 0) {
+            body_nullable = false;
+            break;
+          }
+        }
+        if (body_nullable) {
+          res.insert(head);
+          has_insert = true;
+          break;
+        }
+      }
+    }
+    if (!has_insert) {
+      break;
+    }
+  }
+  return res;
+}
+
+void CFG::eliminate_single_productions() {
+
+  std::multimap<nonterminal_type, nonterminal_type> single_productions;
+
+  for (auto &[head, bodies] : productions) {
+    for (auto const &body : bodies) {
+      if (body.size() != 1) {
+        continue;
+      }
+      auto ptr = std::get_if<nonterminal_type>(&body.front());
+      if (ptr && *ptr != head) {
+        single_productions.emplace(head, *ptr);
+      }
+    }
+  }
+}
+
 } // namespace cyy::lang
