@@ -41,7 +41,7 @@ NFA regex::epsilon_node::to_NFA(const ALPHABET &alphabet,
 }
 
 void regex::epsilon_node::assign_position(
-    std::map<uint64_t, symbol_type> &position_to_symbol [[maybe_unused]]) {}
+    std::map<uint64_t, symbol_type> &position_to_symbol[[maybe_unused]]) {}
 
 std::set<uint64_t> regex::epsilon_node::first_pos() const { return {}; }
 std::set<uint64_t> regex::epsilon_node::last_pos() const { return {}; }
@@ -78,7 +78,6 @@ NFA regex::union_node::to_NFA(const ALPHABET &alphabet,
     left_transition_table[{right_final_state, alphabet.get_epsilon()}] = {
         final_state};
   }
-
 
   return {left_states,
           alphabet.name(),
@@ -161,7 +160,7 @@ std::map<uint64_t, std::set<uint64_t>> regex::concat_node::follow_pos() const {
     return res;
   }
   for (auto pos : left_node->last_pos()) {
-    res[pos].insert(tmp.begin(),tmp.end());
+    res[pos].insert(tmp.begin(), tmp.end());
   }
   return res;
 }
@@ -206,13 +205,13 @@ std::set<uint64_t> regex::kleene_closure_node::last_pos() const {
 
 std::map<uint64_t, std::set<uint64_t>>
 regex::kleene_closure_node::follow_pos() const {
-  auto res= inner_node->follow_pos();
+  auto res = inner_node->follow_pos();
   auto tmp = inner_node->first_pos();
   if (tmp.empty()) {
     return res;
   }
   for (auto pos : inner_node->last_pos()) {
-    res[pos].insert(tmp.begin(),tmp.end());
+    res[pos].insert(tmp.begin(), tmp.end());
   }
   return res;
 }

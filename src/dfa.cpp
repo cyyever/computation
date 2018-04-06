@@ -100,7 +100,7 @@ DFA DFA::minimize() const {
       }
     }
 
-    bool has_new_group=false;
+    bool has_new_group = false;
     decltype(groups) new_groups;
     for (auto const &group : groups) {
       if (group.size() <= 1) {
@@ -113,7 +113,7 @@ DFA DFA::minimize() const {
       auto it = group.begin();
       sub_groups.push_back({*it});
       it++;
-      for(;it != group.end();it++) {
+      for (; it != group.end(); it++) {
         auto state = *it;
         bool in_new_group = true;
         for (auto &sub_group : sub_groups) {
@@ -131,18 +131,19 @@ DFA DFA::minimize() const {
           }
         }
         if (in_new_group) {
-	  has_new_group=true;
+          has_new_group = true;
           sub_groups.push_back({state});
         }
       }
-      new_groups.insert(new_groups.end(),std::move_iterator( sub_groups.begin()),
-	 
-	 std::move_iterator( sub_groups.end()));
+      new_groups.insert(new_groups.end(),
+                        std::move_iterator(sub_groups.begin()),
+
+                        std::move_iterator(sub_groups.end()));
     }
     if (!has_new_group) {
       break;
     }
-    groups=std::move(new_groups);
+    groups = std::move(new_groups);
   }
   uint64_t minimize_DFA_start_state{};
   std::set<uint64_t> minimize_DFA_states;

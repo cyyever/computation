@@ -34,7 +34,7 @@ public:
   struct parse_node;
   using parse_node_ptr = std::shared_ptr<parse_node>;
   struct parse_node {
-    parse_node(grammar_symbol_type grammar_symbol_)
+    explicit parse_node(grammar_symbol_type grammar_symbol_)
         : grammar_symbol(std::move(grammar_symbol_)) {}
 
     grammar_symbol_type grammar_symbol;
@@ -110,6 +110,9 @@ public:
 
   void eliminate_single_productions();
 
+  //! brief covert grammar to Chomsky normal form
+  void to_CNF();
+
   void left_factoring();
 
   bool recursive_descent_parse(symbol_string_view view) const;
@@ -119,6 +122,7 @@ public:
   std::map<nonterminal_type, std::set<terminal_type>> follow() const;
 
   bool is_LL1() const;
+  bool is_CNF() const;
 
   parse_node_ptr LL1_parse(symbol_string_view view) const;
 
@@ -142,13 +146,24 @@ private:
     return;
   }
 
-  nonterminal_type get_new_head(nonterminal_type head) {
-    head.push_back('\'');
+  nonterminal_type get_new_head(nonterminal_type advise_head) const {
+    advise_head.push_back('\'');
 
-    while (productions.find(head) != productions.end()) {
-      head.push_back('\'');
+    while (productions.find(advise_head) != productions.end()) {
+      advise_head.push_back('\'');
     }
-    return head;
+    return advise_head;
+  }
+
+  static nonterminal_type
+  get_new_head(nonterminal_type advise_head,
+               const std::set<nonterminal_type> &heads) {
+    advise_head.push_back('\'');
+
+    while (heads.count(advise_head)) {
+      advise_head.push_back('\'');
+    }
+    return advise_head;
   }
 
   bool is_epsilon(const grammar_symbol_type &grammal_symbol) const {

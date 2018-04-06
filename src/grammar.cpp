@@ -738,4 +738,82 @@ void CFG::eliminate_single_productions() {
   normalize_productions();
 }
 
+void CFG::to_CNF() {
+  eliminate_single_productions();
+
+  std::map<terminal_type, nonterminal_type> terminal_productions;
+  auto heads = get_heads();
+
+  while (true) {
+    decltype(productions) new_productions;
+    for (auto &[head, bodies] : productions) {
+      for (auto &body : bodies) {
+        if (body.size() == 1) {
+          continue;
+        }
+
+        for (auto &symbol : body) {
+          auto terminal_ptr = std::get_if<terminal_type>(&symbol);
+          if (!terminal_ptr) {
+            continue;
+          }
+          auto it = terminal_productions.find(*terminal_ptr);
+          if (it != terminal_productions.end()) {
+            symbol = it->second;
+          } else {
+            auto new_head = get_new_head("Z", heads);
+            heads.insert(new_head);
+            terminal_productions[*terminal_ptr] = new_head;
+            new_productions[new_head].emplace_back(
+                production_body_type{*terminal_ptr});
+            symbol = new_head;
+          }
+        }
+
+        if (body.size() == 2) {
+          continue;
+        }
+
+        auto new_head = get_new_head(head, heads);
+        heads.insert(new_head);
+
+        new_productions[new_head].emplace_back(
+            std::move_iterator(body.begin() + 1),
+            std::move_iterator(body.end()));
+        body.resize(1);
+        body.emplace_back(new_head);
+      }
+    }
+
+    if (!new_productions.empty()) {
+      productions.merge(new_productions);
+    } else {
+      break;
+    }
+  }
+  normalize_productions();
+}
+
+bool CFG::is_CNF() const {
+  for (auto &[head, bodies] : productions) {
+    for (auto &body : bodies) {
+      if (body.size() == 1) {
+        if (!std::holds_alternative<terminal_type>(body[0])) {
+
+          return false;
+        }
+      } else if (body.size() == 2) {
+
+        if (!std::holds_alternative<nonterminal_type>(body[0])) {
+          return false;
+        }
+        if (!std::holds_alternative<nonterminal_type>(body[1])) {
+          return false;
+        }
+      }
+    }
+  }
+  return true;
+}
+
 } // namespace cyy::lang

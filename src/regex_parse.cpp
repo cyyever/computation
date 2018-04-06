@@ -111,11 +111,12 @@ regex::parse(symbol_string_view view) const {
                           self(self, root_parse_node->children[1], nullptr)));
         }
         return left_node;
-
-      } if (*ptr == "rterm") {
+      }
+      if (*ptr == "rterm") {
         left_node = self(self, root_parse_node->children[0], nullptr);
         return self(self, root_parse_node->children[1], left_node);
-      } if (*ptr == "rterm'") {
+      }
+      if (*ptr == "rterm'") {
         if (root_parse_node->children.size() == 2) { // rterm' -> rfactor rterm'
           return self(self, root_parse_node->children[1],
                       std::make_shared<regex::concat_node>(

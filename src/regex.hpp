@@ -30,7 +30,7 @@ public:
 
   class epsilon_node : public syntax_node {
   public:
-    epsilon_node() {}
+    explicit epsilon_node() {}
     NFA to_NFA(const ALPHABET &alphabet, uint64_t start_state) const override;
     bool nullable() const override { return true; }
     void assign_position(
@@ -44,7 +44,7 @@ public:
 
   class basic_node : public syntax_node {
   public:
-    basic_node(symbol_type symbol_) : symbol(symbol_) {}
+    explicit basic_node(symbol_type symbol_) : symbol(symbol_) {}
     NFA to_NFA(const ALPHABET &alphabet, uint64_t start_state) const override;
     bool nullable() const override { return false; }
     void assign_position(
@@ -61,8 +61,8 @@ public:
   };
   class union_node : public syntax_node {
   public:
-    union_node(const std::shared_ptr<syntax_node> &left_node_,
-               const std::shared_ptr<syntax_node> &right_node_)
+    explicit union_node(const std::shared_ptr<syntax_node> &left_node_,
+                        const std::shared_ptr<syntax_node> &right_node_)
         : left_node(left_node_), right_node(right_node_) {}
     NFA to_NFA(const ALPHABET &alphabet, uint64_t start_state) const override;
     bool nullable() const override {
@@ -79,8 +79,8 @@ public:
   };
   class concat_node : public syntax_node {
   public:
-    concat_node(const std::shared_ptr<syntax_node> &left_node_,
-                const std::shared_ptr<syntax_node> &right_node_)
+    explicit concat_node(const std::shared_ptr<syntax_node> &left_node_,
+                         const std::shared_ptr<syntax_node> &right_node_)
         : left_node(left_node_), right_node(right_node_) {}
     NFA to_NFA(const ALPHABET &alphabet, uint64_t start_state) const override;
     bool nullable() const override {
@@ -97,7 +97,8 @@ public:
   };
   class kleene_closure_node : public syntax_node {
   public:
-    kleene_closure_node(const std::shared_ptr<syntax_node> &inner_node_)
+    explicit kleene_closure_node(
+        const std::shared_ptr<syntax_node> &inner_node_)
         : inner_node(inner_node_) {}
     NFA to_NFA(const ALPHABET &alphabet, uint64_t start_state) const override;
     bool nullable() const override { return true; }
