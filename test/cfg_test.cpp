@@ -222,5 +222,30 @@ TEST_CASE("eliminate_single_productions") {
   CFG cfg("common_tokens", "E", productions);
 
   cfg.eliminate_single_productions();
-  cfg.print(std::cout);
+
+  std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
+      new_productions;
+
+  new_productions["E"] = {
+      {"E", "E'"},
+      {"F", "E'"},
+      {"T", "E'"},
+  };
+  new_productions["E'"] = {
+      {'+', "F"},
+      {'+', "T"},
+  };
+  new_productions["F"] = {
+      {'(', "F", "F'"},
+      {'(', "E", "F'"},
+      {'(', "T", "F'"},
+      {id},
+  };
+  new_productions["F'"] = {{')'}};
+  new_productions["T"] = {
+      {"F", "T'"},
+      {"T", "T'"},
+  };
+  new_productions["T'"] = {{'*', "F"}};
+  CHECK(cfg == CFG("common_tokens", "E", new_productions));
 }
