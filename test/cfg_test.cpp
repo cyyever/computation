@@ -135,7 +135,7 @@ TEST_CASE("first_and_follow") {
       productions;
   auto epsilon = ALPHABET::get("common_tokens")->get_epsilon();
   auto endmarker = ALPHABET::get("common_tokens")->get_endmarker();
-  auto id=static_cast<CFG::terminal_type>(common_tokens::token::id);
+  auto id = static_cast<CFG::terminal_type>(common_tokens::token::id);
   productions["E"] = {
       {"T", "E'"},
   };
@@ -157,12 +157,9 @@ TEST_CASE("first_and_follow") {
   CFG cfg("common_tokens", "E", productions);
   auto first_sets = cfg.first();
 
-  CHECK(first_sets["F"] ==
-        std::set<CFG::terminal_type>{'(', id});
-  CHECK(first_sets["T"] ==
-        std::set<CFG::terminal_type>{'(', id});
-  CHECK(first_sets["E"] ==
-        std::set<CFG::terminal_type>{'(', id});
+  CHECK(first_sets["F"] == std::set<CFG::terminal_type>{'(', id});
+  CHECK(first_sets["T"] == std::set<CFG::terminal_type>{'(', id});
+  CHECK(first_sets["E"] == std::set<CFG::terminal_type>{'(', id});
   CHECK(first_sets["E'"] == std::set<CFG::terminal_type>{'+', epsilon});
   CHECK(first_sets["T'"] == std::set<CFG::terminal_type>{'*', epsilon});
   auto follow_sets = cfg.follow();
@@ -180,34 +177,50 @@ TEST_CASE("eliminate_epsilon_productions") {
       productions;
   auto epsilon = ALPHABET::get("ab_set")->get_epsilon();
   productions["S"] = {
-      {'a',"S",'b',"S"},
-      {'b',"S",'a',"S"},
+      {'a', "S", 'b', "S"},
+      {'b', "S", 'a', "S"},
       {epsilon},
   };
-    CFG cfg("ab_set", "S", productions) ;
-    SUBCASE("nullable") {
-      auto nullable_nonterminals=cfg.nullable();
-      CHECK(nullable_nonterminals==std::set<CFG::nonterminal_type>{"S"});
-    }
-    SUBCASE("eliminate_epsilon_productions") {
-      cfg.eliminate_epsilon_productions();
-      cfg.print(std::cout);
+  CFG cfg("ab_set", "S", productions);
+  SUBCASE("nullable") {
+    auto nullable_nonterminals = cfg.nullable();
+    CHECK(nullable_nonterminals == std::set<CFG::nonterminal_type>{"S"});
+  }
+  SUBCASE("eliminate_epsilon_productions") {
+    cfg.eliminate_epsilon_productions();
+    std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
+        new_productions;
+    new_productions["S"] = {
+        {'a', "S", "S'"},
+        {'a', "S'"},
+        {'b', "S", "S''"},
+        {'b', "S''"},
+    };
+    new_productions["S'"] = {
+        {'b', "S"},
+        {'b'},
+    };
+    new_productions["S''"] = {
+        {'a', "S"},
+        {'a'},
+    };
+    CHECK(cfg == CFG("ab_set", "S", new_productions));
+  }
+}
+
+TEST_CASE("eliminate_single_productions") {
+
   std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
-      new_productions;
-  new_productions["S"] = {
-      {'a',"S","S'"},
-      {'a',"S'"},
-      {'b',"S","S''"},
-      {'b',"S''"},
+      productions;
+  auto id = static_cast<CFG::terminal_type>(common_tokens::token::id);
+  productions["E"] = {{"E", '+', "T"}, {"T"}};
+  productions["T"] = {{"T", '*', "F"}, {"F"}};
+  productions["F"] = {
+      {'(', "E", ')'}, {id} // i for id
   };
-  new_productions["S'"] = {
-      {'b',"S"},
-      {'b'},
-  };
-  new_productions["S''"] = {
-      {'a',"S"},
-      {'a'},
-  };
-    CHECK(cfg==CFG("ab_set", "S",new_productions)) ;
-    }
+
+  CFG cfg("common_tokens", "E", productions);
+
+  cfg.eliminate_single_productions();
+  cfg.print(std::cout);
 }
