@@ -16,7 +16,7 @@ namespace cyy::lang {
 
 class set_alphabet final : public ALPHABET {
 public:
-  set_alphabet(const std::set<symbol_type> &explicit_set_)
+  explicit set_alphabet(const std::set<symbol_type> &explicit_set_)
       : explicit_set(explicit_set_) {
     if (explicit_set.empty()) {
       throw std::invalid_argument("explicit set is empty");

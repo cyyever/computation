@@ -84,13 +84,13 @@ CFG::parse_node_ptr CFG::LL1_parse(symbol_string_view view) const {
             if (it != follow_sets.end()) {
               for (auto const &follow_terminal : it->second) {
 
-                auto [it, has_inserted] = parsing_table.emplace(
+                auto [it2, has_inserted] = parsing_table.emplace(
                     std::pair{follow_terminal, head}, body);
                 // not LL1
                 if (!has_inserted) {
                   puts("not LL1 grammar");
 
-                  print(std::cout, head, it->second);
+                  print(std::cout, head, it2->second);
 
                   return {};
                 }

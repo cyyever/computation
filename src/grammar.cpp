@@ -795,7 +795,7 @@ void CFG::to_CNF() {
 }
 
 bool CFG::is_CNF() const {
-  for (auto &[head, bodies] : productions) {
+  for (auto &[_, bodies] : productions) {
     for (auto &body : bodies) {
       if (body.size() == 1) {
         if (!std::holds_alternative<terminal_type>(body[0])) {
