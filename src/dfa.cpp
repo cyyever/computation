@@ -76,7 +76,6 @@ bool DFA::equivalent_with(const DFA &rhs) {
   return true;
 }
 
-
 DFA DFA::minimize() const {
   std::set<uint64_t> non_final_states;
   std::set_difference(states.begin(), states.end(), final_states.begin(),
@@ -112,8 +111,9 @@ DFA DFA::minimize() const {
         for (auto &sub_group : sub_groups) {
           bool in_group = true;
           alphabet->foreach_symbol([&](auto const &a) {
-            if (in_group && state_location[move(*(sub_group.begin()), a).value()] !=
-                                state_location[move(state, a).value()]) {
+            if (in_group &&
+                state_location[move(*(sub_group.begin()), a).value()] !=
+                    state_location[move(state, a).value()]) {
               in_group = false;
             }
           });

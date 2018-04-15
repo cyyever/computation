@@ -10,6 +10,20 @@
 #include "automaton.hpp"
 
 namespace cyy::lang {
+
+std::set<uint64_t> NFA::move(const std::set<uint64_t> &T, symbol_type a) const {
+  std::set<uint64_t> direct_reachable;
+
+  for (const auto &s : T) {
+    auto it = transition_table.find({s, a});
+    if (it != transition_table.end()) {
+      direct_reachable.insert(it->second.begin(), it->second.end());
+    }
+  }
+
+  return epsilon_closure(direct_reachable);
+}
+
 std::set<uint64_t> NFA::epsilon_closure(const std::set<uint64_t> &T) const {
 
   auto stack = T;

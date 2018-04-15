@@ -9,8 +9,8 @@
 
 #include "lang.hpp"
 #include <map>
-#include <set>
 #include <optional>
+#include <set>
 #include <string>
 
 namespace cyy::lang {
@@ -48,7 +48,6 @@ public:
             start_state == rhs.start_state && final_states == rhs.final_states);
   }
 
-protected:
   bool contain_final_state(const std::set<uint64_t> &T) const {
     for (const auto &f : final_states) {
       if (T.count(f) == 1) {
@@ -82,10 +81,10 @@ public:
 
     for (auto const &symbol : view) {
       auto opt_res = move(s, symbol);
-      if(!opt_res) {
-	return false;
+      if (!opt_res) {
+        return false;
       }
-      s=opt_res.value();
+      s = opt_res.value();
     }
     return contain_final_state({s});
   }
@@ -93,10 +92,10 @@ public:
   DFA minimize() const;
 
 private:
-  std::optional< uint64_t> move(uint64_t s, symbol_type a) const {
+  std::optional<uint64_t> move(uint64_t s, symbol_type a) const {
     auto it = transition_table.find({s, a});
     if (it != transition_table.end()) {
-      return { it->second};
+      return {it->second};
     }
     return {};
   }
@@ -115,17 +114,17 @@ public:
       : finite_automaton(states_, alphabet_name, start_state_, final_states_),
         transition_table(transition_table_) {}
 
-  void add_sub_NFA(NFA rhs,bool add_epsilon_transition) {
-    if(alphabet->name()!=rhs.alphabet->name()) {
+  void add_sub_NFA(NFA rhs, bool add_epsilon_transition) {
+    if (alphabet->name() != rhs.alphabet->name()) {
       throw std::runtime_error("sub NFA has different alphabet name");
     }
 
     states.merge(rhs.states);
     transition_table.merge(rhs.transition_table);
     final_states.merge(rhs.final_states);
-    if(add_epsilon_transition) {
-    auto epsilon = alphabet->get_epsilon();
-    transition_table[{start_state,epsilon}].insert(rhs.start_state);
+    if (add_epsilon_transition) {
+      auto epsilon = alphabet->get_epsilon();
+      transition_table[{start_state, epsilon}].insert(rhs.start_state);
     }
   }
 
@@ -136,23 +135,25 @@ public:
                                     std::to_string(final_state));
       }
     }
-    final_states=final_states_;
+    final_states = final_states_;
   }
 
   auto get_transition_table() const -> auto const & { return transition_table; }
   auto get_transition_table() -> auto & { return transition_table; }
 
-  bool simulate(symbol_string_view view) const {
-    auto s = epsilon_closure({start_state});
-    for (auto a : s) {
-      std::cout << "a=" << a << std::endl;
-    }
+  auto get_start_epsilon_closure() const -> auto {
+    return epsilon_closure({start_state});
+  }
 
+  bool simulate(symbol_string_view view) const {
+    auto s = get_start_epsilon_closure();
     for (auto const &symbol : view) {
       s = move(s, symbol);
     }
     return contain_final_state(s);
   }
+
+  std::set<uint64_t> move(const std::set<uint64_t> &T, symbol_type a) const;
 
   // use subset construction
   DFA to_DFA() const;
@@ -164,19 +165,6 @@ public:
 
 private:
   std::set<uint64_t> epsilon_closure(const std::set<uint64_t> &T) const;
-
-  std::set<uint64_t> move(const std::set<uint64_t> &T, symbol_type a) const {
-    std::set<uint64_t> direct_reachable;
-
-    for (const auto &s : T) {
-      auto it = transition_table.find({s, a});
-      if (it != transition_table.end()) {
-        direct_reachable.insert(it->second.begin(), it->second.end());
-      }
-    }
-
-    return epsilon_closure(direct_reachable);
-  }
 
 private:
   std::map<std::pair<uint64_t, symbol_type>, std::set<uint64_t>>

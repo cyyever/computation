@@ -41,7 +41,7 @@ NFA regex::epsilon_node::to_NFA(const ALPHABET &alphabet,
 }
 
 void regex::epsilon_node::assign_position(
-    std::map<uint64_t, symbol_type> &position_to_symbol[[maybe_unused]]) {}
+    std::map<uint64_t, symbol_type> &position_to_symbol [[maybe_unused]]) {}
 
 std::set<uint64_t> regex::epsilon_node::first_pos() const { return {}; }
 std::set<uint64_t> regex::epsilon_node::last_pos() const { return {}; }
@@ -56,13 +56,12 @@ NFA regex::union_node::to_NFA(const ALPHABET &alphabet,
   auto &right_final_states = right_NFA.get_final_states();
   auto final_state = (*right_final_states.begin()) + 1;
 
-  NFA nfa({start_state,final_state},alphabet.name(),start_state,{},{});
-  nfa.add_sub_NFA(left_NFA,true);
-  nfa.add_sub_NFA(right_NFA,true);
+  NFA nfa({start_state, final_state}, alphabet.name(), start_state, {}, {});
+  nfa.add_sub_NFA(left_NFA, true);
+  nfa.add_sub_NFA(right_NFA, true);
 
-  for(auto const &s:nfa.get_final_states()) {
-    nfa.get_transition_table()[{s, alphabet.get_epsilon()}] = {
-        final_state};
+  for (auto const &s : nfa.get_final_states()) {
+    nfa.get_transition_table()[{s, alphabet.get_epsilon()}] = {final_state};
   }
   nfa.replace_final_states({final_state});
   return nfa;
@@ -96,10 +95,10 @@ NFA regex::concat_node::to_NFA(const ALPHABET &alphabet,
   auto left_NFA = left_node->to_NFA(alphabet, start_state);
   const auto &left_final_states = left_NFA.get_final_states();
 
-  auto right_NFA_start_state= *(left_final_states.begin());
+  auto right_NFA_start_state = *(left_final_states.begin());
   auto right_NFA = right_node->to_NFA(alphabet, right_NFA_start_state);
-  auto right_final_states =right_NFA.get_final_states();
-  left_NFA.add_sub_NFA(right_NFA,false);
+  auto right_final_states = right_NFA.get_final_states();
+  left_NFA.add_sub_NFA(right_NFA, false);
   left_NFA.replace_final_states(right_final_states);
 
   return left_NFA;
@@ -150,11 +149,11 @@ NFA regex::kleene_closure_node::to_NFA(const ALPHABET &alphabet,
   auto inner_final_states = inner_NFA.get_final_states();
   auto final_state = (*inner_final_states.begin()) + 1;
 
-  NFA nfa({start_state,final_state},alphabet.name(),start_state,{},{});
-  nfa.add_sub_NFA(inner_NFA,true);
+  NFA nfa({start_state, final_state}, alphabet.name(), start_state, {}, {});
+  nfa.add_sub_NFA(inner_NFA, true);
 
   nfa.get_transition_table()[{start_state, alphabet.get_epsilon()}].insert(
-       final_state);
+      final_state);
 
   for (auto const &inner_final_state : inner_final_states) {
     nfa.get_transition_table()[{inner_final_state, alphabet.get_epsilon()}] = {
