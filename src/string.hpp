@@ -71,18 +71,15 @@ Aho_Corasick(const std::vector<std::basic_string_view<CharT>> &words,
       size_t cur_state = 0;
       for (auto const &c : word) {
         auto [it, has_emplaced] = trie[cur_state].try_emplace(c, next_state);
+        cur_state = it->second;
         if (has_emplaced) {
           trie.emplace_back();
           next_state++;
         }
-        // std::cout<<"cur_state="<<cur_state<<std::endl;
-        cur_state = it->second;
       }
-      std::cout << "cur_state=" << cur_state << std::endl;
       final_states.emplace(cur_state, word.size());
     }
 
-    // return {};
     if (next_state == 1) {
       return {};
     }

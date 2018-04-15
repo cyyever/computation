@@ -23,7 +23,7 @@ void regex::basic_node::assign_position(
   if (position_to_symbol.empty()) {
     position = 1;
   } else {
-    position = position_to_symbol.end()->first + 1;
+    position = position_to_symbol.rbegin()->first + 1;
   }
   position_to_symbol.insert({position, symbol});
 }

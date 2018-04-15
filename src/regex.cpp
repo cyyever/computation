@@ -15,7 +15,7 @@ DFA regex::to_DFA() const {
   std::map<uint64_t, symbol_type> position_to_symbol;
   syntax_tree->assign_position(position_to_symbol);
   // endmarker
-  auto final_position = position_to_symbol.end()->first + 1;
+  auto final_position = position_to_symbol.rbegin()->first + 1;
   auto follow_pos_table = syntax_tree->follow_pos();
   for (auto pos : syntax_tree->last_pos()) {
     follow_pos_table.insert({pos, {final_position}});
