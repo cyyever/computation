@@ -15,22 +15,18 @@ namespace cyy::lang {
 bool DFA::equivalent_with(const DFA &rhs) {
 
   if (alphabet != rhs.alphabet) {
-    puts("aa");
     return false;
   }
   if (states.size() != rhs.states.size()) {
     std::cout << "size1 " << states.size() << " size2=" << rhs.states.size()
               << std::endl;
-    puts("bb");
     return false;
   }
   if (final_states.size() != rhs.final_states.size()) {
-    puts("cc");
     return false;
   }
 
   if (transition_table.size() != rhs.transition_table.size()) {
-    puts("dd");
     return false;
   }
 
@@ -49,7 +45,6 @@ bool DFA::equivalent_with(const DFA &rhs) {
 
       auto it2 = rhs.transition_table.find({it->second, my_next_symbol});
       if (it2 == rhs.transition_table.end()) {
-        puts("ff");
         return false;
       }
       auto rhs_next_state = it2->second;
@@ -60,7 +55,6 @@ bool DFA::equivalent_with(const DFA &rhs) {
         new_mapping = true;
       } else {
         if (it3->second != rhs_next_state) {
-          puts("zz");
           return false;
         }
       }
@@ -71,18 +65,17 @@ bool DFA::equivalent_with(const DFA &rhs) {
     }
   }
   if (state_map.size() != states.size()) {
-    puts("xx");
     return false;
   }
 
   for (auto const &final_state : final_states) {
     if (!rhs.final_states.count(state_map[final_state])) {
-      puts("ifdis");
       return false;
     }
   }
   return true;
 }
+
 
 DFA DFA::minimize() const {
   std::set<uint64_t> non_final_states;
@@ -119,8 +112,8 @@ DFA DFA::minimize() const {
         for (auto &sub_group : sub_groups) {
           bool in_group = true;
           alphabet->foreach_symbol([&](auto const &a) {
-            if (in_group && state_location[move(*(sub_group.begin()), a)] !=
-                                state_location[move(state, a)]) {
+            if (in_group && state_location[move(*(sub_group.begin()), a).value()] !=
+                                state_location[move(state, a).value()]) {
               in_group = false;
             }
           });
@@ -164,7 +157,7 @@ DFA DFA::minimize() const {
     }
 
     alphabet->foreach_symbol([&](auto const &a) {
-      auto next_state = move(*(groups[i].begin()), a);
+      auto next_state = move(*(groups[i].begin()), a).value();
 
       minimize_DFA_transition_table[{i, a}] = state_location[next_state];
     });

@@ -10,6 +10,7 @@
 #include "lang.hpp"
 #include <map>
 #include <set>
+#include <optional>
 #include <string>
 
 namespace cyy::lang {
@@ -80,7 +81,11 @@ public:
     auto s = start_state;
 
     for (auto const &symbol : view) {
-      s = move(s, symbol);
+      auto opt_res = move(s, symbol);
+      if(!opt_res) {
+	return false;
+      }
+      s=opt_res.value();
     }
     return contain_final_state({s});
   }
@@ -88,12 +93,12 @@ public:
   DFA minimize() const;
 
 private:
-  uint64_t move(uint64_t s, symbol_type a) const {
+  std::optional< uint64_t> move(uint64_t s, symbol_type a) const {
     auto it = transition_table.find({s, a});
     if (it != transition_table.end()) {
-      return it->second;
+      return { it->second};
     }
-    return alphabet->get_epsilon();
+    return {};
   }
 
 private:
