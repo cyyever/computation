@@ -118,7 +118,7 @@ public:
     syntax_tree = parse(view);
   }
 
-  NFA to_NFA() const { return syntax_tree->to_NFA(*alphabet, 0); }
+  NFA to_NFA(uint64_t start_state=0) const { return syntax_tree->to_NFA(*alphabet, start_state); }
 
   //基于McNaughton-Yamada算法
   DFA to_DFA() const;

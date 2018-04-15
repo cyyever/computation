@@ -57,8 +57,8 @@ NFA regex::union_node::to_NFA(const ALPHABET &alphabet,
   auto final_state = (*right_final_states.begin()) + 1;
 
   NFA nfa({start_state,final_state},alphabet.name(),start_state,{},{});
-  nfa.add_sub_NFA(left_NFA);
-  nfa.add_sub_NFA(right_NFA);
+  nfa.add_sub_NFA(left_NFA,true);
+  nfa.add_sub_NFA(right_NFA,true);
 
   for(auto const &s:nfa.get_final_states()) {
     nfa.get_transition_table()[{s, alphabet.get_epsilon()}] = {
@@ -94,19 +94,15 @@ NFA regex::concat_node::to_NFA(const ALPHABET &alphabet,
                                uint64_t start_state) const {
 
   auto left_NFA = left_node->to_NFA(alphabet, start_state);
-  auto left_states = left_NFA.get_states();
   const auto &left_final_states = left_NFA.get_final_states();
-  auto left_transition_table = left_NFA.get_transition_table();
 
-  auto right_NFA = right_node->to_NFA(alphabet, *(left_final_states.begin()));
-  auto right_states = right_NFA.get_states();
-  auto right_transition_table = right_NFA.get_transition_table();
+  auto right_NFA_start_state= *(left_final_states.begin());
+  auto right_NFA = right_node->to_NFA(alphabet, right_NFA_start_state);
+  auto right_final_states =right_NFA.get_final_states();
+  left_NFA.add_sub_NFA(right_NFA,false);
+  left_NFA.replace_final_states(right_final_states);
 
-  left_states.merge(right_states);
-  left_transition_table.merge(right_transition_table);
-
-  return {left_states, alphabet.name(), start_state, left_transition_table,
-          right_NFA.get_final_states()};
+  return left_NFA;
 }
 
 void regex::concat_node::assign_position(
@@ -151,26 +147,22 @@ NFA regex::kleene_closure_node::to_NFA(const ALPHABET &alphabet,
                                        uint64_t start_state) const {
   auto inner_start_state = start_state + 1;
   auto inner_NFA = inner_node->to_NFA(alphabet, inner_start_state);
-  auto inner_states = inner_NFA.get_states();
   auto inner_final_states = inner_NFA.get_final_states();
-  auto inner_transition_table = inner_NFA.get_transition_table();
   auto final_state = (*inner_final_states.begin()) + 1;
-  inner_states.insert(start_state);
 
-  inner_states.insert(final_state);
+  NFA nfa({start_state,final_state},alphabet.name(),start_state,{},{});
+  nfa.add_sub_NFA(inner_NFA,true);
 
-  inner_transition_table[{start_state, alphabet.get_epsilon()}] = {
-      inner_start_state, final_state};
+  nfa.get_transition_table()[{start_state, alphabet.get_epsilon()}].insert(
+       final_state);
+
   for (auto const &inner_final_state : inner_final_states) {
-    inner_transition_table[{inner_final_state, alphabet.get_epsilon()}] = {
+    nfa.get_transition_table()[{inner_final_state, alphabet.get_epsilon()}] = {
         inner_start_state, final_state};
   }
 
-  return {inner_states,
-          alphabet.name(),
-          start_state,
-          inner_transition_table,
-          {final_state}};
+  nfa.replace_final_states({final_state});
+  return nfa;
 }
 
 void regex::kleene_closure_node::assign_position(

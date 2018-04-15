@@ -12,6 +12,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <sstream>
 #include <string_view>
 
 namespace cyy::lang {
@@ -45,5 +46,6 @@ private:
 
 using symbol_string = std::basic_string<symbol_type>;
 using symbol_string_view = std::basic_string_view<symbol_type>;
+using symbol_istringstream = std::basic_istringstream<symbol_type>;
 
 } // namespace cyy::lang

@@ -115,7 +115,7 @@ public:
       : finite_automaton(states_, alphabet_name, start_state_, final_states_),
         transition_table(transition_table_) {}
 
-  void add_sub_NFA(NFA rhs) {
+  void add_sub_NFA(NFA rhs,bool add_epsilon_transition) {
     if(alphabet->name()!=rhs.alphabet->name()) {
       throw std::runtime_error("sub NFA has different alphabet name");
     }
@@ -123,8 +123,10 @@ public:
     states.merge(rhs.states);
     transition_table.merge(rhs.transition_table);
     final_states.merge(rhs.final_states);
+    if(add_epsilon_transition) {
     auto epsilon = alphabet->get_epsilon();
     transition_table[{start_state,epsilon}].insert(rhs.start_state);
+    }
   }
 
   void replace_final_states(const std::set<uint64_t> &final_states_) {
