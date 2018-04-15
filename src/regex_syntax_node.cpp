@@ -49,41 +49,23 @@ std::set<uint64_t> regex::epsilon_node::last_pos() const { return {}; }
 NFA regex::union_node::to_NFA(const ALPHABET &alphabet,
                               uint64_t start_state) const {
   auto left_NFA = left_node->to_NFA(alphabet, start_state + 1);
-  auto left_states = left_NFA.get_states();
-  auto left_final_states = left_NFA.get_final_states();
-  auto left_start_state = left_NFA.get_start_state();
-  auto left_transition_table = left_NFA.get_transition_table();
+  auto &left_final_states = left_NFA.get_final_states();
 
   auto right_NFA =
       right_node->to_NFA(alphabet, *(left_final_states.begin()) + 1);
-  auto right_states = right_NFA.get_states();
-  auto right_final_states = right_NFA.get_final_states();
-  auto right_start_state = right_NFA.get_start_state();
-  auto right_transition_table = right_NFA.get_transition_table();
+  auto &right_final_states = right_NFA.get_final_states();
   auto final_state = (*right_final_states.begin()) + 1;
 
-  left_states.merge(right_states);
-  left_transition_table.merge(right_transition_table);
+  NFA nfa({start_state,final_state},alphabet.name(),start_state,{},{});
+  nfa.add_sub_NFA(left_NFA);
+  nfa.add_sub_NFA(right_NFA);
 
-  left_states.insert(start_state);
-  left_states.insert(final_state);
-
-  left_transition_table[{start_state, alphabet.get_epsilon()}] = {
-      left_start_state, right_start_state};
-  for (auto const &left_final_state : left_final_states) {
-    left_transition_table[{left_final_state, alphabet.get_epsilon()}] = {
+  for(auto const &s:nfa.get_final_states()) {
+    nfa.get_transition_table()[{s, alphabet.get_epsilon()}] = {
         final_state};
   }
-  for (auto const &right_final_state : right_final_states) {
-    left_transition_table[{right_final_state, alphabet.get_epsilon()}] = {
-        final_state};
-  }
-
-  return {left_states,
-          alphabet.name(),
-          start_state,
-          left_transition_table,
-          {final_state}};
+  nfa.replace_final_states({final_state});
+  return nfa;
 }
 
 void regex::union_node::assign_position(
