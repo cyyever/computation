@@ -4,7 +4,7 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/../cmake/test.cmake)
 
 FIND_PACKAGE(doctest REQUIRED)
 
-SET(test_progs string_test automaton_test cfg_test parse_test regex_test)
+SET(test_progs string_test automaton_test cfg_test ll_grammar_test regex_test)
 
 FOREACH(test_prog ${test_progs})
   ADD_EXECUTABLE(${test_prog} ${CMAKE_CURRENT_LIST_DIR}/${test_prog}.cpp)
