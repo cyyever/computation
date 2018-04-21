@@ -15,7 +15,7 @@ namespace cyy::lang {
 class LL_grammar :public CFG{
 
 public:
-  explicit LL_grammar(CFG && rhs):CFG(rhs) {
+  explicit LL_grammar(CFG rhs):CFG(std::move(rhs)) {
     if(!is_LL1()) {
       throw std::invalid_argument("not a LL1 grammar");
     }
