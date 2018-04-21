@@ -87,7 +87,7 @@ std::pair<
 SLR_grammar::canonical_collection() const {
   std::vector<LR_0_item_set> collection;
   std::vector<bool> check_flag{true};
-  std::map<std::pair<uint64_t, grammar_symbol_type>, uint64_t> goto_table;
+  std::map<std::pair<uint64_t, grammar_symbol_type>, uint64_t> goto_transitions;
 
   LR_0_item_set init_set;
   auto new_start_symbol = get_new_head(start_symbol);
@@ -99,7 +99,7 @@ SLR_grammar::canonical_collection() const {
   auto nonterminals = get_heads();
 
   uint64_t next_state = 1;
-  for (uint64_t i = 0; i < check_flag.size(); i++) {
+  for (size_t i = 0; i < check_flag.size(); i++) {
     if (!check_flag[i]) {
       continue;
     }
@@ -114,10 +114,10 @@ SLR_grammar::canonical_collection() const {
       if (it == collection.end()) {
         collection.emplace_back(std::move(goto_set));
         check_flag.emplace_back(true);
-        goto_table[{i, {terminal}}] = next_state;
+        goto_transitions[{i, {terminal}}] = next_state;
         next_state++;
       } else {
-        goto_table[{i, {terminal}}] = it - collection.begin();
+        goto_transitions[{i, {terminal}}] = it - collection.begin();
       }
     }
 
@@ -132,15 +132,15 @@ SLR_grammar::canonical_collection() const {
       if (it == collection.end()) {
         collection.emplace_back(std::move(goto_set));
         check_flag.emplace_back(true);
-        goto_table[{i, {nonterminal}}] = next_state;
+        goto_transitions[{i, {nonterminal}}] = next_state;
         next_state++;
       } else {
-        goto_table[{i, {nonterminal}}] = it - collection.begin();
+        goto_transitions[{i, {nonterminal}}] = it - collection.begin();
       }
     }
     check_flag[i] = false;
   }
 
-  return {collection, goto_table};
+  return {collection, goto_transitions};
 }
 } // namespace cyy::lang
