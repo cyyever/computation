@@ -35,9 +35,9 @@ TEST_CASE("LL1 parse") {
       {'(', "E", ')'}, {id} // i for id
   };
 
-  CFG cfg("common_tokens", "E", productions);
+  LL_grammar grammar("common_tokens", "E", productions);
 
-  auto parse_tree = cfg.LL1_parse(symbol_string{id, '+', id, '*', id});
+  auto parse_tree = grammar.parse(symbol_string{id, '+', id, '*', id});
   CHECK(parse_tree);
   CHECK(parse_tree->children.size() == 2);
 }

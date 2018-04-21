@@ -121,14 +121,11 @@ public:
 
   std::map<nonterminal_type, std::set<terminal_type>> follow() const;
 
-  bool is_LL1() const;
   bool is_CNF() const;
-
-  parse_node_ptr LL1_parse(symbol_string_view view) const;
 
   std::set<nonterminal_type> nullable() const;
 
-private:
+protected:
   void print(std::ostream &os, const nonterminal_type &head,
              const production_body_type &body) const {
 
@@ -180,12 +177,7 @@ private:
   follow(const std::map<nonterminal_type, std::set<terminal_type>>
              &nonterminal_first_sets) const;
 
-  bool is_LL1(const std::map<nonterminal_type, std::set<terminal_type>>
-                  &nonterminal_first_sets,
-              const std::map<nonterminal_type, std::set<terminal_type>>
-                  &follow_sets) const;
-
-private:
+protected:
   std::shared_ptr<ALPHABET> alphabet;
   nonterminal_type start_symbol;
   std::map<nonterminal_type, std::vector<production_body_type>> productions;

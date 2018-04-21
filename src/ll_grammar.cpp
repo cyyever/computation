@@ -5,11 +5,11 @@
  * \date 2018-03-04
  */
 
-#include "grammar.hpp"
+#include "ll_grammar.hpp"
 
 namespace cyy::lang {
 
-bool CFG::is_LL1(const std::map<nonterminal_type, std::set<terminal_type>>
+bool LL_grammar::is_LL1(const std::map<nonterminal_type, std::set<terminal_type>>
                      &nonterminal_first_sets,
                  const std::map<nonterminal_type, std::set<terminal_type>>
                      &follow_sets) const {
@@ -56,14 +56,14 @@ bool CFG::is_LL1(const std::map<nonterminal_type, std::set<terminal_type>>
   return true;
 }
 
-bool CFG::is_LL1() const {
+bool LL_grammar::is_LL1() const {
   auto first_sets = first();
   auto follow_sets = follow(first_sets);
 
   return is_LL1(first_sets, follow_sets);
 }
 
-CFG::parse_node_ptr CFG::LL1_parse(symbol_string_view view) const {
+CFG::parse_node_ptr LL_grammar::parse(symbol_string_view view) const {
 
   std::map<std::pair<CFG::terminal_type, CFG::nonterminal_type>,
            const production_body_type &>
