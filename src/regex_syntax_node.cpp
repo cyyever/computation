@@ -5,6 +5,8 @@
  * \date 2018-03-04
  */
 
+#include <doctest.h>
+
 #include "regex.hpp"
 
 namespace cyy::lang {
