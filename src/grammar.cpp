@@ -1,13 +1,6 @@
 /*!
  * \file grammar.cpp
  *
- * \brief
- * \author cyy
- * \date 2018-04-06
- */
-/*!
- * \file grammar.cpp
- *
  * \author cyy
  * \date 2018-03-04
  */
