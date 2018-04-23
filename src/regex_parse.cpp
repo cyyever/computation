@@ -85,8 +85,6 @@ regex::parse(symbol_string_view view) const {
   cfg.eliminate_left_recursion({"rexpr", "rterm", "rfactor", "rprimary"});
   LL_grammar regex_grammar(std::move(cfg));
 
-  //LL_grammar regex_grammar("ASCII", "rexpr", productions);
-
   auto parse_tree = regex_grammar.parse(view);
   if (!parse_tree) {
     throw std::runtime_error("regex grammar is not LL(1) grammar");

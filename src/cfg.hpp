@@ -30,7 +30,7 @@ public:
   using grammar_symbol_string_view =
       std::basic_string_view<grammar_symbol_type>;
   using production_body_type = std::vector<grammar_symbol_type>;
-  using production_type = std::pair<nonterminal_type,production_body_type>;
+  using production_type = std::pair<nonterminal_type, production_body_type>;
 
   struct parse_node;
   using parse_node_ptr = std::shared_ptr<parse_node>;
@@ -79,12 +79,13 @@ public:
   std::set<terminal_type> get_terminals() const {
     std::set<terminal_type> terminals;
     for (auto const &[head, bodies] : productions) {
-      for(auto const &body:bodies) {
-      for(auto const  &symbol:body) {
-	if (auto ptr = std::get_if<terminal_type>(&symbol); ptr&& !alphabet->is_epsilon(*ptr)) {
-	  terminals.insert(*ptr);
-	}
-      }
+      for (auto const &body : bodies) {
+        for (auto const &symbol : body) {
+          if (auto ptr = std::get_if<terminal_type>(&symbol);
+              ptr && !alphabet->is_epsilon(*ptr)) {
+            terminals.insert(*ptr);
+          }
+        }
       }
     }
     return terminals;

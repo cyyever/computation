@@ -9,10 +9,11 @@
 
 namespace cyy::lang {
 
-bool LL_grammar::is_LL1(const std::map<nonterminal_type, std::set<terminal_type>>
-                     &nonterminal_first_sets,
-                 const std::map<nonterminal_type, std::set<terminal_type>>
-                     &follow_sets) const {
+bool LL_grammar::is_LL1(
+    const std::map<nonterminal_type, std::set<terminal_type>>
+        &nonterminal_first_sets,
+    const std::map<nonterminal_type, std::set<terminal_type>> &follow_sets)
+    const {
 
   auto has_intersection = [](const auto &set1, const auto &set2) {
     auto it1 = set1.begin();
