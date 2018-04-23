@@ -78,7 +78,7 @@ public:
 
   std::set<terminal_type> get_terminals() const {
     std::set<terminal_type> terminals;
-    for (auto const &[head, bodies] : productions) {
+    for (auto const &[_, bodies] : productions) {
       for (auto const &body : bodies) {
         for (auto const &symbol : body) {
           if (auto ptr = std::get_if<terminal_type>(&symbol);

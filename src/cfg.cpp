@@ -669,7 +669,7 @@ void CFG::eliminate_single_productions() {
           if (head == tmp) {
             continue;
           }
-          auto [_, has_insert] = derived_nonterminals.insert(tmp);
+          auto has_insert = derived_nonterminals.insert(tmp).second;
           if (has_insert) {
             has_new_derivation = true;
           }
