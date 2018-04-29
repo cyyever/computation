@@ -1,0 +1,156 @@
+/*!
+ * \file cfg_test.cpp
+ *
+ * \brief 测试cfg
+ */
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#include <doctest.h>
+#include <iostream>
+
+#include "../src/common_tokens.hpp"
+#include "../src/slr_grammar.hpp"
+
+using namespace cyy::lang;
+
+TEST_CASE("canonical_collection") {
+  std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
+      productions;
+  auto id = static_cast<CFG::terminal_type>(common_tokens::token::id);
+  /*
+  productions["E'"] = {
+
+      {"E"},
+  };
+  */
+  productions["E"] = {
+      {"E", '+', "T"},
+      {"T"},
+  };
+  productions["T"] = {
+      {"T", '*', "F"},
+      {"F"},
+  };
+  productions["F"] = {
+      {'(', "E", ')'}, {id} // i for id
+  };
+
+  SLR_grammar grammar("common_tokens", "E", productions);
+
+  auto collection = grammar.canonical_collection();
+
+  std::unordered_set<LR_0_item_set> sets;
+
+  {
+    LR_0_item_set set;
+
+    set.nonkernel_items = {"E", "T", "F"};
+
+    set.kernel_items.emplace(LR_0_item{CFG::production_type{"E'", {"E"}}, 0});
+
+    sets.emplace(std::move(set));
+  }
+
+  {
+    LR_0_item_set set;
+
+    set.kernel_items.emplace(LR_0_item{CFG::production_type{"E'", {"E"}}, 1});
+
+    set.kernel_items.emplace(
+        LR_0_item{CFG::production_type{"E", {"E", '+', "T"}}, 1});
+    sets.emplace(std::move(set));
+  }
+
+  {
+    LR_0_item_set set;
+
+    set.kernel_items.emplace(LR_0_item{CFG::production_type{"E", {"T"}}, 1});
+    set.kernel_items.emplace(
+        LR_0_item{CFG::production_type{"T", {"T", '*', "F"}}, 1});
+    sets.emplace(std::move(set));
+  }
+
+  {
+    LR_0_item_set set;
+
+    set.kernel_items.emplace(LR_0_item{CFG::production_type{"T", {"F"}}, 1});
+    sets.emplace(std::move(set));
+  }
+
+  {
+    LR_0_item_set set;
+
+    set.nonkernel_items = {"T", "F", "E"};
+
+    set.kernel_items.emplace(
+        LR_0_item{CFG::production_type{"F", {'(', "E", ')'}}, 1});
+    sets.emplace(std::move(set));
+  }
+
+  {
+    LR_0_item_set set;
+
+    set.kernel_items.emplace(LR_0_item{CFG::production_type{"F", {id}}, 1});
+    sets.emplace(std::move(set));
+  }
+
+  {
+    LR_0_item_set set;
+
+    set.nonkernel_items = {"T", "F"};
+
+    set.kernel_items.emplace(
+        LR_0_item{CFG::production_type{"E", {"E", '+', "T"}}, 2});
+    sets.emplace(std::move(set));
+  }
+
+  {
+    LR_0_item_set set;
+
+    set.nonkernel_items = {"F"};
+
+    set.kernel_items.emplace(
+        LR_0_item{CFG::production_type{"T", {"T", '*', "F"}}, 2});
+    sets.emplace(std::move(set));
+  }
+
+  {
+    LR_0_item_set set;
+
+    set.kernel_items.emplace(
+        LR_0_item{CFG::production_type{"E", {"E", '+', "T"}}, 1});
+    set.kernel_items.emplace(
+        LR_0_item{CFG::production_type{"F", {'(', "E", ')'}}, 2});
+    sets.emplace(std::move(set));
+  }
+
+  {
+    LR_0_item_set set;
+
+    set.kernel_items.emplace(
+        LR_0_item{CFG::production_type{"E", {"E", '+', "T"}}, 3});
+    set.kernel_items.emplace(
+        LR_0_item{CFG::production_type{"T", {"T", '*', "F"}}, 1});
+    sets.emplace(std::move(set));
+  }
+
+  {
+    LR_0_item_set set;
+
+    set.kernel_items.emplace(
+        LR_0_item{CFG::production_type{"T", {"T", '*', "F"}}, 3});
+    sets.emplace(std::move(set));
+  }
+
+  {
+    LR_0_item_set set;
+
+    set.kernel_items.emplace(
+        LR_0_item{CFG::production_type{"F", {'(', "E", ')'}}, 3});
+    sets.emplace(std::move(set));
+  }
+
+ // CHECK(sets.size() == collection.first.size());
+
+  CHECK(sets== decltype(sets){collection.first.begin(),collection.first.end()
+      });
+}

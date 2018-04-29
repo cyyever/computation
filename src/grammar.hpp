@@ -9,3 +9,5 @@
 
 #include "cfg.hpp"
 #include "ll_grammar.hpp"
+#include "lr_grammar.hpp"
+#include "slr_grammar.hpp"

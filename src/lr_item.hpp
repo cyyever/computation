@@ -1,7 +1,6 @@
 /*!
  * \file lr_item.hpp
  *
- * \brief
  * \author cyy
  * \date 2018-04-21
  */
@@ -53,3 +52,15 @@ struct LR_0_item_set {
   bool empty() const { return nonkernel_items.empty() && kernel_items.empty(); }
 };
 } // namespace cyy::lang
+
+namespace std {
+template <> struct hash<cyy::lang::LR_0_item_set> {
+  size_t operator()(const cyy::lang::LR_0_item_set &x) const {
+    auto hash_value =
+      ::std::hash<decltype(x.nonkernel_items.size())>()(x.nonkernel_items.size()) ^
+        ::std::hash<decltype(x.kernel_items.size())>()(x.kernel_items.size());
+    return hash_value;
+  }
+};
+} // namespace std
+

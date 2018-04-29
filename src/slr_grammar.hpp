@@ -11,20 +11,20 @@
 #include <set>
 #include <unordered_set>
 
-#include "grammar.hpp"
+#include "lr_grammar.hpp"
 #include "lang.hpp"
 #include "lr_item.hpp"
 
 namespace cyy::lang {
 
-class SLR_grammar : public CFG {
+class SLR_grammar : public LR_grammar {
 
 public:
   SLR_grammar(const std::string &alphabet_name,
               const nonterminal_type &start_symbol_,
               std::map<nonterminal_type, std::vector<production_body_type>>
                   &productions_)
-      : CFG(alphabet_name, start_symbol_, productions_) {}
+      : LR_grammar(alphabet_name, start_symbol_, productions_) {}
 
   std::pair<std::vector<LR_0_item_set>,
             std::map<std::pair<uint64_t, grammar_symbol_type>, uint64_t>>

@@ -52,10 +52,10 @@ LR_0_item_set SLR_grammar::GOTO(LR_0_item_set set,
   while (!set.kernel_items.empty()) {
     LR_0_item kernel_item =
         std::move(set.kernel_items.extract(set.kernel_items.begin()).value());
-    if (kernel_item.dot_pos < kernel_item.production.second.size()) {
-      if (kernel_item.production.second[kernel_item.dot_pos] != symbol) {
-        continue;
-      }
+    if (kernel_item.dot_pos < kernel_item.production.second.size()
+	&&
+      kernel_item.production.second[kernel_item.dot_pos] == symbol
+	) {
       kernel_item.dot_pos++;
       res.kernel_items.emplace(std::move(kernel_item));
     }
@@ -93,7 +93,7 @@ SLR_grammar::canonical_collection() const {
   auto new_start_symbol = get_new_head(start_symbol);
   init_set.kernel_items.emplace(
       LR_0_item{production_type{new_start_symbol, {start_symbol}}, 0});
-  collection.emplace_back(std::move(init_set));
+  collection.emplace_back(closure(init_set));
 
   auto terminals = get_terminals();
   auto nonterminals = get_heads();
