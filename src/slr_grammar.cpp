@@ -6,24 +6,28 @@
  */
 
 #include "slr_grammar.hpp"
+#include "exception.hpp"
 
 namespace cyy::lang {
 
 LR_0_item_set SLR_grammar::closure(LR_0_item_set set) const {
-  while (true) {
-    bool has_added = false;
-    for (const auto &kernel_item : set.kernel_items) {
-      if (kernel_item.dot_pos < kernel_item.production.second.size()) {
-        auto const &symbol = kernel_item.production.second[kernel_item.dot_pos];
-        if (!std::holds_alternative<nonterminal_type>(symbol)) {
-          continue;
-        }
-        if (set.nonkernel_items.insert(std::get<nonterminal_type>(symbol))
-                .second) {
-          has_added = true;
-        }
+
+  bool has_added = false;
+  for (const auto &kernel_item : set.kernel_items) {
+    if (kernel_item.dot_pos < kernel_item.production.second.size()) {
+      auto const &symbol = kernel_item.production.second[kernel_item.dot_pos];
+      if (!std::holds_alternative<nonterminal_type>(symbol)) {
+        continue;
+      }
+      if (set.nonkernel_items.insert(std::get<nonterminal_type>(symbol))
+              .second) {
+        has_added = true;
       }
     }
+  }
+
+  while (has_added) {
+    has_added = false;
 
     for (const auto &nonkernel_item : set.nonkernel_items) {
       auto it = productions.find(nonkernel_item);
@@ -39,10 +43,25 @@ LR_0_item_set SLR_grammar::closure(LR_0_item_set set) const {
         }
       }
     }
-    if (!has_added) {
-      break;
+  }
+
+  // process epsilon production
+  for (const auto &nonkernel_item : set.nonkernel_items) {
+    auto it = productions.find(nonkernel_item);
+
+    for (auto const &body : it->second) {
+      auto const &symbol = body[0];
+      if (auto ptr = std::get_if<terminal_type>(&symbol); ptr) {
+        if (alphabet->is_epsilon(*ptr)) {
+          LR_0_item kernel_item;
+          kernel_item.production = {it->first, body};
+          kernel_item.dot_pos = 1;
+          set.kernel_items.emplace(std::move(kernel_item));
+        }
+      }
     }
   }
+
   return set;
 }
 
@@ -52,10 +71,8 @@ LR_0_item_set SLR_grammar::GOTO(LR_0_item_set set,
   while (!set.kernel_items.empty()) {
     LR_0_item kernel_item =
         std::move(set.kernel_items.extract(set.kernel_items.begin()).value());
-    if (kernel_item.dot_pos < kernel_item.production.second.size()
-	&&
-      kernel_item.production.second[kernel_item.dot_pos] == symbol
-	) {
+    if (kernel_item.dot_pos < kernel_item.production.second.size() &&
+        kernel_item.production.second[kernel_item.dot_pos] == symbol) {
       kernel_item.dot_pos++;
       res.kernel_items.emplace(std::move(kernel_item));
     }
@@ -90,7 +107,6 @@ SLR_grammar::canonical_collection() const {
   std::map<std::pair<uint64_t, grammar_symbol_type>, uint64_t> goto_transitions;
 
   LR_0_item_set init_set;
-  auto new_start_symbol = get_new_head(start_symbol);
   init_set.kernel_items.emplace(
       LR_0_item{production_type{new_start_symbol, {start_symbol}}, 0});
   collection.emplace_back(closure(init_set));
@@ -142,5 +158,46 @@ SLR_grammar::canonical_collection() const {
   }
 
   return {collection, goto_transitions};
+}
+
+void SLR_grammar::construct_parsing_table() {
+  auto [collection, goto_transitions] = canonical_collection();
+  auto first_sets = first();
+  auto follow_sets = follow(first_sets);
+  auto endmarker = alphabet->get_endmarker();
+  return;
+
+  for (auto const &[p, next_state] : goto_transitions) {
+    if (auto ptr = std::get_if<nonterminal_type>(&p.second); ptr) {
+      goto_table[{p.first, *ptr}] = next_state;
+    } else if (auto ptr = std::get_if<terminal_type>(&p.second); ptr) {
+      action_table[{p.first, *ptr}] = next_state;
+    }
+  }
+
+  for (uint64_t i = 0; i < collection.size(); i++) {
+    auto &set = collection[i];
+
+    for (const auto &kernel_item : set.kernel_items) {
+      if (kernel_item.dot_pos != kernel_item.production.second.size()) {
+        continue;
+      }
+
+      if (kernel_item.production.first == new_start_symbol) {
+        action_table[{i, endmarker}] = true;
+        continue;
+      }
+
+      for (auto const &follow_terminal :
+           follow_sets[kernel_item.production.first]) {
+
+        // conflict
+        if (action_table.count({i, follow_terminal}) != 0) {
+          throw cyy::computation::exception::no_slr_grammar("");
+        }
+        action_table[{i, follow_terminal}] = kernel_item.production;
+      }
+    }
+  }
 }
 } // namespace cyy::lang

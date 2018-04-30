@@ -406,39 +406,47 @@ std::map<CFG::nonterminal_type, std::set<CFG::terminal_type>>
 CFG::first() const {
 
   std::map<CFG::nonterminal_type, std::set<CFG::terminal_type>> first_sets;
-  auto first_of_nonterminal = [&](auto &&self, const nonterminal_type &head,
-                                  const CFG &cfg) -> bool {
-    bool add_new_terminal = false;
-    while (true) {
-      bool loop_add_new_terminal = false;
-      auto it = cfg.productions.find(head);
-      if (it == cfg.productions.end()) {
-        continue;
+  std::unordered_map<CFG::nonterminal_type, bool> flags;
+  std::unordered_map<CFG::nonterminal_type, bool> epsilon_flags;
+
+  // process all terminals
+  for (auto const &[head, bodies] : productions) {
+    for (auto const &body : bodies) {
+      auto terminal_ptr = std::get_if<terminal_type>(&body[0]);
+      if (terminal_ptr) {
+        first_sets[head].insert(*terminal_ptr);
       }
-      for (auto const &body : it->second) {
+    }
+    flags[head] = true;
+  }
+
+  bool add_new_terminal = true;
+  while (add_new_terminal) {
+
+    add_new_terminal = false;
+
+    for (auto const &[head, bodies] : productions) {
+      for (auto const &body : bodies) {
         size_t i = 0;
         for (; i < body.size(); i++) {
           if (std::holds_alternative<terminal_type>(body[i])) {
             if (first_sets[head]
                     .insert(std::get<terminal_type>(body[i]))
                     .second) {
-              loop_add_new_terminal = true;
+              add_new_terminal = true;
             }
             break;
           }
+
           auto nonterminal = std::get<nonterminal_type>(body[i]);
-          if (self(self, nonterminal, cfg)) {
-            loop_add_new_terminal = true;
-          }
 
           bool has_epsilon = false;
-          for (auto const &terminal : first_sets[nonterminal]) {
-            if (alphabet->is_epsilon(terminal)) {
-              has_epsilon = true;
-              continue;
+          for (auto const &first_terminal : first_sets[nonterminal]) {
+            if (first_sets[head].insert(first_terminal).second) {
+              add_new_terminal = true;
             }
-            if (first_sets[head].insert(terminal).second) {
-              loop_add_new_terminal = true;
+            if (alphabet->is_epsilon(first_terminal)) {
+              has_epsilon = true;
             }
           }
           if (!has_epsilon) {
@@ -447,21 +455,13 @@ CFG::first() const {
         }
         if (i == body.size()) {
           if (first_sets[head].insert(alphabet->get_epsilon()).second) {
-            loop_add_new_terminal = true;
+            add_new_terminal = true;
           }
         }
       }
-      if (!loop_add_new_terminal) {
-        break;
-      }
     }
-
-    return add_new_terminal;
-  };
-
-  for (auto const &[head, _] : productions) {
-    first_of_nonterminal(first_of_nonterminal, head, *this);
   }
+
   return first_sets;
 }
 
