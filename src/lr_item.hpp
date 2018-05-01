@@ -19,7 +19,8 @@ struct LR_0_item {
   CFG::production_type production;
   size_t dot_pos;
   bool operator==(const LR_0_item &rhs) const {
-    return std::tie(production,dot_pos) == std::tie(rhs.production,rhs.dot_pos);
+    return std::tie(production, dot_pos) ==
+           std::tie(rhs.production, rhs.dot_pos);
   }
 };
 
@@ -43,27 +44,18 @@ namespace cyy::lang {
 
 class LR_0_item_set {
 
-  public:
+public:
+  auto get_kernel_items() const -> const auto & { return kernel_items; }
 
-  auto get_kernel_items() const -> const auto & {
-    return kernel_items;
-  }
-
-  auto get_nonkernel_items() const -> const auto & {
-    return nonkernel_items;
-  }
- void  add_kernel_item(const       
-  CFG &cfg,
-  LR_0_item kernel_item
-  );
-
+  auto get_nonkernel_items() const -> const auto & { return nonkernel_items; }
+  void add_kernel_item(const CFG &cfg, LR_0_item kernel_item);
 
   bool operator==(const LR_0_item_set &rhs) const {
     return kernel_items == rhs.kernel_items;
   }
   bool empty() const { return kernel_items.empty(); }
 
-  private:
+private:
   std::unordered_set<LR_0_item> kernel_items;
   std::set<CFG::nonterminal_type> nonkernel_items;
 };
@@ -72,8 +64,8 @@ class LR_0_item_set {
 namespace std {
 template <> struct hash<cyy::lang::LR_0_item_set> {
   size_t operator()(const cyy::lang::LR_0_item_set &x) const {
-    auto hash_value =
-        ::std::hash<decltype(x.get_kernel_items().size())>()(x.get_kernel_items().size());
+    auto hash_value = ::std::hash<decltype(x.get_kernel_items().size())>()(
+        x.get_kernel_items().size());
     return hash_value;
   }
 };
@@ -84,7 +76,7 @@ struct LR_1_item {
   LR_0_item item;
   CFG::terminal_type lookahead;
   bool operator==(const LR_1_item &rhs) const {
-    return std::tie(item,lookahead) == std::tie(rhs.item,rhs.lookahead);
+    return std::tie(item, lookahead) == std::tie(rhs.item, rhs.lookahead);
   }
 };
 
@@ -93,24 +85,47 @@ struct LR_1_item {
 namespace std {
 template <> struct hash<cyy::lang::LR_1_item> {
   size_t operator()(const cyy::lang::LR_1_item &x) const {
-    auto hash_value =
-        ::std::hash<decltype(x.item)>()(x.item) ^
-        ::std::hash<decltype(x.lookahead)>()(x.lookahead);
+    auto hash_value = ::std::hash<decltype(x.item)>()(x.item) ^
+                      ::std::hash<decltype(x.lookahead)>()(x.lookahead);
     return hash_value;
   }
 };
 } // namespace std
 
 namespace cyy::lang {
-  using LR_1_item_set=std::unordered_set<LR_1_item>;
-}
+using LR_1_item_set = std::unordered_set<LR_1_item>;
 
+class LR_1_item_set_ {
+
+public:
+  auto get_kernel_items() const -> const auto & { return kernel_items; }
+
+  auto get_nonkernel_items() const -> const auto & { return nonkernel_items; }
+  void add_kernel_item(const CFG &cfg, LR_1_item kernel_item);
+
+  bool operator==(const LR_1_item_set_ &rhs) const {
+    return kernel_items == rhs.kernel_items;
+  }
+  bool empty() const { return kernel_items.empty(); }
+
+private:
+  void add_nonkernel_item(const CFG &cfg,
+                          // const nonterminal_type &head,
+                          CFG::grammar_symbol_string_view view,
+
+                          std::set<CFG::terminal_type> lookahead_set);
+
+private:
+  std::unordered_set<LR_1_item> kernel_items;
+  std::map<CFG::nonterminal_type, std::set<CFG::terminal_type>> nonkernel_items;
+};
+
+} // namespace cyy::lang
 
 namespace std {
 template <> struct hash<cyy::lang::LR_1_item_set> {
   size_t operator()(const cyy::lang::LR_1_item_set &x) const {
-    auto hash_value =
-      ::std::hash<decltype(x.size())>()(x.size());
+    auto hash_value = ::std::hash<decltype(x.size())>()(x.size());
     return hash_value;
   }
 };

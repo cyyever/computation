@@ -104,8 +104,8 @@ SLR_grammar::canonical_collection() const {
 
 void SLR_grammar::construct_parsing_table() {
   auto [collection, goto_transitions] = canonical_collection();
-  auto first_sets = first();
-  auto follow_sets = follow(first_sets);
+  // auto first_sets = first();
+  auto follow_sets = follow();
   auto endmarker = alphabet->get_endmarker();
 
   for (auto const &[p, next_state] : goto_transitions) {

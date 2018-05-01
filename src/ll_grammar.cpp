@@ -10,8 +10,10 @@
 namespace cyy::lang {
 
 bool LL_grammar::is_LL1(
+    /*
     const std::map<nonterminal_type, std::set<terminal_type>>
         &nonterminal_first_sets,
+        */
     const std::map<nonterminal_type, std::set<terminal_type>> &follow_sets)
     const {
 
@@ -35,8 +37,7 @@ bool LL_grammar::is_LL1(
     std::vector<std::set<CFG::terminal_type>> first_sets;
     auto follow_it = follow_sets.find(head);
     for (size_t i = 0; i < bodies.size(); i++) {
-      first_sets.emplace_back(
-          first({bodies[i].data(), bodies[i].size()}, nonterminal_first_sets));
+      first_sets.emplace_back(first({bodies[i].data(), bodies[i].size()}));
       for (size_t j = 0; j < i; j++) {
         if (has_intersection(first_sets[i], first_sets[j])) {
           return false;
@@ -58,10 +59,9 @@ bool LL_grammar::is_LL1(
 }
 
 bool LL_grammar::is_LL1() const {
-  auto first_sets = first();
-  auto follow_sets = follow(first_sets);
+  auto follow_sets = follow();
 
-  return is_LL1(first_sets, follow_sets);
+  return is_LL1(follow_sets);
 }
 
 CFG::parse_node_ptr LL_grammar::parse(symbol_string_view view) const {
@@ -71,12 +71,11 @@ CFG::parse_node_ptr LL_grammar::parse(symbol_string_view view) const {
       parsing_table;
 
   {
-    auto nonterminal_first_sets = first();
-    auto follow_sets = follow(nonterminal_first_sets);
+    // auto nonterminal_first_sets = first();
+    auto follow_sets = follow();
     for (const auto &[head, bodies] : productions) {
       for (auto const &body : bodies) {
-        auto first_set =
-            first({body.data(), body.size()}, nonterminal_first_sets);
+        auto first_set = first({body.data(), body.size()});
 
         for (auto const &terminal : first_set) {
 

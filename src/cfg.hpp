@@ -76,9 +76,9 @@ public:
     return heads;
   }
 
-  auto get_productions() const -> const auto & {
-    return productions;
-  }
+  auto get_alphabet() const -> const auto & { return alphabet; }
+
+  auto get_productions() const -> const auto & { return productions; }
 
   std::set<terminal_type> get_terminals() const {
     std::set<terminal_type> terminals;
@@ -137,7 +137,7 @@ public:
 
   bool recursive_descent_parse(symbol_string_view view) const;
 
-  std::map<nonterminal_type, std::set<terminal_type>> first() const;
+  const std::map<nonterminal_type, std::set<terminal_type>> &first() const;
 
   std::map<nonterminal_type, std::set<terminal_type>> follow() const;
 
@@ -149,6 +149,8 @@ public:
     auto terminal_ptr = std::get_if<terminal_type>(&grammal_symbol);
     return terminal_ptr && alphabet->is_epsilon(*terminal_ptr);
   }
+
+  std::set<terminal_type> first(const grammar_symbol_string_view &alpha) const;
 
 protected:
   void print(std::ostream &os, const nonterminal_type &head,
@@ -188,19 +190,21 @@ protected:
     return advise_head;
   }
 
-
-  std::set<terminal_type>
-  first(const grammar_symbol_string_view &alpha,
+  /*
         const std::map<nonterminal_type, std::set<terminal_type>>
             &nonterminal_first_sets) const;
 
   std::map<nonterminal_type, std::set<terminal_type>>
   follow(const std::map<nonterminal_type, std::set<terminal_type>>
              &nonterminal_first_sets) const;
+            */
 
 protected:
   std::shared_ptr<ALPHABET> alphabet;
   nonterminal_type start_symbol;
   std::map<nonterminal_type, std::vector<production_body_type>> productions;
+
+private:
+  mutable std::map<nonterminal_type, std::set<terminal_type>> first_sets;
 };
 } // namespace cyy::lang

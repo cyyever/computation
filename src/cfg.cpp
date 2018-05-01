@@ -401,10 +401,13 @@ bool CFG::recursive_descent_parse(symbol_string_view view) const {
                            *this);
 }
 
-std::map<CFG::nonterminal_type, std::set<CFG::terminal_type>>
+const std::map<CFG::nonterminal_type, std::set<CFG::terminal_type>> &
 CFG::first() const {
 
-  std::map<CFG::nonterminal_type, std::set<CFG::terminal_type>> first_sets;
+  if (!first_sets.empty()) {
+    return first_sets;
+  }
+  // std::map<CFG::nonterminal_type, std::set<CFG::terminal_type>> first_sets;
   std::unordered_map<CFG::nonterminal_type, bool> flags;
   std::unordered_map<CFG::nonterminal_type, bool> epsilon_flags;
 
@@ -465,10 +468,14 @@ CFG::first() const {
 }
 
 std::set<CFG::terminal_type>
-CFG::first(const grammar_symbol_string_view &alpha,
+CFG::first(const grammar_symbol_string_view &alpha
+    /*
+    ,
            const std::map<nonterminal_type, std::set<terminal_type>>
-               &nonterminal_first_sets) const {
-  std::set<terminal_type> first_set;
+               &nonterminal_first_sets */) const {
+
+  const auto &first_sets = first();
+  std::set<terminal_type> view_first_set;
   for (auto const &symbol : alpha) {
 
     if (std::holds_alternative<terminal_type>(symbol)) {
@@ -477,27 +484,25 @@ CFG::first(const grammar_symbol_string_view &alpha,
     const auto &nonterminal = std::get<nonterminal_type>(symbol);
 
     bool has_epsilon = false;
-    ;
-    auto it = nonterminal_first_sets.find(nonterminal);
+    auto it = first_sets.find(nonterminal);
     for (auto const &terminal : it->second) {
       if (alphabet->is_epsilon(terminal)) {
         has_epsilon = true;
       } else {
-        first_set.insert(terminal);
+        view_first_set.insert(terminal);
       }
     }
     if (!has_epsilon) {
-      return first_set;
+      return view_first_set;
     }
   }
-  first_set.insert(alphabet->get_epsilon());
+  view_first_set.insert(alphabet->get_epsilon());
 
-  return first_set;
+  return view_first_set;
 }
 
 std::map<CFG::nonterminal_type, std::set<CFG::terminal_type>>
-CFG::follow(const std::map<nonterminal_type, std::set<terminal_type>>
-                &nonterminal_first_sets) const {
+CFG::follow() const {
 
   std::map<nonterminal_type, std::set<terminal_type>> follow_sets;
 
@@ -515,10 +520,8 @@ CFG::follow(const std::map<nonterminal_type, std::set<terminal_type>>
 
           const auto &nonterminal = std::get<nonterminal_type>(body[i]);
 
-          auto first_set =
-              first(grammar_symbol_string_view{body.data() + i + 1,
-                                               body.size() - i - 1},
-                    nonterminal_first_sets);
+          auto first_set = first(grammar_symbol_string_view{
+              body.data() + i + 1, body.size() - i - 1});
 
           bool has_epsilon = false;
 
@@ -546,14 +549,6 @@ CFG::follow(const std::map<nonterminal_type, std::set<terminal_type>>
   } while (has_add);
 
   return follow_sets;
-}
-
-std::map<CFG::nonterminal_type, std::set<CFG::terminal_type>>
-CFG::follow() const {
-
-  auto first_sets = first();
-
-  return follow(first_sets);
 }
 
 CFG NFA_to_CFG(const NFA &nfa) {

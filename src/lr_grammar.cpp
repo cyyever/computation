@@ -20,7 +20,7 @@ LR_grammar::parse_node_ptr LR_grammar::parse(symbol_string_view view) const {
 
     auto it = action_table.find({stack.back(), terminal});
     if (it == action_table.end()) {
-	    std::cout<<"no action for "<<(int)terminal<<std::endl;
+      std::cout << "no action for " << (int)terminal << std::endl;
 
       return {};
     }
@@ -33,8 +33,9 @@ LR_grammar::parse_node_ptr LR_grammar::parse(symbol_string_view view) const {
       // shift
       stack.push_back(std::get<uint64_t>(it->second));
       viable_prefix.push_back(std::make_shared<parse_node>(terminal));
-      std::cout<<"viable_prefix size  is "<<viable_prefix.size()<<std::endl;
-	view.remove_prefix(1);
+      std::cout << "viable_prefix size  is " << viable_prefix.size()
+                << std::endl;
+      view.remove_prefix(1);
     } else {
       // reduce
 
@@ -58,7 +59,7 @@ LR_grammar::parse_node_ptr LR_grammar::parse(symbol_string_view view) const {
 
       auto it2 = goto_table.find({stack.back(), production.first});
       if (it2 == goto_table.end()) {
-	    puts("goto table no find");
+        puts("goto table no find");
         return {};
       }
 
@@ -68,11 +69,11 @@ LR_grammar::parse_node_ptr LR_grammar::parse(symbol_string_view view) const {
   }
 
   if (!view.empty()) {
-	    puts("no empty view");
+    puts("no empty view");
     return {};
   }
 
-  std::cout<<"viable_prefix size  is "<<viable_prefix.size()<<std::endl;
+  std::cout << "viable_prefix size  is " << viable_prefix.size() << std::endl;
   return viable_prefix[0];
 }
 } // namespace cyy::lang

@@ -10,7 +10,7 @@
 
 namespace cyy::lang {
 
-LR_1_item_set canonical_LR_grammar::closure(LR_1_item_set set) const {
+LR_1_item_set canonical_LR_grammar::closure(LR_1_item_set set) {
   LR_1_item_set res;
   while (!set.empty()) {
     LR_1_item item = std::move(set.extract(set.begin()).value());
@@ -31,8 +31,7 @@ LR_1_item_set canonical_LR_grammar::closure(LR_1_item_set set) const {
 
     auto lookahead_set =
         first(grammar_symbol_string_view(body.data() + item.item.dot_pos + 1,
-                                         body.size() - item.item.dot_pos - 1),
-              first_sets);
+                                         body.size() - item.item.dot_pos - 1));
     std::cout << "look ah size is " << lookahead_set.size() << std::endl;
 
     if (lookahead_set.erase(alphabet->get_epsilon())) {
@@ -67,9 +66,8 @@ LR_1_item_set canonical_LR_grammar::closure(LR_1_item_set set) const {
   return res;
 }
 
-LR_1_item_set
-canonical_LR_grammar::GOTO(LR_1_item_set set,
-                           const grammar_symbol_type &symbol) const {
+LR_1_item_set canonical_LR_grammar::GOTO(LR_1_item_set set,
+                                         const grammar_symbol_type &symbol) {
   LR_1_item_set res;
 
   while (!set.empty()) {
@@ -88,7 +86,7 @@ std::pair<
     std::vector<LR_1_item_set>,
     std::map<std::pair<uint64_t, canonical_LR_grammar::grammar_symbol_type>,
              uint64_t>>
-canonical_LR_grammar::canonical_collection() const {
+canonical_LR_grammar::canonical_collection() {
   std::vector<LR_1_item_set> collection;
   std::vector<bool> check_flag{true};
   std::map<std::pair<uint64_t, grammar_symbol_type>, uint64_t> goto_transitions;
