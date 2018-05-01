@@ -16,12 +16,6 @@ TEST_CASE("canonical_collection") {
   std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
       productions;
   auto id = static_cast<CFG::terminal_type>(common_tokens::token::id);
-  /*
-  productions["E'"] = {
-
-      {"E"},
-  };
-  */
   productions["E"] = {
       {"E", '+', "T"},
       {"T"},
@@ -149,8 +143,36 @@ TEST_CASE("canonical_collection") {
     sets.emplace(std::move(set));
   }
 
- // CHECK(sets.size() == collection.first.size());
 
-  CHECK(sets== decltype(sets){collection.first.begin(),collection.first.end()
-      });
+  CHECK(sets== decltype(sets){collection.first.begin(),collection.first.end() });
+}
+
+TEST_CASE("SLR(1) parse") {
+  std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
+      productions;
+  auto epsilon = ALPHABET::get("common_tokens")->get_epsilon();
+  auto id = static_cast<CFG::terminal_type>(common_tokens::token::id);
+  productions["E"] = {
+      {"T", "E'"},
+  };
+  productions["E'"] = {
+      {'+', "T", "E'"},
+      {epsilon},
+  };
+  productions["T"] = {
+      {"F", "T'"},
+  };
+  productions["T'"] = {
+      {'*', "F", "T'"},
+      {epsilon},
+  };
+  productions["F"] = {
+      {'(', "E", ')'}, {id} // i for id
+  };
+
+  SLR_grammar grammar("common_tokens", "E", productions);
+
+  auto parse_tree = grammar.parse(symbol_string{id, '+', id, '*', id});
+  REQUIRE(parse_tree);
+  CHECK(parse_tree->children.size() == 2);
 }

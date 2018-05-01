@@ -165,7 +165,6 @@ void SLR_grammar::construct_parsing_table() {
   auto first_sets = first();
   auto follow_sets = follow(first_sets);
   auto endmarker = alphabet->get_endmarker();
-  return;
 
   for (auto const &[p, next_state] : goto_transitions) {
     if (auto ptr = std::get_if<nonterminal_type>(&p.second); ptr) {
