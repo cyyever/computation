@@ -37,9 +37,7 @@ TEST_CASE("canonical_collection") {
   {
     LR_0_item_set set;
 
-    set.nonkernel_items = {"E", "T", "F"};
-
-    set.kernel_items.emplace(LR_0_item{CFG::production_type{"E'", {"E"}}, 0});
+    set.add_kernel_item(grammar, LR_0_item{CFG::production_type{"E'", {"E"}}, 0});
 
     sets.emplace(std::move(set));
   }
@@ -47,9 +45,9 @@ TEST_CASE("canonical_collection") {
   {
     LR_0_item_set set;
 
-    set.kernel_items.emplace(LR_0_item{CFG::production_type{"E'", {"E"}}, 1});
+    set.add_kernel_item(grammar,LR_0_item{CFG::production_type{"E'", {"E"}}, 1});
 
-    set.kernel_items.emplace(
+    set.add_kernel_item(grammar,
         LR_0_item{CFG::production_type{"E", {"E", '+', "T"}}, 1});
     sets.emplace(std::move(set));
   }
@@ -57,8 +55,8 @@ TEST_CASE("canonical_collection") {
   {
     LR_0_item_set set;
 
-    set.kernel_items.emplace(LR_0_item{CFG::production_type{"E", {"T"}}, 1});
-    set.kernel_items.emplace(
+    set.add_kernel_item(grammar,LR_0_item{CFG::production_type{"E", {"T"}}, 1});
+    set.add_kernel_item(grammar,
         LR_0_item{CFG::production_type{"T", {"T", '*', "F"}}, 1});
     sets.emplace(std::move(set));
   }
@@ -66,16 +64,15 @@ TEST_CASE("canonical_collection") {
   {
     LR_0_item_set set;
 
-    set.kernel_items.emplace(LR_0_item{CFG::production_type{"T", {"F"}}, 1});
+    set.add_kernel_item(grammar,LR_0_item{CFG::production_type{"T", {"F"}}, 1});
     sets.emplace(std::move(set));
   }
 
   {
     LR_0_item_set set;
 
-    set.nonkernel_items = {"T", "F", "E"};
 
-    set.kernel_items.emplace(
+    set.add_kernel_item(grammar,
         LR_0_item{CFG::production_type{"F", {'(', "E", ')'}}, 1});
     sets.emplace(std::move(set));
   }
@@ -83,16 +80,15 @@ TEST_CASE("canonical_collection") {
   {
     LR_0_item_set set;
 
-    set.kernel_items.emplace(LR_0_item{CFG::production_type{"F", {id}}, 1});
+    set.add_kernel_item(grammar,LR_0_item{CFG::production_type{"F", {id}}, 1});
     sets.emplace(std::move(set));
   }
 
   {
     LR_0_item_set set;
 
-    set.nonkernel_items = {"T", "F"};
 
-    set.kernel_items.emplace(
+    set.add_kernel_item(grammar,
         LR_0_item{CFG::production_type{"E", {"E", '+', "T"}}, 2});
     sets.emplace(std::move(set));
   }
@@ -100,9 +96,7 @@ TEST_CASE("canonical_collection") {
   {
     LR_0_item_set set;
 
-    set.nonkernel_items = {"F"};
-
-    set.kernel_items.emplace(
+    set.add_kernel_item(grammar,
         LR_0_item{CFG::production_type{"T", {"T", '*', "F"}}, 2});
     sets.emplace(std::move(set));
   }
@@ -110,9 +104,9 @@ TEST_CASE("canonical_collection") {
   {
     LR_0_item_set set;
 
-    set.kernel_items.emplace(
+    set.add_kernel_item(grammar,
         LR_0_item{CFG::production_type{"E", {"E", '+', "T"}}, 1});
-    set.kernel_items.emplace(
+    set.add_kernel_item(grammar,
         LR_0_item{CFG::production_type{"F", {'(', "E", ')'}}, 2});
     sets.emplace(std::move(set));
   }
@@ -120,9 +114,9 @@ TEST_CASE("canonical_collection") {
   {
     LR_0_item_set set;
 
-    set.kernel_items.emplace(
+    set.add_kernel_item(grammar,
         LR_0_item{CFG::production_type{"E", {"E", '+', "T"}}, 3});
-    set.kernel_items.emplace(
+    set.add_kernel_item(grammar,
         LR_0_item{CFG::production_type{"T", {"T", '*', "F"}}, 1});
     sets.emplace(std::move(set));
   }
@@ -130,7 +124,7 @@ TEST_CASE("canonical_collection") {
   {
     LR_0_item_set set;
 
-    set.kernel_items.emplace(
+    set.add_kernel_item(grammar,
         LR_0_item{CFG::production_type{"T", {"T", '*', "F"}}, 3});
     sets.emplace(std::move(set));
   }
@@ -138,7 +132,7 @@ TEST_CASE("canonical_collection") {
   {
     LR_0_item_set set;
 
-    set.kernel_items.emplace(
+    set.add_kernel_item(grammar,
         LR_0_item{CFG::production_type{"F", {'(', "E", ')'}}, 3});
     sets.emplace(std::move(set));
   }

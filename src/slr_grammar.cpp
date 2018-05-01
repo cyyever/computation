@@ -10,77 +10,19 @@
 
 namespace cyy::lang {
 
-LR_0_item_set SLR_grammar::closure(LR_0_item_set set) const {
-
-  bool has_added = false;
-  for (const auto &kernel_item : set.kernel_items) {
-    if (kernel_item.dot_pos < kernel_item.production.second.size()) {
-      auto const &symbol = kernel_item.production.second[kernel_item.dot_pos];
-      if (!std::holds_alternative<nonterminal_type>(symbol)) {
-        continue;
-      }
-      if (set.nonkernel_items.insert(std::get<nonterminal_type>(symbol))
-              .second) {
-        has_added = true;
-      }
-    }
-  }
-
-  while (has_added) {
-    has_added = false;
-
-    for (const auto &nonkernel_item : set.nonkernel_items) {
-      auto it = productions.find(nonkernel_item);
-
-      for (auto const &body : it->second) {
-        auto const &symbol = body[0];
-        if (!std::holds_alternative<nonterminal_type>(symbol)) {
-          continue;
-        }
-        if (set.nonkernel_items.insert(std::get<nonterminal_type>(symbol))
-                .second) {
-          has_added = true;
-        }
-      }
-    }
-  }
-
-  // process epsilon production
-  for (const auto &nonkernel_item : set.nonkernel_items) {
-    auto it = productions.find(nonkernel_item);
-
-    for (auto const &body : it->second) {
-      auto const &symbol = body[0];
-      if (auto ptr = std::get_if<terminal_type>(&symbol); ptr) {
-        if (alphabet->is_epsilon(*ptr)) {
-          LR_0_item kernel_item;
-          kernel_item.production = {it->first, body};
-          kernel_item.dot_pos = 1;
-          set.kernel_items.emplace(std::move(kernel_item));
-        }
-      }
-    }
-  }
-
-  return set;
-}
-
-LR_0_item_set SLR_grammar::GOTO(LR_0_item_set set,
+LR_0_item_set SLR_grammar::GOTO(const LR_0_item_set &set,
                                 const grammar_symbol_type &symbol) const {
   LR_0_item_set res;
-  while (!set.kernel_items.empty()) {
-    LR_0_item kernel_item =
-        std::move(set.kernel_items.extract(set.kernel_items.begin()).value());
+  for (auto const kernel_item : set.kernel_items) {
     if (kernel_item.dot_pos < kernel_item.production.second.size() &&
         kernel_item.production.second[kernel_item.dot_pos] == symbol) {
-      kernel_item.dot_pos++;
-      res.kernel_items.emplace(std::move(kernel_item));
+      auto new_kernel_item = kernel_item;
+      new_kernel_item.dot_pos++;
+      res.add_kernel_item(*this, std::move(new_kernel_item));
     }
   }
 
-  while (!set.nonkernel_items.empty()) {
-    nonterminal_type nonkernel_item = std::move(
-        set.nonkernel_items.extract(set.nonkernel_items.begin()).value());
+  for (auto const nonkernel_item : set.nonkernel_items) {
     auto it = productions.find(nonkernel_item);
 
     for (auto const &body : it->second) {
@@ -90,12 +32,12 @@ LR_0_item_set SLR_grammar::GOTO(LR_0_item_set set,
         new_kernel_item.production.first = nonkernel_item;
         new_kernel_item.production.second = body;
         new_kernel_item.dot_pos = 1;
-        res.kernel_items.emplace(std::move(new_kernel_item));
+        res.add_kernel_item(*this, std::move(new_kernel_item));
       }
     }
   }
 
-  return closure(std::move(res));
+  return res;
 }
 
 std::pair<
@@ -107,9 +49,9 @@ SLR_grammar::canonical_collection() const {
   std::map<std::pair<uint64_t, grammar_symbol_type>, uint64_t> goto_transitions;
 
   LR_0_item_set init_set;
-  init_set.kernel_items.emplace(
-      LR_0_item{production_type{new_start_symbol, {start_symbol}}, 0});
-  collection.emplace_back(closure(init_set));
+  init_set.add_kernel_item(
+      *this, LR_0_item{production_type{new_start_symbol, {start_symbol}}, 0});
+  collection.emplace_back(init_set);
 
   auto terminals = get_terminals();
   auto nonterminals = get_heads();
@@ -192,7 +134,8 @@ void SLR_grammar::construct_parsing_table() {
 
         // conflict
         if (action_table.count({i, follow_terminal}) != 0) {
-	  std::cout<<"config with follow_terminal" <<follow_terminal<<std::endl;
+          std::cout << "config with follow_terminal" << follow_terminal
+                    << std::endl;
           throw cyy::computation::exception::no_SLR_grammar("");
         }
         action_table[{i, follow_terminal}] = kernel_item.production;

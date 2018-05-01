@@ -76,6 +76,10 @@ public:
     return heads;
   }
 
+  auto get_productions() const -> const auto & {
+    return productions;
+  }
+
   std::set<terminal_type> get_terminals() const {
     std::set<terminal_type> terminals;
     for (auto const &[_, bodies] : productions) {
@@ -141,6 +145,11 @@ public:
 
   std::set<nonterminal_type> nullable() const;
 
+  bool is_epsilon(const grammar_symbol_type &grammal_symbol) const {
+    auto terminal_ptr = std::get_if<terminal_type>(&grammal_symbol);
+    return terminal_ptr && alphabet->is_epsilon(*terminal_ptr);
+  }
+
 protected:
   void print(std::ostream &os, const nonterminal_type &head,
              const production_body_type &body) const {
@@ -179,10 +188,6 @@ protected:
     return advise_head;
   }
 
-  bool is_epsilon(const grammar_symbol_type &grammal_symbol) const {
-    auto terminal_ptr = std::get_if<terminal_type>(&grammal_symbol);
-    return terminal_ptr && alphabet->is_epsilon(*terminal_ptr);
-  }
 
   std::set<terminal_type>
   first(const grammar_symbol_string_view &alpha,
