@@ -19,7 +19,7 @@ struct LR_0_item {
   CFG::production_type production;
   size_t dot_pos;
   bool operator==(const LR_0_item &rhs) const {
-    return production == rhs.production && dot_pos == rhs.dot_pos;
+    return std::tie(production,dot_pos) == std::tie(rhs.production,rhs.dot_pos);
   }
 };
 
@@ -64,3 +64,39 @@ template <> struct hash<cyy::lang::LR_0_item_set> {
 };
 } // namespace std
 
+namespace cyy::lang {
+struct LR_1_item {
+  LR_0_item item;
+  CFG::terminal_type lookahead;
+  bool operator==(const LR_1_item &rhs) const {
+    return std::tie(item,lookahead) == std::tie(rhs.item,rhs.lookahead);
+  }
+};
+
+} // namespace cyy::lang
+
+namespace std {
+template <> struct hash<cyy::lang::LR_1_item> {
+  size_t operator()(const cyy::lang::LR_1_item &x) const {
+    auto hash_value =
+        ::std::hash<decltype(x.item)>()(x.item) ^
+        ::std::hash<decltype(x.lookahead)>()(x.lookahead);
+    return hash_value;
+  }
+};
+} // namespace std
+
+namespace cyy::lang {
+  using LR_1_item_set=std::unordered_set<LR_1_item>;
+}
+
+
+namespace std {
+template <> struct hash<cyy::lang::LR_1_item_set> {
+  size_t operator()(const cyy::lang::LR_1_item_set &x) const {
+    auto hash_value =
+      ::std::hash<decltype(x.size())>()(x.size());
+    return hash_value;
+  }
+};
+} // namespace std

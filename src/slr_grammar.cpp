@@ -192,7 +192,8 @@ void SLR_grammar::construct_parsing_table() {
 
         // conflict
         if (action_table.count({i, follow_terminal}) != 0) {
-          throw cyy::computation::exception::no_slr_grammar("");
+	  std::cout<<"config with follow_terminal" <<follow_terminal<<std::endl;
+          throw cyy::computation::exception::no_SLR_grammar("");
         }
         action_table[{i, follow_terminal}] = kernel_item.production;
       }
