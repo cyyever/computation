@@ -6,7 +6,7 @@
  */
 
 #include "common_tokens.hpp"
-#include "grammar.hpp"
+#include "ll_grammar.hpp"
 #include "regex.hpp"
 
 namespace cyy::lang {

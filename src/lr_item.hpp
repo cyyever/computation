@@ -41,54 +41,31 @@ template <> struct hash<cyy::lang::LR_0_item> {
 
 namespace cyy::lang {
 
-struct LR_0_item_set {
+class LR_0_item_set {
 
+  public:
+
+  auto get_kernel_items() const -> const auto & {
+    return kernel_items;
+  }
+
+  auto get_nonkernel_items() const -> const auto & {
+    return nonkernel_items;
+  }
  void  add_kernel_item(const       
   CFG &cfg,
   LR_0_item kernel_item
-  ) {
-   std::set<CFG::nonterminal_type> tmp_nonkernel_items;
-   if (kernel_item.dot_pos < kernel_item.production.second.size()) {
-     auto const &symbol = kernel_item.production.second[kernel_item.dot_pos];
-     if (auto ptr=std::get_if<CFG::nonterminal_type>(&symbol);ptr) {
-       tmp_nonkernel_items.insert(*ptr);
-     }
-   }
+  );
 
-   bool has_added=true;
-   while (has_added) {
-     has_added = false;
-
-     for (const auto &nonkernel_item : tmp_nonkernel_items) {
-       auto it = cfg.get_productions().find(nonkernel_item);
-
-       for (auto const &body : it->second) {
-	 if(cfg.is_epsilon(body[0])) {
-	    kernel_items.emplace(LR_0_item{ {it->first,body}   ,1});
-	  continue;
-	 }
-
-	 if (auto ptr=std::get_if<CFG::nonterminal_type>(&body[0]);ptr) {
-	   if (tmp_nonkernel_items.insert(*ptr)
-	       .second) {
-	     has_added = true;
-	   }
-	 }
-       }
-     }
-   }
-   kernel_items.emplace(std::move(   kernel_item));
-   nonkernel_items.merge(tmp_nonkernel_items);
-}
-
-  std::unordered_set<LR_0_item> kernel_items;
-  std::set<CFG::nonterminal_type> nonkernel_items;
 
   bool operator==(const LR_0_item_set &rhs) const {
     return kernel_items == rhs.kernel_items;
   }
   bool empty() const { return kernel_items.empty(); }
 
+  private:
+  std::unordered_set<LR_0_item> kernel_items;
+  std::set<CFG::nonterminal_type> nonkernel_items;
 };
 } // namespace cyy::lang
 
@@ -96,7 +73,7 @@ namespace std {
 template <> struct hash<cyy::lang::LR_0_item_set> {
   size_t operator()(const cyy::lang::LR_0_item_set &x) const {
     auto hash_value =
-        ::std::hash<decltype(x.kernel_items.size())>()(x.kernel_items.size());
+        ::std::hash<decltype(x.get_kernel_items().size())>()(x.get_kernel_items().size());
     return hash_value;
   }
 };

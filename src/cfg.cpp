@@ -5,8 +5,7 @@
  * \date 2018-03-04
  */
 
-#include "grammar.hpp"
-#include <stack>
+#include "cfg.hpp"
 
 namespace cyy::lang {
 

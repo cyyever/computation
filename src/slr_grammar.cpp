@@ -13,7 +13,7 @@ namespace cyy::lang {
 LR_0_item_set SLR_grammar::GOTO(const LR_0_item_set &set,
                                 const grammar_symbol_type &symbol) const {
   LR_0_item_set res;
-  for (auto const kernel_item : set.kernel_items) {
+  for (auto const kernel_item : set.get_kernel_items()) {
     if (kernel_item.dot_pos < kernel_item.production.second.size() &&
         kernel_item.production.second[kernel_item.dot_pos] == symbol) {
       auto new_kernel_item = kernel_item;
@@ -22,7 +22,7 @@ LR_0_item_set SLR_grammar::GOTO(const LR_0_item_set &set,
     }
   }
 
-  for (auto const nonkernel_item : set.nonkernel_items) {
+  for (auto const nonkernel_item : set.get_nonkernel_items()) {
     auto it = productions.find(nonkernel_item);
 
     for (auto const &body : it->second) {
@@ -119,7 +119,7 @@ void SLR_grammar::construct_parsing_table() {
   for (uint64_t i = 0; i < collection.size(); i++) {
     auto &set = collection[i];
 
-    for (const auto &kernel_item : set.kernel_items) {
+    for (const auto &kernel_item : set.get_kernel_items()) {
       if (kernel_item.dot_pos != kernel_item.production.second.size()) {
         continue;
       }

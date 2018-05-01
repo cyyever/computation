@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "grammar.hpp"
+#include "cfg.hpp"
 #include "lang.hpp"
 
 namespace cyy::lang {
