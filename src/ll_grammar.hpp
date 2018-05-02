@@ -36,12 +36,5 @@ public:
 private:
   bool is_LL1() const;
 
-  bool is_LL1(
-      /*
-      const std::map<nonterminal_type, std::set<terminal_type>>
-                  &nonterminal_first_sets,
-                  */
-      const std::map<nonterminal_type, std::set<terminal_type>> &follow_sets)
-      const;
 };
 } // namespace cyy::lang

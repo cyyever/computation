@@ -35,17 +35,6 @@ TEST_CASE("canonical_collection") {
 
     set.add_kernel_item(grammar,
         LR_1_item{LR_0_item{CFG::production_type{"S'", {"S"}}, 0}, endmarker});
-    /*
-    set.add_kernel_item(grammar,(LR_1_item{LR_0_item{CFG::production_type{"S", {"C", "C"}}, 0},
-                          endmarker});
-    set.add_kernel_item(grammar,(
-        LR_1_item{LR_0_item{CFG::production_type{"C", {'c', "C"}}, 0}, 'c'});
-    set.add_kernel_item(grammar,(
-        LR_1_item{LR_0_item{CFG::production_type{"C", {'c', "C"}}, 0}, 'd'});
-    set.add_kernel_item(grammar,(LR_1_item{LR_0_item{CFG::production_type{"C", {'d'}}, 0}, 'c'});
-    set.add_kernel_item(grammar,(LR_1_item{LR_0_item{CFG::production_type{"C", {'d'}}, 0}, 'd'});
-    */
-
     sets.emplace(std::move(set));
   }
 
@@ -60,33 +49,16 @@ TEST_CASE("canonical_collection") {
     LR_1_item_set_ set;
 
     set.add_kernel_item(grammar,LR_1_item{LR_0_item{CFG::production_type{"S", {"C", "C"}}, 1},endmarker});
-    /*
-    set.add_kernel_item(grammar,(LR_1_item{LR_0_item{CFG::production_type{"C", {'c', "C"}}, 0},
-                          endmarker});
-    set.add_kernel_item(grammar,(
-        LR_1_item{LR_0_item{CFG::production_type{"C", {'d'}}, 0}, endmarker});
-
-	*/
     sets.emplace(std::move(set));
   }
 
   {
     LR_1_item_set_ set;
 
-    /*
-    set.add_kernel_item(grammar,(
-        LR_1_item{LR_0_item{CFG::production_type{"C", {'c', "C"}}, 0}, 'c'});
-    set.add_kernel_item(grammar,(
-        LR_1_item{LR_0_item{CFG::production_type{"C", {'c', "C"}}, 0}, 'd'});
-	*/
     set.add_kernel_item(grammar,
         LR_1_item{LR_0_item{CFG::production_type{"C", {'c', "C"}}, 1}, 'c'});
     set.add_kernel_item(grammar,
         LR_1_item{LR_0_item{CFG::production_type{"C", {'c', "C"}}, 1}, 'd'});
-    /*
-    set.add_kernel_item(grammar,(LR_1_item{LR_0_item{CFG::production_type{"C", {'d'}}, 0}, 'c'});
-    set.add_kernel_item(grammar,(LR_1_item{LR_0_item{CFG::production_type{"C", {'d'}}, 0}, 'd'});
-    */
 
     sets.emplace(std::move(set));
   }
@@ -111,10 +83,8 @@ TEST_CASE("canonical_collection") {
     LR_1_item_set_ set;
 
 
-    //set.add_kernel_item(grammar,(LR_1_item{LR_0_item{CFG::production_type{"C", {'c', "C"}}, 0}, endmarker});
     set.add_kernel_item(grammar,LR_1_item{LR_0_item{CFG::production_type{"C", {'c', "C"}}, 1},
                           endmarker});
-    //set.add_kernel_item(grammar,( LR_1_item{LR_0_item{CFG::production_type{"C", {'d'}}, 0}, endmarker});
 
     sets.emplace(std::move(set));
   }

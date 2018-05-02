@@ -67,14 +67,12 @@ void LR_1_item_set_::add_nonkernel_item(
     std::set<CFG::terminal_type> lookahead_set) {
 
   if (view.empty()) {
-	std::cout<<__LINE__<<std::endl;
     return;
   }
 
   auto ptr = std::get_if<CFG::nonterminal_type>(&view[0]);
 
   if (!ptr) {
-	std::cout<<__LINE__<<std::endl;
     return;
   }
 
@@ -94,7 +92,6 @@ void LR_1_item_set_::add_nonkernel_item(
                       std::inserter(diff, diff.begin()));
 
   if (diff.empty()) {
-	std::cout<<__LINE__<<std::endl;
     return;
   }
 
@@ -114,8 +111,6 @@ void LR_1_item_set_::add_nonkernel_item(
       new_item.lookahead=lookahead;
 
       kernel_items.emplace(new_item);
-      puts("aaaaaaaaaaaaaa");
-      std::cout<<"aaaaaaaaaaaaa  "<<*ptr<<std::endl;
       }
       continue;
     }
@@ -124,7 +119,6 @@ void LR_1_item_set_::add_nonkernel_item(
     add_nonkernel_item(cfg, {new_body.data(), new_body.size()}, diff);
   }
 
-	std::cout<<__LINE__<<std::endl;
   return;
 }
 } // namespace cyy::lang

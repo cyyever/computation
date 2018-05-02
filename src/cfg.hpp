@@ -95,33 +95,8 @@ public:
     return terminals;
   }
 
-  void normalize_productions() {
-    decltype(productions) new_productions;
-    for (auto &[head, bodies] : productions) {
-      std::set<production_body_type> bodies_set;
-      for (auto &body : bodies) {
-        if (body.empty()) {
-          continue;
-        }
+  void normalize_productions();
 
-        auto it = std::remove_if(body.begin(), body.end(),
-                                 [this](const auto &grammal_symbol) {
-                                   return is_epsilon(grammal_symbol);
-                                 });
-        if (it > body.begin()) {
-          bodies_set.emplace(std::move_iterator(body.begin()),
-                             std::move_iterator(it));
-        } else {
-          bodies_set.emplace(1, symbol_type(alphabet->get_epsilon()));
-        }
-      }
-      if (!bodies_set.empty()) {
-        new_productions[head] = {std::move_iterator(bodies_set.begin()),
-                                 std::move_iterator(bodies_set.end())};
-      }
-    }
-    productions = std::move(new_productions);
-  }
   void eliminate_useless_symbols();
 
   void eliminate_left_recursion(std::vector<nonterminal_type> old_heads = {});
@@ -189,15 +164,6 @@ protected:
     }
     return advise_head;
   }
-
-  /*
-        const std::map<nonterminal_type, std::set<terminal_type>>
-            &nonterminal_first_sets) const;
-
-  std::map<nonterminal_type, std::set<terminal_type>>
-  follow(const std::map<nonterminal_type, std::set<terminal_type>>
-             &nonterminal_first_sets) const;
-            */
 
 protected:
   std::shared_ptr<ALPHABET> alphabet;

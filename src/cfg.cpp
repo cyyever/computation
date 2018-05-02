@@ -47,6 +47,36 @@ CFG::CFG(
     throw std::invalid_argument("no productions for start symbol");
   }
 }
+
+
+  void CFG::normalize_productions() {
+    decltype(productions) new_productions;
+    for (auto &[head, bodies] : productions) {
+      std::set<production_body_type> bodies_set;
+      for (auto &body : bodies) {
+        if (body.empty()) {
+          continue;
+        }
+
+        auto it = std::remove_if(body.begin(), body.end(),
+                                 [this](const auto &grammal_symbol) {
+                                   return is_epsilon(grammal_symbol);
+                                 });
+        if (it > body.begin()) {
+          bodies_set.emplace(std::move_iterator(body.begin()),
+                             std::move_iterator(it));
+        } else {
+          bodies_set.emplace(1, symbol_type(alphabet->get_epsilon()));
+        }
+      }
+      if (!bodies_set.empty()) {
+        new_productions[head] = {std::move_iterator(bodies_set.begin()),
+                                 std::move_iterator(bodies_set.end())};
+      }
+    }
+    productions = std::move(new_productions);
+  }
+
 void CFG::eliminate_useless_symbols() {
   if (productions.empty()) {
     return;
@@ -197,7 +227,6 @@ void CFG::eliminate_left_recursion(std::vector<nonterminal_type> old_heads) {
 
         if (body.empty()) {
           continue;
-          // std::cout<<"body is  empty for old_heads" <<old_heads[i]<<'\n';
         }
 
         if (!(std::holds_alternative<nonterminal_type>(body.front()) &&
@@ -407,7 +436,6 @@ CFG::first() const {
   if (!first_sets.empty()) {
     return first_sets;
   }
-  // std::map<CFG::nonterminal_type, std::set<CFG::terminal_type>> first_sets;
   std::unordered_map<CFG::nonterminal_type, bool> flags;
   std::unordered_map<CFG::nonterminal_type, bool> epsilon_flags;
 
@@ -468,11 +496,7 @@ CFG::first() const {
 }
 
 std::set<CFG::terminal_type>
-CFG::first(const grammar_symbol_string_view &alpha
-    /*
-    ,
-           const std::map<nonterminal_type, std::set<terminal_type>>
-               &nonterminal_first_sets */) const {
+CFG::first(const grammar_symbol_string_view &alpha) const {
 
   const auto &first_sets = first();
   std::set<terminal_type> view_first_set;

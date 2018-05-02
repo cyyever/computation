@@ -110,7 +110,6 @@ public:
 
 private:
   void add_nonkernel_item(const CFG &cfg,
-                          // const nonterminal_type &head,
                           CFG::grammar_symbol_string_view view,
 
                           std::set<CFG::terminal_type> lookahead_set);

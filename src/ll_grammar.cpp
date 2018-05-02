@@ -9,13 +9,9 @@
 
 namespace cyy::lang {
 
-bool LL_grammar::is_LL1(
-    /*
-    const std::map<nonterminal_type, std::set<terminal_type>>
-        &nonterminal_first_sets,
-        */
-    const std::map<nonterminal_type, std::set<terminal_type>> &follow_sets)
-    const {
+bool LL_grammar::is_LL1() const {
+
+  auto follow_sets = follow();
 
   auto has_intersection = [](const auto &set1, const auto &set2) {
     auto it1 = set1.begin();
@@ -58,11 +54,6 @@ bool LL_grammar::is_LL1(
   return true;
 }
 
-bool LL_grammar::is_LL1() const {
-  auto follow_sets = follow();
-
-  return is_LL1(follow_sets);
-}
 
 CFG::parse_node_ptr LL_grammar::parse(symbol_string_view view) const {
 
@@ -71,7 +62,6 @@ CFG::parse_node_ptr LL_grammar::parse(symbol_string_view view) const {
       parsing_table;
 
   {
-    // auto nonterminal_first_sets = first();
     auto follow_sets = follow();
     for (const auto &[head, bodies] : productions) {
       for (auto const &body : bodies) {
