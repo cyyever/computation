@@ -129,4 +129,13 @@ template <> struct hash<cyy::lang::LR_1_item_set> {
     return hash_value;
   }
 };
-} // namespace std
+}
+namespace std {
+template <> struct hash<cyy::lang::LR_1_item_set_> {
+  size_t operator()(const cyy::lang::LR_1_item_set_ &x) const {
+    auto hash_value = ::std::hash<decltype(x.get_kernel_items().size())>()(x.get_kernel_items().size());
+    return hash_value;
+  }
+};
+}
+
