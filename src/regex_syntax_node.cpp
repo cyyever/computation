@@ -43,7 +43,7 @@ NFA regex::epsilon_node::to_NFA(const ALPHABET &alphabet,
 }
 
 void regex::epsilon_node::assign_position(
-    std::map<uint64_t, symbol_type> &position_to_symbol[[maybe_unused]]) {}
+    std::map<uint64_t, symbol_type> &position_to_symbol [[maybe_unused]]) {}
 
 std::set<uint64_t> regex::epsilon_node::first_pos() const { return {}; }
 std::set<uint64_t> regex::epsilon_node::last_pos() const { return {}; }

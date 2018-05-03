@@ -34,7 +34,8 @@ public:
   canonical_collection();
 
 private:
-  LR_1_item_set_ GOTO(const LR_1_item_set_ & set, const grammar_symbol_type &symbol);
+  LR_1_item_set_ GOTO(const LR_1_item_set_ &set,
+                      const grammar_symbol_type &symbol);
   void construct_parsing_table() override;
 
 private:

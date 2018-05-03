@@ -35,6 +35,5 @@ public:
 
 private:
   bool is_LL1() const;
-
 };
 } // namespace cyy::lang

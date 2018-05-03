@@ -48,34 +48,33 @@ CFG::CFG(
   }
 }
 
-
-  void CFG::normalize_productions() {
-    decltype(productions) new_productions;
-    for (auto &[head, bodies] : productions) {
-      std::set<production_body_type> bodies_set;
-      for (auto &body : bodies) {
-        if (body.empty()) {
-          continue;
-        }
-
-        auto it = std::remove_if(body.begin(), body.end(),
-                                 [this](const auto &grammal_symbol) {
-                                   return is_epsilon(grammal_symbol);
-                                 });
-        if (it > body.begin()) {
-          bodies_set.emplace(std::move_iterator(body.begin()),
-                             std::move_iterator(it));
-        } else {
-          bodies_set.emplace(1, symbol_type(alphabet->get_epsilon()));
-        }
+void CFG::normalize_productions() {
+  decltype(productions) new_productions;
+  for (auto &[head, bodies] : productions) {
+    std::set<production_body_type> bodies_set;
+    for (auto &body : bodies) {
+      if (body.empty()) {
+        continue;
       }
-      if (!bodies_set.empty()) {
-        new_productions[head] = {std::move_iterator(bodies_set.begin()),
-                                 std::move_iterator(bodies_set.end())};
+
+      auto it = std::remove_if(body.begin(), body.end(),
+                               [this](const auto &grammal_symbol) {
+                                 return is_epsilon(grammal_symbol);
+                               });
+      if (it > body.begin()) {
+        bodies_set.emplace(std::move_iterator(body.begin()),
+                           std::move_iterator(it));
+      } else {
+        bodies_set.emplace(1, symbol_type(alphabet->get_epsilon()));
       }
     }
-    productions = std::move(new_productions);
+    if (!bodies_set.empty()) {
+      new_productions[head] = {std::move_iterator(bodies_set.begin()),
+                               std::move_iterator(bodies_set.end())};
+    }
   }
+  productions = std::move(new_productions);
+}
 
 void CFG::eliminate_useless_symbols() {
   if (productions.empty()) {
@@ -468,7 +467,7 @@ CFG::first() const {
             break;
           }
 
-          auto nonterminal = std::get<nonterminal_type>(body[i]);
+          auto const &nonterminal = std::get<nonterminal_type>(body[i]);
 
           bool has_epsilon = false;
           for (auto const &first_terminal : first_sets[nonterminal]) {

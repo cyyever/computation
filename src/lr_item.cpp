@@ -51,12 +51,12 @@ void LR_1_item_set_ ::add_kernel_item(const CFG &cfg, LR_1_item kernel_item) {
     return;
   }
 
-  add_nonkernel_item(cfg,
+  add_nonkernel_item(
+      cfg,
 
-                     CFG::grammar_symbol_string_view(
-                         body.data() + kernel_item.item.dot_pos ,
-                         body.size() - kernel_item.item.dot_pos ),
-                     {kernel_item.lookahead});
+      CFG::grammar_symbol_string_view(body.data() + kernel_item.item.dot_pos,
+                                      body.size() - kernel_item.item.dot_pos),
+      {kernel_item.lookahead});
 
   kernel_items.emplace(std::move(kernel_item));
   return;
@@ -83,7 +83,6 @@ void LR_1_item_set_::add_nonkernel_item(
     real_lookahead_set.merge(lookahead_set);
   }
 
-
   decltype(real_lookahead_set) diff;
 
   std::set_difference(real_lookahead_set.begin(), real_lookahead_set.end(),
@@ -100,21 +99,20 @@ void LR_1_item_set_::add_nonkernel_item(
   auto it = cfg.get_productions().find(*ptr);
 
   for (auto const &new_body : it->second) {
-    if(new_body.size()==1 && cfg.is_epsilon(new_body[0])) {
+    if (new_body.size() == 1 && cfg.is_epsilon(new_body[0])) {
 
       LR_1_item new_item;
       new_item.item.dot_pos = 1;
 
       new_item.item.production.first = *ptr;
       new_item.item.production.second = new_body;
-      for(auto const &lookahead:diff) {
-      new_item.lookahead=lookahead;
+      for (auto const &lookahead : diff) {
+        new_item.lookahead = lookahead;
 
-      kernel_items.emplace(new_item);
+        kernel_items.emplace(new_item);
       }
       continue;
     }
-
 
     add_nonkernel_item(cfg, {new_body.data(), new_body.size()}, diff);
   }

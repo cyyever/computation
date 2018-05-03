@@ -54,7 +54,6 @@ bool LL_grammar::is_LL1() const {
   return true;
 }
 
-
 CFG::parse_node_ptr LL_grammar::parse(symbol_string_view view) const {
 
   std::map<std::pair<CFG::terminal_type, CFG::nonterminal_type>,

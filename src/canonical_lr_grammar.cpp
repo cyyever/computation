@@ -10,39 +10,38 @@
 
 namespace cyy::lang {
 
-LR_1_item_set_ canonical_LR_grammar::GOTO(const LR_1_item_set_  &set,
-                                         const grammar_symbol_type &symbol) {
+LR_1_item_set_ canonical_LR_grammar::GOTO(const LR_1_item_set_ &set,
+                                          const grammar_symbol_type &symbol) {
   LR_1_item_set_ res;
-  for (auto const & kernel_item : set.get_kernel_items()) {
+  for (auto const &kernel_item : set.get_kernel_items()) {
     if (kernel_item.item.dot_pos < kernel_item.item.production.second.size() &&
-        kernel_item.item.production.second[kernel_item.item.dot_pos] == symbol) {
+        kernel_item.item.production.second[kernel_item.item.dot_pos] ==
+            symbol) {
       auto new_kernel_item = kernel_item;
       new_kernel_item.item.dot_pos++;
       res.add_kernel_item(*this, std::move(new_kernel_item));
     }
   }
 
-  for (auto const & [nonterminal,lookahead_set ]  : set.get_nonkernel_items()) {
+  for (auto const &[nonterminal, lookahead_set] : set.get_nonkernel_items()) {
     auto it = productions.find(nonterminal);
 
     for (auto const &body : it->second) {
       if (body[0] == symbol) {
 
-    std::cout << "look ah size is " << lookahead_set.size() << std::endl;
-	for(auto const &lookahead:lookahead_set) {
-        LR_1_item new_kernel_item;
-        new_kernel_item.item.production.first =nonterminal;
-        new_kernel_item.item.production.second = body;
-        new_kernel_item.item.dot_pos = 1;
-        new_kernel_item.lookahead= lookahead;
-        res.add_kernel_item(*this, std::move(new_kernel_item));
-	}
+        for (auto const &lookahead : lookahead_set) {
+          LR_1_item new_kernel_item;
+          new_kernel_item.item.production.first = nonterminal;
+          new_kernel_item.item.production.second = body;
+          new_kernel_item.item.dot_pos = 1;
+          new_kernel_item.lookahead = lookahead;
+          res.add_kernel_item(*this, std::move(new_kernel_item));
+        }
       }
     }
   }
   return res;
 }
-
 
 std::pair<
     std::vector<LR_1_item_set_>,
@@ -55,10 +54,10 @@ canonical_LR_grammar::canonical_collection() {
   auto endmarker = alphabet->get_endmarker();
 
   LR_1_item_set_ init_set;
-  init_set.add_kernel_item(*this,
+  init_set.add_kernel_item(
+      *this,
       LR_1_item{LR_0_item{production_type{new_start_symbol, {start_symbol}}, 0},
                 endmarker});
-  std::cout << "nonkernel_items size is " << init_set.get_nonkernel_items().size() << std::endl;
   collection.emplace_back(init_set);
 
   auto terminals = get_terminals();
