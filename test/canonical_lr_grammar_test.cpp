@@ -34,21 +34,21 @@ TEST_CASE("canonical_collection") {
     LR_1_item_set_ set;
 
     set.add_kernel_item(grammar,
-        LR_1_item{LR_0_item{CFG::production_type{"S'", {"S"}}, 0}, endmarker});
+        LR_0_item{CFG::production_type{"S'", {"S"}}, 0}, {endmarker});
     sets.emplace(std::move(set));
   }
 
   {
     LR_1_item_set_ set;
 
-    set.add_kernel_item(grammar, LR_1_item{LR_0_item{CFG::production_type{"S'", {"S"}}, 1}, endmarker});
+    set.add_kernel_item(grammar,LR_0_item{CFG::production_type{"S'", {"S"}}, 1}, {endmarker});
     sets.emplace(std::move(set));
   }
 
   {
     LR_1_item_set_ set;
 
-    set.add_kernel_item(grammar,LR_1_item{LR_0_item{CFG::production_type{"S", {"C", "C"}}, 1},endmarker});
+    set.add_kernel_item(grammar,LR_0_item{CFG::production_type{"S", {"C", "C"}}, 1},{endmarker});
     sets.emplace(std::move(set));
   }
 
@@ -56,9 +56,41 @@ TEST_CASE("canonical_collection") {
     LR_1_item_set_ set;
 
     set.add_kernel_item(grammar,
-        LR_1_item{LR_0_item{CFG::production_type{"C", {'c', "C"}}, 1}, 'c'});
+        LR_0_item{CFG::production_type{"C", {'c', "C"}}, 1}, {'c','d'});
+
+    sets.emplace(std::move(set));
+  }
+
+  {
+    LR_1_item_set_ set;
+
+    set.add_kernel_item(grammar,LR_0_item{CFG::production_type{"C", {'d'}}, 1}, {'c','d'});
+
+    sets.emplace(std::move(set));
+  }
+
+  {
+    LR_1_item_set_ set;
+
+    set.add_kernel_item(grammar,LR_0_item{CFG::production_type{"S", {"C", "C"}}, 2}, {endmarker});
+    sets.emplace(std::move(set));
+  }
+
+  {
+    LR_1_item_set_ set;
+
+
+    set.add_kernel_item(grammar,LR_0_item{CFG::production_type{"C", {'c', "C"}}, 1},
+		    {endmarker});
+
+    sets.emplace(std::move(set));
+  }
+
+  {
+    LR_1_item_set_ set;
+
     set.add_kernel_item(grammar,
-        LR_1_item{LR_0_item{CFG::production_type{"C", {'c', "C"}}, 1}, 'd'});
+        LR_0_item{CFG::production_type{"C", {'d'}}, 1}, {endmarker});
 
     sets.emplace(std::move(set));
   }
@@ -66,53 +98,16 @@ TEST_CASE("canonical_collection") {
   {
     LR_1_item_set_ set;
 
-    set.add_kernel_item(grammar,LR_1_item{LR_0_item{CFG::production_type{"C", {'d'}}, 1}, 'c'});
-    set.add_kernel_item(grammar,LR_1_item{LR_0_item{CFG::production_type{"C", {'d'}}, 1}, 'd'});
-
+    set.add_kernel_item(grammar,
+        LR_0_item{CFG::production_type{"C", {'c', "C"}}, 2},{ 'c','d'});
     sets.emplace(std::move(set));
   }
 
   {
     LR_1_item_set_ set;
 
-    set.add_kernel_item(grammar,LR_1_item{LR_0_item{CFG::production_type{"S", {"C", "C"}}, 2}, endmarker});
-    sets.emplace(std::move(set));
-  }
-
-  {
-    LR_1_item_set_ set;
-
-
-    set.add_kernel_item(grammar,LR_1_item{LR_0_item{CFG::production_type{"C", {'c', "C"}}, 1},
-                          endmarker});
-
-    sets.emplace(std::move(set));
-  }
-
-  {
-    LR_1_item_set_ set;
-
-    set.add_kernel_item(grammar,{
-        LR_1_item{LR_0_item{CFG::production_type{"C", {'d'}}, 1}, endmarker}});
-
-    sets.emplace(std::move(set));
-  }
-
-  {
-    LR_1_item_set_ set;
-
-    set.add_kernel_item(grammar,{
-        LR_1_item{LR_0_item{CFG::production_type{"C", {'c', "C"}}, 2}, 'c'}});
-	set.add_kernel_item(grammar,{
-        LR_1_item{LR_0_item{CFG::production_type{"C", {'c', "C"}}, 2}, 'd'}});
-    sets.emplace(std::move(set));
-  }
-
-  {
-    LR_1_item_set_ set;
-
-    set.add_kernel_item(grammar,{LR_1_item{LR_0_item{CFG::production_type{"C", {'c', "C"}}, 2},
-                          endmarker}});
+    set.add_kernel_item(grammar,LR_0_item{CFG::production_type{"C", {'c', "C"}}, 2},
+		    {endmarker});
     sets.emplace(std::move(set));
   }
 

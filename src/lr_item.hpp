@@ -93,15 +93,13 @@ template <> struct hash<cyy::lang::LR_1_item> {
 } // namespace std
 
 namespace cyy::lang {
-using LR_1_item_set = std::unordered_set<LR_1_item>;
-
 class LR_1_item_set_ {
 
 public:
   auto get_kernel_items() const -> const auto & { return kernel_items; }
 
   auto get_nonkernel_items() const -> const auto & { return nonkernel_items; }
-  void add_kernel_item(const CFG &cfg, LR_1_item kernel_item);
+  void add_kernel_item(const CFG &cfg, const LR_0_item & kernel_item,std::set<CFG::terminal_type> lookahead_set    );
 
   bool operator==(const LR_1_item_set_ &rhs) const {
     return kernel_items == rhs.kernel_items;
@@ -114,20 +112,12 @@ private:
                           std::set<CFG::terminal_type> lookahead_set);
 
 private:
-  std::unordered_set<LR_1_item> kernel_items;
+  std::unordered_map<LR_0_item, std::set<CFG::terminal_type>> kernel_items;
   std::map<CFG::nonterminal_type, std::set<CFG::terminal_type>> nonkernel_items;
 };
 
 } // namespace cyy::lang
 
-namespace std {
-template <> struct hash<cyy::lang::LR_1_item_set> {
-  size_t operator()(const cyy::lang::LR_1_item_set &x) const {
-    auto hash_value = ::std::hash<decltype(x.size())>()(x.size());
-    return hash_value;
-  }
-};
-} // namespace std
 namespace std {
 template <> struct hash<cyy::lang::LR_1_item_set_> {
   size_t operator()(const cyy::lang::LR_1_item_set_ &x) const {
