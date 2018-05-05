@@ -6,60 +6,11 @@
  */
 
 #include "ll_grammar.hpp"
+#include "exception.hpp"
 
 namespace cyy::lang {
 
-bool LL_grammar::is_LL1() const {
-
-  auto follow_sets = follow();
-
-  auto has_intersection = [](const auto &set1, const auto &set2) {
-    auto it1 = set1.begin();
-    auto it2 = set2.begin();
-    while (it1 != set1.end() && it2 != set2.end()) {
-      if (*it1 < *it2) {
-        it1++;
-      } else if (*it1 == *it2) {
-        return true;
-      } else {
-        it2++;
-      }
-    }
-    return false;
-  };
-
-  for (const auto &[head, bodies] : productions) {
-
-    std::vector<std::set<CFG::terminal_type>> first_sets;
-    auto follow_it = follow_sets.find(head);
-    for (size_t i = 0; i < bodies.size(); i++) {
-      first_sets.emplace_back(first({bodies[i].data(), bodies[i].size()}));
-      for (size_t j = 0; j < i; j++) {
-        if (has_intersection(first_sets[i], first_sets[j])) {
-          return false;
-        }
-
-        if (first_sets[i].count(alphabet->get_epsilon()) != 0 &&
-            has_intersection(follow_it->second, first_sets[j])) {
-          return false;
-        }
-
-        if (first_sets[j].count(alphabet->get_epsilon()) != 0 &&
-            has_intersection(follow_it->second, first_sets[i])) {
-          return false;
-        }
-      }
-    }
-  }
-  return true;
-}
-
-CFG::parse_node_ptr LL_grammar::parse(symbol_string_view view) const {
-
-  std::map<std::pair<CFG::terminal_type, CFG::nonterminal_type>,
-           const production_body_type &>
-      parsing_table;
-
+void LL_grammar::construct_parsing_table()
   {
     auto follow_sets = follow();
     for (const auto &[head, bodies] : productions) {
@@ -77,11 +28,8 @@ CFG::parse_node_ptr LL_grammar::parse(symbol_string_view view) const {
                     std::pair{follow_terminal, head}, body);
                 // not LL1
                 if (!has_inserted) {
-                  puts("not LL1 grammar");
+			throw cyy::computation::exception::no_LL_grammar("");
 
-                  print(std::cout, head, it2->second);
-
-                  return {};
                 }
               }
             }
@@ -92,16 +40,17 @@ CFG::parse_node_ptr LL_grammar::parse(symbol_string_view view) const {
 
           // not LL1
           if (!has_inserted) {
-            puts("not LL1 grammar");
-            print(std::cout, head, it->second);
-            puts("confict LL1 grammar");
-            print(std::cout, head, body);
-            return {};
+		  throw cyy::computation::exception::no_LL_grammar("");
           }
         }
       }
     }
   }
+
+
+CFG::parse_node_ptr LL_grammar::parse(symbol_string_view view) const {
+
+
 
   puts("begin parse");
 
