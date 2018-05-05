@@ -43,7 +43,7 @@ void LR_0_item_set ::add_kernel_item(const CFG &cfg, LR_0_item kernel_item) {
   nonkernel_items.merge(tmp_nonkernel_items);
 }
 
-void LR_1_item_set_::add_kernel_item(const CFG &cfg, const LR_0_item  & kernel_item,std::set<CFG::terminal_type> lookahead_set    ) {
+void LR_1_item_set::add_kernel_item(const CFG &cfg, const LR_0_item  & kernel_item,std::set<CFG::terminal_type> lookahead_set    ) {
   auto const &body = kernel_item.production.second;
   if (kernel_item.dot_pos < body.size()) {
 
@@ -59,7 +59,7 @@ void LR_1_item_set_::add_kernel_item(const CFG &cfg, const LR_0_item  & kernel_i
   return;
 }
 
-void LR_1_item_set_::add_nonkernel_item(
+void LR_1_item_set::add_nonkernel_item(
     const CFG &cfg, CFG::grammar_symbol_string_view view,
     std::set<CFG::terminal_type> lookahead_set) {
 

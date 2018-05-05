@@ -93,7 +93,7 @@ template <> struct hash<cyy::lang::LR_1_item> {
 } // namespace std
 
 namespace cyy::lang {
-class LR_1_item_set_ {
+class LR_1_item_set {
 
 public:
   auto get_kernel_items() const -> const auto & { return kernel_items; }
@@ -101,7 +101,7 @@ public:
   auto get_nonkernel_items() const -> const auto & { return nonkernel_items; }
   void add_kernel_item(const CFG &cfg, const LR_0_item & kernel_item,std::set<CFG::terminal_type> lookahead_set    );
 
-  bool operator==(const LR_1_item_set_ &rhs) const {
+  bool operator==(const LR_1_item_set &rhs) const {
     return kernel_items == rhs.kernel_items;
   }
   bool empty() const { return kernel_items.empty(); }
@@ -119,8 +119,8 @@ private:
 } // namespace cyy::lang
 
 namespace std {
-template <> struct hash<cyy::lang::LR_1_item_set_> {
-  size_t operator()(const cyy::lang::LR_1_item_set_ &x) const {
+template <> struct hash<cyy::lang::LR_1_item_set> {
+  size_t operator()(const cyy::lang::LR_1_item_set &x) const {
     auto hash_value = ::std::hash<decltype(x.get_kernel_items().size())>()(
         x.get_kernel_items().size());
     return hash_value;

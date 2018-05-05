@@ -10,9 +10,9 @@
 
 namespace cyy::lang {
 
-LR_1_item_set_ canonical_LR_grammar::GOTO(const LR_1_item_set_ &set,
+LR_1_item_set canonical_LR_grammar::GOTO(const LR_1_item_set &set,
                                           const grammar_symbol_type &symbol) {
-  LR_1_item_set_ res;
+  LR_1_item_set res;
   for (auto const &[kernel_item,lookahead_set] : set.get_kernel_items()) {
     if (kernel_item.dot_pos < kernel_item.production.second.size() &&
         kernel_item.production.second[kernel_item.dot_pos] ==
@@ -42,16 +42,16 @@ LR_1_item_set_ canonical_LR_grammar::GOTO(const LR_1_item_set_ &set,
 }
 
 std::pair<
-    std::vector<LR_1_item_set_>,
+    std::vector<LR_1_item_set>,
     std::map<std::pair<uint64_t, canonical_LR_grammar::grammar_symbol_type>,
              uint64_t>>
 canonical_LR_grammar::canonical_collection() {
-  std::vector<LR_1_item_set_> collection;
+  std::vector<LR_1_item_set> collection;
   std::vector<bool> check_flag{true};
   std::map<std::pair<uint64_t, grammar_symbol_type>, uint64_t> goto_transitions;
   auto endmarker = alphabet->get_endmarker();
 
-  LR_1_item_set_ init_set;
+  LR_1_item_set init_set;
   init_set.add_kernel_item(
       *this,
       LR_0_item{production_type{new_start_symbol, {start_symbol}}, 0},
