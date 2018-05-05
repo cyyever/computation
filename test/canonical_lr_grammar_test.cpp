@@ -111,11 +111,6 @@ TEST_CASE("canonical_collection") {
     sets.emplace(std::move(set));
   }
 
-  CHECK(
-      sets.size() ==
-      decltype(sets){collection.first.begin(), collection.first.end()}.size());
-
-
   CHECK(sets ==
         decltype(sets){collection.first.begin(), collection.first.end()});
 }
