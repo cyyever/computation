@@ -133,7 +133,7 @@ void SLR_grammar::construct_parsing_table() {
 
         // conflict
         if (action_table.count({i, follow_terminal}) != 0) {
-          std::cout << "config with follow_terminal" << follow_terminal
+          std::cout << "config with follow_terminal " << (char)follow_terminal
                     << std::endl;
           throw cyy::computation::exception::no_SLR_grammar("");
         }

@@ -63,14 +63,19 @@ regex::parse(symbol_string_view view) const {
      rfactor -> rfactor '?'
      rfactor -> rprimary
 
-     rprimary -> '(' rexpr ')'
-     rprimary -> escape-sequence
      rprimary -> 'non-operator-char'
+     rprimary -> escape-sequence
+     rprimary -> '(' rexpr ')'
+     rprimary -> '[' character-class ']'
+
+     character-class -> 'any-char-except-backslash-and-]' character-class
+     character-class -> escape-sequence character-class
+     character-class -> epsilon
 
      escape-sequence -> '\' 'any-char'
   */
 
-  std::set<CFG::terminal_type> operators{'|', '*', '(', '\\', ')', '+', '?'};
+  std::set<CFG::terminal_type> operators{'|', '*', '(', '\\', ')', '+', '?','[',']'};
 
   std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
       productions;
@@ -89,8 +94,14 @@ regex::parse(symbol_string_view view) const {
       {"rprimary"},
   };
   productions["rprimary"] = {
-      {'(', "rexpr", ')'},
       {"escape-sequence"},
+      {'(', "rexpr", ')'},
+      {'[', "character-class", ']'},
+  };
+
+  productions["character-class"] = {
+      {"escape-sequence","character-class"},
+      {alphabet->get_epsilon()}
   };
 
   alphabet->foreach_symbol([&](auto const &a) {
@@ -99,6 +110,10 @@ regex::parse(symbol_string_view view) const {
 
     if (!operators.count(a)) {
       productions["rprimary"].emplace_back(CFG::production_body_type{a});
+    }
+
+    if(a!='\\' && a != ']') {
+    productions["character-class"].emplace_back(CFG::production_body_type{a,"character-class"});
     }
   });
 
