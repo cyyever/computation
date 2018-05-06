@@ -111,7 +111,7 @@ regex::parse(symbol_string_view view) const {
         if (second_terminal == '*') {
           return std::make_shared<regex::kleene_closure_node>(inner_tree);
         } else if (second_terminal == '+') {
-          return std::make_shared<regex::union_node>(
+          return std::make_shared<regex::concat_node>(
               inner_tree,
               std::make_shared<regex::kleene_closure_node>(inner_tree));
         } else if (second_terminal == '?') {

@@ -45,7 +45,6 @@ TEST_CASE("parse regex and to NFA") {
             {5});
 
     CHECK(nfa == reg.to_NFA());
-    std::cout << reg.to_NFA().get_states().size();
   }
 
   SUBCASE("kleene_closure_node") {
@@ -68,7 +67,6 @@ TEST_CASE("parse regex and to NFA") {
             {7});
 
     CHECK(nfa == reg.to_NFA());
-    std::cout << reg.to_NFA().get_states().size();
   }
 
   SUBCASE("all together") {
@@ -94,14 +92,12 @@ TEST_CASE("parse regex and to NFA") {
             {10});
 
     CHECK(nfa == reg.to_NFA());
-    std::cout << reg.to_NFA().get_states().size();
   }
 }
 TEST_CASE("parse regex and to DFA") {
   symbol_string expr = U"(a|b)*abb";
   regex reg("ab_set", expr);
 
-  puts("aaaaaa");
   DFA dfa({0, 1, 2, 3}, "ab_set", 0,
           {
 
@@ -115,8 +111,57 @@ TEST_CASE("parse regex and to DFA") {
               {{3, 'b'}, 0},
           },
           {3});
-  puts("bbbb");
-
-  std::cout << reg.to_DFA().get_states().size();
   CHECK(dfa == reg.to_DFA());
+
+  CHECK(dfa.simulate(U"abb"));
+  CHECK(dfa.simulate(U"aabb"));
+  CHECK(dfa.simulate(U"babb"));
+  CHECK(!dfa.simulate(U"bb"));
+  CHECK(!dfa.simulate(U"ab"));
+}
+
+TEST_CASE("parse extended regex and to NFA") {
+
+  SUBCASE("*") {
+    symbol_string expr = U"a*";
+    regex reg("ab_set", expr);
+
+    auto nfa = reg.to_NFA();
+    auto dfa = reg.to_DFA().minimize();
+
+    for (auto const &test_string : {U"", U"a", U"aa"}) {
+      CHECK(nfa.simulate(test_string));
+      CHECK(dfa.simulate(test_string));
+    }
+  }
+
+  SUBCASE("+") {
+    symbol_string expr = U"a+";
+    regex reg("ab_set", expr);
+
+    auto nfa = reg.to_NFA();
+    auto dfa = reg.to_DFA().minimize();
+
+    CHECK(!nfa.simulate(U""));
+    CHECK(!dfa.simulate(U""));
+    for (auto const &test_string : {U"a", U"aa"}) {
+      CHECK(nfa.simulate(test_string));
+      CHECK(dfa.simulate(test_string));
+    }
+  }
+
+  SUBCASE("?") {
+    symbol_string expr = U"a?";
+    regex reg("ab_set", expr);
+
+    auto nfa = reg.to_NFA();
+    auto dfa = reg.to_DFA().minimize();
+
+    for (auto const &test_string : {U"", U"a"}) {
+      CHECK(nfa.simulate(test_string));
+      CHECK(dfa.simulate(test_string));
+    }
+    CHECK(!nfa.simulate(U"aa"));
+    CHECK(!dfa.simulate(U"aa"));
+  }
 }
