@@ -33,8 +33,6 @@ LR_grammar::parse_node_ptr LR_grammar::parse(symbol_string_view view) const {
       // shift
       stack.push_back(std::get<uint64_t>(it->second));
       viable_prefix.push_back(std::make_shared<parse_node>(terminal));
-      std::cout << "viable_prefix size  is " << viable_prefix.size()
-                << std::endl;
       view.remove_prefix(1);
     } else {
       // reduce
