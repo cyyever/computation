@@ -8,8 +8,9 @@
 #include <cassert>
 
 #include "common_tokens.hpp"
-#include "slr_grammar.hpp"
+#include "exception.hpp"
 #include "regex.hpp"
+#include "slr_grammar.hpp"
 
 namespace cyy::lang {
 
@@ -29,6 +30,7 @@ regex::parse(symbol_string_view view) const {
      rprimary -> '(' rexpr ')'
      rprimary -> '\' ASCII-char
      rprimary -> 'non-operator-char'
+
      ASCII-char -> 'any-ASCII-char'
   */
 
@@ -66,45 +68,42 @@ regex::parse(symbol_string_view view) const {
   SLR_grammar regex_grammar("ASCII", "rexpr", productions);
 
   auto parse_tree = regex_grammar.parse(view);
-  if(!parse_tree) {
-	  throw std::runtime_error("parse regex failed");
-
+  if (!parse_tree) {
+    throw cyy::computation::exception::no_regular_expression("");
   }
 
   using syntax_node_ptr = std::shared_ptr<regex::syntax_node>;
 
   auto construct_syntex_tree =
-      [](auto &&self, const CFG::parse_node_ptr &root_parse_node
-	 ) -> syntax_node_ptr {
+      [](auto &&self,
+         const CFG::parse_node_ptr &root_parse_node) -> syntax_node_ptr {
     std::shared_ptr<regex::syntax_node> root_syntax_node;
 
     if (auto ptr = std::get_if<CFG::nonterminal_type>(
             &(root_parse_node->grammar_symbol))) {
       if (*ptr == "rexpr") {
-	if(root_parse_node->children.size()==1) {
-		return self(self,root_parse_node->children[0]);
-	} else {
-
-          return 
-                      std::make_shared<regex::union_node>(
-                          self(self, root_parse_node->children[0]),
-                          self(self, root_parse_node->children[2])
-			  );
-
-	}
-      }
-      else if (*ptr == "rterm") {
-	if(root_parse_node->children.size()==1) {
-		return self(self,root_parse_node->children[0]);
-	} else {
-          return std::make_shared<regex::concat_node>( self(self, root_parse_node->children[0]) ,self(self, root_parse_node->children[1]));
-	}
+        if (root_parse_node->children.size() == 1) {
+          return self(self, root_parse_node->children[0]);
+        } else {
+          return std::make_shared<regex::union_node>(
+              self(self, root_parse_node->children[0]),
+              self(self, root_parse_node->children[2]));
+        }
+      } else if (*ptr == "rterm") {
+        if (root_parse_node->children.size() == 1) {
+          return self(self, root_parse_node->children[0]);
+        } else {
+          return std::make_shared<regex::concat_node>(
+              self(self, root_parse_node->children[0]),
+              self(self, root_parse_node->children[1]));
+        }
       } else if (*ptr == "rfactor") {
-	if(root_parse_node->children.size()==1) {
-		return self(self,root_parse_node->children[0]);
-	} else {
-          return std::make_shared<regex::kleene_closure_node>( self(self, root_parse_node->children[0]));
-	}
+        if (root_parse_node->children.size() == 1) {
+          return self(self, root_parse_node->children[0]);
+        } else {
+          return std::make_shared<regex::kleene_closure_node>(
+              self(self, root_parse_node->children[0]));
+        }
       } else if (*ptr == "rprimary") {
         auto first_terminal = std::get<CFG::terminal_type>(
             root_parse_node->children[0]->grammar_symbol);
