@@ -30,10 +30,10 @@ regex::parse(symbol_string_view view) const {
      rfactor -> rprimary
 
      rprimary -> '(' rexpr ')'
-     rprimary -> '\' ASCII-char
+     rprimary -> escape-sequence
      rprimary -> 'non-operator-char'
 
-     ASCII-char -> 'any-ASCII-char'
+     escape-sequence -> '\' 'any-char'
   */
 
   std::set<CFG::terminal_type> operators{'|', '*', '(', '\\', ')', '+', '?'};
@@ -56,19 +56,19 @@ regex::parse(symbol_string_view view) const {
   };
   productions["rprimary"] = {
       {'(', "rexpr", ')'},
-      {'\\', "ASCII-char"},
+      {"escape-sequence"},
   };
 
   alphabet->foreach_symbol([&](auto const &a) {
-    productions["ASCII-char"].emplace_back(CFG::production_body_type{a});
+    productions["escape-sequence"].emplace_back(CFG::production_body_type{'\\',  a});
 
     if (!operators.count(a)) {
       productions["rprimary"].emplace_back(
-
           CFG::production_body_type{a});
     }
   });
 
+  //SLR_grammar regex_grammar(alphabet->name(), "rexpr", productions);
   SLR_grammar regex_grammar("ASCII", "rexpr", productions);
 
   auto parse_tree = regex_grammar.parse(view);
@@ -119,21 +119,45 @@ regex::parse(symbol_string_view view) const {
               std::make_shared<regex::epsilon_node>(), inner_tree);
         }
       } else if (*ptr == "rprimary") {
+        if ( std::holds_alternative<CFG::nonterminal_type>(root_parse_node->children[0]->grammar_symbol)) {
+          return self(self, root_parse_node->children[0]);
+        }
+
         auto first_terminal = std::get<CFG::terminal_type>(
             root_parse_node->children[0]->grammar_symbol);
         switch (first_terminal) {
         case '(':
           return self(self, root_parse_node->children[1]);
-        case '\\':
-          return self(self, root_parse_node->children[1]);
         default:
           return std::make_shared<regex::basic_node>(first_terminal);
         }
-      } else if (*ptr == "ASCII-char") {
-        auto first_terminal = std::get<CFG::terminal_type>(
-            root_parse_node->children[0]->grammar_symbol);
-        return std::make_shared<regex::basic_node>(first_terminal);
+      } else if (*ptr == "escape-sequence") {
+        auto second_terminal = std::get<CFG::terminal_type>(
+            root_parse_node->children[1]->grammar_symbol);
+
+	switch(second_terminal) {
+		case 'f':
+        return std::make_shared<regex::basic_node>('\f');
+		case 'n':
+        return std::make_shared<regex::basic_node>('\n');
+		case 'r':
+        return std::make_shared<regex::basic_node>('\r');
+		case 't':
+        return std::make_shared<regex::basic_node>('\t');
+		case 'v':
+        return std::make_shared<regex::basic_node>('\v');
+
+
+
+
+		default:
+
+        return std::make_shared<regex::basic_node>(second_terminal);
+	}
+      std::cout<<"*ptr="<<*ptr<<std::endl;
       }
+
+
     }
     assert(0);
     return {};

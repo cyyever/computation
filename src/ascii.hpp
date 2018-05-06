@@ -7,37 +7,17 @@
  */
 #pragma once
 
-#include "lang.hpp"
+#include "range_alphabet.hpp"
 
 namespace cyy::lang {
 
-class ASCII final : public ALPHABET {
+class ASCII final : public range_alphabet<0, 127> {
 public:
-  // enum class common_token:symbol_type {
-
-  symbol_type get_epsilon() const override { return 256; }
-  symbol_type get_endmarker() const override { return 257; }
-
-  void print(std::ostream &os, symbol_type symbol) const override {
-    if (symbol == get_epsilon()) {
-      os << "'epsilon'";
-    } else if (symbol == get_endmarker()) {
-      os << "$";
-    } else {
-      os << '\'' << static_cast<char>(symbol) << '\'';
-    }
-    return;
-  }
-
-  void foreach_symbol(
-      const std::function<void(const symbol_type &)> &callback) const override {
-    for (symbol_type i = 0; i < 256; i++) {
-      callback(i);
-    }
-  }
-  bool contain(symbol_type s) const override { return s < 256; }
-  size_t size() const override { return 256; }
   std::string name() const override { return "ASCII"; }
 };
 
+class printable_ASCII final : public range_alphabet<32, 126> {
+public:
+  std::string name() const override { return "printable-ASCII"; }
+};
 } // namespace cyy::lang

@@ -15,6 +15,7 @@ namespace cyy::lang {
 std::map<std::string, std::shared_ptr<ALPHABET>> ALPHABET::factory = {
     {"common_tokens", std::make_shared<common_tokens>()},
     {"ASCII", std::make_shared<ASCII>()},
+    {"printable-ASCII", std::make_shared<printable_ASCII>()},
     {"ab_set", std::make_shared<set_alphabet>(std::set<symbol_type>{'a', 'b'})},
 };
 
