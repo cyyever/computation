@@ -15,8 +15,8 @@
 #include <string_view>
 #include <variant>
 #include <vector>
+#include <set>
 
-#include "automaton.hpp"
 #include "lang.hpp"
 
 namespace cyy::lang {
