@@ -170,4 +170,21 @@ TEST_CASE("parse extended regex and to NFA") {
     CHECK(!nfa.simulate(U"aa"));
     CHECK(!dfa.simulate(U"aa"));
   }
+
+  SUBCASE(".") {
+    symbol_string expr = U".";
+    regex reg("printable-ASCII", expr);
+
+    auto nfa = reg.to_NFA();
+    auto dfa = reg.to_DFA().minimize();
+
+    CHECK(nfa.simulate(U"a"));
+    CHECK(dfa.simulate(U"a"));
+    CHECK(nfa.simulate(U"b"));
+    CHECK(dfa.simulate(U"b"));
+    CHECK(!nfa.simulate(U"\n"));
+    CHECK(!dfa.simulate(U"\n"));
+    CHECK(!nfa.simulate(U"\r"));
+    CHECK(!dfa.simulate(U"\r"));
+  }
 }

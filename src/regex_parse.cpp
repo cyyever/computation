@@ -15,6 +15,40 @@
 namespace cyy::lang {
 
 std::shared_ptr<regex::syntax_node>
+regex::make_character_class(const std::set<symbol_type> &symbol_set) const {
+
+  std::shared_ptr<regex::syntax_node> root{};
+  for (auto const symbol : symbol_set) {
+    if (!root) {
+      root = std::make_shared<regex::basic_node>(symbol);
+    } else {
+      root = std::make_shared<regex::union_node>(
+          root, std::make_shared<regex::basic_node>(symbol));
+    }
+  }
+
+  if (!root) {
+    assert(0);
+  }
+  return root;
+}
+
+std::shared_ptr<regex::syntax_node> regex::make_complemented_character_class(
+    const std::set<symbol_type> &symbol_set) const {
+  std::shared_ptr<regex::syntax_node> root{};
+
+  std::set<symbol_type> complemented_symbol_set;
+
+  alphabet->foreach_symbol([&](auto const &a) {
+    if (!symbol_set.count(a)) {
+      complemented_symbol_set.insert(a);
+    }
+  });
+
+  return make_character_class(complemented_symbol_set);
+}
+
+std::shared_ptr<regex::syntax_node>
 regex::parse(symbol_string_view view) const {
 
   /*
@@ -78,8 +112,8 @@ regex::parse(symbol_string_view view) const {
   using syntax_node_ptr = std::shared_ptr<regex::syntax_node>;
 
   auto construct_syntex_tree =
-      [](auto &&self,
-         const CFG::parse_node_ptr &root_parse_node) -> syntax_node_ptr {
+      [this](auto &&self,
+             const CFG::parse_node_ptr &root_parse_node) -> syntax_node_ptr {
     std::shared_ptr<regex::syntax_node> root_syntax_node;
 
     if (auto ptr = std::get_if<CFG::nonterminal_type>(
@@ -128,6 +162,9 @@ regex::parse(symbol_string_view view) const {
         switch (first_terminal) {
         case '(':
           return self(self, root_parse_node->children[1]);
+        case '.':
+          return make_complemented_character_class({'\n', '\r'});
+
         default:
           return std::make_shared<regex::basic_node>(first_terminal);
         }
