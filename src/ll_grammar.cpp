@@ -10,47 +10,42 @@
 
 namespace cyy::lang {
 
-void LL_grammar::construct_parsing_table()
-  {
-    auto follow_sets = follow();
-    for (const auto &[head, bodies] : productions) {
-      for (auto const &body : bodies) {
-        auto first_set = first({body.data(), body.size()});
+void LL_grammar::construct_parsing_table() {
+  auto follow_sets = follow();
+  for (const auto &[head, bodies] : productions) {
+    for (auto const &body : bodies) {
+      auto first_set = first({body.data(), body.size()});
 
-        for (auto const &terminal : first_set) {
+      for (auto const &terminal : first_set) {
 
-          if (is_epsilon(terminal)) {
-            auto it = follow_sets.find(head);
-            if (it != follow_sets.end()) {
-              for (auto const &follow_terminal : it->second) {
+        if (is_epsilon(terminal)) {
+          auto it = follow_sets.find(head);
+          if (it != follow_sets.end()) {
+            for (auto const &follow_terminal : it->second) {
 
-                auto [it2, has_inserted] = parsing_table.emplace(
-                    std::pair{follow_terminal, head}, body);
-                // not LL1
-                if (!has_inserted) {
-			throw cyy::computation::exception::no_LL_grammar("");
-
-                }
+              auto [it2, has_inserted] =
+                  parsing_table.emplace(std::pair{follow_terminal, head}, body);
+              // not LL1
+              if (!has_inserted) {
+                throw cyy::computation::exception::no_LL_grammar("");
               }
             }
-            continue;
           }
-          auto [it, has_inserted] =
-              parsing_table.emplace(std::pair{terminal, head}, body);
+          continue;
+        }
+        auto [it, has_inserted] =
+            parsing_table.emplace(std::pair{terminal, head}, body);
 
-          // not LL1
-          if (!has_inserted) {
-		  throw cyy::computation::exception::no_LL_grammar("");
-          }
+        // not LL1
+        if (!has_inserted) {
+          throw cyy::computation::exception::no_LL_grammar("");
         }
       }
     }
   }
-
+}
 
 CFG::parse_node_ptr LL_grammar::parse(symbol_string_view view) const {
-
-
 
   puts("begin parse");
 

@@ -5,8 +5,8 @@
  * \date 2018-03-04
  */
 
-#include "automaton.hpp"
 #include "cfg.hpp"
+#include "automaton.hpp"
 
 namespace cyy::lang {
 

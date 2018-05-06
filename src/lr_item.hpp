@@ -99,7 +99,8 @@ public:
   auto get_kernel_items() const -> const auto & { return kernel_items; }
 
   auto get_nonkernel_items() const -> const auto & { return nonkernel_items; }
-  void add_kernel_item(const CFG &cfg, const LR_0_item & kernel_item,std::set<CFG::terminal_type> lookahead_set    );
+  void add_kernel_item(const CFG &cfg, const LR_0_item &kernel_item,
+                       std::set<CFG::terminal_type> lookahead_set);
 
   bool operator==(const LR_1_item_set &rhs) const {
     return kernel_items == rhs.kernel_items;

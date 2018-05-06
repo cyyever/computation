@@ -35,7 +35,7 @@ public:
 
 private:
   LR_1_item_set GOTO(const LR_1_item_set &set,
-                      const grammar_symbol_type &symbol);
+                     const grammar_symbol_type &symbol);
   void construct_parsing_table() override;
 
 private:

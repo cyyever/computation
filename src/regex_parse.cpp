@@ -60,16 +60,15 @@ regex::parse(symbol_string_view view) const {
   };
 
   alphabet->foreach_symbol([&](auto const &a) {
-    productions["escape-sequence"].emplace_back(CFG::production_body_type{'\\',  a});
+    productions["escape-sequence"].emplace_back(
+        CFG::production_body_type{'\\', a});
 
     if (!operators.count(a)) {
-      productions["rprimary"].emplace_back(
-          CFG::production_body_type{a});
+      productions["rprimary"].emplace_back(CFG::production_body_type{a});
     }
   });
 
-  //SLR_grammar regex_grammar(alphabet->name(), "rexpr", productions);
-  SLR_grammar regex_grammar("ASCII", "rexpr", productions);
+  SLR_grammar regex_grammar(alphabet->name(), "rexpr", productions);
 
   auto parse_tree = regex_grammar.parse(view);
   if (!parse_tree) {
@@ -119,7 +118,8 @@ regex::parse(symbol_string_view view) const {
               std::make_shared<regex::epsilon_node>(), inner_tree);
         }
       } else if (*ptr == "rprimary") {
-        if ( std::holds_alternative<CFG::nonterminal_type>(root_parse_node->children[0]->grammar_symbol)) {
+        if (std::holds_alternative<CFG::nonterminal_type>(
+                root_parse_node->children[0]->grammar_symbol)) {
           return self(self, root_parse_node->children[0]);
         }
 
@@ -135,29 +135,24 @@ regex::parse(symbol_string_view view) const {
         auto second_terminal = std::get<CFG::terminal_type>(
             root_parse_node->children[1]->grammar_symbol);
 
-	switch(second_terminal) {
-		case 'f':
-        return std::make_shared<regex::basic_node>('\f');
-		case 'n':
-        return std::make_shared<regex::basic_node>('\n');
-		case 'r':
-        return std::make_shared<regex::basic_node>('\r');
-		case 't':
-        return std::make_shared<regex::basic_node>('\t');
-		case 'v':
-        return std::make_shared<regex::basic_node>('\v');
+        switch (second_terminal) {
+        case 'f':
+          return std::make_shared<regex::basic_node>('\f');
+        case 'n':
+          return std::make_shared<regex::basic_node>('\n');
+        case 'r':
+          return std::make_shared<regex::basic_node>('\r');
+        case 't':
+          return std::make_shared<regex::basic_node>('\t');
+        case 'v':
+          return std::make_shared<regex::basic_node>('\v');
 
+        default:
 
-
-
-		default:
-
-        return std::make_shared<regex::basic_node>(second_terminal);
-	}
-      std::cout<<"*ptr="<<*ptr<<std::endl;
+          return std::make_shared<regex::basic_node>(second_terminal);
+        }
+        std::cout << "*ptr=" << *ptr << std::endl;
       }
-
-
     }
     assert(0);
     return {};

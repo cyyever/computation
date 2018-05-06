@@ -80,8 +80,8 @@ TEST_CASE("get_terminals") {
   };
 
   CFG cfg("common_tokens", "E", productions);
-  CHECK(cfg.get_terminals()==
-        std::set<CFG::terminal_type>{'+', '*', ')','(',id});
+  CHECK(cfg.get_terminals() ==
+        std::set<CFG::terminal_type>{'+', '*', ')', '(', id});
 }
 
 TEST_CASE("eliminate_left_recursion") {

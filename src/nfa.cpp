@@ -81,10 +81,10 @@ DFA NFA::to_DFA() const {
     });
   }
 
-  for (size_t i = 0; i <subsets.size(); i++) {
-        if (contain_final_state(subsets[i])) {
-          DFA_final_states.insert(i);
-        }
+  for (size_t i = 0; i < subsets.size(); i++) {
+    if (contain_final_state(subsets[i])) {
+      DFA_final_states.insert(i);
+    }
   }
 
   return {DFA_states, alphabet->name(), 0, DFA_transition_table,
