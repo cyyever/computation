@@ -71,7 +71,6 @@ LR_grammar::parse_node_ptr LR_grammar::parse(symbol_string_view view) const {
     return {};
   }
 
-  std::cout << "viable_prefix size  is " << viable_prefix.size() << std::endl;
   return viable_prefix[0];
 }
 } // namespace cyy::lang
