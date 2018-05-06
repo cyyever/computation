@@ -13,16 +13,19 @@ namespace cyy::lang {
 
 DFA regex::to_DFA() const {
   std::map<uint64_t, symbol_type> position_to_symbol;
-  syntax_tree->assign_position(position_to_symbol);
-  // endmarker
-  auto final_position = position_to_symbol.rbegin()->first + 1;
-  auto follow_pos_table = syntax_tree->follow_pos();
-  for (auto pos : syntax_tree->last_pos()) {
-    follow_pos_table.insert({pos, {final_position}});
-  }
+
+  auto syntax_tree_with_endmarker = std::make_shared<regex::concat_node>(
+      syntax_tree,
+      std::make_shared<regex::basic_node>(alphabet->get_endmarker()));
+
+  syntax_tree_with_endmarker->assign_position(position_to_symbol);
+
+  auto final_position = position_to_symbol.rbegin()->first;
+  auto follow_pos_table = syntax_tree_with_endmarker->follow_pos();
 
   std::vector<bool> flags{false};
-  std::vector<std::set<uint64_t>> position_sets{syntax_tree->first_pos()};
+  std::vector<std::set<uint64_t>> position_sets{
+      syntax_tree_with_endmarker->first_pos()};
   std::set<uint64_t> DFA_states{0};
   std::map<std::pair<uint64_t, symbol_type>, uint64_t> DFA_transition_table;
   std::set<uint64_t> DFA_final_states;
@@ -54,14 +57,16 @@ DFA regex::to_DFA() const {
         position_sets.push_back(follow_pos_set);
         flags.push_back(false);
         DFA_states.insert(j);
-
-        if (follow_pos_set.count(final_position) != 0) {
-          DFA_final_states.insert(j);
-        }
       }
 
       DFA_transition_table[{i, a}] = j;
     });
+  }
+
+  for (size_t i = 0; i < position_sets.size(); i++) {
+    if (position_sets[i].count(final_position) != 0) {
+      DFA_final_states.insert(i);
+    }
   }
 
   return {DFA_states, alphabet->name(), 0, DFA_transition_table,

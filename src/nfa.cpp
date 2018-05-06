@@ -75,14 +75,16 @@ DFA NFA::to_DFA() const {
         subsets.push_back(res);
         flags.push_back(false);
         DFA_states.insert(j);
-
-        if (contain_final_state(res)) {
-          DFA_final_states.insert(j);
-        }
       }
 
       DFA_transition_table[{i, a}] = j;
     });
+  }
+
+  for (size_t i = 0; i <subsets.size(); i++) {
+        if (contain_final_state(subsets[i])) {
+          DFA_final_states.insert(i);
+        }
   }
 
   return {DFA_states, alphabet->name(), 0, DFA_transition_table,
