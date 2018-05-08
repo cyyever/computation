@@ -11,6 +11,7 @@
 #include "../src/set_alphabet.hpp"
 
 using namespace cyy::lang;
+
 TEST_CASE("parse regex and to NFA") {
 
   SUBCASE("basic case") {
@@ -186,5 +187,82 @@ TEST_CASE("parse extended regex and to NFA") {
     CHECK(!dfa.simulate(U"\n"));
     CHECK(!nfa.simulate(U"\r"));
     CHECK(!dfa.simulate(U"\r"));
+  }
+
+  SUBCASE("[^]") {
+    symbol_string expr = U"[^]";
+    regex reg("printable-ASCII", expr);
+
+    auto nfa = reg.to_NFA();
+    auto dfa = reg.to_DFA().minimize();
+
+    CHECK(nfa.simulate(U"^"));
+    CHECK(dfa.simulate(U"^"));
+  }
+
+  SUBCASE("[-]") {
+    symbol_string expr = U"[-]";
+    regex reg("printable-ASCII", expr);
+
+    auto nfa = reg.to_NFA();
+    auto dfa = reg.to_DFA().minimize();
+
+    CHECK(nfa.simulate(U"-"));
+    CHECK(dfa.simulate(U"-"));
+  }
+
+  SUBCASE("[^-]") {
+    symbol_string expr = U"[^-]";
+    regex reg("printable-ASCII", expr);
+
+    auto nfa = reg.to_NFA();
+    auto dfa = reg.to_DFA().minimize();
+
+    CHECK(!nfa.simulate(U"-"));
+    CHECK(!dfa.simulate(U"-"));
+    CHECK(nfa.simulate(U"a"));
+    CHECK(dfa.simulate(U"a"));
+  }
+
+  SUBCASE("[a-c]") {
+    symbol_string expr = U"[a-c]";
+    regex reg("printable-ASCII", expr);
+
+    auto nfa = reg.to_NFA();
+    auto dfa = reg.to_DFA().minimize();
+
+    CHECK(nfa.simulate(U"a"));
+    CHECK(dfa.simulate(U"a"));
+    CHECK(nfa.simulate(U"b"));
+    CHECK(dfa.simulate(U"b"));
+    CHECK(nfa.simulate(U"c"));
+    CHECK(dfa.simulate(U"c"));
+    CHECK(!nfa.simulate(U"d"));
+    CHECK(!dfa.simulate(U"d"));
+    CHECK(!nfa.simulate(U"-"));
+    CHECK(!dfa.simulate(U"-"));
+  }
+
+  SUBCASE("[a-c-z]") {
+    symbol_string expr = U"[a-c-z]";
+    regex reg("printable-ASCII", expr);
+
+    auto nfa = reg.to_NFA();
+    auto dfa = reg.to_DFA().minimize();
+
+    CHECK(nfa.simulate(U"a"));
+    CHECK(dfa.simulate(U"a"));
+    CHECK(nfa.simulate(U"b"));
+    CHECK(dfa.simulate(U"b"));
+    CHECK(nfa.simulate(U"c"));
+    CHECK(dfa.simulate(U"c"));
+    CHECK(!nfa.simulate(U"d"));
+    CHECK(!dfa.simulate(U"d"));
+    CHECK(nfa.simulate(U"-"));
+    CHECK(dfa.simulate(U"-"));
+    CHECK(nfa.simulate(U"z"));
+    CHECK(dfa.simulate(U"z"));
+    CHECK(!nfa.simulate(U"y"));
+    CHECK(!dfa.simulate(U"y"));
   }
 }
