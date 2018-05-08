@@ -498,7 +498,7 @@ CFG::first() const {
 std::set<CFG::terminal_type>
 CFG::first(const grammar_symbol_string_view &alpha) const {
 
-  const auto &first_sets = first();
+  first();
   std::set<terminal_type> view_first_set;
   for (auto const &symbol : alpha) {
 

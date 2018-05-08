@@ -75,7 +75,8 @@ regex::parse(symbol_string_view view) const {
      escape-sequence -> '\' 'any-char'
   */
 
-  std::set<CFG::terminal_type> operators{'|', '*', '(', '\\', ')', '+', '?','[',']'};
+  std::set<CFG::terminal_type> operators{'|', '*', '(', '\\', ')',
+                                         '+', '?', '[', ']'};
 
   std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
       productions;
@@ -99,10 +100,8 @@ regex::parse(symbol_string_view view) const {
       {'[', "character-class", ']'},
   };
 
-  productions["character-class"] = {
-      {"escape-sequence","character-class"},
-      {alphabet->get_epsilon()}
-  };
+  productions["character-class"] = {{"escape-sequence", "character-class"},
+                                    {alphabet->get_epsilon()}};
 
   alphabet->foreach_symbol([&](auto const &a) {
     productions["escape-sequence"].emplace_back(
@@ -112,8 +111,9 @@ regex::parse(symbol_string_view view) const {
       productions["rprimary"].emplace_back(CFG::production_body_type{a});
     }
 
-    if(a!='\\' && a != ']') {
-    productions["character-class"].emplace_back(CFG::production_body_type{a,"character-class"});
+    if (a != '\\' && a != ']') {
+      productions["character-class"].emplace_back(
+          CFG::production_body_type{a, "character-class"});
     }
   });
 
@@ -126,9 +126,31 @@ regex::parse(symbol_string_view view) const {
 
   using syntax_node_ptr = std::shared_ptr<regex::syntax_node>;
 
+  auto parse_escape_sequence =
+      [](const CFG::parse_node_ptr &parse_node) -> symbol_type {
+    auto second_terminal =
+        std::get<CFG::terminal_type>(parse_node->children[1]->grammar_symbol);
+
+    switch (second_terminal) {
+    case 'f':
+      return '\f';
+    case 'n':
+      return '\n';
+    case 'r':
+      return '\r';
+    case 't':
+      return '\t';
+    case 'v':
+      return '\v';
+    default:
+      return second_terminal;
+    }
+  };
+
   auto construct_syntex_tree =
-      [this](auto &&self,
-             const CFG::parse_node_ptr &root_parse_node) -> syntax_node_ptr {
+      [this, &parse_escape_sequence](
+          auto &&self,
+          const CFG::parse_node_ptr &root_parse_node) -> syntax_node_ptr {
     std::shared_ptr<regex::syntax_node> root_syntax_node;
 
     if (auto ptr = std::get_if<CFG::nonterminal_type>(
@@ -177,6 +199,8 @@ regex::parse(symbol_string_view view) const {
         switch (first_terminal) {
         case '(':
           return self(self, root_parse_node->children[1]);
+        case '[':
+          return self(self, root_parse_node->children[1]);
         case '.':
           return make_complemented_character_class({'\n', '\r'});
 
@@ -184,26 +208,78 @@ regex::parse(symbol_string_view view) const {
           return std::make_shared<regex::basic_node>(first_terminal);
         }
       } else if (*ptr == "escape-sequence") {
-        auto second_terminal = std::get<CFG::terminal_type>(
-            root_parse_node->children[1]->grammar_symbol);
+        return std::make_shared<regex::basic_node>(
+            parse_escape_sequence(root_parse_node));
 
-        switch (second_terminal) {
-        case 'f':
-          return std::make_shared<regex::basic_node>('\f');
-        case 'n':
-          return std::make_shared<regex::basic_node>('\n');
-        case 'r':
-          return std::make_shared<regex::basic_node>('\r');
-        case 't':
-          return std::make_shared<regex::basic_node>('\t');
-        case 'v':
-          return std::make_shared<regex::basic_node>('\v');
+      } else if (*ptr == "character-class") {
 
-        default:
+        std::vector<symbol_type> class_content;
 
-          return std::make_shared<regex::basic_node>(second_terminal);
+        auto cur_node = root_parse_node;
+        while (true) {
+          symbol_type cur_symbol = 0;
+          if (std::holds_alternative<CFG::terminal_type>(
+                  cur_node->children[0]->grammar_symbol)) {
+            cur_symbol = std::get<CFG::terminal_type>(
+                cur_node->children[0]->grammar_symbol);
+            if (alphabet->is_epsilon(cur_symbol)) {
+              break;
+            }
+          } else {
+            cur_symbol = parse_escape_sequence(root_parse_node->children[0]);
+          }
+          class_content.push_back(cur_symbol);
+
+          cur_node = cur_node->children[1];
         }
-        std::cout << "*ptr=" << *ptr << std::endl;
+
+        auto class_size = class_content.size();
+        if (class_size == 0) {
+          throw cyy::computation::exception::no_regular_expression(
+              "empty character class");
+        }
+
+        if (class_size == 1) {
+          return make_character_class({*(class_content.begin())});
+        }
+
+        std::set<symbol_type> symbol_set;
+
+        size_t i = 0;
+        bool complemented = false;
+
+        if (class_content[0] == '^') {
+          complemented = true;
+          i++;
+        }
+
+        while (i < class_size) {
+          symbol_type cur_symbol = class_content[i];
+
+          if (i + 2 < class_size && class_content[i + 1] == '-') {
+            auto end_symbol = class_content[i + 2];
+
+            if (cur_symbol > end_symbol) {
+              throw cyy::computation::exception::no_regular_expression(
+                  std::string("invalid character range ") +
+                  static_cast<char>(cur_symbol) + '-' +
+                  static_cast<char>(end_symbol));
+            }
+
+            for (symbol_type j = cur_symbol; j <= end_symbol; j++) {
+              symbol_set.emplace(j);
+            }
+            i += 3;
+            continue;
+          }
+          symbol_set.insert(cur_symbol);
+          i++;
+        }
+
+        if (complemented) {
+          return make_complemented_character_class(symbol_set);
+        }
+        return make_character_class(symbol_set);
       }
     }
     assert(0);
