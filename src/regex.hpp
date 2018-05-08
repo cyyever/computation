@@ -127,9 +127,11 @@ public:
 
 private:
   std::shared_ptr<syntax_node> parse(symbol_string_view view) const;
+  std::shared_ptr<syntax_node>
+  make_character_class(const std::set<symbol_type> &symbol_set) const;
+  std::shared_ptr<syntax_node> make_complemented_character_class(
+      const std::set<symbol_type> &symbol_set) const;
 
-  std::shared_ptr<syntax_node> make_character_class( const std::set<symbol_type> & symbol_set) const;
-  std::shared_ptr<syntax_node> make_complemented_character_class( const std::set<symbol_type> & symbol_set) const;
 private:
   std::shared_ptr<ALPHABET> alphabet;
   mutable std::shared_ptr<regex::syntax_node> syntax_tree;
