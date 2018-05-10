@@ -56,7 +56,7 @@ std::pair<int, lexical_analyzer::token> lexical_analyzer::scan() {
   auto column_no = cur_column;
 
   while (true) {
-    symbol_type c=0;
+    symbol_type c = 0;
     input_stream.get(c);
 
     if (!input_stream) {

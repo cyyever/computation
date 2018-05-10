@@ -39,7 +39,7 @@ std::shared_ptr<regex::syntax_node> regex::make_complemented_character_class(
 
   std::set<symbol_type> complemented_symbol_set;
 
-  alphabet->foreach_symbol([&](auto const &a) {
+  regex_alphabet->foreach_symbol([&](auto const &a) {
     if (!symbol_set.count(a)) {
       complemented_symbol_set.insert(a);
     }
@@ -101,9 +101,9 @@ regex::parse(symbol_string_view view) const {
   };
 
   productions["character-class"] = {{"escape-sequence", "character-class"},
-                                    {alphabet->get_epsilon()}};
+                                    {regex_alphabet->get_epsilon()}};
 
-  alphabet->foreach_symbol([&](auto const &a) {
+  regex_alphabet->foreach_symbol([&](auto const &a) {
     productions["escape-sequence"].emplace_back(
         CFG::production_body_type{'\\', a});
 
@@ -117,7 +117,7 @@ regex::parse(symbol_string_view view) const {
     }
   });
 
-  SLR_grammar regex_grammar(alphabet->name(), "rexpr", productions);
+  SLR_grammar regex_grammar(regex_alphabet->name(), "rexpr", productions);
 
   auto parse_tree = regex_grammar.parse(view);
   if (!parse_tree) {
@@ -222,7 +222,7 @@ regex::parse(symbol_string_view view) const {
                   cur_node->children[0]->grammar_symbol)) {
             cur_symbol = std::get<CFG::terminal_type>(
                 cur_node->children[0]->grammar_symbol);
-            if (alphabet->is_epsilon(cur_symbol)) {
+            if (regex_alphabet->is_epsilon(cur_symbol)) {
               break;
             }
           } else {

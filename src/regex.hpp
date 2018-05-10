@@ -114,7 +114,8 @@ public:
 
 public:
   regex(const std::string &alphabet_name, symbol_string_view view)
-      : alphabet(ALPHABET::get(alphabet_name)) {
+      : alphabet(ALPHABET::get(alphabet_name)),
+        regex_alphabet(ALPHABET::get("printable-ASCII")) {
     syntax_tree = parse(view);
   }
 
@@ -134,6 +135,7 @@ private:
 
 private:
   std::shared_ptr<ALPHABET> alphabet;
+  std::shared_ptr<ALPHABET> regex_alphabet;
   mutable std::shared_ptr<regex::syntax_node> syntax_tree;
 };
 } // namespace cyy::lang

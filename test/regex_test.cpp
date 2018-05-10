@@ -16,9 +16,9 @@ TEST_CASE("parse regex and to NFA") {
 
   SUBCASE("basic case") {
     symbol_string expr = U"a";
-    regex reg("printable-ASCII", expr);
+    regex reg("ab_set", expr);
 
-    NFA nfa({0, 1}, "printable-ASCII", 0,
+    NFA nfa({0, 1}, "ab_set", 0,
             {
 
                 {{0, 'a'}, {1}},
@@ -31,10 +31,10 @@ TEST_CASE("parse regex and to NFA") {
   SUBCASE("union") {
 
     symbol_string expr = U"a|b";
-    regex reg("printable-ASCII", expr);
+    regex reg("ab_set", expr);
 
-    auto epsilon = ALPHABET::get("printable-ASCII")->get_epsilon();
-    NFA nfa({0, 1, 2, 3, 4, 5}, "printable-ASCII", 0,
+    auto epsilon = ALPHABET::get("ab_set")->get_epsilon();
+    NFA nfa({0, 1, 2, 3, 4, 5}, "ab_set", 0,
             {
 
                 {{0, epsilon}, {1, 3}},
@@ -51,10 +51,10 @@ TEST_CASE("parse regex and to NFA") {
   SUBCASE("kleene_closure_node") {
 
     symbol_string expr = U"(a|b)*";
-    regex reg("printable-ASCII", expr);
+    regex reg("ab_set", expr);
 
-    auto epsilon = ALPHABET::get("printable-ASCII")->get_epsilon();
-    NFA nfa({0, 1, 2, 3, 4, 5, 6, 7}, "printable-ASCII", 0,
+    auto epsilon = ALPHABET::get("ab_set")->get_epsilon();
+    NFA nfa({0, 1, 2, 3, 4, 5, 6, 7}, "ab_set", 0,
             {
 
                 {{0, epsilon}, {1, 7}},
@@ -73,10 +73,10 @@ TEST_CASE("parse regex and to NFA") {
   SUBCASE("all together") {
 
     symbol_string expr = U"(a|b)*abb";
-    regex reg("printable-ASCII", expr);
+    regex reg("ab_set", expr);
 
-    auto epsilon = ALPHABET::get("printable-ASCII")->get_epsilon();
-    NFA nfa({0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, "printable-ASCII", 0,
+    auto epsilon = ALPHABET::get("ab_set")->get_epsilon();
+    NFA nfa({0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, "ab_set", 0,
             {
 
                 {{0, epsilon}, {1, 7}},
@@ -98,13 +98,9 @@ TEST_CASE("parse regex and to NFA") {
 
 TEST_CASE("parse regex and to DFA") {
   symbol_string expr = U"(a|b)*abb";
-  regex reg("printable-ASCII", expr);
+  regex reg("ab_set", expr);
 
-  auto dfa = reg.to_DFA();
-
-  /*
-  auto dfa=reg.to_DFA();
-  DFA dfa({0, 1, 2, 3}, "printable-ASCII", 0,
+  DFA dfa({0, 1, 2, 3}, "ab_set", 0,
           {
 
               {{0, 'a'}, 1},
@@ -118,7 +114,6 @@ TEST_CASE("parse regex and to DFA") {
           },
           {3});
   CHECK(dfa == reg.to_DFA());
-  */
 
   CHECK(dfa.simulate(U"abb"));
   CHECK(dfa.simulate(U"aabb"));
@@ -131,7 +126,7 @@ TEST_CASE("parse extended regex and to NFA") {
 
   SUBCASE("*") {
     symbol_string expr = U"a*";
-    regex reg("printable-ASCII", expr);
+    regex reg("ab_set", expr);
 
     auto nfa = reg.to_NFA();
     auto dfa = reg.to_DFA().minimize();
@@ -144,7 +139,7 @@ TEST_CASE("parse extended regex and to NFA") {
 
   SUBCASE("+") {
     symbol_string expr = U"a+";
-    regex reg("printable-ASCII", expr);
+    regex reg("ab_set", expr);
 
     auto nfa = reg.to_NFA();
     auto dfa = reg.to_DFA().minimize();
@@ -159,7 +154,7 @@ TEST_CASE("parse extended regex and to NFA") {
 
   SUBCASE("?") {
     symbol_string expr = U"a?";
-    regex reg("printable-ASCII", expr);
+    regex reg("ab_set", expr);
 
     auto nfa = reg.to_NFA();
     auto dfa = reg.to_DFA().minimize();
