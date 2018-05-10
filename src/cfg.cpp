@@ -8,7 +8,7 @@
 #include "cfg.hpp"
 #include "automaton.hpp"
 
-namespace cyy::lang {
+namespace cyy::computation {
 
 CFG::CFG(
     const std::string &alphabet_name, const nonterminal_type &start_symbol_,
@@ -827,4 +827,4 @@ bool CFG::is_CNF() const {
   return true;
 }
 
-} // namespace cyy::lang
+} // namespace cyy::computation

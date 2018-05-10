@@ -12,7 +12,7 @@
 #include "regex.hpp"
 #include "slr_grammar.hpp"
 
-namespace cyy::lang {
+namespace cyy::computation {
 
 std::shared_ptr<regex::syntax_node>
 regex::make_character_class(const std::set<symbol_type> &symbol_set) const {
@@ -288,4 +288,4 @@ regex::parse(symbol_string_view view) const {
 
   return construct_syntex_tree(construct_syntex_tree, parse_tree);
 }
-} // namespace cyy::lang
+} // namespace cyy::computation

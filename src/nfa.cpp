@@ -9,7 +9,7 @@
 
 #include "automaton.hpp"
 
-namespace cyy::lang {
+namespace cyy::computation {
 
 std::set<uint64_t> NFA::move(const std::set<uint64_t> &T, symbol_type a) const {
   std::set<uint64_t> direct_reachable;
@@ -90,4 +90,4 @@ DFA NFA::to_DFA() const {
   return {DFA_states, alphabet->name(), 0, DFA_transition_table,
           DFA_final_states};
 }
-} // namespace cyy::lang
+} // namespace cyy::computation

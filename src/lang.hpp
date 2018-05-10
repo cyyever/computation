@@ -15,7 +15,7 @@
 #include <string>
 #include <string_view>
 
-namespace cyy::lang {
+namespace cyy::computation {
 
 using symbol_type = char32_t;
 class ALPHABET {
@@ -48,4 +48,4 @@ using symbol_string = std::basic_string<symbol_type>;
 using symbol_string_view = std::basic_string_view<symbol_type>;
 using symbol_istringstream = std::basic_istringstream<symbol_type>;
 
-} // namespace cyy::lang
+} // namespace cyy::computation

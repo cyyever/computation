@@ -14,7 +14,7 @@
 #include "lang.hpp"
 #include "lr_grammar.hpp"
 
-namespace cyy::lang {
+namespace cyy::computation {
 
 class canonical_LR_grammar : public LR_grammar {
 
@@ -41,4 +41,4 @@ private:
 private:
   nonterminal_type new_start_symbol;
 };
-} // namespace cyy::lang
+} // namespace cyy::computation

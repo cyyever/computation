@@ -14,7 +14,7 @@
 #include "cfg.hpp"
 #include "lr_item.hpp"
 
-namespace cyy::lang {
+namespace cyy::computation {
 
 class LR_grammar : public CFG {
 
@@ -34,4 +34,4 @@ protected:
       action_table;
   std::map<std::pair<uint64_t, nonterminal_type>, uint64_t> goto_table;
 };
-} // namespace cyy::lang
+} // namespace cyy::computation

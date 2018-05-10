@@ -10,7 +10,7 @@
 #include "../src/common_tokens.hpp"
 #include "../src/slr_grammar.hpp"
 
-using namespace cyy::lang;
+using namespace cyy::computation;
 
 TEST_CASE("canonical_collection") {
   std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>

@@ -7,7 +7,7 @@
 
 #include "lr_grammar.hpp"
 
-namespace cyy::lang {
+namespace cyy::computation {
 
 LR_grammar::parse_node_ptr LR_grammar::parse(symbol_string_view view) const {
 
@@ -73,4 +73,4 @@ LR_grammar::parse_node_ptr LR_grammar::parse(symbol_string_view view) const {
 
   return viable_prefix[0];
 }
-} // namespace cyy::lang
+} // namespace cyy::computation

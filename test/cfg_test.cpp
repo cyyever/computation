@@ -10,7 +10,7 @@
 #include "../src/common_tokens.hpp"
 #include "../src/grammar.hpp"
 
-using namespace cyy::lang;
+using namespace cyy::computation;
 TEST_CASE("eliminate_useless_symbols") {
   SUBCASE("have productions after eliminate") {
     std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>

@@ -10,7 +10,7 @@
 #include "lang.hpp"
 #include <map>
 
-namespace cyy::lang {
+namespace cyy::computation {
 
 // find word from str
 template <typename CharT>
@@ -148,4 +148,4 @@ Aho_Corasick(const std::vector<std::basic_string_view<CharT>> &words,
   return {};
 }
 
-} // namespace cyy::lang
+} // namespace cyy::computation

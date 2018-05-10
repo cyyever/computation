@@ -9,7 +9,7 @@
 
 #include "range_alphabet.hpp"
 
-namespace cyy::lang {
+namespace cyy::computation {
 
 class ASCII final : public range_alphabet<0, 127> {
 public:
@@ -20,4 +20,4 @@ class printable_ASCII final : public range_alphabet<32, 126> {
 public:
   std::string name() const override { return "printable-ASCII"; }
 };
-} // namespace cyy::lang
+} // namespace cyy::computation

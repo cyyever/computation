@@ -12,7 +12,7 @@
 
 #include "lang.hpp"
 
-namespace cyy::lang {
+namespace cyy::computation {
 
 class set_alphabet final : public ALPHABET {
 public:
@@ -56,4 +56,4 @@ private:
   std::set<symbol_type> explicit_set;
 };
 
-} // namespace cyy::lang
+} // namespace cyy::computation

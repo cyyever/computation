@@ -8,7 +8,7 @@
 #include "slr_grammar.hpp"
 #include "exception.hpp"
 
-namespace cyy::lang {
+namespace cyy::computation {
 
 LR_0_item_set SLR_grammar::GOTO(const LR_0_item_set &set,
                                 const grammar_symbol_type &symbol) const {
@@ -142,4 +142,4 @@ void SLR_grammar::construct_parsing_table() {
     }
   }
 }
-} // namespace cyy::lang
+} // namespace cyy::computation

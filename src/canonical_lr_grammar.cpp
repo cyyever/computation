@@ -8,7 +8,7 @@
 #include "canonical_lr_grammar.hpp"
 #include "exception.hpp"
 
-namespace cyy::lang {
+namespace cyy::computation {
 
 LR_1_item_set canonical_LR_grammar::GOTO(const LR_1_item_set &set,
                                          const grammar_symbol_type &symbol) {
@@ -141,4 +141,4 @@ void canonical_LR_grammar::construct_parsing_table() {
     }
   }
 }
-} // namespace cyy::lang
+} // namespace cyy::computation

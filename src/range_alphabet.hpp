@@ -9,7 +9,7 @@
 
 #include "lang.hpp"
 
-namespace cyy::lang {
+namespace cyy::computation {
 
 template <symbol_type min_symbol, symbol_type max_symbol>
 class range_alphabet : public ALPHABET {
@@ -43,4 +43,4 @@ private:
   static constexpr symbol_type epsilon{max_symbol + 1};
   static constexpr symbol_type endmarker{max_symbol + 2};
 };
-} // namespace cyy::lang
+} // namespace cyy::computation

@@ -7,7 +7,7 @@
 
 #include "lr_item.hpp"
 
-namespace cyy::lang {
+namespace cyy::computation {
 
 void LR_0_item_set ::add_kernel_item(const CFG &cfg, LR_0_item kernel_item) {
   std::set<CFG::nonterminal_type> tmp_nonkernel_items;
@@ -112,4 +112,4 @@ void LR_1_item_set::add_nonkernel_item(
   }
   return;
 }
-} // namespace cyy::lang
+} // namespace cyy::computation

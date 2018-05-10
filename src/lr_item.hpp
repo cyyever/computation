@@ -13,7 +13,7 @@
 
 #include "cfg.hpp"
 
-namespace cyy::lang {
+namespace cyy::computation {
 
 struct LR_0_item {
   CFG::production_type production;
@@ -24,11 +24,11 @@ struct LR_0_item {
   }
 };
 
-} // namespace cyy::lang
+} // namespace cyy::computation
 
 namespace std {
-template <> struct hash<cyy::lang::LR_0_item> {
-  size_t operator()(const cyy::lang::LR_0_item &x) const {
+template <> struct hash<cyy::computation::LR_0_item> {
+  size_t operator()(const cyy::computation::LR_0_item &x) const {
     auto hash_value =
         ::std::hash<decltype(x.production.first)>()(x.production.first) ^
 
@@ -40,7 +40,7 @@ template <> struct hash<cyy::lang::LR_0_item> {
 };
 } // namespace std
 
-namespace cyy::lang {
+namespace cyy::computation {
 
 class LR_0_item_set {
 
@@ -59,11 +59,11 @@ private:
   std::unordered_set<LR_0_item> kernel_items;
   std::set<CFG::nonterminal_type> nonkernel_items;
 };
-} // namespace cyy::lang
+} // namespace cyy::computation
 
 namespace std {
-template <> struct hash<cyy::lang::LR_0_item_set> {
-  size_t operator()(const cyy::lang::LR_0_item_set &x) const {
+template <> struct hash<cyy::computation::LR_0_item_set> {
+  size_t operator()(const cyy::computation::LR_0_item_set &x) const {
     auto hash_value = ::std::hash<decltype(x.get_kernel_items().size())>()(
         x.get_kernel_items().size());
     return hash_value;
@@ -71,7 +71,7 @@ template <> struct hash<cyy::lang::LR_0_item_set> {
 };
 } // namespace std
 
-namespace cyy::lang {
+namespace cyy::computation {
 struct LR_1_item {
   LR_0_item item;
   CFG::terminal_type lookahead;
@@ -80,11 +80,11 @@ struct LR_1_item {
   }
 };
 
-} // namespace cyy::lang
+} // namespace cyy::computation
 
 namespace std {
-template <> struct hash<cyy::lang::LR_1_item> {
-  size_t operator()(const cyy::lang::LR_1_item &x) const {
+template <> struct hash<cyy::computation::LR_1_item> {
+  size_t operator()(const cyy::computation::LR_1_item &x) const {
     auto hash_value = ::std::hash<decltype(x.item)>()(x.item) ^
                       ::std::hash<decltype(x.lookahead)>()(x.lookahead);
     return hash_value;
@@ -92,7 +92,7 @@ template <> struct hash<cyy::lang::LR_1_item> {
 };
 } // namespace std
 
-namespace cyy::lang {
+namespace cyy::computation {
 class LR_1_item_set {
 
 public:
@@ -117,11 +117,11 @@ private:
   std::map<CFG::nonterminal_type, std::set<CFG::terminal_type>> nonkernel_items;
 };
 
-} // namespace cyy::lang
+} // namespace cyy::computation
 
 namespace std {
-template <> struct hash<cyy::lang::LR_1_item_set> {
-  size_t operator()(const cyy::lang::LR_1_item_set &x) const {
+template <> struct hash<cyy::computation::LR_1_item_set> {
+  size_t operator()(const cyy::computation::LR_1_item_set &x) const {
     auto hash_value = ::std::hash<decltype(x.get_kernel_items().size())>()(
         x.get_kernel_items().size());
     return hash_value;

@@ -10,7 +10,7 @@
 #include "../src/regex.hpp"
 #include "../src/set_alphabet.hpp"
 
-using namespace cyy::lang;
+using namespace cyy::computation;
 
 TEST_CASE("parse regex and to NFA") {
 

@@ -14,7 +14,7 @@
 #include "automaton.hpp"
 #include "lang.hpp"
 
-namespace cyy::lang {
+namespace cyy::computation {
 
 class lexical_analyzer {
 public:
@@ -66,4 +66,4 @@ private:
   std::optional<NFA> nfa_opt;
   std::map<uint64_t, symbol_type> pattern_final_states;
 };
-} // namespace cyy::lang
+} // namespace cyy::computation

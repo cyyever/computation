@@ -9,7 +9,7 @@
 
 #include "regex.hpp"
 
-namespace cyy::lang {
+namespace cyy::computation {
 
 NFA regex::basic_node::to_NFA(const ALPHABET &alphabet,
                               uint64_t start_state) const {
@@ -190,4 +190,4 @@ regex::kleene_closure_node::follow_pos() const {
   }
   return res;
 }
-} // namespace cyy::lang
+} // namespace cyy::computation

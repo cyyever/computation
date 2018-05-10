@@ -9,7 +9,7 @@
 
 #include "regex.hpp"
 
-namespace cyy::lang {
+namespace cyy::computation {
 
 DFA regex::to_DFA() const {
   std::map<uint64_t, symbol_type> position_to_symbol;
@@ -72,4 +72,4 @@ DFA regex::to_DFA() const {
   return {DFA_states, alphabet->name(), 0, DFA_transition_table,
           DFA_final_states};
 }
-} // namespace cyy::lang
+} // namespace cyy::computation

@@ -11,7 +11,7 @@
 
 #include "automaton.hpp"
 
-namespace cyy::lang {
+namespace cyy::computation {
 bool DFA::equivalent_with(const DFA &rhs) {
 
   if (alphabet != rhs.alphabet) {
@@ -165,4 +165,4 @@ DFA DFA::minimize() const {
   return {minimize_DFA_states, alphabet->name(), minimize_DFA_start_state,
           minimize_DFA_transition_table, minimize_DFA_final_states};
 }
-} // namespace cyy::lang
+} // namespace cyy::computation

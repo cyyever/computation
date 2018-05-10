@@ -19,7 +19,7 @@
 
 #include "lang.hpp"
 
-namespace cyy::lang {
+namespace cyy::computation {
 
 class CFG {
 
@@ -173,4 +173,4 @@ protected:
 private:
   mutable std::map<nonterminal_type, std::set<terminal_type>> first_sets;
 };
-} // namespace cyy::lang
+} // namespace cyy::computation

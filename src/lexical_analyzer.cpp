@@ -13,7 +13,7 @@
 #include "lexical_analyzer.hpp"
 #include "regex.hpp"
 
-namespace cyy::lang {
+namespace cyy::computation {
 
 void lexical_analyzer::make_NFA() {
   if (nfa_opt) {
@@ -25,7 +25,7 @@ void lexical_analyzer::make_NFA() {
   }
 
   std::shared_ptr<ALPHABET> alphabet =
-      ::cyy::lang::ALPHABET::get(alphabet_name);
+      ::cyy::computation::ALPHABET::get(alphabet_name);
 
   pattern_final_states.clear();
 
@@ -105,4 +105,4 @@ std::pair<int, lexical_analyzer::token> lexical_analyzer::scan() {
   return {-1, {}};
 }
 
-} // namespace cyy::lang
+} // namespace cyy::computation

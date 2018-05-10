@@ -9,7 +9,7 @@
 
 #include "../src/string.hpp"
 
-using namespace cyy::lang;
+using namespace cyy::computation;
 TEST_CASE("KMP") {
   SUBCASE("match") {
 

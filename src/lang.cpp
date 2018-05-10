@@ -10,7 +10,7 @@
 #include "common_tokens.hpp"
 #include "set_alphabet.hpp"
 
-namespace cyy::lang {
+namespace cyy::computation {
 
 std::map<std::string, std::shared_ptr<ALPHABET>> ALPHABET::factory = {
     {"common_tokens", std::make_shared<common_tokens>()},
@@ -27,4 +27,4 @@ std::shared_ptr<ALPHABET> ALPHABET::get(const std::string &name) {
   ptr->alternative_name = name;
   return ptr;
 }
-} // namespace cyy::lang
+} // namespace cyy::computation

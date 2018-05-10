@@ -8,7 +8,7 @@
 #include "ll_grammar.hpp"
 #include "exception.hpp"
 
-namespace cyy::lang {
+namespace cyy::computation {
 
 void LL_grammar::construct_parsing_table() {
   auto follow_sets = follow();
@@ -97,4 +97,4 @@ CFG::parse_node_ptr LL_grammar::parse(symbol_string_view view) const {
 
   return tree;
 }
-} // namespace cyy::lang
+} // namespace cyy::computation

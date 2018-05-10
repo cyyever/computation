@@ -10,7 +10,7 @@
 #include "cfg.hpp"
 #include "lang.hpp"
 
-namespace cyy::lang {
+namespace cyy::computation {
 
 class LL_grammar : public CFG {
 
@@ -37,4 +37,4 @@ private:
            const production_body_type &>
       parsing_table;
 };
-} // namespace cyy::lang
+} // namespace cyy::computation

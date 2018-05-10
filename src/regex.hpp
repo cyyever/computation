@@ -10,7 +10,7 @@
 #include "automaton.hpp"
 #include "lang.hpp"
 
-namespace cyy::lang {
+namespace cyy::computation {
 
 class regex {
 
@@ -138,4 +138,4 @@ private:
   std::shared_ptr<ALPHABET> regex_alphabet;
   mutable std::shared_ptr<regex::syntax_node> syntax_tree;
 };
-} // namespace cyy::lang
+} // namespace cyy::computation

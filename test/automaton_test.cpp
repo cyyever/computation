@@ -10,7 +10,7 @@
 #include "../src/automaton.hpp"
 #include "../src/set_alphabet.hpp"
 
-using namespace cyy::lang;
+using namespace cyy::computation;
 TEST_CASE("simulate DFA") {
 
   DFA dfa({0, 1, 2, 3}, "ab_set", 0,

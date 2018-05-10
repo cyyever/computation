@@ -8,7 +8,7 @@
 
 #include "lang.hpp"
 
-namespace cyy::lang {
+namespace cyy::computation {
 
 class common_tokens final : public ALPHABET {
 public:
@@ -69,4 +69,4 @@ public:
   std::string name() const override { return "common_tokens"; }
 };
 
-} // namespace cyy::lang
+} // namespace cyy::computation
