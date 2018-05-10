@@ -1,1 +1,1 @@
-# compiler
+# code of computation theory
