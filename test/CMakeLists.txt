@@ -8,7 +8,7 @@ SET(test_progs string_test automaton_test cfg_test ll_grammar_test slr_grammar_t
 
 FOREACH(test_prog ${test_progs})
   ADD_EXECUTABLE(${test_prog} ${CMAKE_CURRENT_LIST_DIR}/${test_prog}.cpp)
-  TARGET_LINK_LIBRARIES(${test_prog} PRIVATE MyCompilerLib)
+  TARGET_LINK_LIBRARIES(${test_prog} PRIVATE MyComputationLib)
   TARGET_LINK_LIBRARIES(${test_prog} PRIVATE doctest::doctest)
   add_test_with_runtime_analysis(TARGET ${test_prog})
 ENDFOREACH()
