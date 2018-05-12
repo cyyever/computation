@@ -10,15 +10,17 @@
 
 namespace cyy::computation {
 
-LR_1_item_set canonical_LR_grammar::GOTO(const LR_1_item_set &set,
-                                         const grammar_symbol_type &symbol) {
-  LR_1_item_set res;
+std::map<CFG::grammar_symbol_type, LR_1_item_set>
+  canonical_LR_grammar::GOTO(const LR_1_item_set &set) const {
+
+std::map<CFG::grammar_symbol_type, LR_1_item_set> res;
+
   for (auto const &[kernel_item, lookahead_set] : set.get_kernel_items()) {
-    if (kernel_item.dot_pos < kernel_item.production.second.size() &&
-        kernel_item.production.second[kernel_item.dot_pos] == symbol) {
+    if (kernel_item.dot_pos < kernel_item.production.second.size()) {
+      auto const &symbol = kernel_item.production.second[kernel_item.dot_pos];
       auto new_kernel_item = kernel_item;
       new_kernel_item.dot_pos++;
-      res.add_kernel_item(*this, new_kernel_item, lookahead_set);
+      res[symbol].add_kernel_item(*this, new_kernel_item, lookahead_set);
     }
   }
 
@@ -26,16 +28,14 @@ LR_1_item_set canonical_LR_grammar::GOTO(const LR_1_item_set &set,
     auto it = productions.find(nonterminal);
 
     for (auto const &body : it->second) {
-      if (body[0] == symbol) {
 
         LR_0_item new_kernel_item;
         new_kernel_item.production.first = nonterminal;
         new_kernel_item.production.second = body;
         new_kernel_item.dot_pos = 1;
 
-        res.add_kernel_item(*this, new_kernel_item, lookahead_set);
+        res[body[0]].add_kernel_item(*this, new_kernel_item, lookahead_set);
       }
-    }
   }
   return res;
 }
@@ -64,41 +64,22 @@ canonical_LR_grammar::canonical_collection() {
     if (!check_flag[i]) {
       continue;
     }
-    for (auto const &terminal : terminals) {
-      auto goto_set = GOTO(collection[i], terminal);
 
-      if (goto_set.empty()) {
-        continue;
-      }
+    auto next_sets= GOTO(collection[i]);
 
-      auto it = std::find(collection.begin(), collection.end(), goto_set);
+    for(auto &[symbol,next_set]:next_sets) {
+
+      auto it = std::find(collection.begin(), collection.end(), next_set);
       if (it == collection.end()) {
-        collection.emplace_back(std::move(goto_set));
+        collection.emplace_back(std::move(next_set));
         check_flag.emplace_back(true);
-        goto_transitions[{i, {terminal}}] = next_state;
+        goto_transitions[{i, symbol}] = next_state;
         next_state++;
       } else {
-        goto_transitions[{i, {terminal}}] = it - collection.begin();
+        goto_transitions[{i, symbol}] = it - collection.begin();
       }
     }
 
-    for (auto const &nonterminal : nonterminals) {
-      auto goto_set = GOTO(collection[i], nonterminal);
-
-      if (goto_set.empty()) {
-        continue;
-      }
-
-      auto it = std::find(collection.begin(), collection.end(), goto_set);
-      if (it == collection.end()) {
-        collection.emplace_back(std::move(goto_set));
-        check_flag.emplace_back(true);
-        goto_transitions[{i, {nonterminal}}] = next_state;
-        next_state++;
-      } else {
-        goto_transitions[{i, {nonterminal}}] = it - collection.begin();
-      }
-    }
     check_flag[i] = false;
   }
 
