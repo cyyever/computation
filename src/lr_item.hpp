@@ -39,7 +39,6 @@ template <> struct hash<cyy::computation::LR_0_item> {
   }
 };
 
-
 template <> struct less<cyy::computation::LR_0_item > {
  bool operator()(const cyy::computation::LR_0_item &lhs, const cyy::computation::LR_0_item &rhs) const {
    return std::tie(lhs.dot_pos      , lhs.production  ) < std::tie(rhs.dot_pos  , rhs.production   );
@@ -64,9 +63,8 @@ public:
   }
 
 private:
-  //std::unordered_set<LR_0_item> kernel_items;
   std::set<LR_0_item> kernel_items;
-  std::set<CFG::nonterminal_type> nonkernel_items;
+  std::unordered_set<CFG::nonterminal_type> nonkernel_items;
 };
 } // namespace cyy::computation
 

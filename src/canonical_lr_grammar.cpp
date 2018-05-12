@@ -40,23 +40,13 @@ std::map<CFG::grammar_symbol_type, LR_1_item_set> res;
   return res;
 }
 
-std::pair<
-    std::vector<LR_1_item_set>,
+std::pair< std::unordered_map<LR_1_item_set, uint64_t>,
     std::map<std::pair<uint64_t, canonical_LR_grammar::grammar_symbol_type>,
              uint64_t>>
 canonical_LR_grammar::canonical_collection() {
-  std::vector<LR_1_item_set> collection;
-  std::vector<bool> check_flag{true};
-  std::map<std::pair<uint64_t, grammar_symbol_type>, uint64_t> goto_transitions;
-  auto endmarker = alphabet->get_endmarker();
-
-  LR_1_item_set init_set;
-  init_set.add_kernel_item(
-      *this, LR_0_item{production_type{new_start_symbol, {start_symbol}}, 0},
-      {endmarker});
-  collection.emplace_back(init_set);
 
 
+  /*
   uint64_t next_state = 1;
   for (size_t i = 0; i < check_flag.size(); i++) {
     if (!check_flag[i]) {
@@ -82,6 +72,48 @@ canonical_LR_grammar::canonical_collection() {
   }
 
   return {collection, goto_transitions};
+  */
+
+  std::unordered_map<LR_1_item_set, uint64_t> unchecked_sets;
+  std::unordered_map<LR_1_item_set, uint64_t> collection;
+  std::map<std::pair<uint64_t, grammar_symbol_type>, uint64_t> goto_transitions;
+
+  auto endmarker = alphabet->get_endmarker();
+
+  LR_1_item_set init_set;
+  init_set.add_kernel_item(
+      *this, LR_0_item{production_type{new_start_symbol, {start_symbol}}, 0},
+      {endmarker});
+  unchecked_sets.emplace(std::move(init_set), 0);
+
+  uint64_t next_state = 1;
+
+  while (!unchecked_sets.empty()) {
+
+    auto node = unchecked_sets.extract(unchecked_sets.begin());
+
+    auto cur_state = node.mapped();
+
+    auto next_sets = GOTO(node.key());
+    collection.emplace(std::move(node.key()), cur_state);
+
+    for (auto &[symbol, next_set] : next_sets) {
+      auto it = collection.find(next_set);
+      if (it == collection.end()) {
+        it = unchecked_sets.find(next_set);
+        if (it == unchecked_sets.end()) {
+          unchecked_sets.emplace(std::move(next_set), next_state);
+          goto_transitions[{cur_state, symbol}] = next_state;
+          next_state++;
+          continue;
+        }
+      }
+      goto_transitions[{cur_state, symbol}] = it->second;
+    }
+  }
+  return {collection, goto_transitions};
+
+
 }
 
 void canonical_LR_grammar::construct_parsing_table() {
@@ -96,8 +128,7 @@ void canonical_LR_grammar::construct_parsing_table() {
     }
   }
 
-  for (uint64_t i = 0; i < collection.size(); i++) {
-    auto &set = collection[i];
+  for (auto const &[set, state] : collection) {
 
     for (const auto &[kernel_item, lookahead_set] : set.get_kernel_items()) {
       if (kernel_item.dot_pos != kernel_item.production.second.size()) {
@@ -105,17 +136,17 @@ void canonical_LR_grammar::construct_parsing_table() {
       }
 
       if (kernel_item.production.first == new_start_symbol) {
-        action_table[{i, endmarker}] = true;
+        action_table[{state, endmarker}] = true;
         continue;
       }
 
       for (const auto &lookahead : lookahead_set) {
         // conflict
-        if (action_table.count({i, lookahead}) != 0) {
+        if (action_table.count({state, lookahead}) != 0) {
           std::cout << "config with follow_terminal" << lookahead << std::endl;
           throw cyy::computation::exception::no_canonical_LR_grammar("");
         }
-        action_table[{i, lookahead}] = kernel_item.production;
+        action_table[{state, lookahead}] = kernel_item.production;
       }
     }
   }

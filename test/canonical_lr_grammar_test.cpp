@@ -26,10 +26,7 @@ TEST_CASE("canonical_collection") {
 
   canonical_LR_grammar grammar("common_tokens", "S", productions);
 
-  auto collection = grammar.canonical_collection();
-
   std::unordered_set<LR_1_item_set> sets;
-
   {
     LR_1_item_set set;
 
@@ -120,8 +117,12 @@ TEST_CASE("canonical_collection") {
     sets.emplace(std::move(set));
   }
 
-  CHECK(sets ==
-        decltype(sets){collection.first.begin(), collection.first.end()});
+  std::unordered_set<LR_1_item_set> collection;
+  for (auto &[set, _] : grammar.canonical_collection().first) {
+    collection.emplace(std::move(set));
+  }
+
+  CHECK(sets == collection);
 }
 
 TEST_CASE("canonical_LR(1) parse") {
