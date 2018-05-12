@@ -43,12 +43,14 @@ std::pair<
     std::map<std::pair<uint64_t, SLR_grammar::grammar_symbol_type>, uint64_t>>
 SLR_grammar::canonical_collection() const {
   std::vector<LR_0_item_set> collection;
+  std::unordered_map<LR_0_item_set,uint64_t> collection2;
   std::vector<bool> check_flag{true};
   std::map<std::pair<uint64_t, grammar_symbol_type>, uint64_t> goto_transitions;
 
   LR_0_item_set init_set;
   init_set.add_kernel_item(
       *this, LR_0_item{production_type{new_start_symbol, {start_symbol}}, 0});
+  collection2.emplace(init_set,0);
   collection.emplace_back(std::move(init_set));
 
   uint64_t next_state = 1;
@@ -60,14 +62,15 @@ SLR_grammar::canonical_collection() const {
 
     auto next_sets=GOTO(collection[i]);
     for(auto &[symbol,next_set]:next_sets) {
-      auto it = std::find(collection.begin(), collection.end(), next_set);
-      if (it == collection.end()) {
+      auto it = collection2.find(next_set);    /// std::find(collection.begin(), collection.end(), next_set);
+      if (it == collection2.end()) {
+        collection2.emplace(next_set,next_state);
         collection.emplace_back(std::move(next_set));
         check_flag.emplace_back(true);
         goto_transitions[{i, symbol}] = next_state;
         next_state++;
       } else {
-        goto_transitions[{i, symbol}] = it - collection.begin();
+        goto_transitions[{i, symbol}] = it->second;// - collection.begin();
       }
     }
   }
