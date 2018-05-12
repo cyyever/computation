@@ -30,12 +30,12 @@ public:
 
   std::pair<std::vector<LR_0_item_set>,
             std::map<std::pair<uint64_t, grammar_symbol_type>, uint64_t>>
-
   canonical_collection() const;
 
 private:
-  LR_0_item_set GOTO(const LR_0_item_set &set,
-                     const grammar_symbol_type &symbol) const;
+  std::map<grammar_symbol_type,LR_0_item_set>
+    GOTO(const LR_0_item_set &set) const;
+
   void construct_parsing_table() override;
 
 private:
