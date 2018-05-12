@@ -43,6 +43,7 @@ template <> struct hash<cyy::computation::LR_0_item> {
 template <> struct less<cyy::computation::LR_0_item > {
  bool operator()(const cyy::computation::LR_0_item &lhs, const cyy::computation::LR_0_item &rhs) const {
    return std::tie(lhs.dot_pos      , lhs.production  ) < std::tie(rhs.dot_pos  , rhs.production   );
+}
 };
 
 } // namespace std
