@@ -38,6 +38,13 @@ template <> struct hash<cyy::computation::LR_0_item> {
     return hash_value;
   }
 };
+
+
+template <> struct less<cyy::computation::LR_0_item > {
+ bool operator()(const cyy::computation::LR_0_item &lhs, const cyy::computation::LR_0_item &rhs) const {
+   return std::tie(lhs.dot_pos      , lhs.production  ) < std::tie(rhs.dot_pos  , rhs.production   );
+};
+
 } // namespace std
 
 namespace cyy::computation {
@@ -49,14 +56,15 @@ public:
 
   auto get_nonkernel_items() const -> const auto & { return nonkernel_items; }
   void add_kernel_item(const CFG &cfg, LR_0_item kernel_item);
-
-  bool operator==(const LR_0_item_set &rhs) const {
-    return kernel_items == rhs.kernel_items;
-  }
   bool empty() const { return kernel_items.empty(); }
 
+  bool operator==(const LR_0_item_set &rhs) const {
+    return      kernel_items==rhs.kernel_items;
+  }
+
 private:
-  std::unordered_set<LR_0_item> kernel_items;
+  //std::unordered_set<LR_0_item> kernel_items;
+  std::set<LR_0_item> kernel_items;
   std::set<CFG::nonterminal_type> nonkernel_items;
 };
 } // namespace cyy::computation
