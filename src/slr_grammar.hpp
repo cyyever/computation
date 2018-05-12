@@ -28,13 +28,13 @@ public:
     construct_parsing_table();
   }
 
-  std::pair<std::vector<LR_0_item_set>,
+  std::pair<std::unordered_map<LR_0_item_set, uint64_t>,
             std::map<std::pair<uint64_t, grammar_symbol_type>, uint64_t>>
   canonical_collection() const;
 
 private:
-  std::map<grammar_symbol_type,LR_0_item_set>
-    GOTO(const LR_0_item_set &set) const;
+  std::map<grammar_symbol_type, LR_0_item_set>
+  GOTO(const LR_0_item_set &set) const;
 
   void construct_parsing_table() override;
 
