@@ -8,7 +8,8 @@
 #pragma once
 
 #include "automaton.hpp"
-#include "lang.hpp"
+#include "lr_grammar.hpp"
+//#include "lang.hpp"
 
 namespace cyy::computation {
 
@@ -114,8 +115,7 @@ public:
 
 public:
   regex(const std::string &alphabet_name, symbol_string_view view)
-      : alphabet(ALPHABET::get(alphabet_name)),
-        regex_alphabet(ALPHABET::get("printable-ASCII")) {
+      : alphabet(ALPHABET::get(alphabet_name)) {
     syntax_tree = parse(view);
   }
 
@@ -133,9 +133,12 @@ private:
   std::shared_ptr<syntax_node> make_complemented_character_class(
       const std::set<symbol_type> &symbol_set) const;
 
+  static std::shared_ptr<LR_grammar> get_grammar();
+  static inline std::shared_ptr<ALPHABET> regex_alphabet{
+      ALPHABET::get("printable-ASCII")};
+
 private:
   std::shared_ptr<ALPHABET> alphabet;
-  std::shared_ptr<ALPHABET> regex_alphabet;
   mutable std::shared_ptr<regex::syntax_node> syntax_tree;
 };
 } // namespace cyy::computation

@@ -14,66 +14,34 @@
 
 namespace cyy::computation {
 
-std::shared_ptr<regex::syntax_node>
-regex::make_character_class(const std::set<symbol_type> &symbol_set) const {
+/*
+   rexpr -> rexpr '|' rterm
+   rexpr -> rterm
 
-  std::shared_ptr<regex::syntax_node> root{};
-  for (auto const symbol : symbol_set) {
-    if (!root) {
-      root = std::make_shared<regex::basic_node>(symbol);
-    } else {
-      root = std::make_shared<regex::union_node>(
-          root, std::make_shared<regex::basic_node>(symbol));
-    }
+   rterm -> rterm rfactor
+   rterm -> rfactor
+
+   rfactor -> rfactor '*'
+   rfactor -> rfactor '+'
+   rfactor -> rfactor '?'
+   rfactor -> rprimary
+
+   rprimary -> 'non-operator-char'
+   rprimary -> escape-sequence
+   rprimary -> '(' rexpr ')'
+   rprimary -> '[' character-class ']'
+
+   character-class -> 'any-char-except-backslash-and-]' character-class
+   character-class -> escape-sequence character-class
+   character-class -> epsilon
+
+   escape-sequence -> '\' 'any-char'
+*/
+std::shared_ptr<LR_grammar> regex::get_grammar() {
+  static std::shared_ptr<LR_grammar> regex_grammar;
+  if (regex_grammar) {
+    return regex_grammar;
   }
-
-  if (!root) {
-    assert(0);
-  }
-  return root;
-}
-
-std::shared_ptr<regex::syntax_node> regex::make_complemented_character_class(
-    const std::set<symbol_type> &symbol_set) const {
-  std::shared_ptr<regex::syntax_node> root{};
-
-  std::set<symbol_type> complemented_symbol_set;
-
-  regex_alphabet->foreach_symbol([&](auto const &a) {
-    if (!symbol_set.count(a)) {
-      complemented_symbol_set.insert(a);
-    }
-  });
-
-  return make_character_class(complemented_symbol_set);
-}
-
-std::shared_ptr<regex::syntax_node>
-regex::parse(symbol_string_view view) const {
-
-  /*
-     rexpr -> rexpr '|' rterm
-     rexpr -> rterm
-
-     rterm -> rterm rfactor
-     rterm -> rfactor
-
-     rfactor -> rfactor '*'
-     rfactor -> rfactor '+'
-     rfactor -> rfactor '?'
-     rfactor -> rprimary
-
-     rprimary -> 'non-operator-char'
-     rprimary -> escape-sequence
-     rprimary -> '(' rexpr ')'
-     rprimary -> '[' character-class ']'
-
-     character-class -> 'any-char-except-backslash-and-]' character-class
-     character-class -> escape-sequence character-class
-     character-class -> epsilon
-
-     escape-sequence -> '\' 'any-char'
-  */
 
   std::set<CFG::terminal_type> operators{'|', '*', '(', '\\', ')',
                                          '+', '?', '[', ']'};
@@ -117,9 +85,50 @@ regex::parse(symbol_string_view view) const {
     }
   });
 
-  SLR_grammar regex_grammar(regex_alphabet->name(), "rexpr", productions);
+  regex_grammar = std::make_shared<SLR_grammar>(regex_alphabet->name(), "rexpr",
+                                                productions);
 
-  auto parse_tree = regex_grammar.parse(view);
+  return regex_grammar;
+}
+
+std::shared_ptr<regex::syntax_node>
+regex::make_character_class(const std::set<symbol_type> &symbol_set) const {
+
+  std::shared_ptr<regex::syntax_node> root{};
+  for (auto const symbol : symbol_set) {
+    if (!root) {
+      root = std::make_shared<regex::basic_node>(symbol);
+    } else {
+      root = std::make_shared<regex::union_node>(
+          root, std::make_shared<regex::basic_node>(symbol));
+    }
+  }
+
+  if (!root) {
+    assert(0);
+  }
+  return root;
+}
+
+std::shared_ptr<regex::syntax_node> regex::make_complemented_character_class(
+    const std::set<symbol_type> &symbol_set) const {
+  std::shared_ptr<regex::syntax_node> root{};
+
+  std::set<symbol_type> complemented_symbol_set;
+
+  regex_alphabet->foreach_symbol([&](auto const &a) {
+    if (!symbol_set.count(a)) {
+      complemented_symbol_set.insert(a);
+    }
+  });
+
+  return make_character_class(complemented_symbol_set);
+}
+
+std::shared_ptr<regex::syntax_node>
+regex::parse(symbol_string_view view) const {
+
+  auto parse_tree = get_grammar()->parse(view);
   if (!parse_tree) {
     throw cyy::computation::exception::no_regular_expression("");
   }
