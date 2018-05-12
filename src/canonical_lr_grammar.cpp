@@ -56,8 +56,6 @@ canonical_LR_grammar::canonical_collection() {
       {endmarker});
   collection.emplace_back(init_set);
 
-  auto terminals = get_terminals();
-  auto nonterminals = get_heads();
 
   uint64_t next_state = 1;
   for (size_t i = 0; i < check_flag.size(); i++) {
