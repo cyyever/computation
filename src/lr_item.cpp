@@ -92,7 +92,7 @@ void LR_1_item_set::add_nonkernel_item(
     return;
   }
 
-  nonkernel_items[*ptr].merge(decltype(diff)(diff));
+  nonkernel_items[*ptr].merge(diff);
 
   auto it = cfg.get_productions().find(*ptr);
 
@@ -104,11 +104,11 @@ void LR_1_item_set::add_nonkernel_item(
       new_item.production.first = *ptr;
       new_item.production.second = new_body;
 
-      kernel_items[new_item].merge(decltype(diff)(diff));
+      kernel_items[new_item]=nonkernel_items[*ptr];
       continue;
     }
 
-    add_nonkernel_item(cfg, {new_body.data(), new_body.size()}, diff);
+    add_nonkernel_item(cfg, {new_body.data(), new_body.size()},nonkernel_items[*ptr]);
   }
   return;
 }
