@@ -39,10 +39,12 @@ template <> struct hash<cyy::computation::LR_0_item> {
   }
 };
 
-template <> struct less<cyy::computation::LR_0_item > {
- bool operator()(const cyy::computation::LR_0_item &lhs, const cyy::computation::LR_0_item &rhs) const {
-   return std::tie(lhs.dot_pos      , lhs.production  ) < std::tie(rhs.dot_pos  , rhs.production   );
-}
+template <> struct less<cyy::computation::LR_0_item> {
+  bool operator()(const cyy::computation::LR_0_item &lhs,
+                  const cyy::computation::LR_0_item &rhs) const {
+    return std::tie(lhs.dot_pos, lhs.production) <
+           std::tie(rhs.dot_pos, rhs.production);
+  }
 };
 
 } // namespace std
@@ -59,7 +61,7 @@ public:
   bool empty() const { return kernel_items.empty(); }
 
   bool operator==(const LR_0_item_set &rhs) const {
-    return      kernel_items==rhs.kernel_items;
+    return kernel_items == rhs.kernel_items;
   }
 
 private:
@@ -73,27 +75,6 @@ template <> struct hash<cyy::computation::LR_0_item_set> {
   size_t operator()(const cyy::computation::LR_0_item_set &x) const {
     auto hash_value = ::std::hash<decltype(x.get_kernel_items().size())>()(
         x.get_kernel_items().size());
-    return hash_value;
-  }
-};
-} // namespace std
-
-namespace cyy::computation {
-struct LR_1_item {
-  LR_0_item item;
-  CFG::terminal_type lookahead;
-  bool operator==(const LR_1_item &rhs) const {
-    return std::tie(item, lookahead) == std::tie(rhs.item, rhs.lookahead);
-  }
-};
-
-} // namespace cyy::computation
-
-namespace std {
-template <> struct hash<cyy::computation::LR_1_item> {
-  size_t operator()(const cyy::computation::LR_1_item &x) const {
-    auto hash_value = ::std::hash<decltype(x.item)>()(x.item) ^
-                      ::std::hash<decltype(x.lookahead)>()(x.lookahead);
     return hash_value;
   }
 };
@@ -129,9 +110,13 @@ private:
 namespace std {
 template <> struct hash<cyy::computation::LR_1_item_set> {
   size_t operator()(const cyy::computation::LR_1_item_set &x) const {
-    auto hash_value = ::std::hash<decltype(x.get_kernel_items().size())>()(
-        x.get_kernel_items().size());
-    return hash_value;
+    auto size = x.get_kernel_items().size();
+
+    if (size >= 1) {
+      return ::std::hash<cyy::computation::LR_0_item>()(
+          x.get_kernel_items().begin()->first);
+    }
+    return 0;
   }
 };
 } // namespace std
