@@ -15,33 +15,32 @@ void LR_0_item_set ::add_kernel_item(const CFG &cfg, LR_0_item kernel_item) {
   if (kernel_item.dot_pos < kernel_item.production.second.size()) {
     auto const &symbol = kernel_item.production.second[kernel_item.dot_pos];
     if (auto ptr = std::get_if<CFG::nonterminal_type>(&symbol); ptr) {
-      if(nonkernel_items.count(*ptr)==0) {
-	tmp_nonkernel_items.push_back(*ptr);
+      if (nonkernel_items.count(*ptr) == 0) {
+        tmp_nonkernel_items.push_back(*ptr);
       }
     }
   }
 
   kernel_items.emplace(std::move(kernel_item));
   while (!tmp_nonkernel_items.empty()) {
-    auto  nonkernel_item = std::move(tmp_nonkernel_items.back());
+    auto nonkernel_item = std::move(tmp_nonkernel_items.back());
     tmp_nonkernel_items.pop_back();
     nonkernel_items.emplace(nonkernel_item);
 
     auto it = cfg.get_productions().find(nonkernel_item);
     for (auto const &body : it->second) {
       if (cfg.is_epsilon(body[0])) {
-	kernel_items.emplace(LR_0_item{{it->first, body}, 1});
-	continue;
+        kernel_items.emplace(LR_0_item{{it->first, body}, 1});
+        continue;
       }
 
       if (auto ptr = std::get_if<CFG::nonterminal_type>(&body[0]); ptr) {
-	if(nonkernel_items.count(*ptr)==0) {
-	  tmp_nonkernel_items.push_back(*ptr);
-	}
+        if (nonkernel_items.count(*ptr) == 0) {
+          tmp_nonkernel_items.push_back(*ptr);
+        }
       }
     }
   }
-
 }
 
 void LR_1_item_set::add_kernel_item(
@@ -63,7 +62,7 @@ void LR_1_item_set::add_kernel_item(
 
 void LR_1_item_set::add_nonkernel_item(
     const CFG &cfg, CFG::grammar_symbol_string_view view,
-    std::set<CFG::terminal_type> lookahead_set) {
+    const std::set<CFG::terminal_type> &lookahead_set) {
 
   if (view.empty()) {
     return;
@@ -79,7 +78,7 @@ void LR_1_item_set::add_nonkernel_item(
   auto real_lookahead_set = cfg.first(view);
 
   if (real_lookahead_set.erase(cfg.get_alphabet()->get_epsilon())) {
-    real_lookahead_set.merge(lookahead_set);
+    real_lookahead_set.merge(std::set<CFG::terminal_type>(lookahead_set));
   }
 
   decltype(real_lookahead_set) diff;

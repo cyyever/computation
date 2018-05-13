@@ -98,7 +98,7 @@ public:
 private:
   void add_nonkernel_item(const CFG &cfg, CFG::grammar_symbol_string_view view,
 
-                          std::set<CFG::terminal_type> lookahead_set);
+                          const std::set<CFG::terminal_type> &lookahead_set);
 
 private:
   std::unordered_map<LR_0_item, std::set<CFG::terminal_type>> kernel_items;

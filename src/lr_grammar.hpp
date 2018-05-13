@@ -12,7 +12,6 @@
 #include <utility>
 
 #include "cfg.hpp"
-#include "lr_item.hpp"
 
 namespace cyy::computation {
 

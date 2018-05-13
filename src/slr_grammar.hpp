@@ -13,6 +13,7 @@
 
 #include "lang.hpp"
 #include "lr_grammar.hpp"
+#include "lr_item.hpp"
 
 namespace cyy::computation {
 
