@@ -39,9 +39,6 @@ public:
 
 protected:
   std::string alternative_name;
-
-private:
-  static std::map<std::string, std::shared_ptr<ALPHABET>> factory;
 };
 
 using symbol_string = std::basic_string<symbol_type>;
