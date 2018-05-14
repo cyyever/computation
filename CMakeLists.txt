@@ -20,6 +20,7 @@ endif()
 
 # test
 add_subdirectory(test)
+add_subdirectory(fuzz_test)
 
 # install lib
 INSTALL(TARGETS MyComputationLib EXPORT ${PROJECT_NAME}Targets
