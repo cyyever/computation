@@ -20,7 +20,12 @@ endif()
 
 # test
 add_subdirectory(test)
-add_subdirectory(fuzz_test)
+
+option(BUILD_FUZZING "Build fuzzing" ON)
+
+if(BUILD_FUZZING)
+  add_subdirectory(fuzz_test)
+endif()
 
 # install lib
 INSTALL(TARGETS MyComputationLib EXPORT ${PROJECT_NAME}Targets
