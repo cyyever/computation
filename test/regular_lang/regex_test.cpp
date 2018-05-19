@@ -7,8 +7,7 @@
 #include <doctest.h>
 #include <iostream>
 
-#include "../src/regex.hpp"
-#include "../src/set_alphabet.hpp"
+#include "../../src/regular_lang/regex.hpp"
 
 using namespace cyy::computation;
 

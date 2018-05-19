@@ -1,5 +1,5 @@
 /*!
- * \file automaton.cpp
+ * \file nfa.cpp
  *
  * \author cyy
  * \date 2018-03-03
@@ -7,7 +7,7 @@
 
 #include <vector>
 
-#include "automaton.hpp"
+#include "nfa.hpp"
 
 namespace cyy::computation {
 

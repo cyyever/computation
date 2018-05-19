@@ -7,8 +7,8 @@
 #include <doctest.h>
 #include <iostream>
 
-#include "../src/common_tokens.hpp"
-#include "../src/slr_grammar.hpp"
+#include "../../src/lang/common_tokens.hpp"
+#include "../../src/contex_free_lang/slr_grammar.hpp"
 
 using namespace cyy::computation;
 

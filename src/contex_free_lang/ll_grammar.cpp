@@ -6,7 +6,7 @@
  */
 
 #include "ll_grammar.hpp"
-#include "exception.hpp"
+#include "../exception.hpp"
 
 namespace cyy::computation {
 

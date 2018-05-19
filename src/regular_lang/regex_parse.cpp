@@ -7,10 +7,9 @@
 
 #include <cassert>
 
-#include "common_tokens.hpp"
-#include "exception.hpp"
+#include "../exception.hpp"
 #include "regex.hpp"
-#include "slr_grammar.hpp"
+#include "../contex_free_lang/slr_grammar.hpp"
 
 namespace cyy::computation {
 

@@ -10,8 +10,9 @@
 #include <set>
 #include <map>
 
-#include "automaton.hpp"
-#include "lr_grammar.hpp"
+#include "nfa.hpp"
+#include "dfa.hpp"
+#include "../contex_free_lang/lr_grammar.hpp"
 
 namespace cyy::computation {
 

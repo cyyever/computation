@@ -7,8 +7,8 @@
 #include <doctest.h>
 #include <iostream>
 
-#include "../src/canonical_lr_grammar.hpp"
-#include "../src/common_tokens.hpp"
+#include "../../src/lang/common_tokens.hpp"
+#include "../../src/contex_free_lang/canonical_lr_grammar.hpp"
 
 using namespace cyy::computation;
 

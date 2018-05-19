@@ -1,5 +1,5 @@
 /*!
- * \file lang.hpp
+ * \file string.hpp
  *
  * \author cyy
  * \date 2018-03-03
@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include "lang.hpp"
 #include <map>
 
 namespace cyy::computation {

@@ -1,5 +1,5 @@
 /*!
- * \file automaton.cpp
+ * \file dfa.cpp
  *
  * \author cyy
  * \date 2018-03-03
@@ -8,8 +8,9 @@
 #include <algorithm>
 #include <iterator>
 #include <vector>
+#include <set>
 
-#include "automaton.hpp"
+#include "dfa.hpp"
 
 namespace cyy::computation {
 bool DFA::equivalent_with(const DFA &rhs) {

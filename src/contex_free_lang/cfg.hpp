@@ -17,7 +17,7 @@
 #include <variant>
 #include <vector>
 
-#include "lang.hpp"
+#include "../lang/lang.hpp"
 
 namespace cyy::computation {
 
@@ -68,6 +68,8 @@ public:
     }
   }
 
+  bool has_production(const production_type &production) const;
+
   std::set<nonterminal_type> get_heads() const {
     std::set<nonterminal_type> heads;
     for (auto const &[head, _] : productions) {
@@ -95,7 +97,6 @@ public:
     return terminals;
   }
 
-  void normalize_productions();
 
   void eliminate_useless_symbols();
 
@@ -165,6 +166,9 @@ protected:
     return advise_head;
   }
 
+private:
+  void normalize_productions();
+
 protected:
   std::shared_ptr<ALPHABET> alphabet;
   nonterminal_type start_symbol;
@@ -173,4 +177,5 @@ protected:
 private:
   mutable std::map<nonterminal_type, std::set<terminal_type>> first_sets;
 };
+
 } // namespace cyy::computation
