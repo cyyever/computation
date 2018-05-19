@@ -33,8 +33,8 @@ void LL_grammar::construct_parsing_table() {
           }
           continue;
         }
-        auto [it, has_inserted] =
-            parsing_table.emplace(std::pair{terminal, head}, body);
+	auto has_inserted =
+            parsing_table.emplace(std::pair{terminal, head}, body).second;
 
         // not LL1
         if (!has_inserted) {
