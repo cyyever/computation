@@ -166,7 +166,6 @@ protected:
     return advise_head;
   }
 
-private:
   void normalize_productions();
 
 protected:

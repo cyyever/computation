@@ -10,7 +10,6 @@ FILE(GLOB test_sources
   )
 
 FOREACH(test_source ${test_sources})
-  message("fds")
   GET_FILENAME_COMPONENT(test_prog ${test_source} NAME_WE)
   ADD_EXECUTABLE(${test_prog} ${test_source})
   TARGET_LINK_LIBRARIES(${test_prog} PRIVATE MyComputationLib)
