@@ -21,8 +21,9 @@ public:
   finite_automaton(const std::set<uint64_t> &states_,
                    const std::string &alphabet_name, uint64_t start_state_,
                    const std::set<uint64_t> &final_states_)
-      : alphabet(::cyy::computation::ALPHABET::get(alphabet_name)), states(states_),
-        start_state(start_state_), final_states(final_states_) {
+      : alphabet(::cyy::computation::ALPHABET::get(alphabet_name)),
+        states(states_), start_state(start_state_),
+        final_states(final_states_) {
 
     if (states.empty()) {
       throw std::invalid_argument("no state");
@@ -64,6 +65,5 @@ protected:
   uint64_t start_state;
   std::set<uint64_t> final_states;
 };
-
 
 } // namespace cyy::computation

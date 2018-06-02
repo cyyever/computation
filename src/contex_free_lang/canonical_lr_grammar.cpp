@@ -1,3 +1,4 @@
+#ifdef aaa
 /*!
  * \file canonical_lr_grammar.cpp
  *
@@ -121,3 +122,4 @@ void canonical_LR_grammar::construct_parsing_table() {
   }
 }
 } // namespace cyy::computation
+#endif

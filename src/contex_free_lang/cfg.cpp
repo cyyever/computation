@@ -34,7 +34,7 @@ CFG::CFG(
                                     head);
       }
       for (auto const &symbol : body) {
-        auto terminal_ptr = std::get_if<terminal_type>(&symbol);
+        auto terminal_ptr = symbol.get_terminal_ptr();
         if (terminal_ptr && !alphabet->is_epsilon(*terminal_ptr) &&
             !alphabet->contain(*terminal_ptr)) {
           throw std::invalid_argument(std::string("invalid terminal ") +
@@ -50,10 +50,11 @@ CFG::CFG(
 
 bool CFG::has_production(const production_type &production) const {
 
-auto it=productions.find(production.first);
-return it!=productions.end() && std::find(it->second.begin(),it->second.end(),production.second)!=it->second.end();
-  }
-
+  auto it = productions.find(production.first);
+  return it != productions.end() &&
+         std::find(it->second.begin(), it->second.end(), production.second) !=
+             it->second.end();
+}
 
 void CFG::normalize_productions() {
   decltype(productions) new_productions;
@@ -105,10 +106,10 @@ void CFG::eliminate_useless_symbols() {
     for (auto &body : bodies) {
       bool useless = false;
       for (auto const &symbol : body) {
-        if (!std::holds_alternative<nonterminal_type>(symbol)) {
+        if (!symbol.is_nonterminal()) {
           continue;
         }
-        auto nonterminal = std::get<nonterminal_type>(symbol);
+        auto nonterminal = *symbol.get_nonterminal_ptr();
         auto it = states.find(nonterminal);
         if (it == states.end()) {
           body.clear();
@@ -163,10 +164,10 @@ void CFG::eliminate_useless_symbols() {
       bool add = true;
       std::set<nonterminal_type> nonterminals;
       for (auto const &symbol : body) {
-        if (!std::holds_alternative<nonterminal_type>(symbol)) {
+        if (!symbol.is_nonterminal()) {
           continue;
         }
-        const auto &nonterminal = std::get<nonterminal_type>(symbol);
+        const auto &nonterminal = *(symbol.get_nonterminal_ptr());
         if (states[nonterminal] != nonterminal_state::non_useless) {
           add = false;
           break;
@@ -204,8 +205,8 @@ void CFG::eliminate_left_recursion(std::vector<nonterminal_type> old_heads) {
 
         for (auto &body : bodies) {
 
-          if (std::holds_alternative<nonterminal_type>(body.front()) &&
-              std::get<nonterminal_type>(body.front()) == head) {
+          if (body.front().is_nonterminal() &&
+              *body.front().get_nonterminal_ptr() == head) {
             body.erase(body.begin());
             body.emplace_back(new_head);
             new_bodies.emplace_back(std::move(body));
@@ -235,8 +236,8 @@ void CFG::eliminate_left_recursion(std::vector<nonterminal_type> old_heads) {
           continue;
         }
 
-        if (!(std::holds_alternative<nonterminal_type>(body.front()) &&
-              std::get<nonterminal_type>(body.front()) == old_heads[j])) {
+        if (!(body.front().is_nonterminal() &&
+              *body.front().get_nonterminal_ptr() == old_heads[j])) {
           new_bodies.emplace_back(std::move(body));
           continue;
         }
@@ -337,8 +338,8 @@ bool CFG::recursive_descent_parse(symbol_string_view view) const {
 
         auto const &grammal_symbol = body[i];
 
-        if (std::holds_alternative<terminal_type>(grammal_symbol)) {
-          auto terminal = std::get<terminal_type>(grammal_symbol);
+        if (grammal_symbol.is_terminal()) {
+          auto terminal = *(grammal_symbol.get_terminal_ptr());
           if (terminal == view[local_pos]) {
             local_pos++;
           } else {
@@ -346,7 +347,8 @@ bool CFG::recursive_descent_parse(symbol_string_view view) const {
             break;
           }
         } else {
-          auto this_nonterminal = std::get<nonterminal_type>(grammal_symbol);
+          auto const &this_nonterminal =
+              *(grammal_symbol.get_nonterminal_ptr());
           if (self(self, this_nonterminal,
                    check_endmark && (i == body.size() - 1), local_pos, cfg)) {
             continue;
@@ -388,7 +390,7 @@ CFG::first() const {
   // process all terminals
   for (auto const &[head, bodies] : productions) {
     for (auto const &body : bodies) {
-      auto terminal_ptr = std::get_if<terminal_type>(&body[0]);
+      auto terminal_ptr = body[0].get_terminal_ptr();
       if (terminal_ptr) {
         first_sets[head].insert(*terminal_ptr);
       }
@@ -405,16 +407,14 @@ CFG::first() const {
       for (auto const &body : bodies) {
         size_t i = 0;
         for (; i < body.size(); i++) {
-          if (std::holds_alternative<terminal_type>(body[i])) {
-            if (first_sets[head]
-                    .insert(std::get<terminal_type>(body[i]))
-                    .second) {
+          if (body[i].is_terminal()) {
+            if (first_sets[head].insert(*body[i].get_terminal_ptr()).second) {
               add_new_terminal = true;
             }
             break;
           }
 
-          auto const &nonterminal = std::get<nonterminal_type>(body[i]);
+          auto const &nonterminal = *(body[i].get_nonterminal_ptr());
 
           bool has_epsilon = false;
           for (auto const &first_terminal : first_sets[nonterminal]) {
@@ -448,10 +448,10 @@ CFG::first(const grammar_symbol_string_view &alpha) const {
   std::set<terminal_type> view_first_set;
   for (auto const &symbol : alpha) {
 
-    if (std::holds_alternative<terminal_type>(symbol)) {
-      return {std::get<terminal_type>(symbol)};
+    if (symbol.is_terminal()) {
+      return {*symbol.get_terminal_ptr()};
     }
-    const auto &nonterminal = std::get<nonterminal_type>(symbol);
+    const auto &nonterminal = *symbol.get_nonterminal_ptr();
 
     bool has_epsilon = false;
     auto it = first_sets.find(nonterminal);
@@ -484,11 +484,11 @@ CFG::follow() const {
     for (const auto &[head, bodies] : productions) {
       for (const auto &body : bodies) {
         for (size_t i = 0; i < body.size(); i++) {
-          if (std::holds_alternative<terminal_type>(body[i])) {
+          if (body[i].is_terminal()) {
             continue;
           }
 
-          const auto &nonterminal = std::get<nonterminal_type>(body[i]);
+          const auto &nonterminal = *(body[i].get_nonterminal_ptr());
 
           auto first_set = first(grammar_symbol_string_view{
               body.data() + i + 1, body.size() - i - 1});
@@ -520,6 +520,5 @@ CFG::follow() const {
 
   return follow_sets;
 }
-
 
 } // namespace cyy::computation

@@ -17,6 +17,7 @@
 #include <variant>
 #include <vector>
 
+#include "../formal_grammar/grammar.hpp"
 #include "../lang/lang.hpp"
 
 namespace cyy::computation {
@@ -24,11 +25,13 @@ namespace cyy::computation {
 class CFG {
 
 public:
-  using terminal_type = symbol_type;
-  using nonterminal_type = std::string;
-  using grammar_symbol_type = std::variant<terminal_type, nonterminal_type>;
+  using terminal_type = grammar_symbol_type::terminal_type;
+  using nonterminal_type = grammar_symbol_type::nonterminal_type;
+  using grammar_symbol_type = ::cyy::computation::grammar_symbol_type;
+  // std::variant<terminal_type, nonterminal_type>;
   using grammar_symbol_string_view =
-      std::basic_string_view<grammar_symbol_type>;
+      ::cyy::computation::grammar_symbol_string_view;
+  //    std::basic_string_view<grammar_symbol_type>;
   using production_body_type = std::vector<grammar_symbol_type>;
   using production_type = std::pair<nonterminal_type, production_body_type>;
 
@@ -52,6 +55,8 @@ public:
            (alphabet->name() == rhs.alphabet->name() &&
             start_symbol == rhs.start_symbol && productions == rhs.productions);
   }
+
+  /*
   void print(std::ostream &os) const {
     // by convention,we print start symbol first.
     auto it = productions.find(start_symbol);
@@ -67,6 +72,7 @@ public:
       }
     }
   }
+  */
 
   bool has_production(const production_type &production) const;
 
@@ -87,8 +93,8 @@ public:
     for (auto const &[_, bodies] : productions) {
       for (auto const &body : bodies) {
         for (auto const &symbol : body) {
-          if (auto ptr = std::get_if<terminal_type>(&symbol);
-              ptr && !alphabet->is_epsilon(*ptr)) {
+          if (auto ptr = symbol.get_terminal_ptr();
+              !alphabet->is_epsilon(*ptr)) {
             terminals.insert(*ptr);
           }
         }
@@ -96,7 +102,6 @@ public:
     }
     return terminals;
   }
-
 
   void eliminate_useless_symbols();
 
@@ -122,23 +127,24 @@ public:
   std::set<nonterminal_type> nullable() const;
 
   bool is_epsilon(const grammar_symbol_type &grammal_symbol) const {
-    auto terminal_ptr = std::get_if<terminal_type>(&grammal_symbol);
+    auto terminal_ptr = grammal_symbol.get_terminal_ptr();
     return terminal_ptr && alphabet->is_epsilon(*terminal_ptr);
   }
 
   std::set<terminal_type> first(const grammar_symbol_string_view &alpha) const;
 
 protected:
+  /*
   void print(std::ostream &os, const nonterminal_type &head,
              const production_body_type &body) const {
 
     os << head << " -> ";
     for (const auto &grammal_symbol : body) {
 
-      if (auto ptr = std::get_if<terminal_type>(&grammal_symbol))
+      if (auto ptr = grammal_symbol.get_terminal_ptr())
         alphabet->print(os, *ptr);
       else {
-        os << std::get<nonterminal_type>(grammal_symbol);
+        os << *(rammal_symbol.get_nonterminal_ptr());
       }
       os << ' ';
     }
@@ -146,6 +152,7 @@ protected:
     return;
   }
 
+  */
   nonterminal_type get_new_head(nonterminal_type advise_head) const {
     advise_head.push_back('\'');
 

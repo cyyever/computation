@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include "cfg.hpp"
 #include "../lang/lang.hpp"
+#include "cfg.hpp"
 
 namespace cyy::computation {
 

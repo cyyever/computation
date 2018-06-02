@@ -87,9 +87,9 @@ void SLR_grammar::construct_parsing_table() {
   auto endmarker = alphabet->get_endmarker();
 
   for (auto const &[p, next_state] : goto_transitions) {
-    if (auto ptr = std::get_if<nonterminal_type>(&p.second); ptr) {
+    if (auto ptr = p.second.get_nonterminal_ptr(); ptr) {
       goto_table[{p.first, *ptr}] = next_state;
-    } else if (auto ptr = std::get_if<terminal_type>(&p.second); ptr) {
+    } else if (auto ptr = p.second.get_terminal_ptr(); ptr) {
       action_table[{p.first, *ptr}] = next_state;
     }
   }

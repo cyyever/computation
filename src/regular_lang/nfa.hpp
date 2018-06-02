@@ -15,7 +15,6 @@
 
 namespace cyy::computation {
 
-
 class NFA final : public finite_automaton {
 public:
   NFA(const std::set<uint64_t> &states_, const std::string &alphabet_name,
