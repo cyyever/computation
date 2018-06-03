@@ -93,7 +93,7 @@ public:
       for (auto const &body : bodies) {
         for (auto const &symbol : body) {
           if (auto ptr = symbol.get_terminal_ptr();
-              !alphabet->is_epsilon(*ptr)) {
+	      ptr && !alphabet->is_epsilon(*ptr)) {
             terminals.insert(*ptr);
           }
         }
