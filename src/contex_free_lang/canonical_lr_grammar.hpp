@@ -1,4 +1,3 @@
-#ifdef aaa
 /*!
  * \file canonical_lr_grammar.hpp
  *
@@ -35,7 +34,7 @@ public:
   canonical_collection();
 
 private:
-  std::map<CFG::grammar_symbol_type, LR_1_item_set>
+  std::map<grammar_symbol_type, LR_1_item_set>
   GOTO(const LR_1_item_set &set) const;
   void construct_parsing_table() override;
 
@@ -43,4 +42,3 @@ private:
   nonterminal_type new_start_symbol;
 };
 } // namespace cyy::computation
-#endif

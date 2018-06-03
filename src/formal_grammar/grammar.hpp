@@ -10,19 +10,32 @@
 #include <variant>
 #include <string>
 #include <string_view>
+#include <utility>
 
 #include "../lang/lang.hpp"
 
 namespace cyy::computation{
-  class  grammar_symbol_type {
+  class  grammar_symbol_type:public std::variant<symbol_type,std::string> {
 
   public:
     using terminal_type = symbol_type;
     using nonterminal_type = std::string;
+    using std::variant<symbol_type,std::string>::variant;
+   // using std::variant<>>
 
+    /*
     grammar_symbol_type()=default;
-    grammar_symbol_type(nonterminal_type  nonterminal):symbol(std::move(nonterminal)){}
-    grammar_symbol_type(terminal_type  terminal):symbol(terminal) {}
+    grammar_symbol_type(const  grammar_symbol_type &)=default;
+    grammar_symbol_type(grammar_symbol_type &&)=default;
+
+    grammar_symbol_type & operator=(const  grammar_symbol_type &)=default;
+    grammar_symbol_type & operator=(grammar_symbol_type &&)=default;
+
+    template<class T>
+      constexpr grammar_symbol_type(T&& t):symbol(t) {}
+
+//grammar_symbol_type(nonterminal_type  nonterminal):symbol(std::move(nonterminal)){}
+//    grammar_symbol_type(terminal_type  terminal):symbol(terminal) {}
 
     constexpr bool operator==(const grammar_symbol_type & rhs) const  {
  return symbol == rhs.symbol;     
@@ -35,16 +48,17 @@ namespace cyy::computation{
     constexpr bool operator!=(const grammar_symbol_type & rhs) const  {
       return !operator==(rhs); 
     }
+*/
 
-    bool is_terminal() const { return std::holds_alternative<terminal_type>(symbol); }
-    bool is_nonterminal() const { return std::holds_alternative<nonterminal_type>(symbol); }
+    bool is_terminal() const { return std::holds_alternative<terminal_type>(*this); }
+    bool is_nonterminal() const { return std::holds_alternative<nonterminal_type>(*this); }
 
     auto get_terminal_ptr()const  ->auto const {
-       return std::get_if<terminal_type>(&symbol);
+       return std::get_if<terminal_type>(this);
     }
 
     auto get_nonterminal_ptr()const  ->auto const {
-       return std::get_if<nonterminal_type>(&symbol);
+       return std::get_if<nonterminal_type>(this);
     }
 
   void print(std::ostream &os,const std::string &alphabet_name) const {
@@ -55,8 +69,11 @@ namespace cyy::computation{
     }
   }
 
+  /*
   private:
-    std::variant<terminal_type, nonterminal_type> symbol;
+    std::variant<terminal_type, nonterminal_type> s
+      /ymbol;
+      */
 };
 
   using grammar_symbol_string =

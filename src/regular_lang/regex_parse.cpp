@@ -37,7 +37,6 @@ namespace cyy::computation {
    escape-sequence -> '\' 'any-char'
 */
 std::shared_ptr<LR_grammar> regex::get_grammar() {
-  /*
   static std::shared_ptr<LR_grammar> regex_grammar;
   if (regex_grammar) {
     return regex_grammar;
@@ -89,8 +88,6 @@ std::shared_ptr<LR_grammar> regex::get_grammar() {
                                                 productions);
 
   return regex_grammar;
-  */
-  return {};
 }
 
 std::shared_ptr<regex::syntax_node>
