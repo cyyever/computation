@@ -24,6 +24,7 @@ public:
 
   virtual symbol_type get_epsilon() const = 0;
   virtual symbol_type get_endmarker() const = 0;
+  virtual symbol_type get_unincluded_symbol() const = 0;
 
   virtual void foreach_symbol(
       const std::function<void(const symbol_type &)> &callback) const = 0;
