@@ -55,7 +55,6 @@ public:
             start_symbol == rhs.start_symbol && productions == rhs.productions);
   }
 
-  /*
   void print(std::ostream &os) const {
     // by convention,we print start symbol first.
     auto it = productions.find(start_symbol);
@@ -71,7 +70,6 @@ public:
       }
     }
   }
-  */
 
   bool has_production(const production_type &production) const;
 
@@ -133,7 +131,6 @@ public:
   std::set<terminal_type> first(const grammar_symbol_string_view &alpha) const;
 
 protected:
-  /*
   void print(std::ostream &os, const nonterminal_type &head,
              const production_body_type &body) const {
 
@@ -143,7 +140,7 @@ protected:
       if (auto ptr = grammal_symbol.get_terminal_ptr())
         alphabet->print(os, *ptr);
       else {
-        os << *(rammal_symbol.get_nonterminal_ptr());
+        os << *(grammal_symbol.get_nonterminal_ptr());
       }
       os << ' ';
     }
@@ -151,7 +148,6 @@ protected:
     return;
   }
 
-  */
   nonterminal_type get_new_head(nonterminal_type advise_head) const {
     advise_head.push_back('\'');
 
