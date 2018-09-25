@@ -130,7 +130,8 @@ public:
 
   std::set<terminal_type> first(const grammar_symbol_string_view &alpha) const;
 
-protected:
+//protected:
+public:
   void print(std::ostream &os, const nonterminal_type &head,
              const production_body_type &body) const {
 

@@ -40,8 +40,6 @@ std::pair<
 LALR_grammar::canonical_collection() {
 	auto [canonical_LR_0_collection,SLR_goto_transitions]= SLR_grammar(alphabet->name(),start_symbol,productions).canonical_collection();
 
-  std::cout<<"size is "<<canonical_LR_0_collection.size()<<std::endl;
-
   std::map<const LR_0_item *,std::set<CFG::terminal_type>> kernel_item_table;
   std::map<const LR_0_item *,std::vector<const LR_0_item *>> propagation_relation;
   std::unordered_map<uint64_t,const LR_0_item_set*> reversed_canonical_LR_0_collection;
@@ -49,6 +47,8 @@ LALR_grammar::canonical_collection() {
   for(auto const & [lr_0_item_set,state]:canonical_LR_0_collection) {
     reversed_canonical_LR_0_collection[state]=&lr_0_item_set;
     for(const auto & kernel_item:lr_0_item_set.get_kernel_items()) {
+
+
       if(kernel_item.production.first==new_start_symbol) {
 	kernel_item_table[&kernel_item]={alphabet->get_endmarker()};
       } else {
@@ -96,17 +96,10 @@ LALR_grammar::canonical_collection() {
   for(auto const & [lr_0_item_set,state]:canonical_LR_0_collection) {
     LR_1_item_set item_set;
     for(const auto & kernel_item:lr_0_item_set.get_kernel_items()) {
-	    for(auto a:kernel_item_table[&kernel_item]) {
-		std::cout<<"add lookahead_symbol "<<(int)a<<std::endl;
-	    }
-	    print(std::cout, kernel_item.production.first,kernel_item.production.second);
       item_set.add_kernel_item(*this,kernel_item,kernel_item_table[&kernel_item]);
     }
     collection.emplace(std::move(item_set),state);
   }
-  std::cout<<"size is "<<collection.size()<<std::endl;
-
-
   return {collection,SLR_goto_transitions};
 }
 

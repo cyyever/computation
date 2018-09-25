@@ -103,7 +103,7 @@ private:
                           const std::set<CFG::terminal_type> &lookahead_set);
 
 private:
-  std::unordered_map<LR_0_item, std::set<CFG::terminal_type>> kernel_items;
+  std::map<LR_0_item, std::set<CFG::terminal_type>> kernel_items;
   std::map<CFG::nonterminal_type, std::set<CFG::terminal_type>> nonkernel_items;
 };
 
