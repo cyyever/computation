@@ -26,7 +26,7 @@ public:
                   &productions_)
       : LR_grammar(alphabet_name, start_symbol_, productions_),
         new_start_symbol{get_new_head(start_symbol)} {
-    construct_parsing_table();
+ //   construct_parsing_table();
   }
 
   std::pair<std::unordered_map<LR_0_item_set, uint64_t>,

@@ -10,24 +10,25 @@
 #include "../exception.hpp"
 
 namespace cyy::computation {
-  //std::map<grammar_symbol_type,std::pair<bool,std::set<CFG::terminal_type>>> LALR_grammar::check_lookahead(const LR_0_item  & item,const grammar_symbol_type &symbol ) {
-  std::map<grammar_symbol_type,std::pair<bool,std::set<CFG::terminal_type>>> LALR_grammar::check_lookahead(const LR_0_item  & item) {
+	//TODO: return next production type
+	//std::map<grammar_symbol_type,std::pair<bool,std::set<CFG::terminal_type>>> LALR_grammar::check_lookahead(const LR_0_item  & item) {
+  std::map<grammar_symbol_type,std::map<CFG::production_type,std::pair<bool,std::set<CFG::terminal_type>>>> LALR_grammar::check_lookahead(const LR_0_item  & item) {
     LR_1_item_set item_set;
     auto unincluded_symbol=alphabet->get_unincluded_symbol();
     item_set.add_kernel_item(*this,item,{unincluded_symbol});
 
-    std::map<grammar_symbol_type,std::pair<bool,std::set<grammar_symbol_type::terminal_type>>> res;
+    std::map<grammar_symbol_type,std::map<CFG::production_type,std::pair<bool,std::set<grammar_symbol_type::terminal_type>>>> res;
     for(auto &[grammar_symbol,next_item_set]:GOTO(item_set)) {
-      bool propagation=false;
-      std::set<CFG::terminal_type> spontaneous_lookahead_set;
-      for(auto const & [_,lookahead_set]:next_item_set.get_kernel_items()) {
+      for(auto const & [next_kernel_item,lookahead_set]:next_item_set.get_kernel_items()) {
+	      bool propagation=false;
+	      std::set<CFG::terminal_type> spontaneous_lookahead_set;
 	if(lookahead_set.count(unincluded_symbol)) {
 	  propagation=true;
 	}
 	spontaneous_lookahead_set.insert(lookahead_set.begin(),lookahead_set.end());
+	spontaneous_lookahead_set.erase(unincluded_symbol);
+	res[grammar_symbol][next_kernel_item.production]={propagation,std::move(spontaneous_lookahead_set)};
       }
-      spontaneous_lookahead_set.erase(unincluded_symbol);
-      res[grammar_symbol]={propagation,spontaneous_lookahead_set};
     }
     return res;
   }
@@ -37,8 +38,9 @@ std::pair<
     std::map<std::pair<uint64_t, grammar_symbol_type>,
              uint64_t>>
 LALR_grammar::canonical_collection() {
-  auto [canonical_LR_0_collection,SLR_goto_transitions]= SLR_grammar(alphabet->name(),start_symbol,productions).canonical_collection();
+	auto [canonical_LR_0_collection,SLR_goto_transitions]= SLR_grammar(alphabet->name(),start_symbol,productions).canonical_collection();
 
+  std::cout<<"size is "<<canonical_LR_0_collection.size()<<std::endl;
 
   std::map<const LR_0_item *,std::set<CFG::terminal_type>> kernel_item_table;
   std::map<const LR_0_item *,std::vector<const LR_0_item *>> propagation_relation;
@@ -57,16 +59,15 @@ LALR_grammar::canonical_collection() {
 
   for(auto const & [lr_0_item_set,state]:canonical_LR_0_collection) {
     for(const auto & kernel_item:lr_0_item_set.get_kernel_items()) {
-      for(auto [symbol,p]:check_lookahead(kernel_item)) {
+      for(auto [symbol,lookahead_map]:check_lookahead(kernel_item)) {
+
 	auto const &next_set=*reversed_canonical_LR_0_collection[SLR_goto_transitions[{state,symbol}]];
 	for(auto const &next_kernel_item:next_set.get_kernel_items()) {
-	  if(next_kernel_item.production==kernel_item.production) {
+		auto &p=lookahead_map[next_kernel_item.production];
 	    kernel_item_table[&next_kernel_item].merge(p.second);
 	    if(p.first) {
 	      propagation_relation[&kernel_item].push_back(&next_kernel_item);
 	    }
-	    break;
-	  }
 	}
       }
     }
@@ -95,10 +96,16 @@ LALR_grammar::canonical_collection() {
   for(auto const & [lr_0_item_set,state]:canonical_LR_0_collection) {
     LR_1_item_set item_set;
     for(const auto & kernel_item:lr_0_item_set.get_kernel_items()) {
+	    for(auto a:kernel_item_table[&kernel_item]) {
+		std::cout<<"add lookahead_symbol "<<(int)a<<std::endl;
+	    }
+	    print(std::cout, kernel_item.production.first,kernel_item.production.second);
       item_set.add_kernel_item(*this,kernel_item,kernel_item_table[&kernel_item]);
-      collection.emplace(std::move(item_set),state);
     }
+    collection.emplace(std::move(item_set),state);
   }
+  std::cout<<"size is "<<collection.size()<<std::endl;
+
 
   return {collection,SLR_goto_transitions};
 }
