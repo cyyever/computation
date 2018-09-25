@@ -16,6 +16,7 @@ class range_alphabet : public ALPHABET {
 public:
   symbol_type get_epsilon() const override { return epsilon; }
   symbol_type get_endmarker() const override { return endmarker; }
+  symbol_type get_unincluded_symbol() const override { return unincluded_symbol; }
 
   void print(std::ostream &os, symbol_type symbol) const override {
     if (symbol == get_epsilon()) {
@@ -42,5 +43,6 @@ public:
 private:
   static constexpr symbol_type epsilon{max_symbol + 1};
   static constexpr symbol_type endmarker{max_symbol + 2};
+  static constexpr symbol_type unincluded_symbol{max_symbol + 3};
 };
 } // namespace cyy::computation

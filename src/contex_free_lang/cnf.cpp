@@ -33,7 +33,7 @@ void CFG::eliminate_epsilon_productions() {
           continue;
         }
         for (size_t i = 0; i < body.size(); i++) {
-          auto ptr = std::get_if<nonterminal_type>(&(body[i]));
+          auto ptr = body[i].get_nonterminal_ptr();
           if (ptr && nullable_nonterminals.count(*ptr)) {
             nonterminal_type new_head;
             if (i + 1 < body.size()) {
@@ -81,7 +81,7 @@ std::set<CFG::nonterminal_type> CFG::nullable() const {
       for (auto const &body : bodies) {
         bool body_nullable = true;
         for (auto const &symbol : body) {
-          auto terminal_ptr = std::get_if<terminal_type>(&symbol);
+          auto terminal_ptr = symbol.get_terminal_ptr();
           if (terminal_ptr) {
             if (!alphabet->is_epsilon(*terminal_ptr)) {
               body_nullable = false;
@@ -90,7 +90,7 @@ std::set<CFG::nonterminal_type> CFG::nullable() const {
             continue;
           }
 
-          if (res.count(std::get<nonterminal_type>(symbol)) == 0) {
+          if (res.count(*symbol.get_nonterminal_ptr()) == 0) {
             body_nullable = false;
             break;
           }
@@ -121,7 +121,7 @@ void CFG::eliminate_single_productions() {
       if (body.size() != 1) {
         continue;
       }
-      auto ptr = std::get_if<nonterminal_type>(&body.front());
+      auto ptr = body.front().get_nonterminal_ptr();
       if (!ptr) {
         continue;
       }
@@ -173,7 +173,7 @@ void CFG::eliminate_single_productions() {
           continue;
         }
         for (size_t i = 0; i < body.size(); i++) {
-          auto ptr = std::get_if<nonterminal_type>(&(body[i]));
+          auto ptr = body[i].get_nonterminal_ptr();
           if (!ptr) {
             continue;
           }
@@ -227,7 +227,7 @@ void CFG::to_CNF() {
         }
 
         for (auto &symbol : body) {
-          auto terminal_ptr = std::get_if<terminal_type>(&symbol);
+          auto terminal_ptr = symbol.get_terminal_ptr();
           if (!terminal_ptr) {
             continue;
           }
@@ -272,16 +272,15 @@ bool CFG::is_CNF() const {
   for (auto &[_, bodies] : productions) {
     for (auto &body : bodies) {
       if (body.size() == 1) {
-        if (!std::holds_alternative<terminal_type>(body[0])) {
-
+        if (!body[0].is_terminal()) {
           return false;
         }
       } else if (body.size() == 2) {
 
-        if (!std::holds_alternative<nonterminal_type>(body[0])) {
+        if (!body[0].is_nonterminal()) {
           return false;
         }
-        if (!std::holds_alternative<nonterminal_type>(body[1])) {
+        if (!body[1].is_nonterminal()) {
           return false;
         }
       }

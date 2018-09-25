@@ -1,4 +1,4 @@
-/*!
+/*
  * \file lr_item.cpp
  *
  * \author cyy
@@ -14,7 +14,7 @@ void LR_0_item_set ::add_kernel_item(const CFG &cfg, LR_0_item kernel_item) {
   std::vector<CFG::nonterminal_type> tmp_nonkernel_items;
   if (kernel_item.dot_pos < kernel_item.production.second.size()) {
     auto const &symbol = kernel_item.production.second[kernel_item.dot_pos];
-    if (auto ptr = std::get_if<CFG::nonterminal_type>(&symbol); ptr) {
+    if (auto ptr = symbol.get_nonterminal_ptr(); ptr) {
       if (nonkernel_items.count(*ptr) == 0) {
         tmp_nonkernel_items.push_back(*ptr);
       }
@@ -34,7 +34,7 @@ void LR_0_item_set ::add_kernel_item(const CFG &cfg, LR_0_item kernel_item) {
         continue;
       }
 
-      if (auto ptr = std::get_if<CFG::nonterminal_type>(&body[0]); ptr) {
+      if (auto ptr = body[0].get_nonterminal_ptr(); ptr) {
         if (nonkernel_items.count(*ptr) == 0) {
           tmp_nonkernel_items.push_back(*ptr);
         }
@@ -68,7 +68,7 @@ void LR_1_item_set::add_nonkernel_item(
     return;
   }
 
-  auto ptr = std::get_if<CFG::nonterminal_type>(&view[0]);
+  auto ptr = view[0].get_nonterminal_ptr();
 
   if (!ptr) {
     return;
@@ -104,11 +104,12 @@ void LR_1_item_set::add_nonkernel_item(
       new_item.production.first = *ptr;
       new_item.production.second = new_body;
 
-      kernel_items[new_item]=nonkernel_items[*ptr];
+      kernel_items[new_item] = nonkernel_items[*ptr];
       continue;
     }
 
-    add_nonkernel_item(cfg, {new_body.data(), new_body.size()},nonkernel_items[*ptr]);
+    add_nonkernel_item(cfg, {new_body.data(), new_body.size()},
+                       nonkernel_items[*ptr]);
   }
   return;
 }

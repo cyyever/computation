@@ -33,7 +33,7 @@ void LL_grammar::construct_parsing_table() {
           }
           continue;
         }
-	auto has_inserted =
+        auto has_inserted =
             parsing_table.emplace(std::pair{terminal, head}, body).second;
 
         // not LL1
@@ -58,7 +58,7 @@ CFG::parse_node_ptr LL_grammar::parse(symbol_string_view view) const {
     auto top = std::move(stack.back());
     stack.pop_back();
 
-    if (auto ptr = std::get_if<terminal_type>(&(top->grammar_symbol))) {
+    if (auto ptr = top->grammar_symbol.get_terminal_ptr()) {
       if (!is_epsilon(*ptr)) {
         if (terminal != *ptr) {
           puts("terminal is not ptr ");
@@ -73,7 +73,7 @@ CFG::parse_node_ptr LL_grammar::parse(symbol_string_view view) const {
     }
 
     auto it = parsing_table.find(
-        {terminal, std::get<nonterminal_type>(top->grammar_symbol)});
+        {terminal, *(top->grammar_symbol.get_nonterminal_ptr())});
 
     if (it == parsing_table.end()) {
       puts("no rule for parsing");

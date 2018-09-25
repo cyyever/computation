@@ -7,12 +7,12 @@
 
 #pragma once
 
-#include <set>
 #include <map>
+#include <set>
 
-#include "nfa.hpp"
-#include "dfa.hpp"
 #include "../contex_free_lang/lr_grammar.hpp"
+#include "dfa.hpp"
+#include "nfa.hpp"
 
 namespace cyy::computation {
 

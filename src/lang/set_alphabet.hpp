@@ -27,6 +27,7 @@ public:
 
   symbol_type get_epsilon() const override { return max_symbol + 1; }
   symbol_type get_endmarker() const override { return max_symbol + 2; }
+  symbol_type get_unincluded_symbol() const override { return max_symbol + 3; }
 
   void print(std::ostream &os, symbol_type symbol) const override {
     if (symbol == get_epsilon()) {

@@ -22,7 +22,7 @@ public:
 
   virtual ~LR_grammar() = default;
 
-  parse_node_ptr parse(symbol_string_view view) const;
+  parse_node_ptr parse(symbol_string_view view);
 
 private:
   virtual void construct_parsing_table() = 0;

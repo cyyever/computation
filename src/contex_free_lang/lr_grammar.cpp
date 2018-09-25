@@ -9,11 +9,14 @@
 
 namespace cyy::computation {
 
-LR_grammar::parse_node_ptr LR_grammar::parse(symbol_string_view view) const {
-
+LR_grammar::parse_node_ptr LR_grammar::parse(symbol_string_view view) {
   std::vector<parse_node_ptr> viable_prefix;
   std::vector<uint64_t> stack{0};
   auto endmarker = alphabet->get_endmarker();
+
+  if(action_table.empty()|| goto_table.empty()) {
+	  construct_parsing_table();
+  }
 
   while (true) {
     auto terminal = view.empty() ? endmarker : view.front();
@@ -71,6 +74,6 @@ LR_grammar::parse_node_ptr LR_grammar::parse(symbol_string_view view) const {
     return {};
   }
 
-  return viable_prefix[0];
+  return viable_prefix.at(0);
 }
 } // namespace cyy::computation

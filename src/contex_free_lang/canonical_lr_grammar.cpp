@@ -10,10 +10,10 @@
 
 namespace cyy::computation {
 
-std::map<CFG::grammar_symbol_type, LR_1_item_set>
+std::map<grammar_symbol_type, LR_1_item_set>
 canonical_LR_grammar::GOTO(const LR_1_item_set &set) const {
 
-  std::map<CFG::grammar_symbol_type, LR_1_item_set> res;
+  std::map<grammar_symbol_type, LR_1_item_set> res;
 
   for (auto const &[kernel_item, lookahead_set] : set.get_kernel_items()) {
     if (kernel_item.dot_pos < kernel_item.production.second.size()) {
@@ -42,7 +42,7 @@ canonical_LR_grammar::GOTO(const LR_1_item_set &set) const {
 
 std::pair<
     std::unordered_map<LR_1_item_set, uint64_t>,
-    std::map<std::pair<uint64_t, canonical_LR_grammar::grammar_symbol_type>,
+    std::map<std::pair<uint64_t, grammar_symbol_type>,
              uint64_t>>
 canonical_LR_grammar::canonical_collection() {
   std::unordered_map<LR_1_item_set, uint64_t> unchecked_sets;

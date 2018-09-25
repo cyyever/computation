@@ -7,8 +7,8 @@
 
 #include <algorithm>
 #include <iterator>
-#include <vector>
 #include <set>
+#include <vector>
 
 #include "dfa.hpp"
 

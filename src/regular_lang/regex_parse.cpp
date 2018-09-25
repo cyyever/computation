@@ -7,9 +7,9 @@
 
 #include <cassert>
 
+#include "../contex_free_lang/slr_grammar.hpp"
 #include "../exception.hpp"
 #include "regex.hpp"
-#include "../contex_free_lang/slr_grammar.hpp"
 
 namespace cyy::computation {
 
@@ -137,7 +137,7 @@ regex::parse(symbol_string_view view) const {
   auto parse_escape_sequence =
       [](const CFG::parse_node_ptr &parse_node) -> symbol_type {
     auto second_terminal =
-        std::get<CFG::terminal_type>(parse_node->children[1]->grammar_symbol);
+        *(parse_node->children[1]->grammar_symbol.get_terminal_ptr());
 
     switch (second_terminal) {
     case 'f':
@@ -161,8 +161,7 @@ regex::parse(symbol_string_view view) const {
           const CFG::parse_node_ptr &root_parse_node) -> syntax_node_ptr {
     std::shared_ptr<regex::syntax_node> root_syntax_node;
 
-    if (auto ptr = std::get_if<CFG::nonterminal_type>(
-            &(root_parse_node->grammar_symbol))) {
+    if (auto ptr = root_parse_node->grammar_symbol.get_nonterminal_ptr()) {
       if (*ptr == "rexpr") {
         if (root_parse_node->children.size() == 1) {
           return self(self, root_parse_node->children[0]);
@@ -182,8 +181,8 @@ regex::parse(symbol_string_view view) const {
           return self(self, root_parse_node->children[0]);
         }
 
-        auto second_terminal = std::get<CFG::terminal_type>(
-            root_parse_node->children[1]->grammar_symbol);
+        auto second_terminal =
+            *(root_parse_node->children[1]->grammar_symbol.get_terminal_ptr());
 
         auto inner_tree = self(self, root_parse_node->children[0]);
         if (second_terminal == '*') {
@@ -197,13 +196,12 @@ regex::parse(symbol_string_view view) const {
               std::make_shared<regex::epsilon_node>(), inner_tree);
         }
       } else if (*ptr == "rprimary") {
-        if (std::holds_alternative<CFG::nonterminal_type>(
-                root_parse_node->children[0]->grammar_symbol)) {
+        if (root_parse_node->children[0]->grammar_symbol.is_nonterminal()) {
           return self(self, root_parse_node->children[0]);
         }
 
-        auto first_terminal = std::get<CFG::terminal_type>(
-            root_parse_node->children[0]->grammar_symbol);
+        auto first_terminal =
+            *(root_parse_node->children[0]->grammar_symbol.get_terminal_ptr());
         switch (first_terminal) {
         case '(':
           return self(self, root_parse_node->children[1]);
@@ -226,10 +224,10 @@ regex::parse(symbol_string_view view) const {
         auto cur_node = root_parse_node;
         while (true) {
           symbol_type cur_symbol = 0;
-          if (std::holds_alternative<CFG::terminal_type>(
-                  cur_node->children[0]->grammar_symbol)) {
-            cur_symbol = std::get<CFG::terminal_type>(
-                cur_node->children[0]->grammar_symbol);
+
+          if (cur_node->children[0]->grammar_symbol.is_terminal()) {
+            cur_symbol =
+                *(cur_node->children[0]->grammar_symbol.get_terminal_ptr());
             if (regex_alphabet->is_epsilon(cur_symbol)) {
               break;
             }

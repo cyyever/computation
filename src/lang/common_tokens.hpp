@@ -18,6 +18,7 @@ public:
     escape_sequence,
     id,
     endmarker,
+    unincluded_symbol
   };
 
   symbol_type get_epsilon() const override {
@@ -25,6 +26,9 @@ public:
   }
   symbol_type get_endmarker() const override {
     return static_cast<symbol_type>(token::endmarker);
+  }
+  symbol_type get_unincluded_symbol() const override {
+    return static_cast<symbol_type>(token::unincluded_symbol);
   }
 
   void print(std::ostream &os, symbol_type symbol) const override {
