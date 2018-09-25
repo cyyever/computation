@@ -97,17 +97,18 @@ Aho_Corasick(const std::vector<std::basic_string_view<CharT>> &words,
   }
 
   while (!search_frontier.empty()) {
-    std::multimap<size_t, size_t> tmp = std::move(search_frontier);
-    for (auto const &[prefix_state, suffix_state] : tmp) {
+    std::multimap<size_t, size_t> tmp;
+    for (auto const &[prefix_state, suffix_state] : search_frontier) {
       auto const &prefix_frontier = trie[prefix_state];
       for (auto const &[next_char, next_state] : trie[suffix_state]) {
         auto it = prefix_frontier.find(next_char);
         if (it != prefix_frontier.end()) {
-          search_frontier.emplace(it->second, next_state);
+          tmp.emplace(it->second, next_state);
           failure_function[next_state] = it->second;
         }
       }
     }
+    search_frontier = std::move(tmp);
   }
 
   size_t s = 0;
