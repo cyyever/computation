@@ -169,7 +169,7 @@ regex::parse(symbol_string_view view) const {
         return std::make_shared<regex::union_node>(
             self(self, root_parse_node->children[0]),
             self(self, root_parse_node->children[2]));
-      } else if (*ptr == "rterm") {
+      } if (*ptr == "rterm") {
         if (root_parse_node->children.size() == 1) {
           return self(self, root_parse_node->children[0]);
         }
@@ -187,7 +187,7 @@ regex::parse(symbol_string_view view) const {
         auto inner_tree = self(self, root_parse_node->children[0]);
         if (second_terminal == '*') {
           return std::make_shared<regex::kleene_closure_node>(inner_tree);
-        } else if (second_terminal == '+') {
+        } if (second_terminal == '+') {
           return std::make_shared<regex::concat_node>(
               inner_tree,
               std::make_shared<regex::kleene_closure_node>(inner_tree));

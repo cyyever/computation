@@ -42,7 +42,7 @@ void CFG::eliminate_epsilon_productions() {
                   std::move_iterator(body.begin() + i + 1),
                   std::move_iterator(body.end()));
               body.erase(body.begin() + i + 1, body.end());
-              body.push_back(new_head);
+              body.emplace_back(new_head);
               heads.insert(new_head);
             }
 
@@ -190,7 +190,7 @@ void CFG::eliminate_single_productions() {
                 std::move_iterator(body.begin() + i + 1),
                 std::move_iterator(body.end()));
             body.erase(body.begin() + i + 1, body.end());
-            body.push_back(new_head);
+            body.emplace_back(new_head);
             heads.insert(new_head);
           }
 

@@ -8,8 +8,8 @@
 #include <doctest.h>
 #include <iostream>
 
-#include "../../src/lang/common_tokens.hpp"
 #include "../../src/contex_free_lang/lalr_grammar.hpp"
+#include "../../src/lang/common_tokens.hpp"
 
 using namespace cyy::computation;
 
@@ -19,12 +19,12 @@ TEST_CASE("canonical_collection") {
   auto endmarker = ALPHABET::get("common_tokens")->get_endmarker();
   auto id = static_cast<CFG::terminal_type>(common_tokens::token::id);
   productions["S"] = {
-      {"L", '=',"R"},
+      {"L", '=', "R"},
       {"R"},
   };
 
   productions["L"] = {
-      {'*',"R"},
+      {'*', "R"},
       {id},
   };
   productions["R"] = {
@@ -53,12 +53,20 @@ TEST_CASE("canonical_collection") {
   {
     LR_1_item_set set;
 
-    set.add_kernel_item(grammar,
-                        LR_0_item{CFG::production_type{"S", {  {"L", '=',"R"}}}, 1},
+    set.add_kernel_item(
+        grammar, LR_0_item{CFG::production_type{"S", {{"L", '=', "R"}}}, 1},
+        {endmarker});
+    set.add_kernel_item(
+        grammar, LR_0_item{CFG::production_type{"R", {{"L"}}}, 1}, {endmarker});
+    sets.emplace(std::move(set));
+  }
+
+  {
+    LR_1_item_set set;
+
+    set.add_kernel_item(grammar, LR_0_item{CFG::production_type{"S", {"R"}}, 1},
                         {endmarker});
-    set.add_kernel_item(grammar,
-                        LR_0_item{CFG::production_type{"R", {  {"L"}}}, 1},
-                        {endmarker});
+
     sets.emplace(std::move(set));
   }
 
@@ -66,16 +74,7 @@ TEST_CASE("canonical_collection") {
     LR_1_item_set set;
 
     set.add_kernel_item(grammar,
-                        LR_0_item{CFG::production_type{"S", {"R"}}, 1},
-                        {endmarker});
-
-    sets.emplace(std::move(set));
-  }
-
-  {
-    LR_1_item_set set;
-
-    set.add_kernel_item(grammar, LR_0_item{CFG::production_type{"L", {'*',"R"}}, 1},
+                        LR_0_item{CFG::production_type{"L", {'*', "R"}}, 1},
                         {'=', endmarker});
 
     sets.emplace(std::move(set));
@@ -84,27 +83,17 @@ TEST_CASE("canonical_collection") {
   {
     LR_1_item_set set;
 
-    set.add_kernel_item(grammar,
-                        LR_0_item{CFG::production_type{"L", {id}}, 1},
-                        {'=',endmarker});
+    set.add_kernel_item(grammar, LR_0_item{CFG::production_type{"L", {id}}, 1},
+                        {'=', endmarker});
     sets.emplace(std::move(set));
   }
 
   {
     LR_1_item_set set;
 
-    set.add_kernel_item(grammar,
-                        LR_0_item{CFG::production_type{"S", {  {"L", '=',"R"}}}, 2},
-                        {endmarker});
-
-    sets.emplace(std::move(set));
-  }
-
-  {
-    LR_1_item_set set;
-
-    set.add_kernel_item(grammar, LR_0_item{CFG::production_type{"L", {'*',"R"}}, 2},
-                        {'=',endmarker});
+    set.add_kernel_item(
+        grammar, LR_0_item{CFG::production_type{"S", {{"L", '=', "R"}}}, 2},
+        {endmarker});
 
     sets.emplace(std::move(set));
   }
@@ -113,23 +102,32 @@ TEST_CASE("canonical_collection") {
     LR_1_item_set set;
 
     set.add_kernel_item(grammar,
-                        LR_0_item{CFG::production_type{"R", {"L"}}, 1},
-                        {'=',endmarker});
+                        LR_0_item{CFG::production_type{"L", {'*', "R"}}, 2},
+                        {'=', endmarker});
+
     sets.emplace(std::move(set));
   }
 
   {
     LR_1_item_set set;
 
-    set.add_kernel_item(grammar,
-                        LR_0_item{CFG::production_type{"S", {  {"L", '=',"R"}}}, 3},
-                        {endmarker});
+    set.add_kernel_item(grammar, LR_0_item{CFG::production_type{"R", {"L"}}, 1},
+                        {'=', endmarker});
+    sets.emplace(std::move(set));
+  }
+
+  {
+    LR_1_item_set set;
+
+    set.add_kernel_item(
+        grammar, LR_0_item{CFG::production_type{"S", {{"L", '=', "R"}}}, 3},
+        {endmarker});
     sets.emplace(std::move(set));
   }
 
   std::unordered_set<LR_1_item_set> collection;
   for (auto &[set, _] : grammar.canonical_collection().first) {
-    collection.emplace(std::move(set));
+    collection.emplace(set);
   }
 
   CHECK(sets == collection);

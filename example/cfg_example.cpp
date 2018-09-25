@@ -8,16 +8,16 @@
 #include <cassert>
 #include <iostream>
 
-#include "../src/grammar.hpp"
 #include "../src/common_tokens.hpp"
+#include "../src/grammar.hpp"
 
 int main() {
-using namespace cyy::lang;
+  using namespace cyy::lang;
 
   std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
       productions;
   productions["rexpr"] = {
-      {"rexpr", '+',"rterm"},
+      {"rexpr", '+', "rterm"},
       {"rterm"},
   };
   productions["rterm"] = {
@@ -25,23 +25,23 @@ using namespace cyy::lang;
       {"rfactor"},
   };
   productions["rfactor"] = {
-      {"rfactor",'*'},
+      {"rfactor", '*'},
       {"rprimary"},
   };
   productions["rprimary"] = {
-    {'(',"rexpr",')'},
-    {'\\',common_tokens::token::ascii_char},
-    {'[',common_tokens::token::ascii_char,']'},
-    {common_tokens::token::ascii_char},
+      {'(', "rexpr", ')'},
+      {'\\', common_tokens::token::ascii_char},
+      {'[', common_tokens::token::ascii_char, ']'},
+      {common_tokens::token::ascii_char},
   };
 
   CFG cfg("common_tokens", "rexpr", productions);
-  cfg.eliminate_left_recursion({"rexpr","rterm","rfactor","rprimary"});
+  cfg.eliminate_left_recursion({"rexpr", "rterm", "rfactor", "rprimary"});
 
-  if(cfg.is_LL1()) {
-    std::cout<<"regex grammar is LL(1) grammar\n";
+  if (cfg.is_LL1()) {
+    std::cout << "regex grammar is LL(1) grammar\n";
   } else {
-    std::cout<<"regex grammar is not LL(1) grammar\n";
+    std::cout << "regex grammar is not LL(1) grammar\n";
   }
 
   cfg.print(std::cout);

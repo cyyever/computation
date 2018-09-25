@@ -7,8 +7,8 @@
 #include <doctest.h>
 #include <iostream>
 
-#include "../../src/regular_lang/dfa.hpp"
 #include "../../src/lang/set_alphabet.hpp"
+#include "../../src/regular_lang/dfa.hpp"
 
 using namespace cyy::computation;
 TEST_CASE("simulate DFA") {

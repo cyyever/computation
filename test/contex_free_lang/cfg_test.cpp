@@ -7,8 +7,8 @@
 #include <doctest.h>
 #include <iostream>
 
-#include "../../src/lang/common_tokens.hpp"
 #include "../../src/contex_free_lang/cfg.hpp"
+#include "../../src/lang/common_tokens.hpp"
 
 using namespace cyy::computation;
 TEST_CASE("eliminate_useless_symbols") {

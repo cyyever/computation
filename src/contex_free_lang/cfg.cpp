@@ -7,12 +7,14 @@
 
 #include "cfg.hpp"
 
+#include <utility>
+
 namespace cyy::computation {
 
 CFG::CFG(
-    const std::string &alphabet_name, const nonterminal_type &start_symbol_,
+    const std::string &alphabet_name, nonterminal_type start_symbol_,
     std::map<nonterminal_type, std::vector<production_body_type>> &productions_)
-    : alphabet(ALPHABET::get(alphabet_name)), start_symbol(start_symbol_),
+    : alphabet(ALPHABET::get(alphabet_name)), start_symbol(std::move(start_symbol_)),
       productions(productions_) {
 
   eliminate_useless_symbols();

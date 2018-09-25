@@ -38,9 +38,8 @@ SLR_grammar::GOTO(const LR_0_item_set &set) const {
   return res;
 }
 
-std::pair<
-    std::unordered_map<LR_0_item_set, uint64_t>,
-    std::map<std::pair<uint64_t, grammar_symbol_type>, uint64_t>>
+std::pair<std::unordered_map<LR_0_item_set, uint64_t>,
+          std::map<std::pair<uint64_t, grammar_symbol_type>, uint64_t>>
 SLR_grammar::canonical_collection() const {
 
   std::unordered_map<LR_0_item_set, uint64_t> unchecked_sets;
@@ -110,7 +109,7 @@ void SLR_grammar::construct_parsing_table() {
 
         // conflict
         if (action_table.count({state, follow_terminal}) != 0) {
-          std::cout << "config with follow_terminal " << (char)follow_terminal
+          std::cout << "conflict with follow_terminal " << static_cast<char>(follow_terminal)
                     << std::endl;
           throw cyy::computation::exception::no_SLR_grammar("");
         }

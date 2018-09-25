@@ -16,7 +16,9 @@ class range_alphabet : public ALPHABET {
 public:
   symbol_type get_epsilon() const override { return epsilon; }
   symbol_type get_endmarker() const override { return endmarker; }
-  symbol_type get_unincluded_symbol() const override { return unincluded_symbol; }
+  symbol_type get_unincluded_symbol() const override {
+    return unincluded_symbol;
+  }
 
   void print(std::ostream &os, symbol_type symbol) const override {
     if (symbol == get_epsilon()) {

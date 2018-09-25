@@ -45,7 +45,7 @@ public:
     std::vector<parse_node_ptr> children;
   };
 
-  CFG(const std::string &alphabet_name, const nonterminal_type &start_symbol_,
+  CFG(const std::string &alphabet_name, nonterminal_type start_symbol_,
       std::map<nonterminal_type, std::vector<production_body_type>>
           &productions_);
 
@@ -130,8 +130,7 @@ public:
 
   std::set<terminal_type> first(const grammar_symbol_string_view &alpha) const;
 
-//protected:
-public:
+protected:
   void print(std::ostream &os, const nonterminal_type &head,
              const production_body_type &body) const {
 

@@ -7,8 +7,8 @@
 #include <doctest.h>
 #include <iostream>
 
-#include "../../src/lang/common_tokens.hpp"
 #include "../../src/contex_free_lang/canonical_lr_grammar.hpp"
+#include "../../src/lang/common_tokens.hpp"
 
 using namespace cyy::computation;
 
@@ -119,7 +119,7 @@ TEST_CASE("canonical_collection") {
 
   std::unordered_set<LR_1_item_set> collection;
   for (auto &[set, _] : grammar.canonical_collection().first) {
-    collection.emplace(std::move(set));
+    collection.emplace(set);
   }
 
   CHECK(sets == collection);

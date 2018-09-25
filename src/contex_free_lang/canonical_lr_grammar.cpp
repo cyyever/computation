@@ -40,10 +40,8 @@ canonical_LR_grammar::GOTO(const LR_1_item_set &set) const {
   return res;
 }
 
-std::pair<
-    std::unordered_map<LR_1_item_set, uint64_t>,
-    std::map<std::pair<uint64_t, grammar_symbol_type>,
-             uint64_t>>
+std::pair<std::unordered_map<LR_1_item_set, uint64_t>,
+          std::map<std::pair<uint64_t, grammar_symbol_type>, uint64_t>>
 canonical_LR_grammar::canonical_collection() {
   std::unordered_map<LR_1_item_set, uint64_t> unchecked_sets;
   std::unordered_map<LR_1_item_set, uint64_t> collection;
@@ -112,7 +110,7 @@ void canonical_LR_grammar::construct_parsing_table() {
       for (const auto &lookahead : lookahead_set) {
         // conflict
         if (action_table.count({state, lookahead}) != 0) {
-          std::cout << "config with follow_terminal" << lookahead << std::endl;
+          std::cout << "conflict with follow_terminal" << lookahead << std::endl;
           throw cyy::computation::exception::no_canonical_LR_grammar("");
         }
         action_table[{state, lookahead}] = kernel_item.production;

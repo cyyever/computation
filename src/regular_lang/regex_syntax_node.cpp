@@ -41,7 +41,7 @@ NFA regex::epsilon_node::to_NFA(const ALPHABET &alphabet,
 }
 
 void regex::epsilon_node::assign_position(
-    std::map<uint64_t, symbol_type> &position_to_symbol [[maybe_unused]]) {}
+    std::map<uint64_t, symbol_type> &position_to_symbol[[maybe_unused]]) {}
 
 std::set<uint64_t> regex::epsilon_node::first_pos() const { return {}; }
 std::set<uint64_t> regex::epsilon_node::last_pos() const { return {}; }
@@ -97,7 +97,7 @@ NFA regex::concat_node::to_NFA(const ALPHABET &alphabet,
 
   auto right_NFA_start_state = *(left_final_states.begin());
   auto right_NFA = right_node->to_NFA(alphabet, right_NFA_start_state);
-  auto right_final_states = right_NFA.get_final_states();
+  const auto& right_final_states = right_NFA.get_final_states();
   left_NFA.add_sub_NFA(right_NFA, false);
   left_NFA.replace_final_states(right_final_states);
 

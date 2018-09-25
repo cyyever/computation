@@ -6,8 +6,8 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
 
-#include "../../src/regular_lang/nfa.hpp"
 #include "../../src/lang/set_alphabet.hpp"
+#include "../../src/regular_lang/nfa.hpp"
 
 using namespace cyy::computation;
 TEST_CASE("simulate NFA") {

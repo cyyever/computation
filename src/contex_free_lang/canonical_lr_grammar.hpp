@@ -25,13 +25,12 @@ public:
       std::map<nonterminal_type, std::vector<production_body_type>>
           &productions_)
       : LR_grammar(alphabet_name, start_symbol_, productions_),
-        new_start_symbol(get_new_head(start_symbol)) {
-	//  construct_parsing_table();
-  }
+        new_start_symbol(get_new_head(start_symbol)) {}
 
-  virtual std::pair<std::unordered_map<LR_1_item_set, uint64_t>,
-            std::map<std::pair<uint64_t, grammar_symbol_type>, uint64_t>>
-  canonical_collection() ;
+  virtual std::pair<
+      std::unordered_map<LR_1_item_set, uint64_t>,
+      std::map<std::pair<uint64_t, grammar_symbol_type>, uint64_t>>
+  canonical_collection();
 
 protected:
   std::map<grammar_symbol_type, LR_1_item_set>

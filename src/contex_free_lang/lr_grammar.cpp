@@ -14,8 +14,8 @@ LR_grammar::parse_node_ptr LR_grammar::parse(symbol_string_view view) {
   std::vector<uint64_t> stack{0};
   auto endmarker = alphabet->get_endmarker();
 
-  if(action_table.empty()|| goto_table.empty()) {
-	  construct_parsing_table();
+  if (action_table.empty() || goto_table.empty()) {
+    construct_parsing_table();
   }
 
   while (true) {
@@ -23,7 +23,7 @@ LR_grammar::parse_node_ptr LR_grammar::parse(symbol_string_view view) {
 
     auto it = action_table.find({stack.back(), terminal});
     if (it == action_table.end()) {
-      std::cout << "no action for " << (int)terminal << std::endl;
+      std::cout << "no action for " << static_cast<int>(terminal) << std::endl;
 
       return {};
     }

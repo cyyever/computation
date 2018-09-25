@@ -57,7 +57,6 @@ void LR_1_item_set::add_kernel_item(
         lookahead_set);
   }
   kernel_items[kernel_item].merge(lookahead_set);
-  return;
 }
 
 void LR_1_item_set::add_nonkernel_item(
@@ -111,6 +110,5 @@ void LR_1_item_set::add_nonkernel_item(
     add_nonkernel_item(cfg, {new_body.data(), new_body.size()},
                        nonkernel_items[*ptr]);
   }
-  return;
-}
+  }
 } // namespace cyy::computation
