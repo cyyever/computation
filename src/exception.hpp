@@ -29,4 +29,8 @@ public:
   using invalid_argument::invalid_argument;
 };
 
+class no_LALR_grammar : public std::invalid_argument {
+public:
+  using invalid_argument::invalid_argument;
+};
 } // namespace cyy::computation::exception

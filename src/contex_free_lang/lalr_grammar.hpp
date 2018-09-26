@@ -32,5 +32,6 @@ private:
   std::map<grammar_symbol_type,
            std::map<production_type, std::pair<bool, std::set<terminal_type>>>>
   check_lookahead(const LR_0_item &item);
+  void construct_parsing_table() override;
 };
 } // namespace cyy::computation

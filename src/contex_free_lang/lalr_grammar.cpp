@@ -117,4 +117,11 @@ LALR_grammar::canonical_collection() {
   return {collection, SLR_goto_transitions};
 }
 
+void LALR_grammar::construct_parsing_table() {
+  try {
+    canonical_LR_grammar::construct_parsing_table();
+  } catch (const cyy::computation::exception::no_canonical_LR_grammar &e) {
+    throw cyy::computation::exception::no_LALR_grammar(e.what());
+  }
+}
 } // namespace cyy::computation
