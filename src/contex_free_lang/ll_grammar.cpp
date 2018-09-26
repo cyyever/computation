@@ -23,8 +23,9 @@ void LL_grammar::construct_parsing_table() {
           if (it != follow_sets.end()) {
             for (auto const &follow_terminal : it->second) {
 
-              auto [it2, has_inserted] =
-                  parsing_table.emplace(std::pair{follow_terminal, head}, body);
+              auto has_inserted =
+                  parsing_table.emplace(std::pair{follow_terminal, head}, body)
+                      .second;
               // not LL1
               if (!has_inserted) {
                 throw cyy::computation::exception::no_LL_grammar("");
