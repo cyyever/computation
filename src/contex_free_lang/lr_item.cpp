@@ -110,5 +110,5 @@ void LR_1_item_set::add_nonkernel_item(
     add_nonkernel_item(cfg, {new_body.data(), new_body.size()},
                        nonkernel_items[*ptr]);
   }
-  }
+}
 } // namespace cyy::computation

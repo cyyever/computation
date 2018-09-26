@@ -110,7 +110,8 @@ void canonical_LR_grammar::construct_parsing_table() {
       for (const auto &lookahead : lookahead_set) {
         // conflict
         if (action_table.count({state, lookahead}) != 0) {
-          std::cout << "conflict with follow_terminal" << lookahead << std::endl;
+          std::cout << "conflict with follow_terminal" << lookahead
+                    << std::endl;
           throw cyy::computation::exception::no_canonical_LR_grammar("");
         }
         action_table[{state, lookahead}] = kernel_item.production;
