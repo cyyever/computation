@@ -97,7 +97,7 @@ NFA regex::concat_node::to_NFA(const ALPHABET &alphabet,
 
   auto right_NFA_start_state = *(left_final_states.begin());
   auto right_NFA = right_node->to_NFA(alphabet, right_NFA_start_state);
-  const auto& right_final_states = right_NFA.get_final_states();
+  const auto &right_final_states = right_NFA.get_final_states();
   left_NFA.add_sub_NFA(right_NFA, false);
   left_NFA.replace_final_states(right_final_states);
 
