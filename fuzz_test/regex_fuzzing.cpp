@@ -5,20 +5,18 @@
  */
 #include <iostream>
 
-#include "../src/ascii.hpp"
-#include "../src/regex.hpp"
-
-using namespace cyy::lang;
+#include "../src/lang/ascii.hpp"
+#include "../src/regular_lang/regex.hpp"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
-  symbol_string expr;
+  cyy::computation::symbol_string expr;
 
   for (size_t i = 0; i < Size; i++) {
     expr.push_back(Data[i] % 95 + 32);
   }
   try {
-    regex reg("printable-ASCII", expr);
-  } catch (const std::runtime_error &) {
+    cyy::computation::regex reg("printable-ASCII", expr);
+  } catch (const std::invalid_argument &) {
   }
   return 0; // Non-zero return values are reserved for future use.
 }
