@@ -29,11 +29,11 @@ public:
     return std::holds_alternative<nonterminal_type>(*this);
   }
 
-  auto get_terminal_ptr() const -> auto const {
+  const terminal_type *get_terminal_ptr() const {
     return std::get_if<terminal_type>(this);
   }
 
-  auto get_nonterminal_ptr() const -> auto const {
+  const nonterminal_type *get_nonterminal_ptr() const {
     return std::get_if<nonterminal_type>(this);
   }
 

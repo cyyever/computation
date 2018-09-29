@@ -26,7 +26,7 @@ public:
 
   std::pair<std::unordered_map<LR_1_item_set, uint64_t>,
             std::map<std::pair<uint64_t, grammar_symbol_type>, uint64_t>>
-  canonical_collection();
+  canonical_collection() override;
 
 private:
   std::map<grammar_symbol_type,
