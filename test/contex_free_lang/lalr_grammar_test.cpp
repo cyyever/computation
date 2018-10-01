@@ -3,6 +3,10 @@
  *
  * \brief 测试cfg
  */
+#if __has_include(<CppCoreCheck\Warnings.h>)
+#include <CppCoreCheck\Warnings.h>
+#pragma warning(disable: ALL_CPPCORECHECK_WARNINGS)
+#endif
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #define DOCTEST_CONFIG_NO_EXCEPTIONS_BUT_WITH_ALL_ASSERTS
 #include <doctest.h>

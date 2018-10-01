@@ -39,7 +39,7 @@ public:
     NFA to_NFA(const ALPHABET &alphabet, uint64_t start_state) const override;
     bool nullable() const noexcept override { return true; }
     void assign_position(
-        std::map<uint64_t, symbol_type> &position_to_symbol) override;
+        std::map<uint64_t, symbol_type> &position_to_symbol) noexcept override;
     std::set<uint64_t> first_pos() const override;
     std::set<uint64_t> last_pos() const override;
     std::map<uint64_t, std::set<uint64_t>> follow_pos() const override {
