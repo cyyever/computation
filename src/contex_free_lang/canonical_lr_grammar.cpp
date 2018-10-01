@@ -47,7 +47,7 @@ canonical_LR_grammar::canonical_collection() {
   std::unordered_map<LR_1_item_set, uint64_t> collection;
   std::map<std::pair<uint64_t, grammar_symbol_type>, uint64_t> goto_transitions;
 
-  auto endmarker = alphabet->get_endmarker();
+  const auto endmarker = alphabet->get_endmarker();
 
   LR_1_item_set init_set;
   init_set.add_kernel_item(

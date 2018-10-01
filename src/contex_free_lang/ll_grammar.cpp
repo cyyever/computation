@@ -53,7 +53,7 @@ CFG::parse_node_ptr LL_grammar::parse(symbol_string_view view) const {
   auto tree = std::make_shared<parse_node>(start_symbol);
 
   std::vector<parse_node_ptr> stack{tree};
-  auto endmarker = alphabet->get_endmarker();
+  const auto endmarker = alphabet->get_endmarker();
   while (!stack.empty()) {
     auto terminal = view.empty() ? endmarker : view.front();
     auto top = std::move(stack.back());

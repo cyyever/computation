@@ -22,18 +22,18 @@ public:
   using nonterminal_type = std::string;
   using std::variant<symbol_type, std::string>::variant;
 
-  bool is_terminal() const {
+  bool is_terminal() const noexcept {
     return std::holds_alternative<terminal_type>(*this);
   }
-  bool is_nonterminal() const {
+  bool is_nonterminal() const noexcept {
     return std::holds_alternative<nonterminal_type>(*this);
   }
 
-  const terminal_type *get_terminal_ptr() const {
+  const terminal_type *get_terminal_ptr() const noexcept {
     return std::get_if<terminal_type>(this);
   }
 
-  const nonterminal_type *get_nonterminal_ptr() const {
+  const nonterminal_type *get_nonterminal_ptr() const noexcept {
     return std::get_if<nonterminal_type>(this);
   }
 

@@ -21,13 +21,13 @@ public:
     unincluded_symbol
   };
 
-  symbol_type get_epsilon() const override {
+  symbol_type get_epsilon() const noexcept override {
     return static_cast<symbol_type>(token::epsilon);
   }
-  symbol_type get_endmarker() const override {
+  symbol_type get_endmarker() const noexcept override {
     return static_cast<symbol_type>(token::endmarker);
   }
-  symbol_type get_unincluded_symbol() const override {
+  symbol_type get_unincluded_symbol() const noexcept override {
     return static_cast<symbol_type>(token::unincluded_symbol);
   }
 
@@ -62,11 +62,11 @@ public:
       callback(i);
     }
   }
-  bool contain(symbol_type s) const override {
+  bool contain(symbol_type s) const noexcept override {
     return s < 256 || (s > static_cast<symbol_type>(token::epsilon) &&
                        s < static_cast<symbol_type>(token::endmarker));
   }
-  size_t size() const override {
+  size_t size() const noexcept override {
     return 256 + static_cast<symbol_type>(token::endmarker) -
            static_cast<symbol_type>(token::epsilon) - 1;
   }

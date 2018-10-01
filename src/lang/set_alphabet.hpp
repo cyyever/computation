@@ -25,9 +25,9 @@ public:
     max_symbol = *it;
   }
 
-  symbol_type get_epsilon() const override { return max_symbol + 1; }
-  symbol_type get_endmarker() const override { return max_symbol + 2; }
-  symbol_type get_unincluded_symbol() const override { return max_symbol + 3; }
+  symbol_type get_epsilon() const noexcept override { return max_symbol + 1; }
+  symbol_type get_endmarker() const noexcept override { return max_symbol + 2; }
+  symbol_type get_unincluded_symbol() const noexcept override { return max_symbol + 3; }
 
   void print(std::ostream &os, symbol_type symbol) const override {
     if (symbol == get_epsilon()) {
@@ -49,7 +49,7 @@ public:
   bool contain(symbol_type s) const override {
     return explicit_set.count(s) != 0;
   }
-  size_t size() const override { return explicit_set.size(); }
+  size_t size() const noexcept override { return explicit_set.size(); }
   std::string name() const override { return alternative_name; }
 
 private:

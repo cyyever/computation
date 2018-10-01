@@ -144,7 +144,7 @@ std::map<uint64_t, std::set<uint64_t>> regex::concat_node::follow_pos() const {
 
 NFA regex::kleene_closure_node::to_NFA(const ALPHABET &alphabet,
                                        uint64_t start_state) const {
-  auto inner_start_state = start_state + 1;
+  const auto inner_start_state = start_state + 1;
   auto inner_NFA = inner_node->to_NFA(alphabet, inner_start_state);
   auto inner_final_states = inner_NFA.get_final_states();
   auto final_state = (*inner_final_states.begin()) + 1;

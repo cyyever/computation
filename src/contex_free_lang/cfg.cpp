@@ -199,7 +199,7 @@ void CFG::eliminate_left_recursion(std::vector<nonterminal_type> old_heads) {
     }
   }
 
-  auto eliminate_immediate_left_recursion =
+  auto const eliminate_immediate_left_recursion =
       [this](const nonterminal_type &head) {
         auto new_head = get_new_head(head);
         std::vector<production_body_type> new_bodies;
@@ -260,7 +260,7 @@ void CFG::eliminate_left_recursion(std::vector<nonterminal_type> old_heads) {
 void CFG::left_factoring() {
 
   normalize_productions();
-  auto left_factoring_nonterminal =
+  const auto left_factoring_nonterminal =
       [this](const nonterminal_type &head) -> nonterminal_type {
     auto &bodies = productions[head];
     if (bodies.size() < 2) {
@@ -341,7 +341,7 @@ bool CFG::recursive_descent_parse(symbol_string_view view) const {
         auto const &grammal_symbol = body[i];
 
         if (grammal_symbol.is_terminal()) {
-          auto terminal = *(grammal_symbol.get_terminal_ptr());
+          const auto terminal = *(grammal_symbol.get_terminal_ptr());
           if (terminal == view[local_pos]) {
             local_pos++;
           } else {

@@ -21,6 +21,7 @@ class regex {
 public:
   class syntax_node {
   public:
+    syntax_node() = default;
     virtual ~syntax_node() = default;
     virtual NFA to_NFA(const ALPHABET &alphabet,
                        uint64_t start_state) const = 0;
@@ -32,11 +33,11 @@ public:
     virtual std::map<uint64_t, std::set<uint64_t>> follow_pos() const = 0;
   };
 
-  class epsilon_node : public syntax_node {
+  class epsilon_node final: public syntax_node {
   public:
-    explicit epsilon_node() {}
+    explicit epsilon_node()=default;
     NFA to_NFA(const ALPHABET &alphabet, uint64_t start_state) const override;
-    bool nullable() const override { return true; }
+    bool nullable() const noexcept override { return true; }
     void assign_position(
         std::map<uint64_t, symbol_type> &position_to_symbol) override;
     std::set<uint64_t> first_pos() const override;
@@ -46,11 +47,11 @@ public:
     }
   };
 
-  class basic_node : public syntax_node {
+  class basic_node final: public syntax_node {
   public:
-    explicit basic_node(symbol_type symbol_) : symbol(symbol_) {}
+    explicit basic_node(symbol_type symbol_) noexcept : symbol(symbol_) {}
     NFA to_NFA(const ALPHABET &alphabet, uint64_t start_state) const override;
-    bool nullable() const override { return false; }
+    bool nullable() const noexcept override { return false; }
     void assign_position(
         std::map<uint64_t, symbol_type> &position_to_symbol) override;
     std::set<uint64_t> first_pos() const override;
@@ -63,10 +64,10 @@ public:
     symbol_type symbol;
     uint64_t position{0};
   };
-  class union_node : public syntax_node {
+  class union_node final: public syntax_node {
   public:
     explicit union_node(const std::shared_ptr<syntax_node> &left_node_,
-                        const std::shared_ptr<syntax_node> &right_node_)
+                        const std::shared_ptr<syntax_node> &right_node_) noexcept
         : left_node(left_node_), right_node(right_node_) {}
     NFA to_NFA(const ALPHABET &alphabet, uint64_t start_state) const override;
     bool nullable() const override {
@@ -81,10 +82,10 @@ public:
   private:
     std::shared_ptr<syntax_node> left_node, right_node;
   };
-  class concat_node : public syntax_node {
+  class concat_node final: public syntax_node {
   public:
     explicit concat_node(const std::shared_ptr<syntax_node> &left_node_,
-                         const std::shared_ptr<syntax_node> &right_node_)
+                         const std::shared_ptr<syntax_node> &right_node_)  noexcept
         : left_node(left_node_), right_node(right_node_) {}
     NFA to_NFA(const ALPHABET &alphabet, uint64_t start_state) const override;
     bool nullable() const override {
@@ -99,13 +100,13 @@ public:
   private:
     std::shared_ptr<syntax_node> left_node, right_node;
   };
-  class kleene_closure_node : public syntax_node {
+  class kleene_closure_node final: public syntax_node {
   public:
     explicit kleene_closure_node(
         const std::shared_ptr<syntax_node> &inner_node_)
         : inner_node(inner_node_) {}
     NFA to_NFA(const ALPHABET &alphabet, uint64_t start_state) const override;
-    bool nullable() const override { return true; }
+    bool nullable() const noexcept override { return true; }
     void assign_position(
         std::map<uint64_t, symbol_type> &position_to_symbol) override;
     std::set<uint64_t> first_pos() const override;

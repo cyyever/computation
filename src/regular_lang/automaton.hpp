@@ -39,10 +39,10 @@ public:
     }
   }
 
-  auto get_states() const -> auto const & { return states; }
-  auto get_alphabet() const -> auto const & { return *alphabet; }
-  auto get_final_states() const -> auto const & { return final_states; }
-  uint64_t get_start_state() const { return start_state; }
+  auto get_states() const noexcept -> auto const & { return states; }
+  auto get_alphabet() const noexcept -> auto const & { return *alphabet; }
+  auto get_final_states() const noexcept -> auto const & { return final_states; }
+  uint64_t get_start_state() const noexcept { return start_state; }
 
   bool operator==(const finite_automaton &rhs) const {
     return (this == &rhs) ||

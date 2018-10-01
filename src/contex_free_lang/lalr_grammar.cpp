@@ -15,7 +15,7 @@ std::map<grammar_symbol_type,
                   std::pair<bool, std::set<CFG::terminal_type>>>>
 LALR_grammar::check_lookahead(const LR_0_item &item) {
   LR_1_item_set item_set;
-  auto unincluded_symbol = alphabet->get_unincluded_symbol();
+  auto const unincluded_symbol = alphabet->get_unincluded_symbol();
   item_set.add_kernel_item(*this, item, {unincluded_symbol});
 
   std::map<
@@ -23,7 +23,7 @@ LALR_grammar::check_lookahead(const LR_0_item &item) {
       std::map<CFG::production_type,
                std::pair<bool, std::set<grammar_symbol_type::terminal_type>>>>
       res;
-  for (auto &[grammar_symbol, next_item_set] : GOTO(item_set)) {
+  for (const auto &[grammar_symbol, next_item_set] : GOTO(item_set)) {
     for (auto const &[next_kernel_item, lookahead_set] :
          next_item_set.get_kernel_items()) {
       bool propagation = false;

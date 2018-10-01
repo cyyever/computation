@@ -136,7 +136,7 @@ regex::parse(symbol_string_view view) const {
 
   auto parse_escape_sequence =
       [](const CFG::parse_node_ptr &parse_node) -> symbol_type {
-    auto second_terminal =
+    const auto second_terminal =
         *(parse_node->children[1]->grammar_symbol.get_terminal_ptr());
 
     switch (second_terminal) {
@@ -181,7 +181,7 @@ regex::parse(symbol_string_view view) const {
           return self(self, root_parse_node->children[0]);
         }
 
-        auto second_terminal =
+        const auto second_terminal =
             *(root_parse_node->children[1]->grammar_symbol.get_terminal_ptr());
 
         auto inner_tree = self(self, root_parse_node->children[0]);
@@ -239,7 +239,7 @@ regex::parse(symbol_string_view view) const {
           cur_node = cur_node->children[1];
         }
 
-        auto class_size = class_content.size();
+        const auto class_size = class_content.size();
         if (class_size == 0) {
           throw cyy::computation::exception::no_regular_expression(
               "empty character class");
@@ -260,7 +260,7 @@ regex::parse(symbol_string_view view) const {
         }
 
         while (i < class_size) {
-          symbol_type cur_symbol = class_content[i];
+          const symbol_type cur_symbol = class_content[i];
 
           if (i + 2 < class_size && class_content[i + 1] == '-') {
             auto end_symbol = class_content[i + 2];

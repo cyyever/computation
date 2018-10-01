@@ -49,8 +49,8 @@ public:
     final_states = final_states_;
   }
 
-  auto get_transition_table() const -> auto const & { return transition_table; }
-  auto get_transition_table() -> auto & { return transition_table; }
+  auto get_transition_table() const noexcept -> auto const & { return transition_table; }
+  auto get_transition_table() noexcept -> auto & { return transition_table; }
 
   auto get_start_epsilon_closure() const -> auto {
     return epsilon_closure({start_state});

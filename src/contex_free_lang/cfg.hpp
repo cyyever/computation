@@ -61,11 +61,11 @@ public:
     for (auto const &body : it->second) {
       print(os, start_symbol, body);
     }
-    for (auto const &[head, bodys] : productions) {
+    for (auto const &[head, bodies] : productions) {
       if (head == start_symbol) {
         continue;
       }
-      for (auto const &body : bodys) {
+      for (auto const &body : bodies) {
         print(os, head, body);
       }
     }
@@ -81,9 +81,9 @@ public:
     return heads;
   }
 
-  auto get_alphabet() const -> const auto & { return alphabet; }
+  auto get_alphabet() const noexcept -> const auto & { return alphabet; }
 
-  auto get_productions() const -> const auto & { return productions; }
+  auto get_productions() const noexcept  -> const auto & { return productions; }
 
   std::set<terminal_type> get_terminals() const {
     std::set<terminal_type> terminals;
