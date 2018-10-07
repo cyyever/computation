@@ -188,7 +188,7 @@ void CFG::eliminate_useless_symbols() {
   };
 
   add_nonterminal(add_nonterminal, start_symbol, *this);
-  productions = new_productions;
+  productions = std::move(new_productions);
 }
 
 void CFG::eliminate_left_recursion(std::vector<nonterminal_type> old_heads) {
