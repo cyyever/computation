@@ -36,7 +36,7 @@ CFG NFA_to_CFG(const NFA &nfa) {
         CFG::production_body_type{{nfa.get_alphabet().get_epsilon()}});
   }
 
-  return {nfa.get_alphabet().name(),
+  return {nfa.get_alphabet().get_name(),
           state_to_nonterminal(nfa.get_start_state()), productions};
 }
 

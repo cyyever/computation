@@ -24,7 +24,7 @@ std::shared_ptr<ALPHABET> ALPHABET::get(const std::string &name) {
   if (!ptr) {
     throw std::invalid_argument(std::string("unkown alphabet name:") + name);
   }
-  ptr->alternative_name = name;
+  ptr->name = name;
   return ptr;
 }
 } // namespace cyy::computation

@@ -12,7 +12,7 @@ namespace cyy::computation {
 NFA regex::basic_node::to_NFA(const ALPHABET &alphabet,
                               uint64_t start_state) const {
   return {{start_state, start_state + 1},
-          alphabet.name(),
+          alphabet.get_name(),
           start_state,
           {{{start_state, symbol}, {start_state + 1}}},
           {start_state + 1}};
@@ -34,7 +34,7 @@ std::set<uint64_t> regex::basic_node::last_pos() const { return {position}; }
 NFA regex::epsilon_node::to_NFA(const ALPHABET &alphabet,
                                 uint64_t start_state) const {
   return {{start_state, start_state + 1},
-          alphabet.name(),
+          alphabet.get_name(),
           start_state,
           {{{start_state, alphabet.get_epsilon()}, {start_state + 1}}},
           {start_state + 1}};
@@ -56,7 +56,7 @@ NFA regex::union_node::to_NFA(const ALPHABET &alphabet,
   auto &right_final_states = right_NFA.get_final_states();
   auto final_state = (*right_final_states.begin()) + 1;
 
-  NFA nfa({start_state, final_state}, alphabet.name(), start_state, {}, {});
+  NFA nfa({start_state, final_state}, alphabet.get_name(), start_state, {}, {});
   nfa.add_sub_NFA(left_NFA, true);
   nfa.add_sub_NFA(right_NFA, true);
 
@@ -149,7 +149,7 @@ NFA regex::kleene_closure_node::to_NFA(const ALPHABET &alphabet,
   auto inner_final_states = inner_NFA.get_final_states();
   auto final_state = (*inner_final_states.begin()) + 1;
 
-  NFA nfa({start_state, final_state}, alphabet.name(), start_state, {}, {});
+  NFA nfa({start_state, final_state}, alphabet.get_name(), start_state, {}, {});
   nfa.add_sub_NFA(inner_NFA, true);
 
   nfa.get_transition_table()[{start_state, alphabet.get_epsilon()}].insert(

@@ -45,7 +45,7 @@ std::pair<std::unordered_map<LR_1_item_set, uint64_t>,
           std::map<std::pair<uint64_t, grammar_symbol_type>, uint64_t>>
 LALR_grammar::canonical_collection() {
   auto [canonical_LR_0_collection, SLR_goto_transitions] =
-      SLR_grammar(alphabet->name(), start_symbol, productions)
+      SLR_grammar(alphabet->get_name(), start_symbol, productions)
           .canonical_collection();
 
   std::map<const LR_0_item *, std::set<CFG::terminal_type>> kernel_item_table;

@@ -163,7 +163,7 @@ DFA DFA::minimize() const {
       minimize_DFA_transition_table[{i, a}] = state_location[next_state];
     });
   }
-  return {minimize_DFA_states, alphabet->name(), minimize_DFA_start_state,
+  return {minimize_DFA_states, alphabet->get_name(), minimize_DFA_start_state,
           minimize_DFA_transition_table, minimize_DFA_final_states};
 }
 } // namespace cyy::computation

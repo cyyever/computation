@@ -19,7 +19,7 @@ using namespace cyy::computation;
 TEST_CASE("canonical_collection") {
   std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
       productions;
-  auto id = static_cast<CFG::terminal_type>(common_tokens::token::id);
+  auto id = static_cast<CFG::terminal_type>(common_token::id);
   productions["E"] = {
       {"E", '+', "T"},
       {"T"},
@@ -155,7 +155,7 @@ TEST_CASE("SLR(1) parse") {
     std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
         productions;
     auto epsilon = ALPHABET::get("common_tokens")->get_epsilon();
-    auto id = static_cast<CFG::terminal_type>(common_tokens::token::id);
+    auto id = static_cast<CFG::terminal_type>(common_token::id);
     productions["E"] = {
         {"T", "E'"},
     };

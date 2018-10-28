@@ -51,7 +51,7 @@ public:
 
   bool operator==(const CFG &rhs) const {
     return (this == &rhs) ||
-           (alphabet->name() == rhs.alphabet->name() &&
+           (alphabet->get_name() == rhs.alphabet->get_name() &&
             start_symbol == rhs.start_symbol && productions == rhs.productions);
   }
 

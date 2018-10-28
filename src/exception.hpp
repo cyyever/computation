@@ -11,6 +11,11 @@
 
 namespace cyy::computation::exception {
 
+class symbol_overflow: public std::invalid_argument {
+public:
+  using invalid_argument::invalid_argument;
+};
+
 class no_regular_expression : public std::invalid_argument {
 public:
   using invalid_argument::invalid_argument;

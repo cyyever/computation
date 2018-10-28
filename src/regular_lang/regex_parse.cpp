@@ -84,7 +84,7 @@ std::shared_ptr<LR_grammar> regex::get_grammar() {
     }
   });
 
-  regex_grammar = std::make_shared<SLR_grammar>(regex_alphabet->name(), "rexpr",
+  regex_grammar = std::make_shared<SLR_grammar>(regex_alphabet->get_name(), "rexpr",
                                                 productions);
 
   return regex_grammar;

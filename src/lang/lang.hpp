@@ -15,6 +15,8 @@
 #include <string>
 #include <string_view>
 
+#include "../exception.hpp"
+
 namespace cyy::computation {
 
 using symbol_type = char32_t;
@@ -22,24 +24,53 @@ class ALPHABET {
 public:
   virtual ~ALPHABET() = default;
 
-  virtual symbol_type get_epsilon() const = 0;
-  virtual symbol_type get_endmarker() const = 0;
-  virtual symbol_type get_unincluded_symbol() const = 0;
+  symbol_type get_epsilon() const noexcept { return add_max_symbol(1); }
+  symbol_type get_endmarker() const noexcept { return add_max_symbol(2); }
+  symbol_type get_unincluded_symbol() const noexcept {
+    return add_max_symbol(3);
+  }
+  bool is_epsilon(symbol_type s) const { return get_epsilon() == s; }
 
   virtual void foreach_symbol(
       const std::function<void(const symbol_type &)> &callback) const = 0;
   virtual bool contain(symbol_type s) const = 0;
-  bool is_epsilon(symbol_type s) const { return get_epsilon() == s; }
-
   virtual size_t size() const = 0;
-  virtual void print(std::ostream &os, symbol_type symbol) const = 0;
+  void print(std::ostream &os, symbol_type symbol) const {
+    if (symbol == get_epsilon()) {
+      os << "'epsilon'";
+    } else if (symbol == get_endmarker()) {
+      os << "$";
+    } else if (contain(symbol)) {
+      print_symbol(os, symbol);
+    } else {
+      os << "(unkown symbol)";
+    }
+    return;
+  }
 
-  virtual std::string name() const = 0;
+  std::string get_name() const { return name; }
+
   static void regist(const std::string &name);
   static std::shared_ptr<ALPHABET> get(const std::string &name);
 
+private:
+  virtual void print_symbol(std::ostream &os, symbol_type symbol) const = 0;
+
+  virtual symbol_type get_min_symbol() const = 0;
+  virtual symbol_type get_max_symbol() const = 0;
+
+  symbol_type add_max_symbol(size_t inc) const {
+    const symbol_type max_symbol = get_max_symbol();
+    symbol_type new_symbol = max_symbol + static_cast<symbol_type>(inc);
+
+    if (new_symbol < max_symbol) {
+      throw cyy::computation::exception::symbol_overflow("");
+    }
+    return new_symbol;
+  }
+
 protected:
-  std::string alternative_name;
+  std::string name;
 };
 
 using symbol_string = std::basic_string<symbol_type>;

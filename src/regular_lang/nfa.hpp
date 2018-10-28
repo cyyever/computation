@@ -26,7 +26,7 @@ public:
         transition_table(transition_table_) {}
 
   void add_sub_NFA(NFA rhs, bool add_epsilon_transition) {
-    if (alphabet->name() != rhs.alphabet->name()) {
+    if (alphabet->get_name() != rhs.alphabet->get_name()) {
       throw std::runtime_error("sub NFA has different alphabet name");
     }
 
