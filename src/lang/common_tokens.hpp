@@ -13,6 +13,7 @@ namespace cyy::computation {
 enum class common_token : symbol_type {
   ascii_char = 256,
   escape_sequence,
+  digit,
   id,
 };
 
@@ -21,7 +22,7 @@ class common_tokens final
 
 private:
   void print_symbol(std::ostream &os, symbol_type symbol) const override {
-    switch (symbol) {
+    switch (static_cast<common_token>(symbol)) {
     case common_token::ascii_char:
       os << "\"ascii char\"";
       break;

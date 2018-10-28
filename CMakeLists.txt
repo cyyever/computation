@@ -5,12 +5,10 @@ PROJECT(MyComputationLib)
 INCLUDE(cmake/all.cmake)
 
 FILE(GLOB SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp  ${CMAKE_CURRENT_SOURCE_DIR}/src/*/*.cpp)
-FILE(GLOB HRDS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp ${CMAKE_CURRENT_SOURCE_DIR}/src/*/*.hpp)
 
 FIND_PACKAGE(doctest REQUIRED)
 
 ADD_LIBRARY(MyComputationLib SHARED ${SOURCE})
-SET_TARGET_PROPERTIES(MyComputationLib PROPERTIES PUBLIC_HEADER "${HRDS}")
 
 TARGET_LINK_LIBRARIES(MyComputationLib PRIVATE doctest::doctest)
 
@@ -32,10 +30,14 @@ INSTALL(TARGETS MyComputationLib EXPORT ${PROJECT_NAME}Targets
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
-  PUBLIC_HEADER DESTINATION include/cyy/computation
   COMPONENT library
   INCLUDES DESTINATION include
   )
+
+foreach(header_dir . contex_free_lang formal_grammar lang regular_lang)
+  install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src/${header_dir} DESTINATION include/cyy/computation/
+    FILES_MATCHING PATTERN "*.hpp")
+endforeach()
 
 # install cmake config file
 INSTALL(EXPORT ${PROJECT_NAME}Targets

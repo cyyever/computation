@@ -26,9 +26,7 @@ public:
 
   symbol_type get_epsilon() const { return add_max_symbol(1); }
   symbol_type get_endmarker() const { return add_max_symbol(2); }
-  symbol_type get_unincluded_symbol() const {
-    return add_max_symbol(3);
-  }
+  symbol_type get_unincluded_symbol() const { return add_max_symbol(3); }
   bool is_epsilon(symbol_type s) const { return get_epsilon() == s; }
 
   virtual void foreach_symbol(
