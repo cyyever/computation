@@ -13,7 +13,7 @@ CFG NFA_to_CFG(const NFA &nfa) {
   std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
       productions;
 
-  auto state_to_nonterminal = [](symbol_type state) {
+  auto const state_to_nonterminal = [](symbol_type state) {
     return std::string("S") + std::to_string(state);
   };
 

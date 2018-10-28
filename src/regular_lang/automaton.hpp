@@ -26,22 +26,26 @@ public:
         final_states(final_states_) {
 
     if (states.empty()) {
-      throw std::invalid_argument("no state");
+      throw cyy::computation::exception::no_finite_automaton("no state");
     }
     if (!states.count(start_state)) {
-      throw std::invalid_argument("unexisted start state");
+      throw cyy::computation::exception::no_finite_automaton(
+          "unexisted start state");
     }
     for (auto const &final_state : final_states) {
       if (!states.count(final_state)) {
-        throw std::invalid_argument(std::string("unexisted start state ") +
-                                    std::to_string(final_state));
+        throw cyy::computation::exception::no_finite_automaton(
+            std::string("unexisted start state ") +
+            std::to_string(final_state));
       }
     }
   }
 
   auto get_states() const noexcept -> auto const & { return states; }
   auto get_alphabet() const noexcept -> auto const & { return *alphabet; }
-  auto get_final_states() const noexcept -> auto const & { return final_states; }
+  auto get_final_states() const noexcept -> auto const & {
+    return final_states;
+  }
   uint64_t get_start_state() const noexcept { return start_state; }
 
   bool operator==(const finite_automaton &rhs) const {

@@ -24,9 +24,9 @@ class ALPHABET {
 public:
   virtual ~ALPHABET() = default;
 
-  symbol_type get_epsilon() const noexcept { return add_max_symbol(1); }
-  symbol_type get_endmarker() const noexcept { return add_max_symbol(2); }
-  symbol_type get_unincluded_symbol() const noexcept {
+  symbol_type get_epsilon() const { return add_max_symbol(1); }
+  symbol_type get_endmarker() const { return add_max_symbol(2); }
+  symbol_type get_unincluded_symbol() const {
     return add_max_symbol(3);
   }
   bool is_epsilon(symbol_type s) const { return get_epsilon() == s; }
@@ -61,7 +61,7 @@ private:
 
   symbol_type add_max_symbol(size_t inc) const {
     const symbol_type max_symbol = get_max_symbol();
-    symbol_type new_symbol = max_symbol + static_cast<symbol_type>(inc);
+    const symbol_type new_symbol = max_symbol + static_cast<symbol_type>(inc);
 
     if (new_symbol < max_symbol) {
       throw cyy::computation::exception::symbol_overflow("");
