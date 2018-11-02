@@ -9,6 +9,7 @@
 
 #include <functional>
 #include <map>
+#include <optional>
 #include <utility>
 
 #include "cfg.hpp"
@@ -22,7 +23,7 @@ public:
 
   virtual ~LR_grammar() = default;
 
-  parse_node_ptr parse(symbol_string_view view);
+  parse_node_ptr parse(symbol_string_view view,std::optional<std::function<void (const production_type&)>> reduction_callback={});
 
 private:
   virtual void construct_parsing_table() = 0;

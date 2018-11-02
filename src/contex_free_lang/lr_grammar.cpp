@@ -9,7 +9,7 @@
 
 namespace cyy::computation {
 
-LR_grammar::parse_node_ptr LR_grammar::parse(symbol_string_view view) {
+LR_grammar::parse_node_ptr LR_grammar::parse(symbol_string_view view,std::optional<std::function<void (const production_type&)>> reduction_callback) {
   std::vector<parse_node_ptr> viable_prefix;
   std::vector<uint64_t> stack{0};
 
@@ -61,6 +61,10 @@ LR_grammar::parse_node_ptr LR_grammar::parse(symbol_string_view view) {
       if (it2 == goto_table.end()) {
         puts("goto table no find");
         return {};
+      }
+
+      if(reduction_callback) {
+	reduction_callback.value()(production);
       }
 
       stack.push_back(it2->second);
