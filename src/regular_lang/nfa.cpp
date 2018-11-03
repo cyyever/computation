@@ -6,6 +6,7 @@
  */
 
 #include <vector>
+#include <cassert>
 
 #include "nfa.hpp"
 
@@ -49,7 +50,7 @@ std::set<uint64_t> NFA::epsilon_closure(const std::set<uint64_t> &T) const {
   return res;
 }
 
- std::pair<DFA,std::unordered_map<uint64_t,uint64_t>> NFA::to_DFA_with_mapping() const {
+ std::pair<DFA,std::unordered_map<uint64_t,std::set<uint64_t>>> NFA::to_DFA_with_mapping() const {
   std::vector<std::set<uint64_t>> subsets{epsilon_closure({start_state})};
 
   std::vector<bool> flags{false};
@@ -83,18 +84,21 @@ std::set<uint64_t> NFA::epsilon_closure(const std::set<uint64_t> &T) const {
   }
 
 
-  std::unordered_map<uint64_t,uint64_t> final_state_map;
   for (size_t i = 0; i < subsets.size(); i++) {
     if (contain_final_state(subsets[i])) {
-      for(auto final_state:subsets[i]) {
-	final_state_map.emplace(final_state,i);
-      }
       DFA_final_states.insert(i);
     }
   }
+  assert(subsets.size()==DFA_states.size());
+
+  std::unordered_map<uint64_t,std::set<uint64_t>> state_map;
+  for(size_t DFA_state=0;DFA_state<subsets.size();DFA_state++) {
+	  state_map.emplace(DFA_state,std::move(subsets[DFA_state]));
+  }
+
 
   return {{DFA_states, alphabet->get_name(), 0, DFA_transition_table,
-          DFA_final_states},final_state_map};
+          DFA_final_states},state_map};
  }
 
  DFA NFA::to_DFA() const {
