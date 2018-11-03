@@ -49,6 +49,8 @@ public:
       std::map<nonterminal_type, std::vector<production_body_type>>
           &productions_);
 
+  virtual ~CFG()=default;
+
   bool operator==(const CFG &rhs) const {
     return (this == &rhs) ||
            (alphabet->get_name() == rhs.alphabet->get_name() &&
