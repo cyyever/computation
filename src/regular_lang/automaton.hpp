@@ -63,6 +63,10 @@ public:
     return false;
   }
 
+  bool is_final_state(uint64_t final_state) const {
+    return final_states.count(final_state)>0;
+  }
+
 protected:
   std::shared_ptr<ALPHABET> alphabet;
   std::set<uint64_t> states;

@@ -67,6 +67,7 @@ public:
   std::set<uint64_t> move(const std::set<uint64_t> &T, symbol_type a) const;
 
   // use subset construction
+  std::pair<DFA,std::unordered_map<uint64_t,uint64_t>> to_DFA_with_mapping() const;
   DFA to_DFA() const;
 
   bool operator==(const NFA &rhs) const {

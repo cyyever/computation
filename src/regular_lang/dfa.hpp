@@ -43,7 +43,6 @@ public:
 
   DFA minimize() const;
 
-private:
   std::optional<uint64_t> move(uint64_t s, symbol_type a) const {
     auto it = transition_table.find({s, a});
     if (it != transition_table.end()) {
