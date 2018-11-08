@@ -13,18 +13,18 @@
 namespace cyy::computation {
 
 std::shared_ptr<ALPHABET> ALPHABET::get(const std::string &name) {
-  static std::map<std::string, std::shared_ptr<ALPHABET>> factory = {
+  static const std::map<std::string, std::shared_ptr<ALPHABET>> factory = {
       {"common_tokens", std::make_shared<common_tokens>()},
       {"ASCII", std::make_shared<ASCII>()},
       {"printable-ASCII", std::make_shared<printable_ASCII>()},
       {"ab_set",
        std::make_shared<set_alphabet>(std::set<symbol_type>{'a', 'b'})},
   };
-  auto ptr = factory[name];
-  if (!ptr) {
+  auto it = factory.find(name);
+  if (it == factory.end()) {
     throw std::invalid_argument(std::string("unkown alphabet name:") + name);
   }
-  ptr->name = name;
-  return ptr;
+  it->second->name = name;
+  return it->second;
 }
 } // namespace cyy::computation
