@@ -13,7 +13,7 @@ namespace cyy::computation {
 std::map<grammar_symbol_type,
          std::map<CFG::production_type,
                   std::pair<bool, std::set<CFG::terminal_type>>>>
-LALR_grammar::check_lookahead(const LR_0_item &item) {
+LALR_grammar::check_lookahead(const LR_0_item &item) const {
   LR_1_item_set item_set;
   auto const unincluded_symbol = alphabet->get_unincluded_symbol();
   item_set.add_kernel_item(*this, item, {unincluded_symbol});
