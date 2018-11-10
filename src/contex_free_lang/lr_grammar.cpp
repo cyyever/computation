@@ -23,7 +23,9 @@ LR_grammar::parse_node_ptr LR_grammar::parse(symbol_string_view view,std::option
 
     auto it = action_table.find({stack.back(), terminal});
     if (it == action_table.end()) {
-      std::cout << "no action for " << static_cast<int>(terminal) << std::endl;
+      std::cerr<< "no action for ";
+      alphabet->print(std::cerr,terminal);
+      std::cerr<<std::endl;
       return {};
     }
 
@@ -59,7 +61,7 @@ LR_grammar::parse_node_ptr LR_grammar::parse(symbol_string_view view,std::option
 
       auto it2 = goto_table.find({stack.back(), production.first});
       if (it2 == goto_table.end()) {
-        puts("goto table no find");
+	      std::cerr<<"goto table no find"<<std::endl;
         return {};
       }
 
@@ -73,7 +75,7 @@ LR_grammar::parse_node_ptr LR_grammar::parse(symbol_string_view view,std::option
   }
 
   if (!view.empty()) {
-    puts("no empty view");
+	  std::cerr<<"rest view"<<std::endl;
     return {};
   }
 
