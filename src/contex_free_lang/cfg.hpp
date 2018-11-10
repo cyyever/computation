@@ -44,8 +44,8 @@ public:
   };
 
   CFG(const std::string &alphabet_name, nonterminal_type start_symbol_,
-     const std::map<nonterminal_type, std::vector<production_body_type>>
-          &productions_);
+     std::map<nonterminal_type, std::vector<production_body_type>>
+          productions_);
 
   CFG(const CFG &) = default;
   CFG &operator=(const CFG &) = default;

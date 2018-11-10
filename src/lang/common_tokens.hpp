@@ -14,6 +14,7 @@ enum class common_token : symbol_type {
   ascii_char = 256,
   escape_sequence,
   digit,
+  number,
   whitespace,
   id,
 };
@@ -39,6 +40,9 @@ private:
       break;
     case common_token::digit:
       os << "\"digit\"";
+      break;
+    case common_token::number:
+      os << "\"number\"";
       break;
     }
   }
