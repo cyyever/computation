@@ -9,7 +9,7 @@
 
 namespace cyy::computation {
 
-LR_grammar::parse_node_ptr LR_grammar::parse(symbol_string_view view,std::optional<std::function<void (const production_type&)>> reduction_callback) {
+LR_grammar::parse_node_ptr LR_grammar::parse(symbol_string_view view,std::optional<std::function<void (const production_type&)>> reduction_callback) const {
   std::vector<parse_node_ptr> viable_prefix;
   std::vector<uint64_t> stack{0};
 

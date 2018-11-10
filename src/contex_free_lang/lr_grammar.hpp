@@ -23,7 +23,7 @@ public:
 
   virtual ~LR_grammar() = default;
 
-  parse_node_ptr parse(symbol_string_view view,std::optional<std::function<void (const production_type&)>> reduction_callback={});
+  parse_node_ptr parse(symbol_string_view view,std::optional<std::function<void (const production_type&)>> reduction_callback={}) const;
 
 private:
   virtual void construct_parsing_table()  const= 0;
