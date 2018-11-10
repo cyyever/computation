@@ -22,12 +22,12 @@ public:
 
   std::pair<std::unordered_map<LR_1_item_set, uint64_t>,
             std::map<std::pair<uint64_t, grammar_symbol_type>, uint64_t>>
-  canonical_collection() override;
+  canonical_collection() const  override;
 
 private:
   std::map<grammar_symbol_type,
            std::map<production_type, std::pair<bool, std::set<terminal_type>>>>
   check_lookahead(const LR_0_item &item) const;
-  void construct_parsing_table() override;
+  void construct_parsing_table() const override;
 };
 } // namespace cyy::computation

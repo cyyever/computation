@@ -43,7 +43,7 @@ LALR_grammar::check_lookahead(const LR_0_item &item) const {
 
 std::pair<std::unordered_map<LR_1_item_set, uint64_t>,
           std::map<std::pair<uint64_t, grammar_symbol_type>, uint64_t>>
-LALR_grammar::canonical_collection() {
+LALR_grammar::canonical_collection() const {
   auto [canonical_LR_0_collection, SLR_goto_transitions] =
       SLR_grammar(alphabet->get_name(), start_symbol, productions)
           .canonical_collection();
@@ -117,7 +117,7 @@ LALR_grammar::canonical_collection() {
   return {collection, SLR_goto_transitions};
 }
 
-void LALR_grammar::construct_parsing_table() {
+void LALR_grammar::construct_parsing_table() const {
   try {
     canonical_LR_grammar::construct_parsing_table();
   } catch (const cyy::computation::exception::no_canonical_LR_grammar &e) {

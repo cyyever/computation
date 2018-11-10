@@ -80,7 +80,7 @@ SLR_grammar::canonical_collection() const {
   return {collection, goto_transitions};
 }
 
-void SLR_grammar::construct_parsing_table() {
+void SLR_grammar::construct_parsing_table() const {
   auto [collection, goto_transitions] = canonical_collection();
   auto follow_sets = follow();
   auto endmarker = alphabet->get_endmarker();

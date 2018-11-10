@@ -27,10 +27,8 @@ class CFG {
 public:
   using terminal_type = grammar_symbol_type::terminal_type;
   using nonterminal_type = grammar_symbol_type::nonterminal_type;
-  // std::variant<terminal_type, nonterminal_type>;
   using grammar_symbol_string_view =
       ::cyy::computation::grammar_symbol_string_view;
-  //    std::basic_string_view<grammar_symbol_type>;
   using production_body_type = std::vector<grammar_symbol_type>;
   using production_type = std::pair<nonterminal_type, production_body_type>;
 
@@ -46,8 +44,14 @@ public:
   };
 
   CFG(const std::string &alphabet_name, nonterminal_type start_symbol_,
-      std::map<nonterminal_type, std::vector<production_body_type>>
+     const std::map<nonterminal_type, std::vector<production_body_type>>
           &productions_);
+
+  CFG(const CFG &) = default;
+  CFG &operator=(const CFG &) = default;
+
+  CFG(CFG &&) noexcept = default;
+  CFG &operator=(CFG &&) noexcept = default;
 
   virtual ~CFG()=default;
 

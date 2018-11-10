@@ -42,7 +42,7 @@ canonical_LR_grammar::GOTO(const LR_1_item_set &set) const {
 
 std::pair<std::unordered_map<LR_1_item_set, uint64_t>,
           std::map<std::pair<uint64_t, grammar_symbol_type>, uint64_t>>
-canonical_LR_grammar::canonical_collection() {
+canonical_LR_grammar::canonical_collection() const {
   std::unordered_map<LR_1_item_set, uint64_t> unchecked_sets;
   std::unordered_map<LR_1_item_set, uint64_t> collection;
   std::map<std::pair<uint64_t, grammar_symbol_type>, uint64_t> goto_transitions;
@@ -83,7 +83,7 @@ canonical_LR_grammar::canonical_collection() {
   return {collection, goto_transitions};
 }
 
-void canonical_LR_grammar::construct_parsing_table() {
+void canonical_LR_grammar::construct_parsing_table() const {
   auto [collection, goto_transitions] = canonical_collection();
   auto endmarker = alphabet->get_endmarker();
 

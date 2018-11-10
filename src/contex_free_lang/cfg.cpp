@@ -13,7 +13,7 @@ namespace cyy::computation {
 
 CFG::CFG(
     const std::string &alphabet_name, nonterminal_type start_symbol_,
-    std::map<nonterminal_type, std::vector<production_body_type>> &productions_)
+ const   std::map<nonterminal_type, std::vector<production_body_type>> &productions_)
     : alphabet(ALPHABET::get(alphabet_name)),
       start_symbol(std::move(start_symbol_)), productions(productions_) {
 
