@@ -48,6 +48,5 @@ public:
 };
 
 using grammar_symbol_string = std::vector<grammar_symbol_type>;
-using grammar_symbol_span = gsl::span<grammar_symbol_type>;
 using grammar_symbol_const_span = gsl::span<const grammar_symbol_type>;
 } // namespace cyy::computation
