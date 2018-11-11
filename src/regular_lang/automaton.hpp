@@ -64,7 +64,7 @@ public:
   }
 
   bool is_final_state(uint64_t final_state) const {
-    return final_states.count(final_state)>0;
+    return final_states.count(final_state) > 0;
   }
 
 protected:

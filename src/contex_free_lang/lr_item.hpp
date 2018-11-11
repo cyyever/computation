@@ -31,10 +31,10 @@ struct LR_0_item {
 namespace std {
 template <> struct hash<cyy::computation::LR_0_item> {
   size_t operator()(const cyy::computation::LR_0_item &x) const noexcept {
-    return  ::std::hash<decltype(x.production.first)>()(x.production.first) ^
-        ::std::hash<decltype(x.production.second.size())>()(
-            x.production.second.size()) ^
-        ::std::hash<decltype(x.dot_pos)>()(x.dot_pos);
+    return ::std::hash<decltype(x.production.first)>()(x.production.first) ^
+           ::std::hash<decltype(x.production.second.size())>()(
+               x.production.second.size()) ^
+           ::std::hash<decltype(x.dot_pos)>()(x.dot_pos);
   }
 };
 
@@ -53,9 +53,13 @@ namespace cyy::computation {
 class LR_0_item_set {
 
 public:
-  auto get_kernel_items() const noexcept -> const auto & { return kernel_items; }
+  auto get_kernel_items() const noexcept -> const auto & {
+    return kernel_items;
+  }
 
-  auto get_nonkernel_items() const noexcept -> const auto & { return nonkernel_items; }
+  auto get_nonkernel_items() const noexcept -> const auto & {
+    return nonkernel_items;
+  }
   void add_kernel_item(const CFG &cfg, LR_0_item kernel_item);
   bool empty() const noexcept { return kernel_items.empty(); }
 
@@ -72,7 +76,7 @@ private:
 namespace std {
 template <> struct hash<cyy::computation::LR_0_item_set> {
   size_t operator()(const cyy::computation::LR_0_item_set &x) const noexcept {
-      return ::std::hash<decltype(x.get_kernel_items().size())>()(
+    return ::std::hash<decltype(x.get_kernel_items().size())>()(
         x.get_kernel_items().size());
   }
 };
@@ -82,9 +86,13 @@ namespace cyy::computation {
 class LR_1_item_set {
 
 public:
-  auto get_kernel_items() const noexcept -> const auto & { return kernel_items; }
+  auto get_kernel_items() const noexcept -> const auto & {
+    return kernel_items;
+  }
 
-  auto get_nonkernel_items() const noexcept -> const auto & { return nonkernel_items; }
+  auto get_nonkernel_items() const noexcept -> const auto & {
+    return nonkernel_items;
+  }
   void add_kernel_item(const CFG &cfg, const LR_0_item &kernel_item,
                        std::set<CFG::terminal_type> lookahead_set);
 

@@ -49,7 +49,9 @@ public:
     final_states = final_states_;
   }
 
-  auto get_transition_table() const noexcept -> auto const & { return transition_table; }
+  auto get_transition_table() const noexcept -> auto const & {
+    return transition_table;
+  }
   auto get_transition_table() noexcept -> auto & { return transition_table; }
 
   auto get_start_epsilon_closure() const -> auto {
@@ -67,7 +69,8 @@ public:
   std::set<uint64_t> move(const std::set<uint64_t> &T, symbol_type a) const;
 
   // use subset construction
-  std::pair<DFA,std::unordered_map<uint64_t,std::set<uint64_t>>> to_DFA_with_mapping() const;
+  std::pair<DFA, std::unordered_map<uint64_t, std::set<uint64_t>>>
+  to_DFA_with_mapping() const;
   DFA to_DFA() const;
 
   bool operator==(const NFA &rhs) const {

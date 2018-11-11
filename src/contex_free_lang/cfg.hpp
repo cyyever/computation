@@ -44,7 +44,7 @@ public:
   };
 
   CFG(const std::string &alphabet_name, nonterminal_type start_symbol_,
-     std::map<nonterminal_type, std::vector<production_body_type>>
+      std::map<nonterminal_type, std::vector<production_body_type>>
           productions_);
 
   CFG(const CFG &) = default;
@@ -53,7 +53,7 @@ public:
   CFG(CFG &&) noexcept = default;
   CFG &operator=(CFG &&) noexcept = default;
 
-  virtual ~CFG()=default;
+  virtual ~CFG() = default;
 
   bool operator==(const CFG &rhs) const {
     return (this == &rhs) ||
@@ -89,7 +89,7 @@ public:
 
   auto get_alphabet() const noexcept -> const auto & { return alphabet; }
 
-  auto get_productions() const noexcept  -> const auto & { return productions; }
+  auto get_productions() const noexcept -> const auto & { return productions; }
 
   std::set<terminal_type> get_terminals() const {
     std::set<terminal_type> terminals;

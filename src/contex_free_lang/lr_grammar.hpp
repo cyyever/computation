@@ -8,9 +8,11 @@
 #pragma once
 
 #include <functional>
+#include <gsl/span>
 #include <map>
 #include <optional>
 #include <utility>
+#include <vector>
 
 #include "cfg.hpp"
 
@@ -23,15 +25,19 @@ public:
 
   virtual ~LR_grammar() = default;
 
-  parse_node_ptr parse(symbol_string_view view,std::optional<std::function<void (const production_type&)>> reduction_callback={}) const;
+  parse_node_ptr
+  parse(symbol_string_view view,
+        const std::optional<
+            std::function<void(const production_type &, gsl::span<size_t>)>>
+            &reduction_callback = {}) const;
 
 private:
-  virtual void construct_parsing_table()  const= 0;
+  virtual void construct_parsing_table() const = 0;
 
 protected:
- mutable std::map<std::pair<uint64_t, terminal_type>,
-           std::variant<uint64_t, production_type, bool>>
+  mutable std::map<std::pair<uint64_t, terminal_type>,
+                   std::variant<uint64_t, production_type, bool>>
       action_table;
- mutable std::map<std::pair<uint64_t, nonterminal_type>, uint64_t> goto_table;
+  mutable std::map<std::pair<uint64_t, nonterminal_type>, uint64_t> goto_table;
 };
 } // namespace cyy::computation

@@ -33,9 +33,9 @@ public:
     virtual std::map<uint64_t, std::set<uint64_t>> follow_pos() const = 0;
   };
 
-  class epsilon_node final: public syntax_node {
+  class epsilon_node final : public syntax_node {
   public:
-    explicit epsilon_node()=default;
+    explicit epsilon_node() = default;
     NFA to_NFA(const ALPHABET &alphabet, uint64_t start_state) const override;
     bool nullable() const noexcept override { return true; }
     void assign_position(
@@ -47,7 +47,7 @@ public:
     }
   };
 
-  class basic_node final: public syntax_node {
+  class basic_node final : public syntax_node {
   public:
     explicit basic_node(symbol_type symbol_) noexcept : symbol(symbol_) {}
     NFA to_NFA(const ALPHABET &alphabet, uint64_t start_state) const override;
@@ -64,10 +64,11 @@ public:
     symbol_type symbol;
     uint64_t position{0};
   };
-  class union_node final: public syntax_node {
+  class union_node final : public syntax_node {
   public:
-    explicit union_node(const std::shared_ptr<syntax_node> &left_node_,
-                        const std::shared_ptr<syntax_node> &right_node_) noexcept
+    explicit union_node(
+        const std::shared_ptr<syntax_node> &left_node_,
+        const std::shared_ptr<syntax_node> &right_node_) noexcept
         : left_node(left_node_), right_node(right_node_) {}
     NFA to_NFA(const ALPHABET &alphabet, uint64_t start_state) const override;
     bool nullable() const override {
@@ -82,10 +83,11 @@ public:
   private:
     std::shared_ptr<syntax_node> left_node, right_node;
   };
-  class concat_node final: public syntax_node {
+  class concat_node final : public syntax_node {
   public:
-    explicit concat_node(const std::shared_ptr<syntax_node> &left_node_,
-                         const std::shared_ptr<syntax_node> &right_node_)  noexcept
+    explicit concat_node(
+        const std::shared_ptr<syntax_node> &left_node_,
+        const std::shared_ptr<syntax_node> &right_node_) noexcept
         : left_node(left_node_), right_node(right_node_) {}
     NFA to_NFA(const ALPHABET &alphabet, uint64_t start_state) const override;
     bool nullable() const override {
@@ -100,7 +102,7 @@ public:
   private:
     std::shared_ptr<syntax_node> left_node, right_node;
   };
-  class kleene_closure_node final: public syntax_node {
+  class kleene_closure_node final : public syntax_node {
   public:
     explicit kleene_closure_node(
         const std::shared_ptr<syntax_node> &inner_node_)
