@@ -27,8 +27,6 @@ class CFG {
 public:
   using terminal_type = grammar_symbol_type::terminal_type;
   using nonterminal_type = grammar_symbol_type::nonterminal_type;
-  using grammar_symbol_string_view =
-      ::cyy::computation::grammar_symbol_string_view;
   using production_body_type = std::vector<grammar_symbol_type>;
   using production_type = std::pair<nonterminal_type, production_body_type>;
 
@@ -134,7 +132,7 @@ public:
     return terminal_ptr && alphabet->is_epsilon(*terminal_ptr);
   }
 
-  std::set<terminal_type> first(const grammar_symbol_string_view &alpha) const;
+  std::set<terminal_type> first(const grammar_symbol_const_span &alpha) const;
 
 protected:
   void print(std::ostream &os, const nonterminal_type &head,

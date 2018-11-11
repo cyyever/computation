@@ -50,17 +50,14 @@ void LR_1_item_set::add_kernel_item(
   if (kernel_item.dot_pos < body.size()) {
 
     add_nonkernel_item(
-        cfg,
-
-        CFG::grammar_symbol_string_view(body.data() + kernel_item.dot_pos,
-                                        body.size() - kernel_item.dot_pos),
+        cfg, grammar_symbol_const_span(body).subspan(kernel_item.dot_pos),
         lookahead_set);
   }
   kernel_items[kernel_item].merge(lookahead_set);
 }
 
 void LR_1_item_set::add_nonkernel_item(
-    const CFG &cfg, CFG::grammar_symbol_string_view view,
+    const CFG &cfg, grammar_symbol_const_span view,
     const std::set<CFG::terminal_type> &lookahead_set) {
 
   if (view.empty()) {
@@ -73,7 +70,7 @@ void LR_1_item_set::add_nonkernel_item(
     return;
   }
 
-  view.remove_prefix(1);
+  view = view.subspan(1);
   auto real_lookahead_set = cfg.first(view);
 
   if (real_lookahead_set.erase(cfg.get_alphabet()->get_epsilon())) {
@@ -107,7 +104,7 @@ void LR_1_item_set::add_nonkernel_item(
       continue;
     }
 
-    add_nonkernel_item(cfg, {new_body.data(), new_body.size()},
+    add_nonkernel_item(cfg, {new_body},
                        nonkernel_items[*ptr]);
   }
 }

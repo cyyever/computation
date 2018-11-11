@@ -7,6 +7,7 @@
 
 #include "cfg.hpp"
 
+#include <unordered_map>
 #include <utility>
 
 namespace cyy::computation {
@@ -445,7 +446,7 @@ CFG::first() const {
 }
 
 std::set<CFG::terminal_type>
-CFG::first(const grammar_symbol_string_view &alpha) const {
+CFG::first(const grammar_symbol_const_span &alpha) const {
 
   first();
   std::set<terminal_type> view_first_set;
@@ -493,8 +494,8 @@ CFG::follow() const {
 
           const auto &nonterminal = *(body[i].get_nonterminal_ptr());
 
-          auto first_set = first(grammar_symbol_string_view{
-              body.data() + i + 1, body.size() - i - 1});
+          auto first_set =
+              first(grammar_symbol_const_span(body).subspan(i + 1));
 
           bool has_epsilon = false;
 

@@ -14,7 +14,7 @@ void LL_grammar::construct_parsing_table() {
   auto follow_sets = follow();
   for (const auto &[head, bodies] : productions) {
     for (auto const &body : bodies) {
-      auto first_set = first({body.data(), body.size()});
+      auto first_set = first({body});
 
       for (auto const &terminal : first_set) {
 

@@ -102,8 +102,7 @@ public:
   bool empty() const noexcept { return kernel_items.empty(); }
 
 private:
-  void add_nonkernel_item(const CFG &cfg, CFG::grammar_symbol_string_view view,
-
+  void add_nonkernel_item(const CFG &cfg, grammar_symbol_const_span view,
                           const std::set<CFG::terminal_type> &lookahead_set);
 
 private:
