@@ -1,6 +1,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.9)
 
-PROJECT(MyComputationLib)
+PROJECT(MyComputationLib LANGUAGES CXX)
 
 INCLUDE(cmake/all.cmake)
 
