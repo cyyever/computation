@@ -8,7 +8,6 @@
 #pragma once
 
 #include <functional>
-#include <gsl/span>
 #include <map>
 #include <optional>
 #include <utility>
@@ -31,7 +30,7 @@ public:
       symbol_string_view view,
       const std::function<void(terminal_type)> &shift_callback,
       const std::function<void(const nonterminal_type &,
-                               const production_body_type &, gsl::span<size_t>)>
+                               const production_body_type &)>
           &reduction_callback) const;
 
 private:

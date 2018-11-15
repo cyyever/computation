@@ -21,8 +21,7 @@ LR_grammar::get_parse_tree(symbol_string_view view) const {
             },
 
             [&viable_prefix, &parent, this,
-             epsilon](auto const &head, auto const &body,
-                      [[maybe_unused]] auto const &terminal_positions) {
+             epsilon](auto const &head, auto const &body) {
               parent = std::make_shared<parse_node>(head);
 
               if (is_epsilon(body)) {
@@ -46,14 +45,12 @@ bool LR_grammar::parse(
     symbol_string_view view,
     const std::function<void(terminal_type)> &shift_callback,
     const std::function<void(const nonterminal_type &,
-                             const production_body_type &, gsl::span<size_t>)>
+                             const production_body_type &)>
         &reduction_callback) const {
   if (action_table.empty() || goto_table.empty()) {
     construct_parsing_table();
   }
 
-  std::vector<size_t> viable_prefix_positions;
-  size_t next_position = 0;
   std::vector<uint64_t> stack{0};
 
   const auto endmarker = alphabet->get_endmarker();
@@ -76,28 +73,14 @@ bool LR_grammar::parse(
       // shift
       stack.push_back(std::get<uint64_t>(it->second));
       shift_callback(terminal);
-      viable_prefix_positions.push_back(next_position);
-      next_position++;
       view.remove_prefix(1);
-      std::cout << "viable_prefix_positions size is "
-                << viable_prefix_positions.size() << std::endl;
       continue;
     }
 
     // reduce
     auto const &[head, body] = std::get<production_type>(it->second);
-    auto const terminal_count = std::count_if(
-        body.begin(), body.end(), [this](auto const &grammal_symbol) {
-          return grammal_symbol.is_terminal() && !is_epsilon(grammal_symbol);
-        });
     reduction_callback(
-        head, body,
-        gsl::span<size_t>(viable_prefix_positions).last(terminal_count));
-    if (terminal_count > 0) {
-      std::cout << "terminal_count is " << terminal_count << std::endl;
-      viable_prefix_positions.resize(viable_prefix_positions.size() -
-                                     terminal_count);
-    }
+        head, body);
 
     if (!is_epsilon(body)) {
       stack.resize(stack.size() - body.size());
