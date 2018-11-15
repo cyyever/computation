@@ -164,22 +164,18 @@ protected:
   }
 
   nonterminal_type get_new_head(nonterminal_type advise_head) const {
+	  do {
     advise_head.push_back('\'');
-
-    while (productions.find(advise_head) != productions.end()) {
-      advise_head.push_back('\'');
-    }
+	  } while (productions.count(advise_head));
     return advise_head;
   }
 
   static nonterminal_type
   get_new_head(nonterminal_type advise_head,
                const std::set<nonterminal_type> &heads) {
+	  do {
     advise_head.push_back('\'');
-
-    while (heads.count(advise_head)) {
-      advise_head.push_back('\'');
-    }
+	  } while (heads.count(advise_head));
     return advise_head;
   }
 

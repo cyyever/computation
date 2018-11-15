@@ -8,7 +8,6 @@
 #pragma once
 
 #include <functional>
-#include <optional>
 
 #include "../lang/lang.hpp"
 #include "cfg.hpp"

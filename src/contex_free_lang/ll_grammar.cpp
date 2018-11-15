@@ -17,7 +17,6 @@ void LL_grammar::construct_parsing_table() {
       auto first_set = first({body});
 
       for (auto const &terminal : first_set) {
-
         if (is_epsilon(terminal)) {
           auto it = follow_sets.find(head);
           if (it != follow_sets.end()) {
