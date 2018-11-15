@@ -94,7 +94,11 @@ LR_grammar::parse_node_ptr LR_grammar::parse(
   }
 
   if (!view.empty()) {
-    std::cerr << "rest view" << std::endl;
+    std::cerr<<"have symbols remain after parse:";
+    for(auto const &terminal:view) {
+      print(std::cerr,terminal);
+    }
+    std::cerr<<std::endl;
     return {};
   }
 

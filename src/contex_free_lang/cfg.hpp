@@ -135,17 +135,25 @@ public:
   std::set<terminal_type> first(const grammar_symbol_const_span &alpha) const;
 
 protected:
+  void print(std::ostream &os,
+             const  terminal_type &terminal) const {
+      alphabet->print(os, terminal);
+  }
+  void print(std::ostream &os,
+             const grammar_symbol_type &grammal_symbol) const {
+    if (auto ptr = grammal_symbol.get_terminal_ptr())
+      alphabet->print(os, *ptr);
+    else {
+      os << *(grammal_symbol.get_nonterminal_ptr());
+    }
+  }
+
   void print(std::ostream &os, const nonterminal_type &head,
              const production_body_type &body) const {
 
     os << head << " -> ";
     for (const auto &grammal_symbol : body) {
-
-      if (auto ptr = grammal_symbol.get_terminal_ptr())
-        alphabet->print(os, *ptr);
-      else {
-        os << *(grammal_symbol.get_nonterminal_ptr());
-      }
+      print(os, grammal_symbol);
       os << ' ';
     }
     os << '\n';

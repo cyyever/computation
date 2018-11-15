@@ -45,57 +45,88 @@ void LL_grammar::construct_parsing_table() {
     }
   }
 }
+bool LL_grammar::parse(
+    symbol_string_view view,
+    const std::function<void(const nonterminal_type &,
+                             const production_body_type &)>
+        &match_nonterminal_callback,
+    const std::function<void(terminal_type)> &match_terminal_callback) const {
 
-CFG::parse_node_ptr LL_grammar::parse(symbol_string_view view) const {
-
-  puts("begin parse");
-
-  auto tree = std::make_shared<parse_node>(start_symbol);
-
-  std::vector<parse_node_ptr> stack{tree};
+  std::vector<grammar_symbol_type> stack{start_symbol};
   const auto endmarker = alphabet->get_endmarker();
   while (!stack.empty()) {
-    auto terminal = view.empty() ? endmarker : view.front();
-    auto top = std::move(stack.back());
+    const auto terminal = view.empty() ? endmarker : view.front();
+    auto top_symbol = std::move(stack.back());
     stack.pop_back();
 
-    if (auto ptr = top->grammar_symbol.get_terminal_ptr()) {
+    if (auto ptr = top_symbol.get_terminal_ptr()) {
       if (!is_epsilon(*ptr)) {
         if (terminal != *ptr) {
-          puts("terminal is not ptr ");
-          alphabet->print(std::cout, terminal);
-          alphabet->print(std::cout, *ptr);
-          return {};
+          std::cerr << "symbol does not match terminal:";
+          alphabet->print(std::cerr, terminal);
+          alphabet->print(std::cerr, *ptr);
+          std::cout << std::endl;
+          return false;
         }
         view.remove_prefix(1);
       }
-      top->grammar_symbol = terminal;
+      match_terminal_callback(*ptr);
       continue;
     }
 
-    auto it = parsing_table.find(
-        {terminal, *(top->grammar_symbol.get_nonterminal_ptr())});
+    auto ptr = top_symbol.get_nonterminal_ptr();
+    auto it = parsing_table.find({terminal, *ptr});
 
     if (it == parsing_table.end()) {
-      puts("no rule for parsing");
-      return {};
+      std::cerr << "no rule for parsing";
+      alphabet->print(std::cerr, terminal);
+      std::cerr << ' ' << *ptr;
+      std::cerr << std::endl;
+      return false;
     }
 
-    for (auto const &grammar_symbol : it->second) {
-      top->children.push_back(std::make_shared<parse_node>(grammar_symbol));
-    }
-
-    for (auto rit = top->children.rbegin(); rit != top->children.rend();
-         rit++) {
+    for (auto rit = it->second.rbegin(); rit != it->second.rend(); rit++) {
       stack.push_back(*rit);
     }
+    match_nonterminal_callback(*ptr, it->second);
   }
 
   if (!view.empty()) {
-    puts("have symbols remain after parse.");
-    return {};
+    std::cerr << "have symbols remain after parse:";
+    for (auto const &terminal : view) {
+      print(std::cerr, terminal);
+    }
+    std::cerr << std::endl;
+    return false;
   }
 
-  return tree;
+  return true;
+}
+
+CFG::parse_node_ptr LL_grammar::get_parse_tree(symbol_string_view view) const {
+  auto root = std::make_shared<parse_node>(start_symbol);
+
+  std::vector<parse_node_ptr> stack{root};
+
+  if (parse(view,
+
+            [&stack](auto const &head, auto const &body) {
+              auto node = std::move(stack.back());
+              stack.pop_back();
+
+              for (auto const &grammar_symbol : body) {
+                node->children.push_back(
+                    std::make_shared<parse_node>(grammar_symbol));
+              }
+
+              for (auto rit = node->children.rbegin();
+                   rit != node->children.rend(); rit++) {
+                stack.push_back(*rit);
+              }
+            },
+            [&stack](auto terminal) { stack.pop_back(); })) {
+    return root;
+  }
+  return {};
 }
 } // namespace cyy::computation

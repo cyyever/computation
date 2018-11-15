@@ -7,13 +7,15 @@
 
 #pragma once
 
+#include <functional>
+#include <optional>
+
 #include "../lang/lang.hpp"
 #include "cfg.hpp"
 
 namespace cyy::computation {
 
-class LL_grammar : public CFG {
-
+class LL_grammar final : public CFG {
 public:
   explicit LL_grammar(CFG rhs) : CFG(std::move(rhs)) {
     construct_parsing_table();
@@ -27,7 +29,13 @@ public:
     construct_parsing_table();
   }
 
-  parse_node_ptr parse(symbol_string_view view) const;
+  bool parse(
+      symbol_string_view view,
+      const std::function<void(const nonterminal_type &,
+                               const production_body_type &)>
+          &match_nonterminal_callback,
+      const std::function<void(terminal_type)> &match_terminal_callback) const;
+  parse_node_ptr get_parse_tree(symbol_string_view view) const;
 
 private:
   void construct_parsing_table();

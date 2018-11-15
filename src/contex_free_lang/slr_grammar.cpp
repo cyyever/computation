@@ -109,8 +109,9 @@ void SLR_grammar::construct_parsing_table() const {
 
         // conflict
         if (action_table.count({state, follow_terminal}) != 0) {
-          std::cout << "conflict with follow_terminal "
-                    << static_cast<char>(follow_terminal) << std::endl;
+          std::cerr << "conflict with follow_terminal ";
+          print(std::cerr, follow_terminal);
+          std::cerr << std::endl;
           throw cyy::computation::exception::no_SLR_grammar("");
         }
         action_table[{state, follow_terminal}] = kernel_item.production;

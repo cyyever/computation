@@ -17,7 +17,7 @@
 
 namespace cyy::computation {
 
-class SLR_grammar : public LR_grammar {
+class SLR_grammar final : public LR_grammar {
 
 public:
   using LR_grammar::LR_grammar;
