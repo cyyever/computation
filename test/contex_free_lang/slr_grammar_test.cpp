@@ -5,7 +5,7 @@
  */
 #if __has_include(<CppCoreCheck\Warnings.h>)
 #include <CppCoreCheck\Warnings.h>
-#pragma warning(disable: ALL_CPPCORECHECK_WARNINGS)
+#pragma warning(disable : ALL_CPPCORECHECK_WARNINGS)
 #endif
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
@@ -176,7 +176,8 @@ TEST_CASE("SLR(1) parse") {
 
     SLR_grammar grammar("common_tokens", "E", productions);
 
-    auto parse_tree = grammar.parse(symbol_string{id, '+', id, '*', id});
+    auto parse_tree =
+        grammar.get_parse_tree(symbol_string{id, '+', id, '*', id});
     REQUIRE(parse_tree);
     CHECK(parse_tree->children.size() == 2);
   }
@@ -193,14 +194,14 @@ TEST_CASE("SLR(1) parse") {
 
     SLR_grammar grammar("common_tokens", "E", productions);
 
-    auto parse_tree = grammar.parse(symbol_string{});
+    auto parse_tree = grammar.get_parse_tree(symbol_string{});
     REQUIRE(parse_tree);
     CHECK(parse_tree->children.size() == 1);
 
-    parse_tree = grammar.parse(symbol_string{'a'});
+    parse_tree = grammar.get_parse_tree(symbol_string{'a'});
     REQUIRE(parse_tree);
     CHECK(parse_tree->children.size() == 2);
-    parse_tree = grammar.parse(symbol_string{'a', 'a'});
+    parse_tree = grammar.get_parse_tree(symbol_string{'a', 'a'});
     REQUIRE(parse_tree);
     CHECK(parse_tree->children.size() == 2);
   }

@@ -127,6 +127,10 @@ public:
 
   std::set<nonterminal_type> nullable() const;
 
+  bool is_epsilon(const production_body_type &body) const {
+    return body.size() == 1 && is_epsilon(body[0]);
+  }
+
   bool is_epsilon(const grammar_symbol_type &grammal_symbol) const {
     auto terminal_ptr = grammal_symbol.get_terminal_ptr();
     return terminal_ptr && alphabet->is_epsilon(*terminal_ptr);
@@ -135,9 +139,8 @@ public:
   std::set<terminal_type> first(const grammar_symbol_const_span &alpha) const;
 
 protected:
-  void print(std::ostream &os,
-             const  terminal_type &terminal) const {
-      alphabet->print(os, terminal);
+  void print(std::ostream &os, const terminal_type &terminal) const {
+    alphabet->print(os, terminal);
   }
   void print(std::ostream &os,
              const grammar_symbol_type &grammal_symbol) const {

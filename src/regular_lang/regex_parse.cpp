@@ -127,7 +127,7 @@ std::shared_ptr<regex::syntax_node> regex::make_complemented_character_class(
 std::shared_ptr<regex::syntax_node>
 regex::parse(symbol_string_view view) const {
 
-  auto parse_tree = get_grammar()->parse(view);
+  auto parse_tree = get_grammar()->get_parse_tree(view);
   if (!parse_tree) {
     throw cyy::computation::exception::no_regular_expression("");
   }

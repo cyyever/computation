@@ -25,11 +25,14 @@ public:
 
   virtual ~LR_grammar() = default;
 
-  parse_node_ptr
-  parse(symbol_string_view view,
-        const std::optional<
-            std::function<void(const production_type &, gsl::span<size_t>)>>
-            &reduction_callback = {}) const;
+  parse_node_ptr get_parse_tree(symbol_string_view view) const;
+
+  bool parse(
+      symbol_string_view view,
+      const std::function<void(terminal_type)> &shift_callback,
+      const std::function<void(const nonterminal_type &,
+                               const production_body_type &, gsl::span<size_t>)>
+          &reduction_callback) const;
 
 private:
   virtual void construct_parsing_table() const = 0;

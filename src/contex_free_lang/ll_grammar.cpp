@@ -92,7 +92,7 @@ bool LL_grammar::parse(
   }
 
   if (!view.empty()) {
-    std::cerr << "have symbols remain after parse:";
+    std::cerr << "there are symbols remain after parse:";
     for (auto const &terminal : view) {
       print(std::cerr, terminal);
     }
