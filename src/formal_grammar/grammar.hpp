@@ -34,6 +34,10 @@ public:
     return std::get_if<terminal_type>(this);
   }
 
+  terminal_type get_terminal() const noexcept {
+    return std::get<terminal_type>(*this);
+  }
+
   const nonterminal_type *get_nonterminal_ptr() const noexcept {
     return std::get_if<nonterminal_type>(this);
   }

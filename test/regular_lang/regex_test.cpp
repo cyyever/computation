@@ -22,7 +22,6 @@ TEST_CASE("parse regex and to NFA") {
 
     NFA nfa({0, 1}, "ab_set", 0,
             {
-
                 {{0, 'a'}, {1}},
             },
             {1});
