@@ -22,22 +22,31 @@ void LL_grammar::construct_parsing_table() {
           if (it != follow_sets.end()) {
             for (auto const &follow_terminal : it->second) {
 
-              auto has_inserted =
-                  parsing_table.emplace(std::pair{follow_terminal, head}, body)
-                      .second;
+              auto [it2, has_inserted] =
+                  parsing_table.emplace(std::pair{follow_terminal, head}, body);
               // not LL1
               if (!has_inserted) {
+                std::cerr << "head and terminal confliction:" << head << ' ';
+                print(std::cerr, follow_terminal);
+                std::cerr << ' ';
+                print(std::cerr, it2->first.first);
+                std::cerr << std::endl;
                 throw cyy::computation::exception::no_LL_grammar("");
               }
             }
           }
           continue;
         }
-        auto has_inserted =
-            parsing_table.emplace(std::pair{terminal, head}, body).second;
 
+        auto [it, has_inserted] =
+            parsing_table.emplace(std::pair{terminal, head}, body);
         // not LL1
         if (!has_inserted) {
+          std::cerr << "head and terminal confliction:" << head << ' ';
+          print(std::cerr, terminal);
+          std::cerr << ' ';
+          print(std::cerr, it->first.first);
+          std::cerr << std::endl;
           throw cyy::computation::exception::no_LL_grammar("");
         }
       }
@@ -109,7 +118,7 @@ CFG::parse_node_ptr LL_grammar::get_parse_tree(symbol_string_view view) const {
 
   if (parse(view,
 
-            [&stack](auto const &head, auto const &body) {
+            [&stack]([[maybe_unused]] auto const &head, auto const &body) {
               auto node = std::move(stack.back());
               stack.pop_back();
 
@@ -123,7 +132,7 @@ CFG::parse_node_ptr LL_grammar::get_parse_tree(symbol_string_view view) const {
                 stack.push_back(*rit);
               }
             },
-            [&stack](auto terminal) { stack.pop_back(); })) {
+            [&stack]([[maybe_unused]] auto terminal) { stack.pop_back(); })) {
     return root;
   }
   return {};
