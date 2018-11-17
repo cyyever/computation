@@ -20,9 +20,9 @@ namespace cyy::computation {
    rterm -> rterm rfactor
    rterm -> rfactor
 
-   rfactor -> rfactor '*'
-   rfactor -> rfactor '+'
-   rfactor -> rfactor '?'
+   rfactor -> rprimary '*'
+   rfactor -> rprimary '+'
+   rfactor -> rprimary '?'
    rfactor -> rprimary
 
    rprimary -> 'non-operator-char'
@@ -56,9 +56,9 @@ std::shared_ptr<LR_grammar> regex::get_grammar() {
       {"rfactor"},
   };
   productions["rfactor"] = {
-      {"rfactor", '*'},
-      {"rfactor", '+'},
-      {"rfactor", '?'},
+      {"rprimary", '*'},
+      {"rprimary", '+'},
+      {"rprimary", '?'},
       {"rprimary"},
   };
   productions["rprimary"] = {
@@ -177,14 +177,14 @@ regex::parse(symbol_string_view view) const {
             self(self, root_parse_node->children[0]),
             self(self, root_parse_node->children[1]));
       } else if (*ptr == "rfactor") {
+        auto inner_tree = self(self, root_parse_node->children[0]);
         if (root_parse_node->children.size() == 1) {
-          return self(self, root_parse_node->children[0]);
+          return inner_tree;
         }
 
         const auto second_terminal =
             *(root_parse_node->children[1]->grammar_symbol.get_terminal_ptr());
 
-        auto inner_tree = self(self, root_parse_node->children[0]);
         if (second_terminal == '*') {
           return std::make_shared<regex::kleene_closure_node>(inner_tree);
         } else if (second_terminal == '+') {
