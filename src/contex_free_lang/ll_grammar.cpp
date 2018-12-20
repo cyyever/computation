@@ -117,7 +117,6 @@ CFG::parse_node_ptr LL_grammar::get_parse_tree(symbol_string_view view) const {
   std::vector<parse_node_ptr> stack{root};
 
   if (parse(view,
-
             [&stack]([[maybe_unused]] auto const &head, auto const &body) {
               auto node = std::move(stack.back());
               stack.pop_back();

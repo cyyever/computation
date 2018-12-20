@@ -1,7 +1,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.9)
 
 PROJECT(MyComputationLib LANGUAGES CXX)
-
 INCLUDE(cmake/all.cmake)
 
 FILE(GLOB SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp  ${CMAKE_CURRENT_SOURCE_DIR}/src/*/*.cpp)
@@ -17,10 +16,12 @@ if(CMAKE_BUILD_TYPE STREQUAL Release)
 endif()
 
 # test
-add_subdirectory(test)
+option(build_test "Build test" ON)
+if(BUILD_TEST)
+  add_subdirectory(test)
+endif()
 
 option(BUILD_FUZZING "Build fuzzing" OFF)
-
 if(BUILD_FUZZING)
   add_subdirectory(fuzz_test)
 endif()
