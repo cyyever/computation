@@ -32,10 +32,8 @@ install(TARGETS MyComputationLib EXPORT ${PROJECT_NAME}Targets
   INCLUDES DESTINATION include
   )
 
-foreach(header_dir . contex_free_lang formal_grammar lang regular_lang)
-  install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src/${header_dir} DESTINATION include/cyy/computation/
-    FILES_MATCHING PATTERN "*.hpp")
-endforeach()
+install(DIRECTORY src/ DESTINATION include/cyy/computation
+  FILES_MATCHING PATTERN "*.hpp")
 
 # install cmake config file
 install(EXPORT ${PROJECT_NAME}Targets
