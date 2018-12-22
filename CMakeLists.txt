@@ -1,32 +1,30 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.9)
+cmake_minimum_required(VERSION 3.13)
 
-PROJECT(MyComputationLib LANGUAGES CXX)
+project(MyComputationLib LANGUAGES CXX)
 
-INCLUDE(cmake/all.cmake)
+include(cmake/all.cmake)
 
-FILE(GLOB SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp  ${CMAKE_CURRENT_SOURCE_DIR}/src/*/*.cpp)
+file(GLOB SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp  ${CMAKE_CURRENT_SOURCE_DIR}/src/*/*.cpp)
 
-FIND_PACKAGE(doctest REQUIRED)
+find_package(MicrosoftGSL REQUIRED)
 
-ADD_LIBRARY(MyComputationLib SHARED ${SOURCE})
+add_library(MyComputationLib ${SOURCE})
 
-TARGET_LINK_LIBRARIES(MyComputationLib PRIVATE doctest::doctest)
-
-if(CMAKE_BUILD_TYPE STREQUAL Release)
-  TARGET_COMPILE_DEFINITIONS(MyComputationLib PRIVATE DOCTEST_CONFIG_DISABLE)
-endif()
+target_link_libraries(MyComputationLib PUBLIC MicrosoftGSL::GSL)
 
 # test
-add_subdirectory(test)
+option(BUILD_TEST "Build test" ON)
+if(BUILD_TEST)
+  add_subdirectory(test)
+endif()
 
 option(BUILD_FUZZING "Build fuzzing" OFF)
-
 if(BUILD_FUZZING)
   add_subdirectory(fuzz_test)
 endif()
 
 # install lib
-INSTALL(TARGETS MyComputationLib EXPORT ${PROJECT_NAME}Targets
+install(TARGETS MyComputationLib EXPORT ${PROJECT_NAME}Targets
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
@@ -40,6 +38,6 @@ foreach(header_dir . contex_free_lang formal_grammar lang regular_lang)
 endforeach()
 
 # install cmake config file
-INSTALL(EXPORT ${PROJECT_NAME}Targets
+install(EXPORT ${PROJECT_NAME}Targets
   FILE ${PROJECT_NAME}Config.cmake
   DESTINATION lib/cmake/${PROJECT_NAME})
