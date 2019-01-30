@@ -1,7 +1,3 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.9)
-
-INCLUDE(${CMAKE_CURRENT_LIST_DIR}/../cmake/test.cmake)
-
 FIND_PACKAGE(doctest REQUIRED)
 
 FILE(GLOB test_sources 

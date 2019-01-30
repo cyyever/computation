@@ -8,7 +8,7 @@
 #pragma warning(disable: ALL_CPPCORECHECK_WARNINGS)
 #endif
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#include <doctest.h>
+#include <doctest/doctest.h>
 
 #include "../../src/lang/set_alphabet.hpp"
 #include "../../src/regular_lang/nfa.hpp"
