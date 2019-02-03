@@ -22,7 +22,7 @@ public:
 
   LL_grammar(const std::string &alphabet_name,
              const nonterminal_type &start_symbol_,
-             std::map<nonterminal_type, std::vector<production_body_type>>
+             std::map<nonterminal_type, std::vector<CFG_production::body_type>>
                  &productions_)
       : CFG(alphabet_name, start_symbol_, productions_) {
     construct_parsing_table();
@@ -31,7 +31,7 @@ public:
   bool parse(
       symbol_string_view view,
       const std::function<void(const nonterminal_type &,
-                               const production_body_type &)>
+                               const CFG_production::body_type &)>
           &match_nonterminal_callback,
       const std::function<void(terminal_type)> &match_terminal_callback) const;
   parse_node_ptr get_parse_tree(symbol_string_view view) const;
@@ -41,7 +41,7 @@ private:
 
 private:
   std::map<std::pair<CFG::terminal_type, CFG::nonterminal_type>,
-           const production_body_type &>
+           const CFG_production::body_type &>
       parsing_table;
 };
 } // namespace cyy::computation

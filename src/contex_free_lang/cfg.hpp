@@ -19,6 +19,7 @@
 
 #include "../formal_grammar/grammar.hpp"
 #include "../lang/lang.hpp"
+#include "cfg_production.hpp"
 
 namespace cyy::computation {
 
@@ -27,8 +28,6 @@ class CFG {
 public:
   using terminal_type = grammar_symbol_type::terminal_type;
   using nonterminal_type = grammar_symbol_type::nonterminal_type;
-  using production_body_type = std::vector<grammar_symbol_type>;
-  using production_type = std::pair<nonterminal_type, production_body_type>;
 
   struct parse_node;
   using parse_node_ptr = std::shared_ptr<parse_node>;
@@ -42,7 +41,7 @@ public:
   };
 
   CFG(const std::string &alphabet_name, nonterminal_type start_symbol_,
-      std::map<nonterminal_type, std::vector<production_body_type>>
+      std::map<nonterminal_type, std::vector<CFG_production::body_type>>
           productions_);
 
   CFG(const CFG &) = default;
@@ -55,13 +54,13 @@ public:
 
   bool operator==(const CFG &rhs) const;
 
-  void print(std::ostream &os) const;
+  std::ostream &operator<<(std::ostream &os) const;
 
-  bool has_production(const production_type &production) const;
+  bool has_production(const CFG_production &production) const;
 
   std::set<nonterminal_type> get_heads() const;
 
-  auto get_alphabet() const noexcept -> const auto & { return alphabet; }
+  auto get_alphabet() const noexcept -> const auto & { return *alphabet; }
 
   auto get_productions() const noexcept -> const auto & { return productions; }
 
@@ -103,43 +102,10 @@ public:
 
   std::set<nonterminal_type> nullable() const;
 
-  bool is_epsilon(const production_body_type &body) const {
-    return body.size() == 1 && is_epsilon(body[0]);
-  }
-
-  bool is_epsilon(const grammar_symbol_type &grammal_symbol) const {
-    auto terminal_ptr = grammal_symbol.get_terminal_ptr();
-    return terminal_ptr && alphabet->is_epsilon(*terminal_ptr);
-  }
-
   std::set<terminal_type>
   first(const grammar_symbol_const_span_type &alpha) const;
 
 protected:
-  void print(std::ostream &os, const terminal_type &terminal) const {
-    alphabet->print(os, terminal);
-  }
-  void print(std::ostream &os,
-             const grammar_symbol_type &grammal_symbol) const {
-    if (auto ptr = grammal_symbol.get_terminal_ptr())
-      alphabet->print(os, *ptr);
-    else {
-      os << *(grammal_symbol.get_nonterminal_ptr());
-    }
-  }
-
-  void print(std::ostream &os, const nonterminal_type &head,
-             const production_body_type &body) const {
-
-    os << head << " -> ";
-    for (const auto &grammal_symbol : body) {
-      print(os, grammal_symbol);
-      os << ' ';
-    }
-    os << '\n';
-    return;
-  }
-
   nonterminal_type get_new_head(nonterminal_type advise_head) const {
     do {
       advise_head.push_back('\'');
@@ -161,7 +127,8 @@ protected:
 protected:
   std::shared_ptr<ALPHABET> alphabet;
   nonterminal_type start_symbol;
-  std::map<nonterminal_type, std::vector<production_body_type>> productions;
+  std::map<nonterminal_type, std::vector<CFG_production::body_type>>
+      productions;
 
 private:
   mutable std::map<nonterminal_type, std::set<terminal_type>> first_sets;

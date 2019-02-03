@@ -45,7 +45,7 @@ std::shared_ptr<LR_grammar> regex::get_grammar() {
   std::set<CFG::terminal_type> operators{'|', '*', '(', '\\', ')',
                                          '+', '?', '[', ']'};
 
-  std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
+  std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
       productions;
   productions["rexpr"] = {
       {"rexpr", '|', "rterm"},
@@ -72,15 +72,15 @@ std::shared_ptr<LR_grammar> regex::get_grammar() {
 
   regex_alphabet->foreach_symbol([&](auto const &a) {
     productions["escape-sequence"].emplace_back(
-        CFG::production_body_type{'\\', a});
+        CFG_production::body_type{'\\', a});
 
     if (!operators.count(a)) {
-      productions["rprimary"].emplace_back(CFG::production_body_type{a});
+      productions["rprimary"].emplace_back(CFG_production::body_type{a});
     }
 
     if (a != '\\' && a != ']') {
       productions["character-class"].emplace_back(
-          CFG::production_body_type{a, "character-class"});
+          CFG_production::body_type{a, "character-class"});
     }
   });
 

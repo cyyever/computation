@@ -12,9 +12,9 @@
 
 namespace cyy::computation {
 
-CFG::CFG(
-    const std::string &alphabet_name, nonterminal_type start_symbol_,
-    std::map<nonterminal_type, std::vector<production_body_type>> productions_)
+CFG::CFG(const std::string &alphabet_name, nonterminal_type start_symbol_,
+         std::map<nonterminal_type, std::vector<CFG_production::body_type>>
+             productions_)
     : alphabet(ALPHABET::get(alphabet_name)),
       start_symbol(std::move(start_symbol_)),
       productions(std::move(productions_)) {
@@ -58,20 +58,21 @@ bool CFG::operator==(const CFG &rhs) const {
           start_symbol == rhs.start_symbol && productions == rhs.productions);
 }
 
-void CFG::print(std::ostream &os) const {
+std::ostream &CFG::operator<<(std::ostream &os) const {
   // by convention,we print start symbol first.
   auto it = productions.find(start_symbol);
   for (auto const &body : it->second) {
-    print(os, start_symbol, body);
+    CFG_production(start_symbol, body).print(os, *alphabet);
   }
   for (auto const &[head, bodies] : productions) {
     if (head == start_symbol) {
       continue;
     }
     for (auto const &body : bodies) {
-      print(os, head, body);
+      CFG_production(head, body).print(os, *alphabet);
     }
   }
+  return os;
 }
 
 std::set<CFG::nonterminal_type> CFG::get_heads() const {
@@ -82,18 +83,18 @@ std::set<CFG::nonterminal_type> CFG::get_heads() const {
   return heads;
 }
 
-bool CFG::has_production(const production_type &production) const {
+bool CFG::has_production(const CFG_production &production) const {
 
-  auto it = productions.find(production.first);
+  auto it = productions.find(production.get_head());
   return it != productions.end() &&
-         std::find(it->second.begin(), it->second.end(), production.second) !=
-             it->second.end();
+         std::find(it->second.begin(), it->second.end(),
+                   production.get_body()) != it->second.end();
 }
 
 void CFG::normalize_productions() {
   decltype(productions) new_productions;
   for (auto &[head, bodies] : productions) {
-    std::set<production_body_type> bodies_set;
+    std::set<CFG_production::body_type> bodies_set;
     for (auto &body : bodies) {
       if (body.empty()) {
         continue;
@@ -101,7 +102,7 @@ void CFG::normalize_productions() {
 
       auto it = std::remove_if(body.begin(), body.end(),
                                [this](const auto &grammal_symbol) {
-                                 return is_epsilon(grammal_symbol);
+                                 return grammal_symbol.is_epsilon(*alphabet);
                                });
       if (it > body.begin()) {
         bodies_set.emplace(std::move_iterator(body.begin()),
@@ -234,7 +235,7 @@ void CFG::eliminate_left_recursion(std::vector<nonterminal_type> old_heads) {
   auto const eliminate_immediate_left_recursion =
       [this](const nonterminal_type &head) {
         auto new_head = get_new_head(head);
-        std::vector<production_body_type> new_bodies;
+        std::vector<CFG_production::body_type> new_bodies;
         auto &bodies = productions[head];
 
         for (auto &body : bodies) {
@@ -263,7 +264,7 @@ void CFG::eliminate_left_recursion(std::vector<nonterminal_type> old_heads) {
 
   for (size_t i = 0; i < old_heads.size(); i++) {
     for (size_t j = 0; j < i; j++) {
-      std::vector<production_body_type> new_bodies;
+      std::vector<CFG_production::body_type> new_bodies;
       for (auto &body : productions[old_heads[i]]) {
 
         if (body.empty()) {

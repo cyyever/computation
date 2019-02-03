@@ -16,8 +16,9 @@ canonical_LR_grammar::GOTO(const LR_1_item_set &set) const {
   std::map<grammar_symbol_type, LR_1_item_set> res;
 
   for (auto const &[kernel_item, lookahead_set] : set.get_kernel_items()) {
-    if (kernel_item.dot_pos < kernel_item.production.second.size()) {
-      auto const &symbol = kernel_item.production.second[kernel_item.dot_pos];
+    if (kernel_item.dot_pos < kernel_item.production.get_body().size()) {
+      auto const &symbol =
+          kernel_item.production.get_body()[kernel_item.dot_pos];
       auto new_kernel_item = kernel_item;
       new_kernel_item.dot_pos++;
       res[symbol].add_kernel_item(*this, new_kernel_item, lookahead_set);
@@ -28,12 +29,7 @@ canonical_LR_grammar::GOTO(const LR_1_item_set &set) const {
     auto it = productions.find(nonterminal);
 
     for (auto const &body : it->second) {
-
-      LR_0_item new_kernel_item;
-      new_kernel_item.production.first = nonterminal;
-      new_kernel_item.production.second = body;
-      new_kernel_item.dot_pos = 1;
-
+      LR_0_item new_kernel_item{{nonterminal, body}, 1};
       res[body[0]].add_kernel_item(*this, new_kernel_item, lookahead_set);
     }
   }
@@ -51,7 +47,7 @@ canonical_LR_grammar::canonical_collection() const {
 
   LR_1_item_set init_set;
   init_set.add_kernel_item(
-      *this, LR_0_item{production_type{new_start_symbol, {start_symbol}}, 0},
+      *this, LR_0_item{CFG_production{new_start_symbol, {start_symbol}}, 0},
       {endmarker});
   unchecked_sets.emplace(std::move(init_set), 0);
 
@@ -98,11 +94,11 @@ void canonical_LR_grammar::construct_parsing_table() const {
   for (auto const &[set, state] : collection) {
 
     for (const auto &[kernel_item, lookahead_set] : set.get_kernel_items()) {
-      if (kernel_item.dot_pos != kernel_item.production.second.size()) {
+      if (kernel_item.dot_pos != kernel_item.production.get_body().size()) {
         continue;
       }
 
-      if (kernel_item.production.first == new_start_symbol) {
+      if (kernel_item.production.get_head() == new_start_symbol) {
         action_table[{state, endmarker}] = true;
         continue;
       }

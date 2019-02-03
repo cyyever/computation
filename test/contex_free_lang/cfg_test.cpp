@@ -18,7 +18,7 @@
 using namespace cyy::computation;
 TEST_CASE("eliminate_useless_symbols") {
   SUBCASE("have productions after eliminate") {
-    std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
+    std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
         productions;
     productions["S"] = {
         {"A"},
@@ -32,7 +32,7 @@ TEST_CASE("eliminate_useless_symbols") {
     productions["B"] = {{'1'}};
     productions["C"] = {{"S"}};
 
-    std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
+    std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
         reduced_productions;
     reduced_productions["S"] = {
         {'0'},
@@ -45,7 +45,7 @@ TEST_CASE("eliminate_useless_symbols") {
   }
 
   SUBCASE("no production after eliminate") {
-    std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
+    std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
         productions;
 
     productions["S"] = {{"A"}};
@@ -62,7 +62,7 @@ TEST_CASE("eliminate_useless_symbols") {
 }
 
 TEST_CASE("get_terminals") {
-  std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
+  std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
       productions;
   auto epsilon = ALPHABET::get("common_tokens")->get_epsilon();
   auto id = static_cast<CFG::terminal_type>(common_token::id);
@@ -90,7 +90,7 @@ TEST_CASE("get_terminals") {
 }
 
 TEST_CASE("eliminate_left_recursion") {
-  std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
+  std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
       productions;
   productions["S"] = {
       {"A", 'a'},
@@ -105,7 +105,7 @@ TEST_CASE("eliminate_left_recursion") {
   CFG cfg("common_tokens", "S", productions);
   cfg.eliminate_left_recursion({"S", "A"});
 
-  std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
+  std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
       reduced_productions;
   reduced_productions["S"] = {
       {"A", 'a'},
@@ -125,7 +125,7 @@ TEST_CASE("eliminate_left_recursion") {
 }
 
 TEST_CASE("left_factoring") {
-  std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
+  std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
       productions;
   productions["S"] = {
       {'i', "E", 't', "S"},
@@ -136,7 +136,7 @@ TEST_CASE("left_factoring") {
 
   CFG cfg("common_tokens", "S", productions);
   cfg.left_factoring();
-  std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
+  std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
       reduced_productions;
   reduced_productions["S"] = {
       {'i', "E", 't', "S", "S'"},
@@ -151,7 +151,7 @@ TEST_CASE("left_factoring") {
 }
 
 TEST_CASE("recursive_descent_parse") {
-  std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
+  std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
       productions;
   productions["S"] = {
       {'a', "S", 'a'},
@@ -164,7 +164,7 @@ TEST_CASE("recursive_descent_parse") {
 }
 
 TEST_CASE("first_and_follow") {
-  std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
+  std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
       productions;
   auto epsilon = ALPHABET::get("common_tokens")->get_epsilon();
   auto endmarker = ALPHABET::get("common_tokens")->get_endmarker();

@@ -18,7 +18,7 @@
 namespace cyy::computation {
 
 struct LR_0_item {
-  CFG::production_type production;
+  CFG_production production;
   size_t dot_pos{0};
   bool operator==(const LR_0_item &rhs) const noexcept {
     return std::tie(production, dot_pos) ==
@@ -31,9 +31,10 @@ struct LR_0_item {
 namespace std {
 template <> struct hash<cyy::computation::LR_0_item> {
   size_t operator()(const cyy::computation::LR_0_item &x) const noexcept {
-    return ::std::hash<decltype(x.production.first)>()(x.production.first) ^
-           ::std::hash<decltype(x.production.second.size())>()(
-               x.production.second.size()) ^
+    return ::std::hash<cyy::computation::CFG_production::head_type>()(
+               x.production.get_head()) ^
+           ::std::hash<decltype(x.production.get_body().size())>()(
+               x.production.get_body().size()) ^
            ::std::hash<decltype(x.dot_pos)>()(x.dot_pos);
   }
 };

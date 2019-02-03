@@ -17,7 +17,7 @@ void LL_grammar::construct_parsing_table() {
       auto first_set = first({body});
 
       for (auto const &terminal : first_set) {
-        if (is_epsilon(terminal)) {
+        if (alphabet->is_epsilon(terminal)) {
           auto it = follow_sets.find(head);
           if (it != follow_sets.end()) {
             for (auto const &follow_terminal : it->second) {
@@ -27,9 +27,9 @@ void LL_grammar::construct_parsing_table() {
               // not LL1
               if (!has_inserted) {
                 std::cerr << "head and terminal confliction:" << head << ' ';
-                print(std::cerr, follow_terminal);
+                alphabet->print(std::cerr, follow_terminal);
                 std::cerr << ' ';
-                print(std::cerr, it2->first.first);
+                alphabet->print(std::cerr, it2->first.first);
                 std::cerr << std::endl;
                 throw cyy::computation::exception::no_LL_grammar("");
               }
@@ -43,9 +43,9 @@ void LL_grammar::construct_parsing_table() {
         // not LL1
         if (!has_inserted) {
           std::cerr << "head and terminal confliction:" << head << ' ';
-          print(std::cerr, terminal);
+          alphabet->print(std::cerr, terminal);
           std::cerr << ' ';
-          print(std::cerr, it->first.first);
+          alphabet->print(std::cerr, it->first.first);
           std::cerr << std::endl;
           throw cyy::computation::exception::no_LL_grammar("");
         }
@@ -56,7 +56,7 @@ void LL_grammar::construct_parsing_table() {
 bool LL_grammar::parse(
     symbol_string_view view,
     const std::function<void(const nonterminal_type &,
-                             const production_body_type &)>
+                             const CFG_production::body_type &)>
         &match_nonterminal_callback,
     const std::function<void(terminal_type)> &match_terminal_callback) const {
 
@@ -68,7 +68,7 @@ bool LL_grammar::parse(
     stack.pop_back();
 
     if (auto ptr = top_symbol.get_terminal_ptr()) {
-      if (!is_epsilon(*ptr)) {
+      if (!alphabet->is_epsilon(*ptr)) {
         if (terminal != *ptr) {
           std::cerr << "symbol does not match terminal:";
           alphabet->print(std::cerr, terminal);
@@ -102,7 +102,7 @@ bool LL_grammar::parse(
   if (!view.empty()) {
     std::cerr << "there are symbols remain after parse:";
     for (auto const &terminal : view) {
-      print(std::cerr, terminal);
+      alphabet->print(std::cerr, terminal);
     }
     std::cerr << std::endl;
     return false;

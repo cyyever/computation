@@ -10,9 +10,9 @@
 #include "slr_grammar.hpp"
 
 namespace cyy::computation {
-std::map<grammar_symbol_type,
-         std::map<CFG::production_type,
-                  std::pair<bool, std::set<CFG::terminal_type>>>>
+std::map<
+    grammar_symbol_type,
+    std::map<CFG_production, std::pair<bool, std::set<CFG::terminal_type>>>>
 LALR_grammar::check_lookahead(const LR_0_item &item) const {
   LR_1_item_set item_set;
   auto const unincluded_symbol = alphabet->get_unincluded_symbol();
@@ -20,7 +20,7 @@ LALR_grammar::check_lookahead(const LR_0_item &item) const {
 
   std::map<
       grammar_symbol_type,
-      std::map<CFG::production_type,
+      std::map<CFG_production,
                std::pair<bool, std::set<grammar_symbol_type::terminal_type>>>>
       res;
   for (const auto &[grammar_symbol, next_item_set] : GOTO(item_set)) {
@@ -58,7 +58,7 @@ LALR_grammar::canonical_collection() const {
     reversed_canonical_LR_0_collection[state] = &lr_0_item_set;
     for (const auto &kernel_item : lr_0_item_set.get_kernel_items()) {
 
-      if (kernel_item.production.first == new_start_symbol) {
+      if (kernel_item.production.get_head() == new_start_symbol) {
         kernel_item_table[&kernel_item] = {alphabet->get_endmarker()};
       } else {
         kernel_item_table[&kernel_item] = {};

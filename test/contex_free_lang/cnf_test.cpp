@@ -17,7 +17,7 @@
 using namespace cyy::computation;
 
 TEST_CASE("eliminate_epsilon_productions") {
-  std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
+  std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
       productions;
   auto epsilon = ALPHABET::get("ab_set")->get_epsilon();
   productions["S"] = {
@@ -32,7 +32,7 @@ TEST_CASE("eliminate_epsilon_productions") {
   }
   SUBCASE("eliminate_epsilon_productions") {
     cfg.eliminate_epsilon_productions();
-    std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
+    std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
         new_productions;
     new_productions["S"] = {
         {'a', "S", "S'"},
@@ -54,7 +54,7 @@ TEST_CASE("eliminate_epsilon_productions") {
 
 TEST_CASE("eliminate_single_productions") {
 
-  std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
+  std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
       productions;
   auto id = static_cast<CFG::terminal_type>(common_token::id);
   productions["E"] = {{"E", '+', "T"}, {"T"}};
@@ -67,7 +67,7 @@ TEST_CASE("eliminate_single_productions") {
 
   cfg.eliminate_single_productions();
 
-  std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
+  std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
       new_productions;
 
   new_productions["E"] = {
@@ -95,7 +95,7 @@ TEST_CASE("eliminate_single_productions") {
 }
 
 TEST_CASE("to_CNF") {
-  std::map<CFG::nonterminal_type, std::vector<CFG::production_body_type>>
+  std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
       productions;
   auto epsilon = ALPHABET::get("ab_set")->get_epsilon();
   productions["S"] = {

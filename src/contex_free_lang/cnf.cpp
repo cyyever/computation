@@ -15,7 +15,7 @@ void CFG::eliminate_epsilon_productions() {
   if (nullable_nonterminals.empty()) {
     return;
   }
-  production_body_type epsilon_production{alphabet->get_epsilon()};
+  CFG_production::body_type epsilon_production{alphabet->get_epsilon()};
 
   auto heads = get_heads();
   while (!heads.empty()) {
@@ -23,7 +23,7 @@ void CFG::eliminate_epsilon_productions() {
     heads.clear();
     for (auto const &head : checking_heads) {
 
-      std::vector<production_body_type> new_bodies;
+      std::vector<CFG_production::body_type> new_bodies;
       for (auto &body : productions[head]) {
         if (body.empty()) {
           continue;
@@ -167,7 +167,7 @@ void CFG::eliminate_single_productions() {
     auto checking_heads = std::move(heads);
     heads.clear();
     for (auto const &head : checking_heads) {
-      std::vector<production_body_type> new_bodies;
+      std::vector<CFG_production::body_type> new_bodies;
       for (auto &body : productions[head]) {
         if (body.empty()) {
           continue;
@@ -239,7 +239,7 @@ void CFG::to_CNF() {
             heads.insert(new_head);
             terminal_productions[*terminal_ptr] = new_head;
             new_productions[new_head].emplace_back(
-                production_body_type{*terminal_ptr});
+                CFG_production::body_type{*terminal_ptr});
             symbol = new_head;
           }
         }

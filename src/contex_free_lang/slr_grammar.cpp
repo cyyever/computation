@@ -15,8 +15,9 @@ SLR_grammar::GOTO(const LR_0_item_set &set) const {
   std::map<grammar_symbol_type, LR_0_item_set> res;
 
   for (auto const &kernel_item : set.get_kernel_items()) {
-    if (kernel_item.dot_pos < kernel_item.production.second.size()) {
-      auto const &symbol = kernel_item.production.second[kernel_item.dot_pos];
+    if (kernel_item.dot_pos < kernel_item.production.get_body().size()) {
+      auto const &symbol =
+          kernel_item.production.get_body()[kernel_item.dot_pos];
       auto new_kernel_item = kernel_item;
       new_kernel_item.dot_pos++;
       res[symbol].add_kernel_item(*this, std::move(new_kernel_item));
@@ -27,10 +28,12 @@ SLR_grammar::GOTO(const LR_0_item_set &set) const {
     auto it = productions.find(nonkernel_item);
 
     for (auto const &body : it->second) {
-      LR_0_item new_kernel_item;
-      new_kernel_item.production.first = nonkernel_item;
-      new_kernel_item.production.second = body;
+      LR_0_item new_kernel_item{{nonkernel_item, body}, 1};
+      /*
+      new_kernel_item.production.get_head() = nonkernel_item;
+      new_kernel_item.production.get_body() = body;
       new_kernel_item.dot_pos = 1;
+      */
       res[body[0]].add_kernel_item(*this, std::move(new_kernel_item));
     }
   }
@@ -48,7 +51,7 @@ SLR_grammar::canonical_collection() const {
 
   LR_0_item_set init_set;
   init_set.add_kernel_item(
-      *this, LR_0_item{production_type{new_start_symbol, {start_symbol}}, 0});
+      *this, LR_0_item{CFG_production{new_start_symbol, {start_symbol}}, 0});
 
   unchecked_sets.emplace(std::move(init_set), 0);
 
@@ -95,22 +98,22 @@ void SLR_grammar::construct_parsing_table() const {
 
   for (auto const &[set, state] : collection) {
     for (const auto &kernel_item : set.get_kernel_items()) {
-      if (kernel_item.dot_pos != kernel_item.production.second.size()) {
+      if (kernel_item.dot_pos != kernel_item.production.get_body().size()) {
         continue;
       }
 
-      if (kernel_item.production.first == new_start_symbol) {
+      if (kernel_item.production.get_head() == new_start_symbol) {
         action_table[{state, endmarker}] = true;
         continue;
       }
 
       for (auto const &follow_terminal :
-           follow_sets[kernel_item.production.first]) {
+           follow_sets[kernel_item.production.get_head()]) {
 
         // conflict
         if (action_table.count({state, follow_terminal}) != 0) {
           std::cerr << "conflict with follow_terminal ";
-          print(std::cerr, follow_terminal);
+          alphabet->print(std::cerr, follow_terminal);
           std::cerr << std::endl;
           throw cyy::computation::exception::no_SLR_grammar("");
         }

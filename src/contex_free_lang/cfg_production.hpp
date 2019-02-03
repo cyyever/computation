@@ -30,9 +30,18 @@ public:
 
   ~CFG_production() = default;
 
+  bool operator==(const CFG_production &rhs) const {
+    return head == rhs.head && body == rhs.body;
+  }
+  bool operator<(const CFG_production &rhs) const {
+    return head < rhs.head || (head == rhs.head && body < rhs.body);
+  }
   bool is_epsilon(const ALPHABET &alphabet) const;
 
   void print(std::ostream &os, const ALPHABET &alphabet) const;
+
+  auto get_head() const -> auto const & { return head; }
+  auto get_body() const -> auto const & { return body; }
 
 private:
   grammar_symbol_type::nonterminal_type head;

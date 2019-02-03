@@ -24,7 +24,7 @@ LR_grammar::get_parse_tree(symbol_string_view view) const {
                                                      auto const &body) {
               parent = std::make_shared<parse_node>(head);
 
-              if (is_epsilon(body)) {
+              if (CFG_production{head, body}.is_epsilon(*alphabet)) {
                 parent->children.push_back(
                     std::make_shared<parse_node>(epsilon));
               } else {
@@ -41,11 +41,12 @@ LR_grammar::get_parse_tree(symbol_string_view view) const {
   return {};
 }
 
-bool LR_grammar::parse(symbol_string_view view,
-                       const std::function<void(terminal_type)> &shift_callback,
-                       const std::function<void(const nonterminal_type &,
-                                                const production_body_type &)>
-                           &reduction_callback) const {
+bool LR_grammar::parse(
+    symbol_string_view view,
+    const std::function<void(terminal_type)> &shift_callback,
+    const std::function<void(const nonterminal_type &,
+                             const CFG_production::body_type &)>
+        &reduction_callback) const {
   if (action_table.empty() || goto_table.empty()) {
     construct_parsing_table();
   }
@@ -76,11 +77,13 @@ bool LR_grammar::parse(symbol_string_view view,
       continue;
     }
 
+    auto const &production = std::get<CFG_production>(it->second);
     // reduce
-    auto const &[head, body] = std::get<production_type>(it->second);
+    auto const &head = std::get<CFG_production>(it->second).get_head();
+    auto const &body = std::get<CFG_production>(it->second).get_body();
     reduction_callback(head, body);
 
-    if (!is_epsilon(body)) {
+    if (!production.is_epsilon(*alphabet)) {
       stack.resize(stack.size() - body.size());
     }
     auto it2 = goto_table.find({stack.back(), head});
@@ -94,7 +97,7 @@ bool LR_grammar::parse(symbol_string_view view,
   if (!view.empty()) {
     std::cerr << "have symbols remain after parse:";
     for (auto const &terminal : view) {
-      print(std::cerr, terminal);
+      alphabet->print(std::cerr, terminal);
     }
     std::cerr << std::endl;
     return false;

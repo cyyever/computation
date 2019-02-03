@@ -28,7 +28,7 @@ public:
   bool parse(symbol_string_view view,
              const std::function<void(terminal_type)> &shift_callback,
              const std::function<void(const nonterminal_type &,
-                                      const production_body_type &)>
+                                      const CFG_production::body_type &)>
                  &reduction_callback) const;
 
 private:
@@ -36,7 +36,7 @@ private:
 
 protected:
   mutable std::map<std::pair<uint64_t, terminal_type>,
-                   std::variant<uint64_t, production_type, bool>>
+                   std::variant<uint64_t, CFG_production, bool>>
       action_table;
   mutable std::map<std::pair<uint64_t, nonterminal_type>, uint64_t> goto_table;
 };
