@@ -20,15 +20,14 @@ LR_grammar::get_parse_tree(symbol_string_view view) const {
               viable_prefix.push_back(std::make_shared<parse_node>(terminal));
             },
 
-            [&viable_prefix, &parent, this, epsilon](auto const &head,
-                                                     auto const &body) {
-              parent = std::make_shared<parse_node>(head);
+            [&viable_prefix, &parent, this, epsilon](auto const &production) {
+              parent = std::make_shared<parse_node>(production.get_head());
 
-              if (CFG_production{head, body}.is_epsilon(*alphabet)) {
+              if (production.is_epsilon(*alphabet)) {
                 parent->children.push_back(
                     std::make_shared<parse_node>(epsilon));
               } else {
-                const auto body_size = body.size();
+                const auto body_size = production.get_body().size();
                 parent->children = {
                     std::move_iterator(viable_prefix.end() - body_size),
                     std::move_iterator(viable_prefix.end())};
@@ -44,8 +43,7 @@ LR_grammar::get_parse_tree(symbol_string_view view) const {
 bool LR_grammar::parse(
     symbol_string_view view,
     const std::function<void(terminal_type)> &shift_callback,
-    const std::function<void(const nonterminal_type &,
-                             const CFG_production::body_type &)>
+    const std::function<void( const CFG_production&)>
         &reduction_callback) const {
   if (action_table.empty() || goto_table.empty()) {
     construct_parsing_table();
@@ -81,7 +79,7 @@ bool LR_grammar::parse(
     // reduce
     auto const &head = std::get<CFG_production>(it->second).get_head();
     auto const &body = std::get<CFG_production>(it->second).get_body();
-    reduction_callback(head, body);
+    reduction_callback(production);
 
     if (!production.is_epsilon(*alphabet)) {
       stack.resize(stack.size() - body.size());

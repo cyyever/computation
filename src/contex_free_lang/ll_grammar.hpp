@@ -30,8 +30,8 @@ public:
 
   bool parse(
       symbol_string_view view,
-      const std::function<void(const nonterminal_type &,
-                               const CFG_production::body_type &)>
+      const std::function<void(
+                               const CFG_production&)>
           &match_nonterminal_callback,
       const std::function<void(terminal_type)> &match_terminal_callback) const;
   parse_node_ptr get_parse_tree(symbol_string_view view) const;

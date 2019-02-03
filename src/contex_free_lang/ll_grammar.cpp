@@ -55,8 +55,8 @@ void LL_grammar::construct_parsing_table() {
 }
 bool LL_grammar::parse(
     symbol_string_view view,
-    const std::function<void(const nonterminal_type &,
-                             const CFG_production::body_type &)>
+    const std::function<void(
+                             const CFG_production&)>
         &match_nonterminal_callback,
     const std::function<void(terminal_type)> &match_terminal_callback) const {
 
@@ -96,7 +96,7 @@ bool LL_grammar::parse(
     for (auto rit = it->second.rbegin(); rit != it->second.rend(); rit++) {
       stack.push_back(*rit);
     }
-    match_nonterminal_callback(*ptr, it->second);
+    match_nonterminal_callback(CFG_production{*ptr, it->second});
   }
 
   if (!view.empty()) {
@@ -117,11 +117,11 @@ CFG::parse_node_ptr LL_grammar::get_parse_tree(symbol_string_view view) const {
   std::vector<parse_node_ptr> stack{root};
 
   if (parse(view,
-            [&stack]([[maybe_unused]] auto const &head, auto const &body) {
+            [&stack]([[maybe_unused]] auto const &production) {
               auto node = std::move(stack.back());
               stack.pop_back();
 
-              for (auto const &grammar_symbol : body) {
+              for (auto const &grammar_symbol :production.get_body()) {
                 node->children.push_back(
                     std::make_shared<parse_node>(grammar_symbol));
               }
