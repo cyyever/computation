@@ -53,37 +53,13 @@ public:
 
   virtual ~CFG() = default;
 
-  bool operator==(const CFG &rhs) const {
-    return (this == &rhs) ||
-           (alphabet->get_name() == rhs.alphabet->get_name() &&
-            start_symbol == rhs.start_symbol && productions == rhs.productions);
-  }
+  bool operator==(const CFG &rhs) const;
 
-  void print(std::ostream &os) const {
-    // by convention,we print start symbol first.
-    auto it = productions.find(start_symbol);
-    for (auto const &body : it->second) {
-      print(os, start_symbol, body);
-    }
-    for (auto const &[head, bodies] : productions) {
-      if (head == start_symbol) {
-        continue;
-      }
-      for (auto const &body : bodies) {
-        print(os, head, body);
-      }
-    }
-  }
+  void print(std::ostream &os) const;
 
   bool has_production(const production_type &production) const;
 
-  std::set<nonterminal_type> get_heads() const {
-    std::set<nonterminal_type> heads;
-    for (auto const &[head, _] : productions) {
-      heads.insert(head);
-    }
-    return heads;
-  }
+  std::set<nonterminal_type> get_heads() const;
 
   auto get_alphabet() const noexcept -> const auto & { return alphabet; }
 
@@ -136,7 +112,8 @@ public:
     return terminal_ptr && alphabet->is_epsilon(*terminal_ptr);
   }
 
-  std::set<terminal_type> first(const grammar_symbol_const_span &alpha) const;
+  std::set<terminal_type>
+  first(const grammar_symbol_const_span_type &alpha) const;
 
 protected:
   void print(std::ostream &os, const terminal_type &terminal) const {

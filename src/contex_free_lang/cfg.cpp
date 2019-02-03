@@ -52,6 +52,36 @@ CFG::CFG(
   }
 }
 
+bool CFG::operator==(const CFG &rhs) const {
+  return (this == &rhs) ||
+         (alphabet->get_name() == rhs.alphabet->get_name() &&
+          start_symbol == rhs.start_symbol && productions == rhs.productions);
+}
+
+void CFG::print(std::ostream &os) const {
+  // by convention,we print start symbol first.
+  auto it = productions.find(start_symbol);
+  for (auto const &body : it->second) {
+    print(os, start_symbol, body);
+  }
+  for (auto const &[head, bodies] : productions) {
+    if (head == start_symbol) {
+      continue;
+    }
+    for (auto const &body : bodies) {
+      print(os, head, body);
+    }
+  }
+}
+
+std::set<CFG::nonterminal_type> CFG::get_heads() const {
+  std::set<nonterminal_type> heads;
+  for (auto const &[head, _] : productions) {
+    heads.insert(head);
+  }
+  return heads;
+}
+
 bool CFG::has_production(const production_type &production) const {
 
   auto it = productions.find(production.first);
@@ -446,7 +476,7 @@ CFG::first() const {
 }
 
 std::set<CFG::terminal_type>
-CFG::first(const grammar_symbol_const_span &alpha) const {
+CFG::first(const grammar_symbol_const_span_type &alpha) const {
 
   first();
   std::set<terminal_type> view_first_set;
@@ -495,7 +525,7 @@ CFG::follow() const {
           const auto &nonterminal = *(body[i].get_nonterminal_ptr());
 
           auto first_set =
-              first(grammar_symbol_const_span(body).subspan(i + 1));
+              first(grammar_symbol_const_span_type(body).subspan(i + 1));
 
           bool has_epsilon = false;
 

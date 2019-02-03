@@ -50,14 +50,14 @@ void LR_1_item_set::add_kernel_item(
   if (kernel_item.dot_pos < body.size()) {
 
     add_nonkernel_item(
-        cfg, grammar_symbol_const_span(body).subspan(kernel_item.dot_pos),
+        cfg, grammar_symbol_const_span_type(body).subspan(kernel_item.dot_pos),
         lookahead_set);
   }
   kernel_items[kernel_item].merge(lookahead_set);
 }
 
 void LR_1_item_set::add_nonkernel_item(
-    const CFG &cfg, grammar_symbol_const_span view,
+    const CFG &cfg, grammar_symbol_const_span_type view,
     const std::set<CFG::terminal_type> &lookahead_set) {
 
   if (view.empty()) {

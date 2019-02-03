@@ -42,15 +42,20 @@ public:
     return std::get_if<nonterminal_type>(this);
   }
 
-  void print(std::ostream &os, const std::string &alphabet_name) const {
+  void print(std::ostream &os, const ALPHABET &alphabet) const {
     if (is_terminal()) {
-      ALPHABET::get(alphabet_name)->print(os, *get_terminal_ptr());
+      alphabet.print(os, *get_terminal_ptr());
     } else {
       os << *get_nonterminal_ptr();
     }
   }
+
+  bool is_epsilon(const ALPHABET &alphabet) const {
+    auto terminal_ptr = get_terminal_ptr();
+    return terminal_ptr && alphabet.is_epsilon(*terminal_ptr);
+  }
 };
 
-using grammar_symbol_string = std::vector<grammar_symbol_type>;
-using grammar_symbol_const_span = gsl::span<const grammar_symbol_type>;
+using grammar_symbol_string_type = std::vector<grammar_symbol_type>;
+using grammar_symbol_const_span_type = gsl::span<const grammar_symbol_type>;
 } // namespace cyy::computation
