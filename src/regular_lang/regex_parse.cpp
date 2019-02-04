@@ -46,10 +46,10 @@ namespace cyy::computation {
    escape-sequence -> '\' printable-ASCII
    printable-ASCII -> 'printable-ASCII'
 */
-std::shared_ptr<LL_grammar> regex::get_grammar() {
+    const LL_grammar& regex::get_grammar() {
   static std::shared_ptr<LL_grammar> regex_grammar;
   if (regex_grammar) {
-    return regex_grammar;
+    return *regex_grammar;
   }
 
   std::set<CFG::terminal_type> operators{'|', '*', '(', '\\', ')',
@@ -102,7 +102,7 @@ std::shared_ptr<LL_grammar> regex::get_grammar() {
 
   regex_grammar = std::make_shared<LL_grammar>(regex_alphabet->get_name(),
                                                "rexpr", productions);
-  return regex_grammar;
+  return *regex_grammar;
 }
 
 std::shared_ptr<regex::syntax_node>
@@ -133,7 +133,7 @@ regex::parse(symbol_string_view view) const {
 
   bool in_class = false;
   std::vector<symbol_type> class_content;
-  auto parse_res = get_grammar()->parse2(
+  auto parse_res = get_grammar().parse2(
       view, [&node_stack, &last_symbol, &escape_symbol, &in_class,
              &class_content, this](auto const &production, auto const &pos) {
         auto const &head = production.get_head();

@@ -139,7 +139,7 @@ private:
   std::shared_ptr<syntax_node> make_complemented_character_class(
       const std::set<symbol_type> &symbol_set) const;
 
-  static std::shared_ptr<LL_grammar> get_grammar();
+  static const LL_grammar & get_grammar();
   static inline std::shared_ptr<ALPHABET> regex_alphabet{
       ALPHABET::get("printable-ASCII")};
 
