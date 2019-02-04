@@ -39,8 +39,7 @@ TEST_CASE("canonical_collection") {
   {
     LR_0_item_set set;
 
-    set.add_kernel_item(grammar,
-                        LR_0_item{CFG_production{"E'", {"E"}}, 0});
+    set.add_kernel_item(grammar, LR_0_item{CFG_production{"E'", {"E"}}, 0});
 
     sets.emplace(std::move(set));
   }
@@ -48,11 +47,26 @@ TEST_CASE("canonical_collection") {
   {
     LR_0_item_set set;
 
-    set.add_kernel_item(grammar,
-                        LR_0_item{CFG_production{"E'", {"E"}}, 1});
+    set.add_kernel_item(grammar, LR_0_item{CFG_production{"E'", {"E"}}, 1});
 
-    set.add_kernel_item(
-        grammar, LR_0_item{CFG_production{"E", {"E", '+', "T"}}, 1});
+    set.add_kernel_item(grammar,
+                        LR_0_item{CFG_production{"E", {"E", '+', "T"}}, 1});
+    sets.emplace(std::move(set));
+  }
+
+  {
+    LR_0_item_set set;
+
+    set.add_kernel_item(grammar, LR_0_item{CFG_production{"E", {"T"}}, 1});
+    set.add_kernel_item(grammar,
+                        LR_0_item{CFG_production{"T", {"T", '*', "F"}}, 1});
+    sets.emplace(std::move(set));
+  }
+
+  {
+    LR_0_item_set set;
+
+    set.add_kernel_item(grammar, LR_0_item{CFG_production{"T", {"F"}}, 1});
     sets.emplace(std::move(set));
   }
 
@@ -60,25 +74,7 @@ TEST_CASE("canonical_collection") {
     LR_0_item_set set;
 
     set.add_kernel_item(grammar,
-                        LR_0_item{CFG_production{"E", {"T"}}, 1});
-    set.add_kernel_item(
-        grammar, LR_0_item{CFG_production{"T", {"T", '*', "F"}}, 1});
-    sets.emplace(std::move(set));
-  }
-
-  {
-    LR_0_item_set set;
-
-    set.add_kernel_item(grammar,
-                        LR_0_item{CFG_production{"T", {"F"}}, 1});
-    sets.emplace(std::move(set));
-  }
-
-  {
-    LR_0_item_set set;
-
-    set.add_kernel_item(
-        grammar, LR_0_item{CFG_production{"F", {'(', "E", ')'}}, 1});
+                        LR_0_item{CFG_production{"F", {'(', "E", ')'}}, 1});
     sets.emplace(std::move(set));
   }
 
@@ -92,52 +88,52 @@ TEST_CASE("canonical_collection") {
   {
     LR_0_item_set set;
 
-    set.add_kernel_item(
-        grammar, LR_0_item{CFG_production{"E", {"E", '+', "T"}}, 2});
+    set.add_kernel_item(grammar,
+                        LR_0_item{CFG_production{"E", {"E", '+', "T"}}, 2});
     sets.emplace(std::move(set));
   }
 
   {
     LR_0_item_set set;
 
-    set.add_kernel_item(
-        grammar, LR_0_item{CFG_production{"T", {"T", '*', "F"}}, 2});
+    set.add_kernel_item(grammar,
+                        LR_0_item{CFG_production{"T", {"T", '*', "F"}}, 2});
     sets.emplace(std::move(set));
   }
 
   {
     LR_0_item_set set;
 
-    set.add_kernel_item(
-        grammar, LR_0_item{CFG_production{"E", {"E", '+', "T"}}, 1});
-    set.add_kernel_item(
-        grammar, LR_0_item{CFG_production{"F", {'(', "E", ')'}}, 2});
+    set.add_kernel_item(grammar,
+                        LR_0_item{CFG_production{"E", {"E", '+', "T"}}, 1});
+    set.add_kernel_item(grammar,
+                        LR_0_item{CFG_production{"F", {'(', "E", ')'}}, 2});
     sets.emplace(std::move(set));
   }
 
   {
     LR_0_item_set set;
 
-    set.add_kernel_item(
-        grammar, LR_0_item{CFG_production{"E", {"E", '+', "T"}}, 3});
-    set.add_kernel_item(
-        grammar, LR_0_item{CFG_production{"T", {"T", '*', "F"}}, 1});
+    set.add_kernel_item(grammar,
+                        LR_0_item{CFG_production{"E", {"E", '+', "T"}}, 3});
+    set.add_kernel_item(grammar,
+                        LR_0_item{CFG_production{"T", {"T", '*', "F"}}, 1});
     sets.emplace(std::move(set));
   }
 
   {
     LR_0_item_set set;
 
-    set.add_kernel_item(
-        grammar, LR_0_item{CFG_production{"T", {"T", '*', "F"}}, 3});
+    set.add_kernel_item(grammar,
+                        LR_0_item{CFG_production{"T", {"T", '*', "F"}}, 3});
     sets.emplace(std::move(set));
   }
 
   {
     LR_0_item_set set;
 
-    set.add_kernel_item(
-        grammar, LR_0_item{CFG_production{"F", {'(', "E", ')'}}, 3});
+    set.add_kernel_item(grammar,
+                        LR_0_item{CFG_production{"F", {'(', "E", ')'}}, 3});
     sets.emplace(std::move(set));
   }
 

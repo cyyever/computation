@@ -41,27 +41,27 @@ TEST_CASE("canonical_collection") {
   {
     LR_1_item_set set;
 
-    set.add_kernel_item(
-        grammar, LR_0_item{CFG_production{"S'", {"S"}}, 0}, {endmarker});
+    set.add_kernel_item(grammar, LR_0_item{CFG_production{"S'", {"S"}}, 0},
+                        {endmarker});
     sets.emplace(std::move(set));
   }
 
   {
     LR_1_item_set set;
 
-    set.add_kernel_item(
-        grammar, LR_0_item{CFG_production{"S'", {"S"}}, 1}, {endmarker});
+    set.add_kernel_item(grammar, LR_0_item{CFG_production{"S'", {"S"}}, 1},
+                        {endmarker});
     sets.emplace(std::move(set));
   }
 
   {
     LR_1_item_set set;
 
-    set.add_kernel_item(
-        grammar, LR_0_item{CFG_production{"S", {{"L", '=', "R"}}}, 1},
-        {endmarker});
-    set.add_kernel_item(
-        grammar, LR_0_item{CFG_production{"R", {{"L"}}}, 1}, {endmarker});
+    set.add_kernel_item(grammar,
+                        LR_0_item{CFG_production{"S", {{"L", '=', "R"}}}, 1},
+                        {endmarker});
+    set.add_kernel_item(grammar, LR_0_item{CFG_production{"R", {{"L"}}}, 1},
+                        {endmarker});
     sets.emplace(std::move(set));
   }
 
@@ -77,8 +77,7 @@ TEST_CASE("canonical_collection") {
   {
     LR_1_item_set set;
 
-    set.add_kernel_item(grammar,
-                        LR_0_item{CFG_production{"L", {'*', "R"}}, 1},
+    set.add_kernel_item(grammar, LR_0_item{CFG_production{"L", {'*', "R"}}, 1},
                         {'=', endmarker});
 
     sets.emplace(std::move(set));
@@ -95,9 +94,9 @@ TEST_CASE("canonical_collection") {
   {
     LR_1_item_set set;
 
-    set.add_kernel_item(
-        grammar, LR_0_item{CFG_production{"S", {{"L", '=', "R"}}}, 2},
-        {endmarker});
+    set.add_kernel_item(grammar,
+                        LR_0_item{CFG_production{"S", {{"L", '=', "R"}}}, 2},
+                        {endmarker});
 
     sets.emplace(std::move(set));
   }
@@ -105,8 +104,7 @@ TEST_CASE("canonical_collection") {
   {
     LR_1_item_set set;
 
-    set.add_kernel_item(grammar,
-                        LR_0_item{CFG_production{"L", {'*', "R"}}, 2},
+    set.add_kernel_item(grammar, LR_0_item{CFG_production{"L", {'*', "R"}}, 2},
                         {'=', endmarker});
 
     sets.emplace(std::move(set));
@@ -123,9 +121,9 @@ TEST_CASE("canonical_collection") {
   {
     LR_1_item_set set;
 
-    set.add_kernel_item(
-        grammar, LR_0_item{CFG_production{"S", {{"L", '=', "R"}}}, 3},
-        {endmarker});
+    set.add_kernel_item(grammar,
+                        LR_0_item{CFG_production{"S", {{"L", '=', "R"}}}, 3},
+                        {endmarker});
     sets.emplace(std::move(set));
   }
 
