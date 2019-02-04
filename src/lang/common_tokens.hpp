@@ -28,7 +28,6 @@ private:
     case common_token::ascii_char:
       os << "\"ascii char\"";
       break;
-
     case common_token::escape_sequence:
       os << "\"escape sequence\"";
       break;
@@ -43,6 +42,9 @@ private:
       break;
     case common_token::number:
       os << "\"number\"";
+      break;
+    default:
+      os << '\'' << static_cast<char>(symbol) << '\'';
       break;
     }
   }

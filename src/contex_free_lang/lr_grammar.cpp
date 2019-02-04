@@ -40,11 +40,10 @@ LR_grammar::get_parse_tree(symbol_string_view view) const {
   return {};
 }
 
-bool LR_grammar::parse(
-    symbol_string_view view,
-    const std::function<void(terminal_type)> &shift_callback,
-    const std::function<void( const CFG_production&)>
-        &reduction_callback) const {
+bool LR_grammar::parse(symbol_string_view view,
+                       const std::function<void(terminal_type)> &shift_callback,
+                       const std::function<void(const CFG_production &)>
+                           &reduction_callback) const {
   if (action_table.empty() || goto_table.empty()) {
     construct_parsing_table();
   }

@@ -27,7 +27,7 @@ public:
 
   bool parse(symbol_string_view view,
              const std::function<void(terminal_type)> &shift_callback,
-             const std::function<void( const CFG_production&)>
+             const std::function<void(const CFG_production &)>
                  &reduction_callback) const;
 
 private:
