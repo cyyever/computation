@@ -7,37 +7,47 @@
 
 #include <cassert>
 
-#include "../contex_free_lang/slr_grammar.hpp"
+#include "../contex_free_lang/cfg_production.hpp"
+#include "../contex_free_lang/ll_grammar.hpp"
 #include "../exception.hpp"
 #include "regex.hpp"
 
 namespace cyy::computation {
 
 /*
-   rexpr -> rexpr '|' rterm
-   rexpr -> rterm
+   rexpr -> rterm rexpr'
+   rexpr' -> '|' rterm rexpr'
+   rexpr' -> epsilon
 
-   rterm -> rterm rfactor
-   rterm -> rfactor
+   rterm -> rfactor rterm'
+   rterm' -> rfactor rterm'
+   rterm' -> epsilon
 
-   rfactor -> rprimary '*'
-   rfactor -> rprimary '+'
-   rfactor -> rprimary '?'
-   rfactor -> rprimary
+   rfactor -> rprimary rfactor'
+
+   rfactor' -> closure-operator
+   rfactor' -> epsilon
+
+   closure-operator -> '*'
+   closure-operator -> '+'
+   closure-operator -> '?'
 
    rprimary -> 'non-operator-char'
    rprimary -> escape-sequence
    rprimary -> '(' rexpr ')'
    rprimary -> '[' character-class ']'
 
-   character-class -> 'any-char-except-backslash-and-]' character-class
-   character-class -> escape-sequence character-class
+   character-class -> character-class-element character-class
    character-class -> epsilon
 
-   escape-sequence -> '\' 'any-char'
+   character-class-element -> 'printable-ASCII except backslash and ]'
+   character-class-element -> escape-sequence
+
+   escape-sequence -> '\' printable-ASCII
+   printable-ASCII -> 'printable-ASCII'
 */
-std::shared_ptr<LR_grammar> regex::get_grammar() {
-  static std::shared_ptr<LR_grammar> regex_grammar;
+std::shared_ptr<LL_grammar> regex::get_grammar() {
+  static std::shared_ptr<LL_grammar> regex_grammar;
   if (regex_grammar) {
     return regex_grammar;
   }
@@ -47,19 +57,21 @@ std::shared_ptr<LR_grammar> regex::get_grammar() {
 
   std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
       productions;
-  productions["rexpr"] = {
-      {"rexpr", '|', "rterm"},
-      {"rterm"},
-  };
+  auto epsilon = regex_alphabet->get_epsilon();
+  productions["rexpr"] = {{"rterm", "rexpr'"}};
+  productions["rexpr'"] = {{'|', "rterm", "rexpr'"}, {epsilon}};
   productions["rterm"] = {
-      {"rterm", "rfactor"},
-      {"rfactor"},
+      {"rfactor", "rterm'"},
   };
+  productions["rterm'"] = {{"rfactor", "rterm'"}, {epsilon}};
   productions["rfactor"] = {
-      {"rprimary", '*'},
-      {"rprimary", '+'},
-      {"rprimary", '?'},
-      {"rprimary"},
+      {"rprimary", "rfactor'"},
+  };
+  productions["rfactor'"] = {{"closure-operator"}, {epsilon}};
+  productions["closure-operator"] = {
+      {'*'},
+      {'+'},
+      {'?'},
   };
   productions["rprimary"] = {
       {"escape-sequence"},
@@ -67,32 +79,226 @@ std::shared_ptr<LR_grammar> regex::get_grammar() {
       {'[', "character-class", ']'},
   };
 
-  productions["character-class"] = {{"escape-sequence", "character-class"},
-                                    {regex_alphabet->get_epsilon()}};
+  productions["character-class"] = {
+      {"character-class-element", "character-class"}, {epsilon}};
 
+  productions["character-class-element"] = {{"escape-sequence"}};
+
+  productions["escape-sequence"] = {
+      {'\\', "printable-ASCII"},
+  };
   regex_alphabet->foreach_symbol([&](auto const &a) {
-    productions["escape-sequence"].emplace_back(
-        CFG_production::body_type{'\\', a});
+    productions["printable-ASCII"].emplace_back(CFG_production::body_type{a});
 
     if (!operators.count(a)) {
       productions["rprimary"].emplace_back(CFG_production::body_type{a});
     }
 
     if (a != '\\' && a != ']') {
-      productions["character-class"].emplace_back(
-          CFG_production::body_type{a, "character-class"});
+      productions["character-class-element"].emplace_back(
+          CFG_production::body_type{a});
     }
   });
 
-  regex_grammar = std::make_shared<SLR_grammar>(regex_alphabet->get_name(),
-                                                "rexpr", productions);
-
+  regex_grammar = std::make_shared<LL_grammar>(regex_alphabet->get_name(),
+                                               "rexpr", productions);
   return regex_grammar;
 }
 
 std::shared_ptr<regex::syntax_node>
-regex::make_character_class(const std::set<symbol_type> &symbol_set) const {
+regex::parse(symbol_string_view view) const {
 
+  using syntax_node_ptr = std::shared_ptr<regex::syntax_node>;
+
+  auto escape_symbol = [](symbol_type symbol) -> symbol_type {
+    switch (symbol) {
+    case 'f':
+      return '\f';
+    case 'n':
+      return '\n';
+    case 'r':
+      return '\r';
+    case 't':
+      return '\t';
+    case 'v':
+      return '\v';
+    default:
+      return symbol;
+    }
+  };
+
+  std::vector<std::shared_ptr<regex::syntax_node>> node_stack;
+
+  symbol_type last_symbol = '\0';
+
+  bool in_class = false;
+  std::vector<symbol_type> class_content;
+  auto parse_res = get_grammar()->parse2(
+      view, [&node_stack, &last_symbol, &escape_symbol, &in_class,
+             &class_content, this](auto const &production, auto const &pos) {
+        auto const &head = production.get_head();
+        auto const &body = production.get_body();
+        bool finish_production = (pos == body.size());
+
+        // printable-ASCII -> 'printable-ASCII'
+        if (head == "printable-ASCII" && finish_production) {
+          last_symbol = *(body[0].get_terminal_ptr());
+          if (in_class) {
+            class_content.push_back(last_symbol);
+          } else {
+            node_stack.emplace_back(
+                std::make_shared<regex::basic_node>(last_symbol));
+          }
+        }
+
+        // escape-sequence -> '\' printable-ASCII
+        if (head == "escape-sequence" && finish_production) {
+          auto new_symbol = escape_symbol(last_symbol);
+          if (in_class) {
+            class_content.push_back(new_symbol);
+          } else {
+            if (new_symbol != last_symbol)
+              assert(node_stack.size() >= 1);
+            node_stack.pop_back();
+            node_stack.emplace_back(
+                std::make_shared<regex::basic_node>(new_symbol));
+          }
+        }
+
+        // character-class-element -> 'printable-ASCII except backslash and ]'
+        if (head == "character-class-element") {
+          if (finish_production && body[0].is_terminal()) {
+            class_content.push_back(*(body[0].get_terminal_ptr()));
+          }
+        }
+
+        if (head == "rprimary") {
+          // rprimary -> 'non-operator-char'
+          if (finish_production && body.size() == 1 && body[0].is_terminal()) {
+            auto symbol = *(body[0].get_terminal_ptr());
+            if (symbol == '.') {
+              node_stack.emplace_back(
+                  make_complemented_character_class({'\n', '\r'}));
+            } else {
+              node_stack.emplace_back(std::make_shared<regex::basic_node>(
+                  *(body[0].get_terminal_ptr())));
+            }
+          }
+          // rprimary -> '[' character-class ']'
+          if (body[0].is_terminal() && *(body[0].get_terminal_ptr()) == '[') {
+            if (pos == 1) {
+              in_class = true;
+              class_content.clear();
+            } else if (pos == 3) {
+              in_class = false;
+              const auto class_size = class_content.size();
+              assert(class_size != 0);
+
+              if (class_size == 1) {
+                node_stack.emplace_back(
+                    std::make_shared<regex::basic_node>(class_content[0]));
+                return;
+              }
+
+              std::set<symbol_type> symbol_set;
+
+              size_t i = 0;
+              bool complemented = false;
+
+              if (class_content[0] == '^') {
+                complemented = true;
+                i++;
+              }
+
+              while (i < class_size) {
+                const symbol_type cur_symbol = class_content[i];
+
+                if (i + 2 < class_size && class_content[i + 1] == '-') {
+                  auto end_symbol = class_content[i + 2];
+
+                  if (cur_symbol > end_symbol) {
+                    throw cyy::computation::exception::no_regular_expression(
+                        std::string("invalid character range ") +
+                        static_cast<char>(cur_symbol) + '-' +
+                        static_cast<char>(end_symbol));
+                  }
+
+                  for (symbol_type j = cur_symbol; j <= end_symbol; j++) {
+                    symbol_set.emplace(j);
+                  }
+                  i += 3;
+                  continue;
+                }
+                symbol_set.insert(cur_symbol);
+                i++;
+              }
+
+              if (complemented) {
+                node_stack.push_back(
+                    make_complemented_character_class(symbol_set));
+                return;
+              }
+              node_stack.push_back(make_character_class(symbol_set));
+              return;
+            }
+          }
+        }
+        if (head == "closure-operator" && finish_production) {
+          auto const &inner_tree = node_stack.back();
+          syntax_node_ptr node;
+          auto closure_operator = *(body[0].get_terminal_ptr());
+          if (closure_operator == '*') {
+            node = std::make_shared<regex::kleene_closure_node>(inner_tree);
+          } else if (closure_operator == '+') {
+            node = std::make_shared<regex::concat_node>(
+                inner_tree,
+                std::make_shared<regex::kleene_closure_node>(inner_tree));
+          } else if (closure_operator == '?') {
+            node = std::make_shared<regex::union_node>(
+                std::make_shared<regex::epsilon_node>(), inner_tree);
+          } else {
+            assert(0);
+          }
+          node_stack.back() = node;
+        }
+
+        if (head == "rterm'") {
+          // rterm' -> rfactor rterm'
+          if (body.size() == 2 && pos == 1) {
+            assert(node_stack.size() >= 2);
+            auto right_node = node_stack.back();
+            node_stack.pop_back();
+            auto left_node = node_stack.back();
+            node_stack.pop_back();
+            node_stack.emplace_back(
+                std::make_shared<regex::concat_node>(left_node, right_node));
+          }
+        }
+
+        if (head == "rexpr'") {
+          // rexpr' -> '|' rterm rexpr'
+          if (body.size() == 3 && pos == 2) {
+            assert(node_stack.size() >= 2);
+            auto right_node = node_stack.back();
+            node_stack.pop_back();
+            auto left_node = node_stack.back();
+            node_stack.pop_back();
+            node_stack.emplace_back(
+                std::make_shared<regex::union_node>(left_node, right_node));
+          }
+        }
+      });
+
+  if (!parse_res) {
+    throw cyy::computation::exception::no_regular_expression("");
+  }
+
+  assert(node_stack.size() == 1);
+  return node_stack[0];
+}
+
+std::shared_ptr<regex::syntax_node>
+regex::make_character_class(const std::set<symbol_type> &symbol_set) const {
   std::shared_ptr<regex::syntax_node> root{};
   for (auto const symbol : symbol_set) {
     if (!root) {
@@ -103,9 +309,7 @@ regex::make_character_class(const std::set<symbol_type> &symbol_set) const {
     }
   }
 
-  if (!root) {
-    assert(0);
-  }
+  assert(root);
   return root;
 }
 
@@ -124,174 +328,4 @@ std::shared_ptr<regex::syntax_node> regex::make_complemented_character_class(
   return make_character_class(complemented_symbol_set);
 }
 
-std::shared_ptr<regex::syntax_node>
-regex::parse(symbol_string_view view) const {
-
-  auto parse_tree = get_grammar()->get_parse_tree(view);
-  if (!parse_tree) {
-    throw cyy::computation::exception::no_regular_expression("");
-  }
-
-  using syntax_node_ptr = std::shared_ptr<regex::syntax_node>;
-
-  auto parse_escape_sequence =
-      [](const CFG::parse_node_ptr &parse_node) -> symbol_type {
-    const auto second_terminal =
-        *(parse_node->children[1]->grammar_symbol.get_terminal_ptr());
-
-    switch (second_terminal) {
-    case 'f':
-      return '\f';
-    case 'n':
-      return '\n';
-    case 'r':
-      return '\r';
-    case 't':
-      return '\t';
-    case 'v':
-      return '\v';
-    default:
-      return second_terminal;
-    }
-  };
-
-  auto construct_syntax_tree =
-      [this, &parse_escape_sequence](
-          auto &&self,
-          const CFG::parse_node_ptr &root_parse_node) -> syntax_node_ptr {
-    std::shared_ptr<regex::syntax_node> root_syntax_node;
-
-    if (auto ptr = root_parse_node->grammar_symbol.get_nonterminal_ptr()) {
-      if (*ptr == "rexpr") {
-        if (root_parse_node->children.size() == 1) {
-          return self(self, root_parse_node->children[0]);
-        }
-        return std::make_shared<regex::union_node>(
-            self(self, root_parse_node->children[0]),
-            self(self, root_parse_node->children[2]));
-      } else if (*ptr == "rterm") {
-        if (root_parse_node->children.size() == 1) {
-          return self(self, root_parse_node->children[0]);
-        }
-        return std::make_shared<regex::concat_node>(
-            self(self, root_parse_node->children[0]),
-            self(self, root_parse_node->children[1]));
-      } else if (*ptr == "rfactor") {
-        auto inner_tree = self(self, root_parse_node->children[0]);
-        if (root_parse_node->children.size() == 1) {
-          return inner_tree;
-        }
-
-        const auto second_terminal =
-            *(root_parse_node->children[1]->grammar_symbol.get_terminal_ptr());
-
-        if (second_terminal == '*') {
-          return std::make_shared<regex::kleene_closure_node>(inner_tree);
-        } else if (second_terminal == '+') {
-          return std::make_shared<regex::concat_node>(
-              inner_tree,
-              std::make_shared<regex::kleene_closure_node>(inner_tree));
-        } else if (second_terminal == '?') {
-          return std::make_shared<regex::union_node>(
-              std::make_shared<regex::epsilon_node>(), inner_tree);
-        }
-      } else if (*ptr == "rprimary") {
-        if (root_parse_node->children[0]->grammar_symbol.is_nonterminal()) {
-          return self(self, root_parse_node->children[0]);
-        }
-
-        auto first_terminal =
-            *(root_parse_node->children[0]->grammar_symbol.get_terminal_ptr());
-        switch (first_terminal) {
-        case '(':
-          return self(self, root_parse_node->children[1]);
-        case '[':
-          return self(self, root_parse_node->children[1]);
-        case '.':
-          return make_complemented_character_class({'\n', '\r'});
-
-        default:
-          return std::make_shared<regex::basic_node>(first_terminal);
-        }
-      } else if (*ptr == "escape-sequence") {
-        return std::make_shared<regex::basic_node>(
-            parse_escape_sequence(root_parse_node));
-
-      } else if (*ptr == "character-class") {
-
-        std::vector<symbol_type> class_content;
-
-        auto cur_node = root_parse_node;
-        while (true) {
-          symbol_type cur_symbol = 0;
-
-          if (cur_node->children[0]->grammar_symbol.is_terminal()) {
-            cur_symbol =
-                *(cur_node->children[0]->grammar_symbol.get_terminal_ptr());
-            if (regex_alphabet->is_epsilon(cur_symbol)) {
-              break;
-            }
-          } else {
-            cur_symbol = parse_escape_sequence(cur_node->children[0]);
-          }
-          class_content.push_back(cur_symbol);
-
-          cur_node = cur_node->children[1];
-        }
-
-        const auto class_size = class_content.size();
-        if (class_size == 0) {
-          throw cyy::computation::exception::no_regular_expression(
-              "empty character class");
-        }
-
-        if (class_size == 1) {
-          return make_character_class({*(class_content.begin())});
-        }
-
-        std::set<symbol_type> symbol_set;
-
-        size_t i = 0;
-        bool complemented = false;
-
-        if (class_content[0] == '^') {
-          complemented = true;
-          i++;
-        }
-
-        while (i < class_size) {
-          const symbol_type cur_symbol = class_content[i];
-
-          if (i + 2 < class_size && class_content[i + 1] == '-') {
-            auto end_symbol = class_content[i + 2];
-
-            if (cur_symbol > end_symbol) {
-              throw cyy::computation::exception::no_regular_expression(
-                  std::string("invalid character range ") +
-                  static_cast<char>(cur_symbol) + '-' +
-                  static_cast<char>(end_symbol));
-            }
-
-            for (symbol_type j = cur_symbol; j <= end_symbol; j++) {
-              symbol_set.emplace(j);
-            }
-            i += 3;
-            continue;
-          }
-          symbol_set.insert(cur_symbol);
-          i++;
-        }
-
-        if (complemented) {
-          return make_complemented_character_class(symbol_set);
-        }
-        return make_character_class(symbol_set);
-      }
-    }
-    assert(0);
-    return {};
-  };
-
-  return construct_syntax_tree(construct_syntax_tree, parse_tree);
-}
 } // namespace cyy::computation
