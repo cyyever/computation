@@ -28,13 +28,7 @@ public:
     construct_parsing_table();
   }
 
-  bool parse(
-      symbol_string_view view,
-      const std::function<void(const CFG_production &)>
-          &match_nonterminal_callback,
-      const std::function<void(terminal_type)> &match_terminal_callback) const;
-
-  bool parse2(symbol_string_view view,
+  bool parse(symbol_string_view view,
               const std::function<void(const CFG_production &, size_t pos)>
                   &match_callback) const;
 

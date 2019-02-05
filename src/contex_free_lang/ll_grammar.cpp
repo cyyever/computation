@@ -5,9 +5,10 @@
  * \date 2018-03-04
  */
 
+#include <cassert>
+
 #include "ll_grammar.hpp"
 #include "../exception.hpp"
-#include <cassert>
 
 namespace cyy::computation {
 
@@ -54,64 +55,8 @@ void LL_grammar::construct_parsing_table() {
     }
   }
 }
+
 bool LL_grammar::parse(
-    symbol_string_view view,
-    const std::function<void(const CFG_production &)>
-        &match_nonterminal_callback,
-    const std::function<void(terminal_type)> &match_terminal_callback) const {
-
-  std::vector<grammar_symbol_type> stack{start_symbol};
-  const auto endmarker = alphabet->get_endmarker();
-  while (!stack.empty()) {
-    const auto terminal = view.empty() ? endmarker : view.front();
-    auto top_symbol = std::move(stack.back());
-    stack.pop_back();
-
-    if (auto ptr = top_symbol.get_terminal_ptr()) {
-      if (!alphabet->is_epsilon(*ptr)) {
-        if (terminal != *ptr) {
-          std::cerr << "symbol does not match terminal:";
-          alphabet->print(std::cerr, terminal);
-          alphabet->print(std::cerr, *ptr);
-          std::cout << std::endl;
-          return false;
-        }
-        view.remove_prefix(1);
-      }
-      match_terminal_callback(*ptr);
-      continue;
-    }
-
-    auto ptr = top_symbol.get_nonterminal_ptr();
-    auto it = parsing_table.find({terminal, *ptr});
-
-    if (it == parsing_table.end()) {
-      std::cerr << "no rule for parsing";
-      alphabet->print(std::cerr, terminal);
-      std::cerr << ' ' << *ptr;
-      std::cerr << std::endl;
-      return false;
-    }
-
-    for (auto rit = it->second.rbegin(); rit != it->second.rend(); rit++) {
-      stack.push_back(*rit);
-    }
-    match_nonterminal_callback(CFG_production{*ptr, it->second});
-  }
-
-  if (!view.empty()) {
-    std::cerr << "there are symbols remain after parse:";
-    for (auto const &terminal : view) {
-      alphabet->print(std::cerr, terminal);
-    }
-    std::cerr << std::endl;
-    return false;
-  }
-
-  return true;
-}
-
-bool LL_grammar::parse2(
     symbol_string_view view,
     const std::function<void(const CFG_production &, size_t pos)>
         &match_callback) const {
@@ -187,22 +132,26 @@ CFG::parse_node_ptr LL_grammar::get_parse_tree(symbol_string_view view) const {
 
   std::vector<parse_node_ptr> stack{root};
 
-  if (parse(view,
-            [&stack]([[maybe_unused]] auto const &production) {
-              auto node = std::move(stack.back());
-              stack.pop_back();
+  if (parse(view, [&stack](auto const &production, const auto pos) {
+        if (pos == 0) {
+          auto node = std::move(stack.back());
+          stack.pop_back();
 
-              for (auto const &grammar_symbol : production.get_body()) {
-                node->children.push_back(
-                    std::make_shared<parse_node>(grammar_symbol));
-              }
+          for (auto const &grammar_symbol : production.get_body()) {
+            node->children.push_back(
+                std::make_shared<parse_node>(grammar_symbol));
+          }
 
-              for (auto rit = node->children.rbegin();
-                   rit != node->children.rend(); rit++) {
-                stack.push_back(*rit);
-              }
-            },
-            [&stack]([[maybe_unused]] auto terminal) { stack.pop_back(); })) {
+          for (auto rit = node->children.rbegin(); rit != node->children.rend();
+               rit++) {
+            if ((*rit)->grammar_symbol.is_nonterminal()) {
+              stack.push_back(*rit);
+            }
+          }
+          return;
+        }
+      })) {
+    assert(stack.empty());
     return root;
   }
   return {};

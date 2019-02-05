@@ -71,7 +71,7 @@ TEST_CASE("LL(1) parse") {
 
   LL_grammar grammar("common_tokens", "E", productions);
 
-  auto parse_res = grammar.parse2(symbol_string{id, '+', id, '*', id},
+  auto parse_res = grammar.parse(symbol_string{id, '+', id, '*', id},
                                   [](const auto &production, auto pos) {});
   REQUIRE(parse_res);
 }

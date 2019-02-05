@@ -46,7 +46,7 @@ namespace cyy::computation {
    escape-sequence -> '\' printable-ASCII
    printable-ASCII -> 'printable-ASCII'
 */
-    const LL_grammar& regex::get_grammar() {
+const LL_grammar &regex::get_grammar() {
   static std::shared_ptr<LL_grammar> regex_grammar;
   if (regex_grammar) {
     return *regex_grammar;
@@ -133,7 +133,7 @@ regex::parse(symbol_string_view view) const {
 
   bool in_class = false;
   std::vector<symbol_type> class_content;
-  auto parse_res = get_grammar().parse2(
+  auto parse_res = get_grammar().parse(
       view, [&node_stack, &last_symbol, &escape_symbol, &in_class,
              &class_content, this](auto const &production, auto const &pos) {
         auto const &head = production.get_head();
