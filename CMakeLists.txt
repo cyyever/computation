@@ -18,7 +18,7 @@ if(BUILD_TEST)
   add_subdirectory(test)
 endif()
 
-option(BUILD_FUZZING "Build fuzzing" OFF)
+option(BUILD_FUZZING "Build fuzzing" ON)
 if(BUILD_FUZZING)
   add_subdirectory(fuzz_test)
 endif()
