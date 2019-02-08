@@ -20,7 +20,6 @@ void CFG_production::print(std::ostream &os, const ALPHABET &alphabet) const {
     os << ' ';
   }
   os << '\n';
-  return;
 }
 
 } // namespace cyy::computation
