@@ -37,8 +37,10 @@ namespace cyy::computation {
    rprimary -> '(' rexpr ')'
    rprimary -> '[' character-class ']'
 
-   character-class -> character-class-element character-class
-   character-class -> epsilon
+   character-class -> character-class-element character-class'
+
+   character-class' -> character-class-element character-class'
+   character-class' -> epsilon
 
    character-class-element -> 'printable-ASCII except backslash and ]'
    character-class-element -> escape-sequence
@@ -80,7 +82,10 @@ const LL_grammar &regex::get_grammar() {
   };
 
   productions["character-class"] = {
-      {"character-class-element", "character-class"}, {epsilon}};
+      {"character-class-element", "character-class'"} };
+
+  productions["character-class'"] = {
+      {"character-class-element", "character-class'"}, {epsilon}};
 
   productions["character-class-element"] = {{"escape-sequence"}};
 
@@ -158,7 +163,7 @@ regex::parse(symbol_string_view view) const {
             class_content.push_back(new_symbol);
           } else {
             if (new_symbol != last_symbol)
-              assert(node_stack.size() >= 1);
+              assert(!node_stack.empty());
             node_stack.pop_back();
             node_stack.emplace_back(
                 std::make_shared<regex::basic_node>(new_symbol));
