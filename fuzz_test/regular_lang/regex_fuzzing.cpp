@@ -3,10 +3,9 @@
  *
  * \brief 测试正則
  */
-#include <iostream>
-
-#include "../src/lang/ascii.hpp"
-#include "../src/regular_lang/regex.hpp"
+#include "../../src/lang/ascii.hpp"
+#include "../../src/regular_lang/regex.hpp"
+#include "../helper.hpp"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
   cyy::computation::symbol_string expr;

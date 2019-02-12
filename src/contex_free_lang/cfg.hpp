@@ -54,7 +54,6 @@ public:
 
   bool operator==(const CFG &rhs) const;
 
-  std::ostream &operator<<(std::ostream &os) const;
 
   bool has_production(const CFG_production &production) const;
 
@@ -124,6 +123,7 @@ protected:
 
   void normalize_productions();
 
+  friend std::ostream & operator<<(std::ostream &os, const CFG& cfg);
 protected:
   std::shared_ptr<ALPHABET> alphabet;
   nonterminal_type start_symbol;

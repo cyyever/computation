@@ -1,4 +1,3 @@
-include(../cmake/test.cmake)
 find_package(doctest REQUIRED)
 
 file(GLOB test_sources

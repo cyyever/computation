@@ -19,11 +19,25 @@ CFG::CFG(const std::string &alphabet_name, nonterminal_type start_symbol_,
       start_symbol(std::move(start_symbol_)),
       productions(std::move(productions_)) {
 
+        puts("-----------");
+        std::cout<<(*this);
+        puts("-----------");
+
   eliminate_useless_symbols();
   normalize_productions();
 
   bool has_start_symbol = false;
-  for (auto &[head, bodies] : productions) {
+  std::cout<<"productions size is "<<productions.size()<<std::endl;
+        puts("+++++++++++");
+    for (auto const &[head, bodies] : productions) {
+      for (auto const &body : bodies) {
+        std::cout<<"body size is "<<body.size()<<std::endl;
+        CFG_production(head, body).print(std::cout, *alphabet);
+      }
+    }
+    std::cout<<std::endl;
+        puts("+++++++++++");
+  for (const auto &[head, bodies] : productions) {
     if (!has_start_symbol && head == start_symbol) {
       has_start_symbol = true;
     }
@@ -58,18 +72,19 @@ bool CFG::operator==(const CFG &rhs) const {
           start_symbol == rhs.start_symbol && productions == rhs.productions);
 }
 
-std::ostream &CFG::operator<<(std::ostream &os) const {
+std::ostream & operator<<(std::ostream &os, const CFG& cfg) {
   // by convention,we print start symbol first.
-  auto it = productions.find(start_symbol);
-  for (auto const &body : it->second) {
-    CFG_production(start_symbol, body).print(os, *alphabet);
-  }
-  for (auto const &[head, bodies] : productions) {
-    if (head == start_symbol) {
-      continue;
-    }
-    for (auto const &body : bodies) {
-      CFG_production(head, body).print(os, *alphabet);
+  for(size_t i=0;i<2;i++) {
+    for (auto const &[head, bodies] : cfg.productions) {
+      if (i==0 && head != cfg.start_symbol) {
+        continue;
+      }
+      if (i==1 && head == cfg.start_symbol) {
+        continue;
+      }
+      for (auto const &body : bodies) {
+        CFG_production(head, body).print(os, *cfg.alphabet);
+      }
     }
   }
   return os;
@@ -124,104 +139,65 @@ void CFG::eliminate_useless_symbols() {
     return;
   }
 
-  enum class nonterminal_state { unchecked, checking, useless, non_useless };
+  std::set<nonterminal_type> in_use_heads;
+  std::map<nonterminal_type, std::vector<std::set<nonterminal_type>>> depedency_heads;
 
-  std::map<nonterminal_type, nonterminal_state> states;
-  std::map<nonterminal_type, std::set<nonterminal_type>> depedency_heads;
-
-  for (const auto &[head, _] : productions) {
-    states[head] = nonterminal_state::unchecked;
+  for (const auto &[head, bodies] : productions) {
+    states[head] = nonterminal_state::checking;
+    for (const auto &body :bodies) {
+      std::set<nonterminal_type> body_depedency_heads;
+      for (auto const &symbol : body) {
+        auto nonterminal_ptr = *symbol.get_nonterminal_ptr();
+        if (!nonterminal_type) { //terminal
+          continue;
+        }
+        body_depedency_heads.insert(nonterminal_ptr);
+      }
+      if(body_depedency_heads.empty()) {
+        in_use_heads.emplace_back(head);
+      }
+      depedency_heads[head].emplace_back(std::move(body_depedency_heads));
+    }
   }
 
-  auto check_nonterminal = [&](auto &&self, const nonterminal_type &head,
-                               CFG &cfg) -> void {
-    states[head] = nonterminal_state::checking;
+  while(true) {
+    auto prev_size=in_use_heads.size();
+    for (auto &[head, bodies] : productions) {
+      auto &bodies_depedency_heads=depedency_heads[head];
+      for(size_t i=0;i<bodies.size();i++) {
+        std::set<nonterminal_type> diff;
+        std::set_difference(bodies_depedency_heads[i].begin(), bodies_depedency_heads[i].end(), in_use_heads.begin(), in_use_heads.end(), 
+            std::inserter(diff, diff.begin()));
+        if (diff.empty()) {
+          in_use_heads.insert(head);
+        }
+        bodies_depedency_heads[i].emplace(std::move(diff));
+      }
+    }
 
-    auto &bodies = cfg.productions[head];
-    for (auto &body : bodies) {
-      bool useless = false;
-      for (auto const &symbol : body) {
-        if (!symbol.is_nonterminal()) {
+    if (prev_size==in_use_heads.size()) {
+      break;
+    }
+  }
+
+    for (auto &[head, bodies] : productions) {
+      auto &bodies_depedency_heads=depedency_heads[head];
+      for(size_t i=0;i<bodies.size();i++) {
+        if(bodies_depedency_heads[i].empty()) {
           continue;
         }
-        auto nonterminal = *symbol.get_nonterminal_ptr();
-        auto it = states.find(nonterminal);
-        if (it == states.end()) {
-          body.clear();
-          useless = true;
-          break;
-        }
-        if (it->second == nonterminal_state::unchecked) {
-          self(self, nonterminal, cfg);
-          it = states.find(nonterminal);
-        }
-        if (it->second == nonterminal_state::useless) {
-          body.clear();
-          useless = true;
-          break;
-        }
-        if (it->second == nonterminal_state::checking) {
-          depedency_heads[nonterminal].insert(head);
-          useless = true;
-        }
+        bodies[i].clear();
       }
-      if (!useless) {
-        states[head] = nonterminal_state::non_useless;
-      }
+      bodies.erase(std::remove_if(bodies.begin(), bodies.end(),
+            [](const auto &body) { return body.empty(); }),
+          bodies.end());
     }
-    bodies.erase(std::remove_if(bodies.begin(), bodies.end(),
-                                [](const auto &body) { return body.empty(); }),
-                 bodies.end());
-    if (bodies.empty()) {
-      states[head] = nonterminal_state::useless;
-    }
+    productions.erase(std::remove_if(productions.begin(), productions.end(),
+          [](const auto &bodies) { return bodies.empty(); }),
+        productions.end());
 
-    if (states[head] != nonterminal_state::checking) {
-      for (auto const &depedency_head : depedency_heads[head]) {
-        if (states[depedency_head] == nonterminal_state::checking) {
-          states[depedency_head] = nonterminal_state::unchecked;
-          self(self, depedency_head, cfg);
-        }
-      }
-    }
-  };
 
-  decltype(productions) new_productions;
-  check_nonterminal(check_nonterminal, start_symbol, *this);
 
-  auto add_nonterminal = [&](auto &&self, const nonterminal_type &head,
-                             CFG &cfg) -> void {
-    auto &bodies = cfg.productions[head];
-    for (auto &body : bodies) {
-      if (body.empty()) {
-        continue;
-      }
-      bool add = true;
-      std::set<nonterminal_type> nonterminals;
-      for (auto const &symbol : body) {
-        if (!symbol.is_nonterminal()) {
-          continue;
-        }
-        const auto &nonterminal = *(symbol.get_nonterminal_ptr());
-        if (states[nonterminal] != nonterminal_state::non_useless) {
-          add = false;
-          break;
-        }
-        nonterminals.insert(nonterminal);
-      }
-      if (!add) {
-        continue;
-      }
-      new_productions[head].emplace_back(std::move(body));
-      body.clear();
-      for (auto const &nonterminal : nonterminals) {
-        self(self, nonterminal, cfg);
-      }
-    }
-  };
-
-  add_nonterminal(add_nonterminal, start_symbol, *this);
-  productions = std::move(new_productions);
 }
 
 void CFG::eliminate_left_recursion(std::vector<nonterminal_type> old_heads) {
@@ -419,7 +395,6 @@ CFG::first() const {
   if (!first_sets.empty()) {
     return first_sets;
   }
-  std::unordered_map<CFG::nonterminal_type, bool> flags;
   std::unordered_map<CFG::nonterminal_type, bool> epsilon_flags;
 
   // process all terminals
@@ -430,7 +405,6 @@ CFG::first() const {
         first_sets[head].insert(*terminal_ptr);
       }
     }
-    flags[head] = true;
   }
 
   bool add_new_terminal = true;

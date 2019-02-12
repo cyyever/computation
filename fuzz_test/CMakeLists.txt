@@ -1,7 +1,10 @@
-SET(test_progs regex_fuzzing)
+file(GLOB test_sources
+  ${CMAKE_CURRENT_SOURCE_DIR}/*/*.cpp
+  )
 
-FOREACH(test_prog ${test_progs})
-  ADD_EXECUTABLE(${test_prog} ${CMAKE_CURRENT_LIST_DIR}/${test_prog}.cpp)
-  TARGET_LINK_LIBRARIES(${test_prog} PRIVATE MyComputationLib)
+foreach(test_source IN LISTS test_sources)
+  get_filename_component(test_prog ${test_source} NAME_WE)
+  add_executable(${test_prog} ${test_source} ${CMAKE_CURRENT_SOURCE_DIR}/helper.cpp)
+  target_link_libraries(${test_prog} PRIVATE MyComputationLib)
   add_fuzzing(TARGET ${test_prog})
-ENDFOREACH()
+endforeach()
