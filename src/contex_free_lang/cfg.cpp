@@ -5,10 +5,11 @@
  * \date 2018-03-04
  */
 
-#include "cfg.hpp"
-
 #include <unordered_map>
 #include <utility>
+#include <cassert>
+
+#include "cfg.hpp"
 
 namespace cyy::computation {
 
@@ -19,24 +20,10 @@ CFG::CFG(const std::string &alphabet_name, nonterminal_type start_symbol_,
       start_symbol(std::move(start_symbol_)),
       productions(std::move(productions_)) {
 
-        puts("-----------");
-        std::cout<<(*this);
-        puts("-----------");
-
   eliminate_useless_symbols();
   normalize_productions();
 
   bool has_start_symbol = false;
-  std::cout<<"productions size is "<<productions.size()<<std::endl;
-        puts("+++++++++++");
-    for (auto const &[head, bodies] : productions) {
-      for (auto const &body : bodies) {
-        std::cout<<"body size is "<<body.size()<<std::endl;
-        CFG_production(head, body).print(std::cout, *alphabet);
-      }
-    }
-    std::cout<<std::endl;
-        puts("+++++++++++");
   for (const auto &[head, bodies] : productions) {
     if (!has_start_symbol && head == start_symbol) {
       has_start_symbol = true;
@@ -134,27 +121,75 @@ void CFG::normalize_productions() {
   productions = std::move(new_productions);
 }
 
+void CFG::eliminate_empty_productions() {
+  for (auto &[_, bodies] : productions) {
+    bodies.erase(std::remove_if(bodies.begin(), bodies.end(),
+          [](const auto &body) { return body.empty(); }),
+        bodies.end());
+  }
+  for(auto it=productions.begin(); it!=productions.end(); ) {
+    if (it->second.empty()) {
+      productions.erase(it++);
+    } else {
+      ++it;
+    }
+  }
+
+}
+
 void CFG::eliminate_useless_symbols() {
   if (productions.empty()) {
     return;
   }
 
+  //eliminate unreachable heads from start symbol
+  std::set<nonterminal_type> reachable_heads{start_symbol};
+  while(true) {
+    auto prev_size=reachable_heads.size();
+    for (const auto &[head, bodies] : productions) {
+      if(reachable_heads.count(head)==0) {
+        continue;
+      }
+      for (const auto &body :bodies) {
+        for (auto const &symbol : body) {
+          auto nonterminal_ptr = symbol.get_nonterminal_ptr();
+          if (!nonterminal_ptr) { //terminal
+            continue;
+          }
+          reachable_heads.insert(*nonterminal_ptr);
+        }
+      }
+    }
+    if(reachable_heads.size()==prev_size) {
+      break;
+    }
+  }
+
+  for(auto it=productions.begin(); it!=productions.end(); ) {
+    if (reachable_heads.count(it->first)==0) {
+      productions.erase(it++);
+    } else {
+      ++it;
+    }
+  }
+
   std::set<nonterminal_type> in_use_heads;
   std::map<nonterminal_type, std::vector<std::set<nonterminal_type>>> depedency_heads;
 
+  eliminate_empty_productions();
+
   for (const auto &[head, bodies] : productions) {
-    states[head] = nonterminal_state::checking;
     for (const auto &body :bodies) {
       std::set<nonterminal_type> body_depedency_heads;
       for (auto const &symbol : body) {
-        auto nonterminal_ptr = *symbol.get_nonterminal_ptr();
-        if (!nonterminal_type) { //terminal
+        auto nonterminal_ptr = symbol.get_nonterminal_ptr();
+        if (!nonterminal_ptr) { //terminal
           continue;
         }
-        body_depedency_heads.insert(nonterminal_ptr);
+        body_depedency_heads.insert(*nonterminal_ptr);
       }
       if(body_depedency_heads.empty()) {
-        in_use_heads.emplace_back(head);
+        in_use_heads.emplace(head);
       }
       depedency_heads[head].emplace_back(std::move(body_depedency_heads));
     }
@@ -171,7 +206,7 @@ void CFG::eliminate_useless_symbols() {
         if (diff.empty()) {
           in_use_heads.insert(head);
         }
-        bodies_depedency_heads[i].emplace(std::move(diff));
+        bodies_depedency_heads[i]=std::move(diff);
       }
     }
 
@@ -180,24 +215,18 @@ void CFG::eliminate_useless_symbols() {
     }
   }
 
-    for (auto &[head, bodies] : productions) {
-      auto &bodies_depedency_heads=depedency_heads[head];
-      for(size_t i=0;i<bodies.size();i++) {
-        if(bodies_depedency_heads[i].empty()) {
-          continue;
-        }
-        bodies[i].clear();
+
+  for (auto &[head, bodies] : productions) {
+    auto &bodies_depedency_heads=depedency_heads[head];
+    for(size_t i=0;i<bodies.size();i++) {
+      if(bodies_depedency_heads[i].empty()) {
+        continue;
       }
-      bodies.erase(std::remove_if(bodies.begin(), bodies.end(),
-            [](const auto &body) { return body.empty(); }),
-          bodies.end());
+      bodies[i].clear();
     }
-    productions.erase(std::remove_if(productions.begin(), productions.end(),
-          [](const auto &bodies) { return bodies.empty(); }),
-        productions.end());
+  }
 
-
-
+  eliminate_empty_productions();
 }
 
 void CFG::eliminate_left_recursion(std::vector<nonterminal_type> old_heads) {
@@ -464,6 +493,7 @@ CFG::first(const grammar_symbol_const_span_type &alpha) const {
 
     bool has_epsilon = false;
     auto it = first_sets.find(nonterminal);
+    assert(it!=first_sets.end());
     for (auto const &terminal : it->second) {
       if (alphabet->is_epsilon(terminal)) {
         has_epsilon = true;
