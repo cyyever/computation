@@ -7,14 +7,8 @@
 
 #pragma once
 
-#include <algorithm>
-#include <iterator>
-#include <map>
-#include <optional>
 #include <set>
 #include <string>
-#include <string_view>
-#include <variant>
 #include <vector>
 
 #include "../formal_grammar/grammar.hpp"

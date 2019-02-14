@@ -7,11 +7,6 @@
 
 #pragma once
 
-#include <functional>
-#include <set>
-#include <unordered_set>
-
-#include "../lang/lang.hpp"
 #include "lr_grammar.hpp"
 #include "lr_item.hpp"
 
