@@ -53,48 +53,32 @@ namespace cyy::computation {
 
   std::pair<DFA, std::unordered_map<uint64_t, std::set<uint64_t>>>
   NFA::to_DFA_with_mapping() const {
-    std::vector<std::set<uint64_t>> subsets{epsilon_closure({start_state})};
+    std::map<std::set<uint64_t>, uint64_t> subsets{
+        {epsilon_closure({start_state}), 0}};
+    uint64_t next_state = 1;
 
-    std::vector<bool> flags{false};
-    std::set<uint64_t> DFA_states{0};
     std::map<std::pair<uint64_t, symbol_type>, uint64_t> DFA_transition_table;
-    std::set<uint64_t> DFA_final_states;
-    for (size_t i = 0; i < flags.size(); i++) {
-      if (flags[i]) {
-        continue;
-      }
-      flags[i] = true;
+    for (auto it = subsets.begin(); it != subsets.end(); it++) {
       alphabet->foreach_symbol([&](auto const &a) {
-        auto res = move(subsets[i], a);
+        auto res = move(it->first, a);
 
-        size_t j = 0;
-        for (j = 0; j < flags.size(); j++) {
-          if (subsets[j] == res) {
-            break;
-          }
+        auto [it2, has_emplaced] = subsets.emplace(std::move(res), next_state);
+        if (has_emplaced) {
+          next_state++;
         }
-
-        // new state
-        if (j == flags.size()) {
-          subsets.push_back(res);
-          flags.push_back(false);
-          DFA_states.insert(j);
-        }
-
-        DFA_transition_table[{i, a}] = j;
+        DFA_transition_table[{it->second, a}] = it2->second;
       });
     }
 
-    for (size_t i = 0; i < subsets.size(); i++) {
-      if (contain_final_state(subsets[i])) {
-        DFA_final_states.insert(i);
-      }
-    }
-    assert(subsets.size() == DFA_states.size());
-
+    std::set<uint64_t> DFA_states;
+    std::set<uint64_t> DFA_final_states;
     std::unordered_map<uint64_t, std::set<uint64_t>> state_map;
-    for (size_t DFA_state = 0; DFA_state < subsets.size(); DFA_state++) {
-      state_map.emplace(DFA_state, std::move(subsets[DFA_state]));
+    for (auto const &[subset, DFA_state] : subsets) {
+      DFA_states.insert(DFA_state);
+      if (contain_final_state(subset)) {
+        DFA_final_states.insert(DFA_state);
+      }
+      state_map.emplace(DFA_state, subset);
     }
 
     return {{DFA_states, alphabet->get_name(), 0, DFA_transition_table,
