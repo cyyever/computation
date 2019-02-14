@@ -1,9 +1,10 @@
 /*!
- * \file cfg_test.cpp
+ * \file ll_grammar_fuzzing.cpp
  *
- * \brief 测试cfg
+ * \brief
+ * \author cyy
+ * \date 2019-02-14
  */
-
 
 #include "../../src/contex_free_lang/ll_grammar.hpp"
 #include "../../src/lang/common_tokens.hpp"
@@ -12,11 +13,11 @@
 using namespace cyy::computation;
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
-  auto productions=fuzzing_CFG_productions(Data,Size);
+  auto productions = fuzzing_CFG_productions(Data, Size);
 
   CFG::nonterminal_type start_symbol;
-  if(!productions.empty()) {
-    start_symbol=productions.begin()->first;
+  if (!productions.empty()) {
+    start_symbol = productions.begin()->first;
   }
 
   try {
