@@ -76,4 +76,5 @@ using symbol_string_view = std::basic_string_view<symbol_type>;
 using symbol_istringstream = std::basic_istringstream<symbol_type>;
 using symbol_istream = std::basic_istream<symbol_type>;
 
+void print_symbol_string(std::ostream &os, const symbol_string & str,const ALPHABET & alphabet);
 } // namespace cyy::computation

@@ -27,4 +27,12 @@ namespace cyy::computation {
     it->second->name = name;
     return it->second;
   }
+
+  void print_symbol_string(std::ostream &os, const symbol_string &str,
+                           const ALPHABET &alphabet) {
+    for (auto const &c : str) {
+      alphabet.print(os, c);
+    }
+  }
+
 } // namespace cyy::computation

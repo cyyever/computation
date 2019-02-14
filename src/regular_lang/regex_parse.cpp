@@ -137,10 +137,12 @@ namespace cyy::computation {
     symbol_type last_symbol = '\0';
 
     bool in_class = false;
+    bool in_escape_sequence = false;
     std::vector<symbol_type> class_content;
     auto parse_res = get_grammar().parse(
         view, [&node_stack, &last_symbol, &escape_symbol, &in_class,
-               &class_content, this](auto const &production, auto const &pos) {
+               &in_escape_sequence, &class_content,
+               this](auto const &production, auto const &pos) {
           auto const &head = production.get_head();
           auto const &body = production.get_body();
           bool finish_production = (pos == body.size());
@@ -148,6 +150,11 @@ namespace cyy::computation {
           // printable-ASCII -> 'printable-ASCII'
           if (head == "printable-ASCII" && finish_production) {
             last_symbol = *(body[0].get_terminal_ptr());
+
+            if (in_escape_sequence) {
+              last_symbol = escape_symbol(last_symbol);
+            }
+
             if (in_class) {
               class_content.push_back(last_symbol);
             } else {
@@ -157,16 +164,11 @@ namespace cyy::computation {
           }
 
           // escape-sequence -> '\' printable-ASCII
-          if (head == "escape-sequence" && finish_production) {
-            auto new_symbol = escape_symbol(last_symbol);
-            if (in_class) {
-              class_content.push_back(new_symbol);
+          if (head == "escape-sequence") {
+            if (pos == 1) {
+              in_escape_sequence = true;
             } else {
-              if (new_symbol != last_symbol)
-                assert(!node_stack.empty());
-              node_stack.pop_back();
-              node_stack.emplace_back(
-                  std::make_shared<regex::basic_node>(new_symbol));
+              in_escape_sequence = false;
             }
           }
 
