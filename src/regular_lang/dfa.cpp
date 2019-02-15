@@ -31,20 +31,20 @@ namespace cyy::computation {
       return false;
     }
 
-    std::map<uint64_t, uint64_t> state_map{{start_state, rhs.start_state}};
-    std::map<uint64_t, bool> check_flags{{start_state, false}};
+    std::map<state_type, state_type> state_map{{start_state, rhs.start_state}};
+    std::map<state_type, bool> check_flags{{start_state, false}};
     while (true) {
 
       bool new_mapping = false;
 
       for (auto const &[pair, my_next_state] : transition_table) {
-        auto const &[my_state, my_next_symbol] = pair;
+        auto const &[my_next_symbol, my_state] = pair;
         auto it = state_map.find(my_state);
         if (it == state_map.end()) {
           continue;
         }
 
-        auto it2 = rhs.transition_table.find({it->second, my_next_symbol});
+        auto it2 = rhs.transition_table.find({my_next_symbol, it->second});
         if (it2 == rhs.transition_table.end()) {
           return false;
         }
@@ -78,13 +78,13 @@ namespace cyy::computation {
   }
 
   DFA DFA::minimize() const {
-    std::set<uint64_t> non_final_states;
+    std::set<state_type> non_final_states;
     std::set_difference(
         states.begin(), states.end(), final_states.begin(), final_states.end(),
         std::inserter(non_final_states, non_final_states.end()));
 
-    std::vector<std::set<uint64_t>> groups{non_final_states, final_states};
-    std::map<uint64_t, size_t> state_location;
+    std::vector<std::set<state_type>> groups{non_final_states, final_states};
+    std::map<state_type, size_t> state_location;
 
     while (true) {
       for (size_t i = 0; i < groups.size(); i++) {
@@ -139,11 +139,10 @@ namespace cyy::computation {
       }
       groups = std::move(new_groups);
     }
-    uint64_t minimize_DFA_start_state{};
-    std::set<uint64_t> minimize_DFA_states;
-    std::set<uint64_t> minimize_DFA_final_states;
-    std::map<std::pair<uint64_t, symbol_type>, uint64_t>
-        minimize_DFA_transition_table;
+    state_type minimize_DFA_start_state{};
+    std::set<state_type> minimize_DFA_states;
+    std::set<state_type> minimize_DFA_final_states;
+    transition_table_type minimize_DFA_transition_table;
     for (size_t i = 0; i < groups.size(); i++) {
       minimize_DFA_states.insert(i);
       if (groups[i].count(this->start_state) != 0) {
@@ -160,7 +159,7 @@ namespace cyy::computation {
       alphabet->foreach_symbol([&](auto const &a) {
         auto next_state = move(*(groups[i].begin()), a).value();
 
-        minimize_DFA_transition_table[{i, a}] = state_location[next_state];
+        minimize_DFA_transition_table[{a, i}] = state_location[next_state];
       });
     }
     return {minimize_DFA_states, alphabet->get_name(), minimize_DFA_start_state,

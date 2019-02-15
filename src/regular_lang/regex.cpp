@@ -26,9 +26,9 @@ namespace cyy::computation {
     std::vector<bool> flags{false};
     std::vector<std::set<uint64_t>> position_sets{
         syntax_tree_with_endmarker->first_pos()};
-    std::set<uint64_t> DFA_states{0};
-    std::map<std::pair<uint64_t, symbol_type>, uint64_t> DFA_transition_table;
-    std::set<uint64_t> DFA_final_states;
+    std::set<DFA::state_type> DFA_states{0};
+    DFA::transition_table_type DFA_transition_table;
+    std::set<DFA::state_type> DFA_final_states;
     for (size_t i = 0; i < flags.size(); i++) {
       if (flags[i]) {
         continue;
@@ -59,7 +59,7 @@ namespace cyy::computation {
           DFA_states.insert(j);
         }
 
-        DFA_transition_table[{i, a}] = j;
+        DFA_transition_table[{a, i}] = j;
       });
     }
 

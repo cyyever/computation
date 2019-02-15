@@ -57,20 +57,7 @@ public:
 
   auto get_productions() const noexcept -> const auto & { return productions; }
 
-  std::set<terminal_type> get_terminals() const {
-    std::set<terminal_type> terminals;
-    for (auto const &[_, bodies] : productions) {
-      for (auto const &body : bodies) {
-        for (auto const &symbol : body) {
-          if (auto ptr = symbol.get_terminal_ptr();
-              ptr && !alphabet->is_epsilon(*ptr)) {
-            terminals.insert(*ptr);
-          }
-        }
-      }
-    }
-    return terminals;
-  }
+  std::set<terminal_type> get_terminals() const; 
 
   void eliminate_useless_symbols();
 

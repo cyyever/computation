@@ -18,11 +18,11 @@ namespace cyy::computation {
 
 class NFA final : public finite_automaton {
 public:
-  NFA(const std::set<uint64_t> &states_, const std::string &alphabet_name,
-      uint64_t start_state_,
-      const std::map<std::pair<uint64_t, symbol_type>, std::set<uint64_t>>
-          &transition_table_,
-      const std::set<uint64_t> &final_states_)
+  using transition_table_type= std::map<std::pair< symbol_type,state_type>, std::set<state_type>>;
+  NFA(const std::set<state_type> &states_, const std::string &alphabet_name,
+      state_type start_state_,
+      const transition_table_type &transition_table_,
+      const std::set<state_type> &final_states_)
       : finite_automaton(states_, alphabet_name, start_state_, final_states_),
         transition_table(transition_table_) {}
 
@@ -36,11 +36,11 @@ public:
     final_states.merge(rhs.final_states);
     if (add_epsilon_transition) {
       auto epsilon = alphabet->get_epsilon();
-      transition_table[{start_state, epsilon}].insert(rhs.start_state);
+      transition_table[{ epsilon,start_state}].insert(rhs.start_state);
     }
   }
 
-  void replace_final_states(const std::set<uint64_t> &final_states_) {
+  void replace_final_states(const std::set<state_type> &final_states_) {
     for (auto const &final_state : final_states_) {
       if (!states.count(final_state)) {
         throw std::invalid_argument(std::string("unexisted start state ") +
@@ -67,10 +67,10 @@ public:
     return contain_final_state(s);
   }
 
-  std::set<uint64_t> move(const std::set<uint64_t> &T, symbol_type a) const;
+  std::set<state_type> move(const std::set<state_type> &T, symbol_type a) const;
 
   // use subset construction
-  std::pair<DFA, std::unordered_map<uint64_t, std::set<uint64_t>>>
+  std::pair<DFA, std::unordered_map<state_type, std::set<state_type>>>
   to_DFA_with_mapping() const;
   DFA to_DFA() const;
 
@@ -80,10 +80,10 @@ public:
   }
 
 private:
-  std::set<uint64_t> epsilon_closure(const std::set<uint64_t> &T) const;
+  std::set<state_type> epsilon_closure(const std::set<state_type> &T) const;
 
 private:
-  std::map<std::pair<uint64_t, symbol_type>, std::set<uint64_t>>
+    transition_table_type
       transition_table;
 };
 

@@ -85,6 +85,21 @@ namespace cyy::computation {
     return heads;
   }
 
+  std::set<CFG::terminal_type> CFG::get_terminals() const {
+    std::set<terminal_type> terminals;
+    for (auto const &[_, bodies] : productions) {
+      for (auto const &body : bodies) {
+        for (auto const &symbol : body) {
+          if (auto ptr = symbol.get_terminal_ptr();
+              ptr && !alphabet->is_epsilon(*ptr)) {
+            terminals.insert(*ptr);
+          }
+        }
+      }
+    }
+    return terminals;
+  }
+
   bool CFG::has_production(const CFG_production &production) const {
 
     auto it = productions.find(production.get_head());

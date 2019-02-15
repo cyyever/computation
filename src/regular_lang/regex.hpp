@@ -24,7 +24,7 @@ public:
     syntax_node() = default;
     virtual ~syntax_node() = default;
     virtual NFA to_NFA(const ALPHABET &alphabet,
-                       uint64_t start_state) const = 0;
+                       NFA::state_type start_state) const = 0;
     virtual bool nullable() const = 0;
     virtual void
     assign_position(std::map<uint64_t, symbol_type> &position_to_symbol) = 0;
@@ -36,7 +36,7 @@ public:
   class epsilon_node final : public syntax_node {
   public:
     explicit epsilon_node() = default;
-    NFA to_NFA(const ALPHABET &alphabet, uint64_t start_state) const override;
+    NFA to_NFA(const ALPHABET &alphabet, NFA::state_type start_state) const override;
     bool nullable() const noexcept override { return true; }
     void assign_position(
         std::map<uint64_t, symbol_type> &position_to_symbol) noexcept override;
@@ -50,7 +50,7 @@ public:
   class basic_node final : public syntax_node {
   public:
     explicit basic_node(symbol_type symbol_) noexcept : symbol(symbol_) {}
-    NFA to_NFA(const ALPHABET &alphabet, uint64_t start_state) const override;
+    NFA to_NFA(const ALPHABET &alphabet, NFA::state_type start_state) const override;
     bool nullable() const noexcept override { return false; }
     void assign_position(
         std::map<uint64_t, symbol_type> &position_to_symbol) override;
@@ -70,7 +70,7 @@ public:
         const std::shared_ptr<syntax_node> &left_node_,
         const std::shared_ptr<syntax_node> &right_node_) noexcept
         : left_node(left_node_), right_node(right_node_) {}
-    NFA to_NFA(const ALPHABET &alphabet, uint64_t start_state) const override;
+    NFA to_NFA(const ALPHABET &alphabet, NFA::state_type start_state) const override;
     bool nullable() const override {
       return left_node->nullable() || right_node->nullable();
     }
@@ -89,7 +89,7 @@ public:
         const std::shared_ptr<syntax_node> &left_node_,
         const std::shared_ptr<syntax_node> &right_node_) noexcept
         : left_node(left_node_), right_node(right_node_) {}
-    NFA to_NFA(const ALPHABET &alphabet, uint64_t start_state) const override;
+    NFA to_NFA(const ALPHABET &alphabet, NFA::state_type start_state) const override;
     bool nullable() const override {
       return left_node->nullable() && right_node->nullable();
     }
@@ -107,7 +107,7 @@ public:
     explicit kleene_closure_node(
         const std::shared_ptr<syntax_node> &inner_node_)
         : inner_node(inner_node_) {}
-    NFA to_NFA(const ALPHABET &alphabet, uint64_t start_state) const override;
+    NFA to_NFA(const ALPHABET &alphabet, NFA::state_type start_state) const override;
     bool nullable() const noexcept override { return true; }
     void assign_position(
         std::map<uint64_t, symbol_type> &position_to_symbol) override;
@@ -125,7 +125,7 @@ public:
     syntax_tree = parse(view);
   }
 
-  NFA to_NFA(uint64_t start_state = 0) const {
+  NFA to_NFA(NFA::state_type start_state = 0) const {
     return syntax_tree->to_NFA(*alphabet, start_state);
   }
 

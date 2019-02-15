@@ -18,11 +18,12 @@ namespace cyy::computation {
 
 class DFA final : public finite_automaton {
 public:
-  DFA(const std::set<uint64_t> &states_, const std::string &alphabet_name,
-      uint64_t start_state_,
-      const std::map<std::pair<uint64_t, symbol_type>, uint64_t>
+  using transition_table_type= std::map<std::pair< symbol_type,state_type>, state_type>;
+  DFA(const std::set<state_type> &states_, const std::string &alphabet_name,
+      state_type start_state_,
+      const transition_table_type
           &transition_table_,
-      const std::set<uint64_t> &final_states_)
+      const std::set<state_type> &final_states_)
       : finite_automaton(states_, alphabet_name, start_state_, final_states_),
         transition_table(transition_table_) {}
 
@@ -43,8 +44,8 @@ public:
 
   DFA minimize() const;
 
-  std::optional<uint64_t> move(uint64_t s, symbol_type a) const {
-    auto it = transition_table.find({s, a});
+  std::optional<state_type> move(state_type s, symbol_type a) const {
+    auto it = transition_table.find({a, s});
     if (it != transition_table.end()) {
       return {it->second};
     }
@@ -52,7 +53,7 @@ public:
   }
 
 private:
-  std::map<std::pair<uint64_t, symbol_type>, uint64_t> transition_table;
+  transition_table_type transition_table;
 };
 
 } // namespace cyy::computation

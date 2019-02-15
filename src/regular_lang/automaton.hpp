@@ -18,9 +18,10 @@ namespace cyy::computation {
 
 class finite_automaton {
 public:
-  finite_automaton(const std::set<uint64_t> &states_,
-                   const std::string &alphabet_name, uint64_t start_state_,
-                   const std::set<uint64_t> &final_states_)
+  using state_type=uint64_t;
+  finite_automaton(const std::set<state_type> &states_,
+                   const std::string &alphabet_name, state_type start_state_,
+                   const std::set<state_type> &final_states_)
       : alphabet(::cyy::computation::ALPHABET::get(alphabet_name)),
         states(states_), start_state(start_state_),
         final_states(final_states_) {
@@ -46,7 +47,7 @@ public:
   auto get_final_states() const noexcept -> auto const & {
     return final_states;
   }
-  uint64_t get_start_state() const noexcept { return start_state; }
+  state_type get_start_state() const noexcept { return start_state; }
 
   bool operator==(const finite_automaton &rhs) const {
     return (this == &rhs) ||
@@ -54,7 +55,7 @@ public:
             start_state == rhs.start_state && final_states == rhs.final_states);
   }
 
-  bool contain_final_state(const std::set<uint64_t> &T) const {
+  bool contain_final_state(const std::set<state_type> &T) const {
     for (const auto &f : final_states) {
       if (T.count(f) == 1) {
         return true;
@@ -63,15 +64,15 @@ public:
     return false;
   }
 
-  bool is_final_state(uint64_t final_state) const {
+  bool is_final_state(state_type final_state) const {
     return final_states.count(final_state) > 0;
   }
 
 protected:
   std::shared_ptr<ALPHABET> alphabet;
-  std::set<uint64_t> states;
-  uint64_t start_state;
-  std::set<uint64_t> final_states;
+  std::set<state_type> states;
+  state_type start_state;
+  std::set<state_type> final_states;
 };
 
 } // namespace cyy::computation
