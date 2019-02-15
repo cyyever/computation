@@ -12,6 +12,6 @@
 
 namespace cyy::computation {
 
-CFG NFA_to_CFG(const NFA &nfa);
+  CFG NFA_to_CFG(const NFA &nfa);
 
 } // namespace cyy::computation

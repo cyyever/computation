@@ -19,7 +19,7 @@ namespace cyy::computation {
       return false;
     }
     if (states.size() != rhs.states.size()) {
-      std::cout << "size1 " << states.size() << " size2=" << rhs.states.size()
+      std::cout << "size1=" << states.size() << " size2=" << rhs.states.size()
                 << std::endl;
       return false;
     }

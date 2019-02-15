@@ -11,7 +11,7 @@
 
 namespace cyy::computation {
 
-class ASCII final : public range_alphabet<0, 127> {};
+  class ASCII final : public range_alphabet<0, 127> {};
 
-class printable_ASCII final : public range_alphabet<32, 126> {};
+  class printable_ASCII final : public range_alphabet<32, 126> {};
 } // namespace cyy::computation

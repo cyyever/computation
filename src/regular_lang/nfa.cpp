@@ -23,7 +23,61 @@ namespace cyy::computation {
       }
     }
 
+    /*
+    std::set<state_type> res;
+    for(auto const & d:direct_reachable) {
+      res.merge(std::set<state_type>(epsilon_closure(d)));
+    }
+    return res;
+    */
+
+
     return epsilon_closure(direct_reachable);
+  }
+
+  const std::set<NFA::state_type> &NFA::epsilon_closure(state_type s) const {
+    if (!epsilon_closures.empty()) {
+      return epsilon_closures[s];
+    }
+
+    for (auto a : states) {
+      epsilon_closures[a].insert(a);
+    };
+
+    std::map<state_type, std::vector<state_type>> dependency;
+    std::set<state_type> unstable_states;
+    auto epsilon = alphabet->get_epsilon();
+    for (auto const &[p, next_states] : transition_table) {
+      if (p.first != epsilon) {
+        continue;
+      }
+      epsilon_closures[p.second].merge(std::set<state_type>(next_states));
+      for (auto next_state : next_states) {
+        dependency[next_state].push_back(p.second);
+      }
+      unstable_states.insert(p.second);
+    }
+
+    while (!unstable_states.empty()) {
+      auto it = unstable_states.begin();
+      auto unstable_state = *it;
+      unstable_states.erase(it);
+      for (auto prev_state : dependency[unstable_state]) {
+        std::set<state_type> diff;
+        auto &prev_epsilon_closure = epsilon_closures[prev_state];
+        auto &unstable_epsilon_closure = epsilon_closures[unstable_state];
+        std::set_difference(
+            unstable_epsilon_closure.begin(), unstable_epsilon_closure.end(),
+            prev_epsilon_closure.begin(), prev_epsilon_closure.end(),
+            std::inserter(diff, diff.begin()));
+
+        if (!diff.empty()) {
+          prev_epsilon_closure.merge(diff);
+          unstable_states.insert(prev_state);
+        }
+      }
+    }
+    return epsilon_closures[s];
   }
 
   std::set<NFA::state_type>
@@ -49,13 +103,19 @@ namespace cyy::computation {
       }
       stack = std::move(next_stack);
     }
+
+    if (T == std::set<state_type>{0}) {
+      for (auto a : res) {
+        std::cout << "epsilon_closures next_stack is " << (int)a << std::endl;
+      }
+    }
     return res;
   }
 
   std::pair<DFA, std::unordered_map<DFA::state_type, std::set<NFA::state_type>>>
   NFA::to_DFA_with_mapping() const {
     std::map<std::set<state_type>, state_type> subsets{
-        {epsilon_closure({start_state}), 0}};
+        {epsilon_closure(start_state), 0}};
     state_type next_state = 1;
 
     DFA::transition_table_type DFA_transition_table;
