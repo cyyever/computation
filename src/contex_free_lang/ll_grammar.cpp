@@ -24,7 +24,7 @@ namespace cyy::computation {
             if (it != follow_sets.end()) {
               for (auto const &follow_terminal : it->second) {
 
-                auto [it2, has_inserted] = parsing_table.emplace(
+                auto [it2, has_inserted] = parsing_table.try_emplace(
                     std::pair{follow_terminal, head}, body);
                 // not LL1
                 if (!has_inserted) {
@@ -41,7 +41,7 @@ namespace cyy::computation {
           }
 
           auto [it, has_inserted] =
-              parsing_table.emplace(std::pair{terminal, head}, body);
+              parsing_table.try_emplace(std::pair{terminal, head}, body);
           // not LL1
           if (!has_inserted) {
             std::cerr << "head and terminal confliction:" << head << ' ';

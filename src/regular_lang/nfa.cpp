@@ -62,7 +62,7 @@ namespace cyy::computation {
       alphabet->foreach_symbol([&](auto const &a) {
         auto res = move(it->first, a);
 
-        auto [it2, has_emplaced] = subsets.emplace(std::move(res), next_state);
+        auto [it2, has_emplaced] = subsets.try_emplace(std::move(res), next_state);
         if (has_emplaced) {
           next_state++;
         }
