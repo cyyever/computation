@@ -6,7 +6,6 @@
  */
 
 #include <cassert>
-#include <chrono>
 #include <vector>
 
 #include "../util.hpp"
@@ -14,10 +13,36 @@
 
 namespace cyy::computation {
 
-  std::pair<std::set<symbol_type>,
-            std::map<symbol_type, std::set<NFA::state_type>>>
-  NFA::move(const std::set<state_type> &T) const {
-    return {};
+  const std::set<symbol_type> &NFA::get_active_symbols() const {
+    if (active_symbols_opt) {
+      return active_symbols_opt.value();
+    }
+
+    auto epsilon = alphabet->get_epsilon();
+    std::set<symbol_type> active_symbols;
+    for (auto const &[p, _] : transition_table) {
+      if (p.first != epsilon) {
+        active_symbols.insert(p.first);
+      }
+    }
+    active_symbols_opt = std::move(active_symbols);
+    return active_symbols_opt.value();
+  }
+  const std::set<symbol_type> &NFA::get_inactive_symbols() const {
+    if (inactive_symbols_opt) {
+      return inactive_symbols_opt.value();
+    }
+
+    auto const &active_symbols = get_active_symbols();
+
+    std::set<symbol_type> inactive_symbols;
+    alphabet->foreach_symbol([&](auto const &a) {
+      if (active_symbols.count(a) == 0) {
+        inactive_symbols.insert(a);
+      }
+    });
+    inactive_symbols_opt = std::move(inactive_symbols);
+    return inactive_symbols_opt.value();
   }
 
   std::set<NFA::state_type> NFA::move(const std::set<state_type> &T,
@@ -44,8 +69,6 @@ namespace cyy::computation {
     if (it != epsilon_closures.end()) {
       return it->second;
     }
-    auto t1 = std::chrono::steady_clock::now();
-
     std::map<state_type, std::vector<state_type>> dependency;
     std::set<state_type> unstable_states{s};
     std::vector<state_type> stack{s};
@@ -75,14 +98,7 @@ namespace cyy::computation {
       epsilon_closures[unstable_state].insert(unstable_state);
     }
 
-    auto t3 = std::chrono::steady_clock::now();
     auto [sorted_states, remain_dependency] = topological_sort(dependency);
-    auto t4 = std::chrono::steady_clock::now();
-
-    std::cout << "sort took "
-              << std::chrono::duration_cast<std::chrono::milliseconds>(t4 - t3)
-                     .count()
-              << "us.\n";
 
     for (auto sorted_state : sorted_states) {
       for (auto prev_state : dependency[sorted_state]) {
@@ -102,9 +118,9 @@ namespace cyy::computation {
     }
 
     while (!unstable_states.empty()) {
-      auto it = unstable_states.begin();
-      auto unstable_state = *it;
-      unstable_states.erase(it);
+      auto it2 = unstable_states.begin();
+      auto unstable_state = *it2;
+      unstable_states.erase(it2);
       for (auto prev_state : remain_dependency[unstable_state]) {
         std::set<state_type> diff;
         auto &prev_epsilon_closure = epsilon_closures[prev_state];
@@ -120,11 +136,6 @@ namespace cyy::computation {
         }
       }
     }
-    auto t2 = std::chrono::steady_clock::now();
-    std::cout << "Printing took "
-              << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1)
-                     .count()
-              << "us.\n";
     return epsilon_closures[s];
   }
 
@@ -134,28 +145,29 @@ namespace cyy::computation {
         {epsilon_closure(start_state), 0}};
     state_type next_state = 1;
 
+    std::optional<state_type> empty_set_state;
     DFA::transition_table_type DFA_transition_table;
     for (auto it = subsets.begin(); it != subsets.end(); it++) {
-      auto t1 = std::chrono::steady_clock::now();
-      alphabet->foreach_symbol([&](auto const &a) {
-        auto res = move(it->first, a);
-        if (res.empty()) {
-          std::cout << "empty res" << std::endl;
+      for (auto a : get_inactive_symbols()) {
+        if (!empty_set_state) {
+          auto [_, has_emplaced] = subsets.try_emplace({}, next_state);
+          assert(has_emplaced);
+          empty_set_state = next_state;
+          next_state++;
         }
+        DFA_transition_table[{a, empty_set_state.value()}] =
+            empty_set_state.value();
+      }
 
+      for (auto a : get_active_symbols()) {
+        auto res = move(it->first, a);
         auto [it2, has_emplaced] =
             subsets.try_emplace(std::move(res), next_state);
         if (has_emplaced) {
           next_state++;
         }
         DFA_transition_table[{a, it->second}] = it2->second;
-      });
-      auto t2 = std::chrono::steady_clock::now();
-      std::cout << "move subset took "
-                << std::chrono::duration_cast<std::chrono::milliseconds>(t2 -
-                                                                         t1)
-                       .count()
-                << "us.\n";
+      };
     }
 
     std::set<state_type> DFA_states;

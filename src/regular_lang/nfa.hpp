@@ -39,6 +39,8 @@ namespace cyy::computation {
         transition_table[{epsilon, start_state}].insert(rhs.start_state);
       }
       epsilon_closures.clear();
+      active_symbols_opt.reset();
+      inactive_symbols_opt.reset();
     }
 
     void replace_final_states(const std::set<state_type> &final_states_) {
@@ -84,13 +86,14 @@ namespace cyy::computation {
   private:
     std::set<state_type> epsilon_closure(const std::set<state_type> &T) const;
     const std::set<NFA::state_type> &epsilon_closure(state_type s) const;
-    std::pair<std::set<symbol_type>,
-              std::map<symbol_type, std::set<NFA::state_type>>>
-    move(const std::set<state_type> &T) const;
+    const std::set<symbol_type> &get_inactive_symbols() const;
+    const std::set<symbol_type> &get_active_symbols() const;
 
   private:
     transition_table_type transition_table;
     mutable std::map<state_type, std::set<state_type>> epsilon_closures;
+    mutable std::optional<std::set<symbol_type>> active_symbols_opt;
+    mutable std::optional<std::set<symbol_type>> inactive_symbols_opt;
   };
 
 } // namespace cyy::computation
