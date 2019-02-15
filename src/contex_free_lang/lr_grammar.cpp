@@ -15,27 +15,26 @@ namespace cyy::computation {
     std::vector<parse_node_ptr> viable_prefix;
 
     const auto epsilon = alphabet->get_epsilon();
-    if (parse(
-            view,
-            [&viable_prefix](auto terminal) {
-              viable_prefix.push_back(std::make_shared<parse_node>(terminal));
-            },
+    if (parse(view,
+              [&viable_prefix](auto terminal) {
+                viable_prefix.push_back(std::make_shared<parse_node>(terminal));
+              },
 
-            [&viable_prefix, &parent, this, epsilon](auto const &production) {
-              parent = std::make_shared<parse_node>(production.get_head());
+              [&viable_prefix, &parent, this, epsilon](auto const &production) {
+                parent = std::make_shared<parse_node>(production.get_head());
 
-              if (production.is_epsilon(*alphabet)) {
-                parent->children.push_back(
-                    std::make_shared<parse_node>(epsilon));
-              } else {
-                const auto body_size = production.get_body().size();
-                parent->children = {
-                    std::move_iterator(viable_prefix.end() - body_size),
-                    std::move_iterator(viable_prefix.end())};
-                viable_prefix.resize(viable_prefix.size() - body_size);
-              }
-              viable_prefix.push_back(parent);
-            })) {
+                if (production.is_epsilon(*alphabet)) {
+                  parent->children.push_back(
+                      std::make_shared<parse_node>(epsilon));
+                } else {
+                  const auto body_size = production.get_body().size();
+                  parent->children = {
+                      std::move_iterator(viable_prefix.end() - body_size),
+                      std::move_iterator(viable_prefix.end())};
+                  viable_prefix.resize(viable_prefix.size() - body_size);
+                }
+                viable_prefix.push_back(parent);
+              })) {
       return parent;
     }
     return {};
