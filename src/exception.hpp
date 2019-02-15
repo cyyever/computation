@@ -11,36 +11,36 @@
 
 namespace cyy::computation::exception {
 
-class symbol_overflow : public std::invalid_argument {
-public:
-  using invalid_argument::invalid_argument;
-};
+  class symbol_overflow : public std::invalid_argument {
+  public:
+    using invalid_argument::invalid_argument;
+  };
 
-class no_finite_automaton : public std::invalid_argument {
-public:
-  using invalid_argument::invalid_argument;
-};
+  class no_finite_automaton : public std::invalid_argument {
+  public:
+    using invalid_argument::invalid_argument;
+  };
 
-class no_regular_expression : public std::invalid_argument {
-public:
-  using invalid_argument::invalid_argument;
-};
+  class no_regular_expression : public std::invalid_argument {
+  public:
+    using invalid_argument::invalid_argument;
+  };
 
-class no_LL_grammar : public std::invalid_argument {
-public:
-  using invalid_argument::invalid_argument;
-};
-class no_SLR_grammar : public std::invalid_argument {
-public:
-  using invalid_argument::invalid_argument;
-};
-class no_canonical_LR_grammar : public std::invalid_argument {
-public:
-  using invalid_argument::invalid_argument;
-};
+  class no_LL_grammar : public std::invalid_argument {
+  public:
+    using invalid_argument::invalid_argument;
+  };
+  class no_SLR_grammar : public std::invalid_argument {
+  public:
+    using invalid_argument::invalid_argument;
+  };
+  class no_canonical_LR_grammar : public std::invalid_argument {
+  public:
+    using invalid_argument::invalid_argument;
+  };
 
-class no_LALR_grammar : public std::invalid_argument {
-public:
-  using invalid_argument::invalid_argument;
-};
+  class no_LALR_grammar : public std::invalid_argument {
+  public:
+    using invalid_argument::invalid_argument;
+  };
 } // namespace cyy::computation::exception

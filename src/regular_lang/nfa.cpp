@@ -6,9 +6,11 @@
  */
 
 #include <cassert>
+#include <chrono>
 #include <vector>
 
 #include "nfa.hpp"
+#include "../util.hpp"
 
 namespace cyy::computation {
 
@@ -23,46 +25,85 @@ namespace cyy::computation {
       }
     }
 
-    /*
     std::set<state_type> res;
-    for(auto const & d:direct_reachable) {
-      res.merge(std::set<state_type>(epsilon_closure(d)));
+    for (auto const &d : direct_reachable) {
+      auto const &closure = epsilon_closure(d);
+      res.insert(closure.begin(), closure.end());
     }
     return res;
-    */
-
-
-    return epsilon_closure(direct_reachable);
   }
 
   const std::set<NFA::state_type> &NFA::epsilon_closure(state_type s) const {
-    if (!epsilon_closures.empty()) {
-      return epsilon_closures[s];
+    auto it = epsilon_closures.find(s);
+    if (it != epsilon_closures.end()) {
+      return it->second;
     }
-
-    for (auto a : states) {
-      epsilon_closures[a].insert(a);
-    };
+    auto t1 = std::chrono::steady_clock::now();
 
     std::map<state_type, std::vector<state_type>> dependency;
-    std::set<state_type> unstable_states;
+    std::set<state_type> unstable_states{s};
+    std::vector<state_type> stack{s};
     auto epsilon = alphabet->get_epsilon();
-    for (auto const &[p, next_states] : transition_table) {
-      if (p.first != epsilon) {
+    for (size_t i = 0; i < stack.size(); i++) {
+      auto unstable_state = stack[i];
+      auto it2 = transition_table.find({epsilon, unstable_state});
+      if (it2 == transition_table.end()) {
         continue;
       }
-      epsilon_closures[p.second].merge(std::set<state_type>(next_states));
-      for (auto next_state : next_states) {
-        dependency[next_state].push_back(p.second);
+
+      for (auto next_state : it2->second) {
+        auto it3 = epsilon_closures.find(next_state);
+        if (it3 != epsilon_closures.end()) {
+          epsilon_closures[unstable_state].insert(it3->second.begin(),
+                                                  it3->second.end());
+        } else {
+          if (unstable_states.insert(next_state).second) {
+            stack.push_back(next_state);
+          }
+          dependency[next_state].push_back(unstable_state);
+        }
       }
-      unstable_states.insert(p.second);
     }
+
+    for (auto unstable_state : unstable_states) {
+      epsilon_closures[unstable_state].insert(unstable_state);
+    }
+
+
+    auto t3 = std::chrono::steady_clock::now();
+    auto [sorted_states,remain_dependency]=topological_sort(dependency);
+    auto t4 = std::chrono::steady_clock::now();
+
+    std::cout << "sort took "
+              << std::chrono::duration_cast<std::chrono::milliseconds>(t4 - t3)
+                     .count()
+              << "us.\n";
+
+
+
+    for(auto sorted_state:sorted_states) {
+      for (auto prev_state : dependency[sorted_state]) {
+        std::set<state_type> diff;
+        auto &prev_epsilon_closure = epsilon_closures[prev_state];
+        auto &unstable_epsilon_closure = epsilon_closures[sorted_state];
+        std::set_difference(
+            unstable_epsilon_closure.begin(), unstable_epsilon_closure.end(),
+            prev_epsilon_closure.begin(), prev_epsilon_closure.end(),
+            std::inserter(diff, diff.begin()));
+
+        if (!diff.empty()) {
+          prev_epsilon_closure.merge(diff);
+        }
+      }
+      unstable_states.erase(sorted_state);
+    }
+
 
     while (!unstable_states.empty()) {
       auto it = unstable_states.begin();
       auto unstable_state = *it;
       unstable_states.erase(it);
-      for (auto prev_state : dependency[unstable_state]) {
+      for (auto prev_state : remain_dependency[unstable_state]) {
         std::set<state_type> diff;
         auto &prev_epsilon_closure = epsilon_closures[prev_state];
         auto &unstable_epsilon_closure = epsilon_closures[unstable_state];
@@ -77,39 +118,12 @@ namespace cyy::computation {
         }
       }
     }
+    auto t2 = std::chrono::steady_clock::now();
+    std::cout << "Printing took "
+              << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1)
+                     .count()
+              << "us.\n";
     return epsilon_closures[s];
-  }
-
-  std::set<NFA::state_type>
-  NFA::epsilon_closure(const std::set<state_type> &T) const {
-
-    auto stack = T;
-    auto res = T;
-    auto epsilon = alphabet->get_epsilon();
-
-    while (!stack.empty()) {
-      decltype(stack) next_stack;
-      for (auto const &t : stack) {
-        auto it = transition_table.find({epsilon, t});
-        if (it == transition_table.end()) {
-          continue;
-        }
-        for (auto const &u : it->second) {
-          if (res.count(u) == 0) {
-            next_stack.insert(u);
-            res.insert(u);
-          }
-        }
-      }
-      stack = std::move(next_stack);
-    }
-
-    if (T == std::set<state_type>{0}) {
-      for (auto a : res) {
-        std::cout << "epsilon_closures next_stack is " << (int)a << std::endl;
-      }
-    }
-    return res;
   }
 
   std::pair<DFA, std::unordered_map<DFA::state_type, std::set<NFA::state_type>>>
@@ -120,8 +134,12 @@ namespace cyy::computation {
 
     DFA::transition_table_type DFA_transition_table;
     for (auto it = subsets.begin(); it != subsets.end(); it++) {
+      auto t1 = std::chrono::steady_clock::now();
       alphabet->foreach_symbol([&](auto const &a) {
         auto res = move(it->first, a);
+        if(res.empty()) {
+        std::cout<<"empty res"<<std::endl;
+        }
 
         auto [it2, has_emplaced] =
             subsets.try_emplace(std::move(res), next_state);
@@ -130,6 +148,12 @@ namespace cyy::computation {
         }
         DFA_transition_table[{a, it->second}] = it2->second;
       });
+      auto t2 = std::chrono::steady_clock::now();
+      std::cout << "move subset took "
+                << std::chrono::duration_cast<std::chrono::milliseconds>(t2 -
+                                                                         t1)
+                       .count()
+                << "us.\n";
     }
 
     std::set<state_type> DFA_states;
