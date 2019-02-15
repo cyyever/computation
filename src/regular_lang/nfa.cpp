@@ -9,10 +9,16 @@
 #include <chrono>
 #include <vector>
 
-#include "nfa.hpp"
 #include "../util.hpp"
+#include "nfa.hpp"
 
 namespace cyy::computation {
+
+  std::pair<std::set<symbol_type>,
+            std::map<symbol_type, std::set<NFA::state_type>>>
+  NFA::move(const std::set<state_type> &T) const {
+    return {};
+  }
 
   std::set<NFA::state_type> NFA::move(const std::set<state_type> &T,
                                       symbol_type a) const {
@@ -69,9 +75,8 @@ namespace cyy::computation {
       epsilon_closures[unstable_state].insert(unstable_state);
     }
 
-
     auto t3 = std::chrono::steady_clock::now();
-    auto [sorted_states,remain_dependency]=topological_sort(dependency);
+    auto [sorted_states, remain_dependency] = topological_sort(dependency);
     auto t4 = std::chrono::steady_clock::now();
 
     std::cout << "sort took "
@@ -79,9 +84,7 @@ namespace cyy::computation {
                      .count()
               << "us.\n";
 
-
-
-    for(auto sorted_state:sorted_states) {
+    for (auto sorted_state : sorted_states) {
       for (auto prev_state : dependency[sorted_state]) {
         std::set<state_type> diff;
         auto &prev_epsilon_closure = epsilon_closures[prev_state];
@@ -97,7 +100,6 @@ namespace cyy::computation {
       }
       unstable_states.erase(sorted_state);
     }
-
 
     while (!unstable_states.empty()) {
       auto it = unstable_states.begin();
@@ -137,8 +139,8 @@ namespace cyy::computation {
       auto t1 = std::chrono::steady_clock::now();
       alphabet->foreach_symbol([&](auto const &a) {
         auto res = move(it->first, a);
-        if(res.empty()) {
-        std::cout<<"empty res"<<std::endl;
+        if (res.empty()) {
+          std::cout << "empty res" << std::endl;
         }
 
         auto [it2, has_emplaced] =

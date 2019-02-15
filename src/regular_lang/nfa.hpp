@@ -84,6 +84,9 @@ namespace cyy::computation {
   private:
     std::set<state_type> epsilon_closure(const std::set<state_type> &T) const;
     const std::set<NFA::state_type> &epsilon_closure(state_type s) const;
+    std::pair<std::set<symbol_type>,
+              std::map<symbol_type, std::set<NFA::state_type>>>
+    move(const std::set<state_type> &T) const;
 
   private:
     transition_table_type transition_table;
