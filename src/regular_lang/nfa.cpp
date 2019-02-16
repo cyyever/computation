@@ -69,7 +69,7 @@ namespace cyy::computation {
     if (it != epsilon_closures.end()) {
       return it->second;
     }
-    std::map<state_type, std::vector<state_type>> dependency;
+    std::map<state_type, std::set<state_type>> dependency;
     std::set<state_type> unstable_states{s};
     std::vector<state_type> stack{s};
     auto epsilon = alphabet->get_epsilon();
@@ -89,7 +89,7 @@ namespace cyy::computation {
           if (unstable_states.insert(next_state).second) {
             stack.push_back(next_state);
           }
-          dependency[next_state].push_back(unstable_state);
+          dependency[next_state].insert(unstable_state);
         }
       }
     }
