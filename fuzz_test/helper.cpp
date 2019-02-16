@@ -6,6 +6,7 @@
  * \date 2019-02-12
  */
 #include "helper.hpp"
+#include "../src/lang/lang.hpp"
 
 using namespace cyy::computation;
 std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
@@ -40,4 +41,66 @@ fuzzing_CFG_productions(const uint8_t *Data, size_t Size) {
     }
   }
   return productions;
+}
+
+NFA fuzzing_NFA(const uint8_t *Data, size_t Size) {
+
+  std::set<NFA::state_type> states;
+  NFA::state_type start_state = 0;
+  NFA::transition_table_type transition_table;
+  std::set<NFA::state_type> final_states;
+  auto alphabet = ALPHABET::get("ab_set");
+  size_t i = 0;
+  if (i < Size) {
+    auto state_num = Data[i];
+    i++;
+    while (i < Size && i < state_num) {
+      states.insert(Data[i]);
+      i++;
+    }
+  }
+  if (i < Size) {
+    auto state_num = Data[i];
+    i++;
+    while (i < Size && i < state_num) {
+      final_states.insert(Data[i]);
+      i++;
+    }
+  }
+
+  if (i < Size) {
+    start_state = Data[i];
+    i++;
+  }
+
+  while (i < Size) {
+    auto from_state = Data[i];
+    i++;
+
+    std::set<NFA::state_type> to_states;
+    if (i < Size) {
+      auto state_num = Data[i];
+      i++;
+      while (i < Size && i < state_num) {
+        to_states.insert(Data[i]);
+        i++;
+      }
+    }
+
+    if (i < Size) {
+      alphabet->foreach_symbol([&](auto s) {
+        if (s >= Data[i]) {
+          transition_table.try_emplace({s, from_state}, to_states);
+        }
+      });
+      i++;
+    }
+    if (i < Size) {
+      transition_table.try_emplace({alphabet->get_epsilon(), from_state},
+                                   to_states);
+      i++;
+    }
+  }
+  return NFA(states, alphabet->get_name(), start_state, transition_table,
+             final_states);
 }
