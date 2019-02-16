@@ -167,7 +167,7 @@ namespace cyy::computation {
           next_state++;
         }
         DFA_transition_table[{a, it->second}] = it2->second;
-      };
+      }
     }
 
     std::set<state_type> DFA_states;
