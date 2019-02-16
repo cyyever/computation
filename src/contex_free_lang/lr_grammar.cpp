@@ -49,7 +49,7 @@ namespace cyy::computation {
       construct_parsing_table();
     }
 
-    std::vector<uint64_t> stack{0};
+    std::vector<state_type> stack{0};
 
     const auto endmarker = alphabet->get_endmarker();
     while (true) {
@@ -67,9 +67,9 @@ namespace cyy::computation {
         break;
       }
 
-      if (std::holds_alternative<uint64_t>(it->second)) {
+      if (std::holds_alternative<state_type>(it->second)) {
         // shift
-        stack.push_back(std::get<uint64_t>(it->second));
+        stack.push_back(std::get<state_type>(it->second));
         shift_callback(terminal);
         view.remove_prefix(1);
         continue;

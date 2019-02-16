@@ -29,11 +29,6 @@ namespace cyy::computation {
 
       for (auto const &body : it->second) {
         LR_0_item new_kernel_item{{nonkernel_item, body}, 1};
-        /*
-        new_kernel_item.production.get_head() = nonkernel_item;
-        new_kernel_item.production.get_body() = body;
-        new_kernel_item.dot_pos = 1;
-        */
         res[body[0]].add_kernel_item(*this, std::move(new_kernel_item));
       }
     }
@@ -41,13 +36,14 @@ namespace cyy::computation {
     return res;
   }
 
-  std::pair<std::unordered_map<LR_0_item_set, uint64_t>,
-            std::map<std::pair<uint64_t, grammar_symbol_type>, uint64_t>>
+  std::pair<std::unordered_map<LR_0_item_set, SLR_grammar::state_type>,
+            std::map<std::pair<SLR_grammar::state_type, grammar_symbol_type>,
+                     SLR_grammar::state_type>>
   SLR_grammar::canonical_collection() const {
 
-    std::unordered_map<LR_0_item_set, uint64_t> unchecked_sets;
-    std::unordered_map<LR_0_item_set, uint64_t> collection;
-    std::map<std::pair<uint64_t, grammar_symbol_type>, uint64_t>
+    std::unordered_map<LR_0_item_set, state_type> unchecked_sets;
+    std::unordered_map<LR_0_item_set, state_type> collection;
+    std::map<std::pair<state_type, grammar_symbol_type>, state_type>
         goto_transitions;
 
     LR_0_item_set init_set;
@@ -56,7 +52,7 @@ namespace cyy::computation {
 
     unchecked_sets.emplace(std::move(init_set), 0);
 
-    uint64_t next_state = 1;
+    state_type next_state = 1;
 
     while (!unchecked_sets.empty()) {
 
@@ -90,10 +86,11 @@ namespace cyy::computation {
     auto endmarker = alphabet->get_endmarker();
 
     for (auto const &[p, next_state] : goto_transitions) {
-      if (auto ptr = p.second.get_nonterminal_ptr(); ptr) {
+      auto ptr = p.second.get_nonterminal_ptr();
+      if (ptr) {
         goto_table[{p.first, *ptr}] = next_state;
-      } else if (auto ptr = p.second.get_terminal_ptr(); ptr) {
-        action_table[{p.first, *ptr}] = next_state;
+      } else {
+        action_table[{p.first, *p.second.get_terminal_ptr()}] = next_state;
       }
     }
 

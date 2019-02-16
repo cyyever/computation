@@ -41,8 +41,9 @@ namespace cyy::computation {
     return res;
   }
 
-  std::pair<std::unordered_map<LR_1_item_set, uint64_t>,
-            std::map<std::pair<uint64_t, grammar_symbol_type>, uint64_t>>
+  std::pair<std::unordered_map<LR_1_item_set, LALR_grammar::state_type>,
+            std::map<std::pair<LALR_grammar::state_type, grammar_symbol_type>,
+                     LALR_grammar::state_type>>
   LALR_grammar::canonical_collection() const {
     auto [canonical_LR_0_collection, SLR_goto_transitions] =
         SLR_grammar(alphabet->get_name(), start_symbol, productions)
@@ -51,7 +52,7 @@ namespace cyy::computation {
     std::map<const LR_0_item *, std::set<CFG::terminal_type>> kernel_item_table;
     std::map<const LR_0_item *, std::vector<const LR_0_item *>>
         propagation_relation;
-    std::unordered_map<uint64_t, const LR_0_item_set *>
+    std::unordered_map<state_type, const LR_0_item_set *>
         reversed_canonical_LR_0_collection;
 
     for (auto const &[lr_0_item_set, state] : canonical_LR_0_collection) {
@@ -104,7 +105,7 @@ namespace cyy::computation {
       }
     }
 
-    std::unordered_map<LR_1_item_set, uint64_t> collection;
+    std::unordered_map<LR_1_item_set, state_type> collection;
 
     for (auto const &[lr_0_item_set, state] : canonical_LR_0_collection) {
       LR_1_item_set item_set;

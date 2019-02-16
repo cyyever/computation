@@ -36,12 +36,14 @@ namespace cyy::computation {
     return res;
   }
 
-  std::pair<std::unordered_map<LR_1_item_set, uint64_t>,
-            std::map<std::pair<uint64_t, grammar_symbol_type>, uint64_t>>
+  std::pair<
+      std::unordered_map<LR_1_item_set, canonical_LR_grammar::state_type>,
+      std::map<std::pair<canonical_LR_grammar::state_type, grammar_symbol_type>,
+               canonical_LR_grammar::state_type>>
   canonical_LR_grammar::canonical_collection() const {
-    std::unordered_map<LR_1_item_set, uint64_t> unchecked_sets;
-    std::unordered_map<LR_1_item_set, uint64_t> collection;
-    std::map<std::pair<uint64_t, grammar_symbol_type>, uint64_t>
+    std::unordered_map<LR_1_item_set, state_type> unchecked_sets;
+    std::unordered_map<LR_1_item_set, state_type> collection;
+    std::map<std::pair<state_type, grammar_symbol_type>, state_type>
         goto_transitions;
 
     const auto endmarker = alphabet->get_endmarker();
@@ -52,7 +54,7 @@ namespace cyy::computation {
         {endmarker});
     unchecked_sets.emplace(std::move(init_set), 0);
 
-    uint64_t next_state = 1;
+    state_type next_state = 1;
 
     while (!unchecked_sets.empty()) {
 
@@ -85,10 +87,11 @@ namespace cyy::computation {
     auto endmarker = alphabet->get_endmarker();
 
     for (auto const &[p, next_state] : goto_transitions) {
-      if (auto ptr = std::get_if<nonterminal_type>(&p.second); ptr) {
+      auto ptr = p.second.get_nonterminal_ptr();
+      if (ptr) {
         goto_table[{p.first, *ptr}] = next_state;
-      } else if (auto ptr = std::get_if<terminal_type>(&p.second); ptr) {
-        action_table[{p.first, *ptr}] = next_state;
+      } else {
+        action_table[{p.first, *p.second.get_terminal_ptr()}] = next_state;
       }
     }
 

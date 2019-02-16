@@ -20,8 +20,8 @@ namespace cyy::computation {
   public:
     using canonical_LR_grammar::canonical_LR_grammar;
 
-    std::pair<std::unordered_map<LR_1_item_set, uint64_t>,
-              std::map<std::pair<uint64_t, grammar_symbol_type>, uint64_t>>
+    std::pair<std::unordered_map<LR_1_item_set, state_type>,
+              std::map<std::pair<state_type, grammar_symbol_type>, state_type>>
     canonical_collection() const override;
 
   private:

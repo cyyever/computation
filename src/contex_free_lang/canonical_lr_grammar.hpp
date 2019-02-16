@@ -18,8 +18,8 @@ namespace cyy::computation {
     using LR_grammar::LR_grammar;
 
     virtual std::pair<
-        std::unordered_map<LR_1_item_set, uint64_t>,
-        std::map<std::pair<uint64_t, grammar_symbol_type>, uint64_t>>
+        std::unordered_map<LR_1_item_set, state_type>,
+        std::map<std::pair<state_type, grammar_symbol_type>, state_type>>
     canonical_collection() const;
 
   protected:

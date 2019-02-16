@@ -20,6 +20,7 @@ namespace cyy::computation {
 
   public:
     using CFG::CFG;
+    using state_type = uint64_t;
 
     virtual ~LR_grammar() = default;
 
@@ -34,10 +35,10 @@ namespace cyy::computation {
     virtual void construct_parsing_table() const = 0;
 
   protected:
-    mutable std::map<std::pair<uint64_t, terminal_type>,
-                     std::variant<uint64_t, CFG_production, bool>>
+    mutable std::map<std::pair<state_type, terminal_type>,
+                     std::variant<state_type, CFG_production, bool>>
         action_table;
-    mutable std::map<std::pair<uint64_t, nonterminal_type>, uint64_t>
+    mutable std::map<std::pair<state_type, nonterminal_type>, state_type>
         goto_table;
   };
 } // namespace cyy::computation
