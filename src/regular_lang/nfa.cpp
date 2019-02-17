@@ -7,6 +7,8 @@
 
 #include <cassert>
 #include <vector>
+#include <iterator>
+#include <algorithm>
 
 #include "../util.hpp"
 #include "nfa.hpp"
