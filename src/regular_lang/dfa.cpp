@@ -5,8 +5,8 @@
  * \date 2018-03-03
  */
 
-#include <algorithm>
 #include <iterator>
+#include <range/v3/algorithm.hpp>
 #include <set>
 #include <vector>
 
@@ -77,9 +77,9 @@ namespace cyy::computation {
 
   DFA DFA::minimize() const {
     std::set<state_type> non_final_states;
-    std::set_difference(
-        states.begin(), states.end(), final_states.begin(), final_states.end(),
-        std::inserter(non_final_states, non_final_states.end()));
+    ranges::v3::set_difference(
+        states, final_states,
+        ranges::v3::inserter(non_final_states, non_final_states.begin()));
 
     std::vector<std::set<state_type>> groups{non_final_states, final_states};
     std::map<state_type, size_t> state_location;
@@ -129,7 +129,6 @@ namespace cyy::computation {
         }
         new_groups.insert(new_groups.end(),
                           std::move_iterator(sub_groups.begin()),
-
                           std::move_iterator(sub_groups.end()));
       }
       if (!has_new_group) {

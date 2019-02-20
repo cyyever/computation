@@ -6,9 +6,9 @@
  */
 
 #include <cassert>
-#include <vector>
 #include <iterator>
-#include <algorithm>
+#include <range/v3/algorithm.hpp>
+#include <vector>
 
 #include "../util.hpp"
 #include "nfa.hpp"
@@ -107,10 +107,9 @@ namespace cyy::computation {
         std::set<state_type> diff;
         auto &prev_epsilon_closure = epsilon_closures[prev_state];
         auto &unstable_epsilon_closure = epsilon_closures[sorted_state];
-        std::set_difference(
-            unstable_epsilon_closure.begin(), unstable_epsilon_closure.end(),
-            prev_epsilon_closure.begin(), prev_epsilon_closure.end(),
-            std::inserter(diff, diff.begin()));
+        ranges::v3::set_difference(unstable_epsilon_closure,
+                                   prev_epsilon_closure,
+                                   ranges::v3::inserter(diff, diff.begin()));
 
         if (!diff.empty()) {
           prev_epsilon_closure.merge(diff);
@@ -127,10 +126,9 @@ namespace cyy::computation {
         std::set<state_type> diff;
         auto &prev_epsilon_closure = epsilon_closures[prev_state];
         auto &unstable_epsilon_closure = epsilon_closures[unstable_state];
-        std::set_difference(
-            unstable_epsilon_closure.begin(), unstable_epsilon_closure.end(),
-            prev_epsilon_closure.begin(), prev_epsilon_closure.end(),
-            std::inserter(diff, diff.begin()));
+        ranges::v3::set_difference(unstable_epsilon_closure,
+                                   prev_epsilon_closure,
+                                   ranges::v3::inserter(diff, diff.begin()));
 
         if (!diff.empty()) {
           prev_epsilon_closure.merge(diff);
@@ -149,7 +147,8 @@ namespace cyy::computation {
 
     std::optional<state_type> empty_set_state;
     DFA::transition_table_type DFA_transition_table;
-    for (auto it = subsets.begin(); it != subsets.end(); it++) {
+
+    for (auto const &[subset, state] : subsets) {
       for (auto a : get_inactive_symbols()) {
         if (!empty_set_state) {
           auto [_, has_emplaced] = subsets.try_emplace({}, next_state);
@@ -162,13 +161,13 @@ namespace cyy::computation {
       }
 
       for (auto a : get_active_symbols()) {
-        auto res = move(it->first, a);
+        auto res = move(subset, a);
         auto [it2, has_emplaced] =
             subsets.try_emplace(std::move(res), next_state);
         if (has_emplaced) {
           next_state++;
         }
-        DFA_transition_table[{a, it->second}] = it2->second;
+        DFA_transition_table[{a, state}] = it2->second;
       }
     }
 

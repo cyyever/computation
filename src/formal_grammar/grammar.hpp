@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <gsl/span>
+#include <range/v3/span.hpp>
 #include <string>
 #include <string_view>
 #include <utility>
@@ -58,5 +58,5 @@ public:
 };
 
 using grammar_symbol_string_type = std::vector<grammar_symbol_type>;
-using grammar_symbol_const_span_type = gsl::span<const grammar_symbol_type>;
+using grammar_symbol_const_span_type = ranges::v3::span<const grammar_symbol_type>;
 } // namespace cyy::computation

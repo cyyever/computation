@@ -6,6 +6,7 @@
  */
 
 #include <cassert>
+#include <range/v3/algorithm.hpp>
 #include <unordered_map>
 #include <utility>
 
@@ -101,11 +102,10 @@ namespace cyy::computation {
   }
 
   bool CFG::has_production(const CFG_production &production) const {
-
     auto it = productions.find(production.get_head());
     return it != productions.end() &&
-           std::find(it->second.begin(), it->second.end(),
-                     production.get_body()) != it->second.end();
+           ranges::v3::find(it->second, production.get_body()) !=
+               it->second.end();
   }
 
   void CFG::normalize_productions() {
@@ -117,10 +117,10 @@ namespace cyy::computation {
           continue;
         }
 
-        auto it = std::remove_if(body.begin(), body.end(),
-                                 [this](const auto &grammal_symbol) {
-                                   return grammal_symbol.is_epsilon(*alphabet);
-                                 });
+        auto it =
+            ranges::v3::remove_if(body, [this](const auto &grammal_symbol) {
+              return grammal_symbol.is_epsilon(*alphabet);
+            });
         if (it > body.begin()) {
           bodies_set.emplace(std::move_iterator(body.begin()),
                              std::move_iterator(it));
@@ -138,10 +138,9 @@ namespace cyy::computation {
 
   void CFG::eliminate_empty_productions() {
     for (auto &[_, bodies] : productions) {
-      bodies.erase(
-          std::remove_if(bodies.begin(), bodies.end(),
-                         [](const auto &body) { return body.empty(); }),
-          bodies.end());
+      bodies.erase(ranges::v3::remove_if(
+                       bodies, [](const auto &body) { return body.empty(); }),
+                   bodies.end());
     }
     for (auto it = productions.begin(); it != productions.end();) {
       if (it->second.empty()) {
@@ -217,10 +216,9 @@ namespace cyy::computation {
         auto &bodies_depedency_heads = depedency_heads[head];
         for (size_t i = 0; i < bodies.size(); i++) {
           std::set<nonterminal_type> diff;
-          std::set_difference(bodies_depedency_heads[i].begin(),
-                              bodies_depedency_heads[i].end(),
-                              in_use_heads.begin(), in_use_heads.end(),
-                              std::inserter(diff, diff.begin()));
+          ranges::v3::set_difference(bodies_depedency_heads[i], in_use_heads,
+                                     ranges::v3::inserter(diff, diff.begin()));
+
           if (diff.empty()) {
             in_use_heads.insert(head);
           }
