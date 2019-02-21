@@ -6,6 +6,7 @@
  */
 
 #include "lang.hpp"
+#include "../exception.hpp"
 #include "ascii.hpp"
 #include "common_tokens.hpp"
 #include "set_alphabet.hpp"
@@ -22,7 +23,7 @@ namespace cyy::computation {
     };
     auto it = factory.find(name);
     if (it == factory.end()) {
-      throw std::invalid_argument(std::string("unkown alphabet name:") + name);
+      throw exception::unexisted_alphabet(name);
     }
     it->second->name = name;
     return it->second;

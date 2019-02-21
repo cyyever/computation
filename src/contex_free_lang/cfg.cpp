@@ -31,26 +31,28 @@ namespace cyy::computation {
       }
 
       if (bodies.empty()) {
-        throw std::invalid_argument(std::string("no body for head ") + head);
+        throw exception::invalid_CFG_production(
+            std::string("no body for head ") + head);
       }
 
       for (auto const &body : bodies) {
         if (body.empty()) {
-          throw std::invalid_argument(std::string("an empty body for head ") +
-                                      head);
+          throw exception::invalid_CFG_production(
+              std::string("an empty body for head ") + head);
         }
         for (auto const &symbol : body) {
           auto terminal_ptr = symbol.get_terminal_ptr();
           if (terminal_ptr && !alphabet->is_epsilon(*terminal_ptr) &&
               !alphabet->contain(*terminal_ptr)) {
-            throw std::invalid_argument(std::string("invalid terminal ") +
-                                        std::to_string(*terminal_ptr));
+            throw exception::invalid_CFG_production(
+                std::string("alphabet [") + alphabet->get_name() +
+                "] does not contain terminal " + std::to_string(*terminal_ptr));
           }
         }
       }
     }
     if (!has_start_symbol) {
-      throw std::invalid_argument("no productions for start symbol");
+      throw exception::no_CFG("no productions for start symbol");
     }
   }
 

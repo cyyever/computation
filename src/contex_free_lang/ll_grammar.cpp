@@ -12,7 +12,7 @@
 
 namespace cyy::computation {
 
-  void LL_grammar::construct_parsing_table() {
+  void LL_grammar::construct_parsing_table() const {
     auto follow_sets = follow();
     for (const auto &[head, bodies] : productions) {
       for (auto const &body : bodies) {
@@ -60,6 +60,10 @@ namespace cyy::computation {
       symbol_string_view view,
       const std::function<void(const CFG_production &, size_t pos)>
           &match_callback) const {
+
+    if (parsing_table.empty()) {
+      construct_parsing_table();
+    }
     std::vector<grammar_symbol_type> stack{start_symbol};
     std::vector<
         std::pair<decltype(this->parsing_table)::const_iterator, size_t>>
@@ -100,7 +104,7 @@ namespace cyy::computation {
       auto ptr = top_symbol.get_nonterminal_ptr();
       auto it = parsing_table.find({terminal, *ptr});
       if (it == parsing_table.end()) {
-        std::cerr << "no rule for parsing";
+        std::cerr << "no rule for parsing ";
         alphabet->print(std::cerr, terminal);
         std::cerr << ' ' << *ptr;
         std::cerr << std::endl;

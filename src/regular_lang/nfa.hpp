@@ -28,7 +28,7 @@ namespace cyy::computation {
 
     void add_sub_NFA(NFA rhs, bool add_epsilon_transition) {
       if (alphabet->get_name() != rhs.alphabet->get_name()) {
-        throw std::runtime_error("sub NFA has different alphabet name");
+        throw std::invalid_argument("sub NFA has different alphabet name");
       }
 
       states.merge(rhs.states);
@@ -46,8 +46,8 @@ namespace cyy::computation {
     void replace_final_states(const std::set<state_type> &final_states_) {
       for (auto const &final_state : final_states_) {
         if (!states.count(final_state)) {
-          throw std::invalid_argument(std::string("unexisted state ") +
-                                      std::to_string(final_state));
+          throw exception::unexisted_finite_automaton_state(
+              std::to_string(final_state));
         }
       }
       final_states = final_states_;
