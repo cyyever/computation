@@ -17,6 +17,9 @@ namespace cyy::computation {
     number,
     whitespace,
     id,
+    INT,
+    FLOAT,
+    record,
   };
 
   class common_tokens final
