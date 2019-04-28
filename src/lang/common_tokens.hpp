@@ -16,10 +16,10 @@ namespace cyy::computation {
     digit,
     number,
     whitespace,
-    id,
     INT,
     FLOAT,
     record,
+    id,
   };
 
   class common_tokens final
