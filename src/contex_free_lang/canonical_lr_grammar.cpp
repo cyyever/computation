@@ -5,8 +5,10 @@
  * \date 2018-03-04
  */
 
-#include "canonical_lr_grammar.hpp"
+#include <iostream>
+
 #include "../exception.hpp"
+#include "canonical_lr_grammar.hpp"
 
 namespace cyy::computation {
 
@@ -110,7 +112,7 @@ namespace cyy::computation {
         for (const auto &lookahead : lookahead_set) {
           // conflict
           if (action_table.count({state, lookahead}) != 0) {
-            std::cout << "conflict with follow_terminal" << lookahead
+            std::cerr << "conflict with follow_terminal" << lookahead
                       << std::endl;
             throw cyy::computation::exception::no_canonical_LR_grammar("");
           }

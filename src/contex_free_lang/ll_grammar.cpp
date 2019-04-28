@@ -6,6 +6,7 @@
  */
 
 #include <cassert>
+#include <iostream>
 
 #include "../exception.hpp"
 #include "ll_grammar.hpp"
@@ -80,7 +81,7 @@ namespace cyy::computation {
             std::cerr << "symbol does not match terminal:";
             alphabet->print(std::cerr, terminal);
             alphabet->print(std::cerr, *ptr);
-            std::cout << std::endl;
+            std::cerr << std::endl;
             return false;
           }
           view.remove_prefix(1);
