@@ -37,6 +37,9 @@ namespace cyy::computation {
       case common_token::record:
         os << "\"record\"";
         break;
+      case common_token::CLASS:
+        os << "\"class\"";
+        break;
       default:
         os << '\'' << static_cast<char>(symbol) << '\'';
         break;
