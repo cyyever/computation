@@ -21,10 +21,12 @@ namespace cyy::computation {
     FLOAT,
     record,
     CLASS,
+    __end,
   };
 
   class common_tokens final
-      : public range_alphabet<0, static_cast<symbol_type>(common_token::id)> {
+      : public range_alphabet<0, static_cast<symbol_type>(common_token::__end) -
+                                     1> {
 
   private:
     void print_symbol(std::ostream &os, symbol_type symbol) const override;
