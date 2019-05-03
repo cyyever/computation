@@ -6,6 +6,7 @@
  */
 
 #include "model_transform.hpp"
+#include "../regular_lang/automaton.hpp"
 
 namespace cyy::computation {
 
@@ -13,7 +14,7 @@ namespace cyy::computation {
     std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
         productions;
 
-    auto const state_to_nonterminal = [](symbol_type state) {
+    auto const state_to_nonterminal = [](finite_automaton::state_type state) {
       return std::string("S") + std::to_string(state);
     };
 
