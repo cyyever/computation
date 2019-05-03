@@ -30,7 +30,8 @@ namespace cyy::computation {
               } else {
                 const auto body_size = production.get_body().size();
                 parent->children = {
-                    std::move_iterator(viable_prefix.end() - body_size),
+                    std::move_iterator(viable_prefix.end() -
+                                       static_cast<ssize_t>(body_size)),
                     std::move_iterator(viable_prefix.end())};
                 viable_prefix.resize(viable_prefix.size() - body_size);
               }

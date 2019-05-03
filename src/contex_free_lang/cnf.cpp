@@ -39,14 +39,17 @@ namespace cyy::computation {
               if (i + 1 < body.size()) {
                 new_head = get_new_head(head);
                 productions[new_head].emplace_back(
-                    std::move_iterator(body.begin() + i + 1),
+                    std::move_iterator(body.begin() +
+                                       static_cast<ssize_t>(i + 1)),
                     std::move_iterator(body.end()));
-                body.erase(body.begin() + i + 1, body.end());
+                body.erase(body.begin() + static_cast<ssize_t>(i + 1),
+                           body.end());
                 body.emplace_back(new_head);
                 heads.insert(new_head);
               }
 
-              new_bodies.emplace_back(body.begin(), body.begin() + i);
+              new_bodies.emplace_back(body.begin(),
+                                      body.begin() + static_cast<ssize_t>(i));
 
               if (!new_head.empty()) {
                 new_bodies.back().push_back(new_head);
@@ -187,15 +190,18 @@ namespace cyy::computation {
             if (i + 1 < body.size()) {
               new_head = get_new_head(head);
               productions[new_head].emplace_back(
-                  std::move_iterator(body.begin() + i + 1),
+                  std::move_iterator(body.begin() +
+                                     static_cast<ssize_t>(i + 1)),
                   std::move_iterator(body.end()));
-              body.erase(body.begin() + i + 1, body.end());
+              body.erase(body.begin() + static_cast<ssize_t>(i + 1),
+                         body.end());
               body.emplace_back(new_head);
               heads.insert(new_head);
             }
 
             for (auto const &derived_nonterminal : it->second) {
-              new_bodies.emplace_back(body.begin(), body.begin() + i);
+              new_bodies.emplace_back(body.begin(),
+                                      body.begin() + static_cast<ssize_t>(i));
               new_bodies.back().push_back(derived_nonterminal);
               if (!new_head.empty()) {
                 new_bodies.back().push_back(new_head);

@@ -50,10 +50,10 @@ namespace cyy::computation {
     auto const &body = kernel_item.production.get_body();
     if (kernel_item.dot_pos < body.size()) {
 
-      add_nonkernel_item(
-          cfg,
-          grammar_symbol_const_span_type(body).subspan(kernel_item.dot_pos),
-          lookahead_set);
+      add_nonkernel_item(cfg,
+                         grammar_symbol_const_span_type(body).subspan(
+                             static_cast<ssize_t>(kernel_item.dot_pos)),
+                         lookahead_set);
     }
     kernel_items[kernel_item].merge(lookahead_set);
   }
