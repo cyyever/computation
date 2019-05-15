@@ -52,7 +52,7 @@ namespace cyy::computation {
 
       add_nonkernel_item(cfg,
                          grammar_symbol_const_span_type(body).subspan(
-                             static_cast<ssize_t>(kernel_item.dot_pos)),
+                             static_cast<std::ptrdiff_t>(kernel_item.dot_pos)),
                          lookahead_set);
     }
     kernel_items[kernel_item].merge(lookahead_set);

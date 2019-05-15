@@ -350,14 +350,15 @@ namespace cyy::computation {
           auto &body = bodies[index];
 
           productions[new_head].emplace_back(
-              std::move_iterator(body.begin() +
-                                 static_cast<ssize_t>(common_prefix.size())),
+              std::move_iterator(body.begin() + static_cast<std::ptrdiff_t>(
+                                                    common_prefix.size())),
               std::move_iterator(body.end()));
           if (productions[new_head].back().empty()) {
             productions[new_head].back().emplace_back(alphabet->get_epsilon());
           }
 
-          body.erase(body.begin() + static_cast<ssize_t>(common_prefix.size()),
+          body.erase(body.begin() +
+                         static_cast<std::ptrdiff_t>(common_prefix.size()),
                      body.end());
 
           body.emplace_back(new_head);
@@ -548,7 +549,7 @@ namespace cyy::computation {
             const auto &nonterminal = *(body[i].get_nonterminal_ptr());
 
             auto first_set = first(grammar_symbol_const_span_type(body).subspan(
-                static_cast<ssize_t>(i + 1)));
+                static_cast<std::ptrdiff_t>(i + 1)));
 
             bool has_epsilon = false;
 
