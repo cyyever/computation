@@ -9,6 +9,7 @@
 
 #include <map>
 #include <set>
+#include <string_view>
 
 #include "../contex_free_lang/ll_grammar.hpp"
 #include "dfa.hpp"
@@ -23,7 +24,7 @@ namespace cyy::computation {
     public:
       syntax_node() = default;
       virtual ~syntax_node() = default;
-      virtual NFA to_NFA(const ALPHABET &alphabet,
+      virtual NFA to_NFA(std::string_view alphabet_name,
                          NFA::state_type start_state) const = 0;
       virtual bool nullable() const = 0;
       virtual void
@@ -36,7 +37,7 @@ namespace cyy::computation {
     class epsilon_node final : public syntax_node {
     public:
       explicit epsilon_node() = default;
-      NFA to_NFA(const ALPHABET &alphabet,
+      NFA to_NFA(std::string_view alphabet_name,
                  NFA::state_type start_state) const override;
       bool nullable() const noexcept override { return true; }
       void assign_position(std::map<uint64_t, symbol_type>
@@ -51,7 +52,7 @@ namespace cyy::computation {
     class basic_node final : public syntax_node {
     public:
       explicit basic_node(symbol_type symbol_) noexcept : symbol(symbol_) {}
-      NFA to_NFA(const ALPHABET &alphabet,
+      NFA to_NFA(std::string_view alphabet_name,
                  NFA::state_type start_state) const override;
       bool nullable() const noexcept override { return false; }
       void assign_position(
@@ -72,7 +73,7 @@ namespace cyy::computation {
           const std::shared_ptr<syntax_node> &left_node_,
           const std::shared_ptr<syntax_node> &right_node_) noexcept
           : left_node(left_node_), right_node(right_node_) {}
-      NFA to_NFA(const ALPHABET &alphabet,
+      NFA to_NFA(std::string_view alphabet_name,
                  NFA::state_type start_state) const override;
       bool nullable() const override {
         return left_node->nullable() || right_node->nullable();
@@ -92,7 +93,7 @@ namespace cyy::computation {
           const std::shared_ptr<syntax_node> &left_node_,
           const std::shared_ptr<syntax_node> &right_node_) noexcept
           : left_node(left_node_), right_node(right_node_) {}
-      NFA to_NFA(const ALPHABET &alphabet,
+      NFA to_NFA(std::string_view alphabet_name,
                  NFA::state_type start_state) const override;
       bool nullable() const override {
         return left_node->nullable() && right_node->nullable();
@@ -111,7 +112,7 @@ namespace cyy::computation {
       explicit kleene_closure_node(
           const std::shared_ptr<syntax_node> &inner_node_)
           : inner_node(inner_node_) {}
-      NFA to_NFA(const ALPHABET &alphabet,
+      NFA to_NFA(std::string_view alphabet_name,
                  NFA::state_type start_state) const override;
       bool nullable() const noexcept override { return true; }
       void assign_position(
@@ -131,7 +132,7 @@ namespace cyy::computation {
     }
 
     NFA to_NFA(NFA::state_type start_state = 0) const {
-      return syntax_tree->to_NFA(*alphabet, start_state);
+      return syntax_tree->to_NFA(alphabet->get_name(), start_state);
     }
 
     //基于McNaughton-Yamada算法

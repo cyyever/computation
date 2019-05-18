@@ -11,6 +11,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <string_view>
 
 #include "../exception.hpp"
 #include "symbol.hpp"
@@ -40,7 +41,7 @@ namespace cyy::computation {
 
     bool operator!=(const ALPHABET &rhs) const { return !operator==(rhs); }
     static void regist(const std::string &name);
-    static std::shared_ptr<ALPHABET> get(const std::string &name);
+    static std::shared_ptr<ALPHABET> get(std::string_view name);
 
   private:
     virtual void print_symbol(std::ostream &os, symbol_type symbol) const = 0;

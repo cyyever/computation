@@ -10,6 +10,7 @@
 #include <map>
 #include <set>
 #include <string>
+#include <string_view>
 #include <unordered_map>
 
 #include "dfa.hpp"
@@ -22,7 +23,7 @@ namespace cyy::computation {
         std::map<std::pair<symbol_type, state_type>, std::set<state_type>>;
     using epsilon_transition_function_type =
         std::map<state_type, std::set<state_type>>;
-    NFA(const std::set<state_type> &states_, const std::string &alphabet_name,
+    NFA(const std::set<state_type> &states_, std::string_view alphabet_name,
         state_type start_state_,
         const transition_function_type &transition_function_,
         const std::set<state_type> &final_states_,

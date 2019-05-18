@@ -12,6 +12,7 @@
 #include <range/v3/algorithm.hpp>
 #include <set>
 #include <string>
+#include <string_view>
 
 #include "../lang/alphabet.hpp"
 
@@ -21,7 +22,7 @@ namespace cyy::computation {
   public:
     using state_type = uint64_t;
     finite_automaton(const std::set<state_type> &states_,
-                     const std::string &alphabet_name, state_type start_state_,
+                     std::string_view alphabet_name, state_type start_state_,
                      const std::set<state_type> &final_states_)
         : alphabet(::cyy::computation::ALPHABET::get(alphabet_name)),
           states(states_), start_state(start_state_),

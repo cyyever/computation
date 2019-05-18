@@ -9,10 +9,10 @@
 
 namespace cyy::computation {
 
-  NFA regex::basic_node::to_NFA(const ALPHABET &alphabet,
+  NFA regex::basic_node::to_NFA(std::string_view alphabet_name,
                                 NFA::state_type start_state) const {
     return {{start_state, start_state + 1},
-            alphabet.get_name(),
+            alphabet_name,
             start_state,
             {{{symbol, start_state}, {start_state + 1}}},
             {start_state + 1}};
@@ -31,10 +31,10 @@ namespace cyy::computation {
   std::set<uint64_t> regex::basic_node::first_pos() const { return {position}; }
   std::set<uint64_t> regex::basic_node::last_pos() const { return {position}; }
 
-  NFA regex::epsilon_node::to_NFA(const ALPHABET &alphabet,
+  NFA regex::epsilon_node::to_NFA(std::string_view alphabet_name,
                                   NFA::state_type start_state) const {
     return {{start_state, start_state + 1},
-            alphabet.get_name(),
+            alphabet_name,
             start_state,
             {},
             {start_state + 1},
@@ -48,18 +48,17 @@ namespace cyy::computation {
   std::set<uint64_t> regex::epsilon_node::first_pos() const { return {}; }
   std::set<uint64_t> regex::epsilon_node::last_pos() const { return {}; }
 
-  NFA regex::union_node::to_NFA(const ALPHABET &alphabet,
+  NFA regex::union_node::to_NFA(std::string_view alphabet_name,
                                 NFA::state_type start_state) const {
-    auto left_NFA = left_node->to_NFA(alphabet, start_state + 1);
+    auto left_NFA = left_node->to_NFA(alphabet_name, start_state + 1);
     auto &left_final_states = left_NFA.get_final_states();
 
     auto right_NFA =
-        right_node->to_NFA(alphabet, *(left_final_states.begin()) + 1);
+        right_node->to_NFA(alphabet_name, *(left_final_states.begin()) + 1);
     auto &right_final_states = right_NFA.get_final_states();
     auto final_state = (*right_final_states.begin()) + 1;
 
-    NFA nfa({start_state, final_state}, alphabet.get_name(), start_state, {},
-            {});
+    NFA nfa({start_state, final_state}, alphabet_name, start_state, {}, {});
     nfa.add_sub_NFA(left_NFA);
     nfa.add_epsilon_transition(start_state, {left_NFA.get_start_state()});
     nfa.add_sub_NFA(right_NFA);
@@ -94,14 +93,14 @@ namespace cyy::computation {
     return res;
   }
 
-  NFA regex::concat_node::to_NFA(const ALPHABET &alphabet,
+  NFA regex::concat_node::to_NFA(std::string_view alphabet_name,
                                  NFA::state_type start_state) const {
 
-    auto left_NFA = left_node->to_NFA(alphabet, start_state);
+    auto left_NFA = left_node->to_NFA(alphabet_name, start_state);
     const auto &left_final_states = left_NFA.get_final_states();
 
     auto right_NFA_start_state = *(left_final_states.begin());
-    auto right_NFA = right_node->to_NFA(alphabet, right_NFA_start_state);
+    auto right_NFA = right_node->to_NFA(alphabet_name, right_NFA_start_state);
     const auto &right_final_states = right_NFA.get_final_states();
     left_NFA.add_sub_NFA(right_NFA);
     left_NFA.replace_final_states(right_final_states);
@@ -148,15 +147,14 @@ namespace cyy::computation {
     return res;
   }
 
-  NFA regex::kleene_closure_node::to_NFA(const ALPHABET &alphabet,
+  NFA regex::kleene_closure_node::to_NFA(std::string_view alphabet_name,
                                          NFA::state_type start_state) const {
     const auto inner_start_state = start_state + 1;
-    auto inner_NFA = inner_node->to_NFA(alphabet, inner_start_state);
+    auto inner_NFA = inner_node->to_NFA(alphabet_name, inner_start_state);
     auto inner_final_states = inner_NFA.get_final_states();
     auto final_state = (*inner_final_states.begin()) + 1;
 
-    NFA nfa({start_state, final_state}, alphabet.get_name(), start_state, {},
-            {});
+    NFA nfa({start_state, final_state}, alphabet_name, start_state, {}, {});
     nfa.add_sub_NFA(inner_NFA);
     nfa.add_epsilon_transition(start_state, {inner_NFA.get_start_state()});
 
