@@ -25,7 +25,7 @@ namespace cyy::computation {
       return false;
     }
 
-    if (transition_table.size() != rhs.transition_table.size()) {
+    if (transition_function.size() != rhs.transition_function.size()) {
       return false;
     }
 
@@ -35,15 +35,15 @@ namespace cyy::computation {
 
       bool new_mapping = false;
 
-      for (auto const &[pair, my_next_state] : transition_table) {
+      for (auto const &[pair, my_next_state] : transition_function) {
         auto const &[my_next_symbol, my_state] = pair;
         auto it = state_map.find(my_state);
         if (it == state_map.end()) {
           continue;
         }
 
-        auto it2 = rhs.transition_table.find({my_next_symbol, it->second});
-        if (it2 == rhs.transition_table.end()) {
+        auto it2 = rhs.transition_function.find({my_next_symbol, it->second});
+        if (it2 == rhs.transition_function.end()) {
           return false;
         }
         auto rhs_next_state = it2->second;
@@ -139,7 +139,7 @@ namespace cyy::computation {
     state_type minimize_DFA_start_state{};
     std::set<state_type> minimize_DFA_states;
     std::set<state_type> minimize_DFA_final_states;
-    transition_table_type minimize_DFA_transition_table;
+    transition_function_type minimize_DFA_transition_function;
     for (size_t i = 0; i < groups.size(); i++) {
       minimize_DFA_states.insert(i);
       if (groups[i].count(this->start_state) != 0) {
@@ -156,10 +156,10 @@ namespace cyy::computation {
       alphabet->foreach_symbol([&](auto const &a) {
         auto next_state = move(*(groups[i].begin()), a).value();
 
-        minimize_DFA_transition_table[{a, i}] = state_location[next_state];
+        minimize_DFA_transition_function[{a, i}] = state_location[next_state];
       });
     }
     return {minimize_DFA_states, alphabet->get_name(), minimize_DFA_start_state,
-            minimize_DFA_transition_table, minimize_DFA_final_states};
+            minimize_DFA_transition_function, minimize_DFA_final_states};
   }
 } // namespace cyy::computation

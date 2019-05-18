@@ -7,7 +7,7 @@
  */
 #pragma once
 
-#include "lang.hpp"
+#include "alphabet.hpp"
 
 namespace cyy::computation {
 

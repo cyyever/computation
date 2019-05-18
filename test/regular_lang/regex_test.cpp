@@ -33,71 +33,38 @@ TEST_CASE("parse regex and to NFA") {
     symbol_string expr = U"a|b";
     regex reg("ab_set", expr);
 
-    auto epsilon = ALPHABET::get("ab_set")->get_epsilon();
     NFA nfa({0, 1, 2, 3, 4, 5}, "ab_set", 0,
             {
-
-                {{
-                     epsilon,
-                     0,
-                 },
-                 {1, 3}},
                 {{'a', 1}, {2}},
-                {{
-                     epsilon,
-                     2,
-                 },
-                 {5}},
                 {{'b', 3}, {4}},
-                {{
-                     epsilon,
-                     4,
-                 },
-                 {5}},
             },
-            {5});
+            {5},
+            {
+                {0, {1, 3}},
+                {2, {5}},
+                {4, {5}},
+            });
 
     CHECK(nfa == reg.to_NFA());
   }
 
   SUBCASE("kleene_closure_node") {
-
     symbol_string expr = U"(a|b)*";
     regex reg("ab_set", expr);
 
-    auto epsilon = ALPHABET::get("ab_set")->get_epsilon();
     NFA nfa({0, 1, 2, 3, 4, 5, 6, 7}, "ab_set", 0,
             {
-
-                {{
-                     epsilon,
-                     0,
-                 },
-                 {1, 7}},
-                {{
-                     epsilon,
-                     1,
-                 },
-                 {2, 4}},
                 {{'a', 2}, {3}},
-                {{
-                     epsilon,
-                     3,
-                 },
-                 {6}},
                 {{'b', 4}, {5}},
-                {{
-                     epsilon,
-                     5,
-                 },
-                 {6}},
-                {{
-                     epsilon,
-                     6,
-                 },
-                 {1, 7}},
             },
-            {7});
+            {7},
+            {
+                {0, {1, 7}},
+                {1, {2, 4}},
+                {3, {6}},
+                {5, {6}},
+                {6, {1, 7}},
+            });
 
     CHECK(nfa == reg.to_NFA());
   }
@@ -107,26 +74,23 @@ TEST_CASE("parse regex and to NFA") {
     symbol_string expr = U"(a|b)*abb";
     regex reg("ab_set", expr);
 
-    auto epsilon = ALPHABET::get("ab_set")->get_epsilon();
     NFA nfa({0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, "ab_set", 0,
             {
 
-                {{epsilon, 0}, {1, 7}},
-                {{epsilon, 1}, {2, 4}},
                 {{'a', 2}, {3}},
-                {{
-                     epsilon,
-                     3,
-                 },
-                 {6}},
                 {{'b', 4}, {5}},
-                {{epsilon, 5}, {6}},
-                {{epsilon, 6}, {1, 7}},
                 {{'a', 7}, {8}},
                 {{'b', 8}, {9}},
                 {{'b', 9}, {10}},
             },
-            {10});
+            {10},
+            {
+                {0, {1, 7}},
+                {1, {2, 4}},
+                {3, {6}},
+                {5, {6}},
+                {6, {1, 7}},
+            });
 
     CHECK(nfa == reg.to_NFA());
   }

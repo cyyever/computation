@@ -10,7 +10,7 @@
 #include <algorithm>
 #include <set>
 
-#include "lang.hpp"
+#include "alphabet.hpp"
 
 namespace cyy::computation {
 

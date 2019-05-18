@@ -1,5 +1,5 @@
 /*!
- * \file lang.hpp
+ * \file alphabet.hpp
  *
  * \author cyy
  * \date 2018-03-03

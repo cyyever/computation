@@ -5,11 +5,12 @@
  * \date 2018-03-03
  */
 
-#include "lang.hpp"
+#include "alphabet.hpp"
 #include "../exception.hpp"
 #include "ascii.hpp"
 #include "common_tokens.hpp"
 #include "set_alphabet.hpp"
+#include <map>
 
 namespace cyy::computation {
 
@@ -27,6 +28,19 @@ namespace cyy::computation {
     }
     it->second->name = name;
     return it->second;
+  }
+
+  void ALPHABET::print(std::ostream &os, symbol_type symbol) const {
+    if (symbol == get_epsilon()) {
+      os << "'epsilon'";
+    } else if (symbol == get_endmarker()) {
+      os << "$";
+    } else if (contain(symbol)) {
+      print_symbol(os, symbol);
+    } else {
+      os << "(unkown symbol)";
+    }
+    return;
   }
 
   void print_symbol_string(std::ostream &os, const symbol_string &str,

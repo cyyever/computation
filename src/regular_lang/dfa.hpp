@@ -18,13 +18,14 @@ namespace cyy::computation {
 
   class DFA final : public finite_automaton {
   public:
-    using transition_table_type =
+    using transition_function_type =
         std::map<std::pair<symbol_type, state_type>, state_type>;
     DFA(const std::set<state_type> &states_, const std::string &alphabet_name,
-        state_type start_state_, const transition_table_type &transition_table_,
+        state_type start_state_,
+        const transition_function_type &transition_function_,
         const std::set<state_type> &final_states_)
         : finite_automaton(states_, alphabet_name, start_state_, final_states_),
-          transition_table(transition_table_) {}
+          transition_function(transition_function_) {}
 
     bool equivalent_with(const DFA &rhs);
 
@@ -44,15 +45,15 @@ namespace cyy::computation {
     DFA minimize() const;
 
     std::optional<state_type> move(state_type s, symbol_type a) const {
-      auto it = transition_table.find({a, s});
-      if (it != transition_table.end()) {
+      auto it = transition_function.find({a, s});
+      if (it != transition_function.end()) {
         return {it->second};
       }
       return {};
     }
 
   private:
-    transition_table_type transition_table;
+    transition_function_type transition_function;
   };
 
 } // namespace cyy::computation

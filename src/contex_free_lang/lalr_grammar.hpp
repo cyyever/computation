@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "../lang/lang.hpp"
+#include "../lang/alphabet.hpp"
 #include "canonical_lr_grammar.hpp"
 #include "lr_item.hpp"
 #include <functional>

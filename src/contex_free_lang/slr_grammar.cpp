@@ -4,9 +4,10 @@
  * \author cyy
  * \date 2018-03-04
  */
+#include <iostream>
 
-#include "slr_grammar.hpp"
 #include "../exception.hpp"
+#include "slr_grammar.hpp"
 
 namespace cyy::computation {
 

@@ -15,45 +15,13 @@
 
 namespace cyy::computation {
 
-  const std::set<symbol_type> &NFA::get_active_symbols() const {
-    if (active_symbols_opt) {
-      return active_symbols_opt.value();
-    }
-
-    auto epsilon = alphabet->get_epsilon();
-    std::set<symbol_type> active_symbols;
-    for (auto const &[p, _] : transition_table) {
-      if (p.first != epsilon) {
-        active_symbols.insert(p.first);
-      }
-    }
-    active_symbols_opt = std::move(active_symbols);
-    return active_symbols_opt.value();
-  }
-  const std::set<symbol_type> &NFA::get_inactive_symbols() const {
-    if (inactive_symbols_opt) {
-      return inactive_symbols_opt.value();
-    }
-
-    auto const &active_symbols = get_active_symbols();
-
-    std::set<symbol_type> inactive_symbols;
-    alphabet->foreach_symbol([&](auto const &a) {
-      if (active_symbols.count(a) == 0) {
-        inactive_symbols.insert(a);
-      }
-    });
-    inactive_symbols_opt = std::move(inactive_symbols);
-    return inactive_symbols_opt.value();
-  }
-
   std::set<NFA::state_type> NFA::move(const std::set<state_type> &T,
                                       symbol_type a) const {
     std::set<state_type> direct_reachable;
 
     for (const auto &s : T) {
-      auto it = transition_table.find({a, s});
-      if (it != transition_table.end()) {
+      auto it = transition_function.find({a, s});
+      if (it != transition_function.end()) {
         direct_reachable.insert(it->second.begin(), it->second.end());
       }
     }
@@ -65,6 +33,16 @@ namespace cyy::computation {
     }
     return res;
   }
+  bool NFA::simulate(symbol_string_view view) const {
+    auto s = epsilon_closure(start_state);
+    for (auto const &symbol : view) {
+      s = move(s, symbol);
+      if (s.empty()) {
+        return false;
+      }
+    }
+    return contain_final_state(s);
+  }
 
   const std::set<NFA::state_type> &NFA::epsilon_closure(state_type s) const {
     auto it = epsilon_closures.find(s);
@@ -74,11 +52,10 @@ namespace cyy::computation {
     std::map<state_type, std::set<state_type>> dependency;
     std::set<state_type> unstable_states{s};
     std::vector<state_type> stack{s};
-    auto epsilon = alphabet->get_epsilon();
     for (size_t i = 0; i < stack.size(); i++) {
       auto unstable_state = stack[i];
-      auto it2 = transition_table.find({epsilon, unstable_state});
-      if (it2 == transition_table.end()) {
+      auto it2 = epsilon_transition_function.find(unstable_state);
+      if (it2 == epsilon_transition_function.end()) {
         continue;
       }
 
@@ -146,28 +123,40 @@ namespace cyy::computation {
     state_type next_state = 1;
 
     std::optional<state_type> empty_set_state;
-    DFA::transition_table_type DFA_transition_table;
+    DFA::transition_function_type DFA_transition_function;
+
+    std::set<symbol_type> active_symbols;
+    for (auto const &[p, _] : transition_function) {
+      active_symbols.insert(p.first);
+    }
+    std::set<symbol_type> inactive_symbols;
+    alphabet->foreach_symbol(
+        [&active_symbols, &inactive_symbols](auto const &a) {
+          if (active_symbols.count(a) == 0) {
+            inactive_symbols.insert(a);
+          }
+        });
 
     for (auto const &[subset, state] : subsets) {
-      for (auto a : get_inactive_symbols()) {
+      for (auto a : inactive_symbols) {
         if (!empty_set_state) {
           auto [_, has_emplaced] = subsets.try_emplace({}, next_state);
           assert(has_emplaced);
           empty_set_state = next_state;
           next_state++;
         }
-        DFA_transition_table[{a, empty_set_state.value()}] =
+        DFA_transition_function[{a, empty_set_state.value()}] =
             empty_set_state.value();
       }
 
-      for (auto a : get_active_symbols()) {
+      for (auto a : active_symbols) {
         auto res = move(subset, a);
         auto [it2, has_emplaced] =
             subsets.try_emplace(std::move(res), next_state);
         if (has_emplaced) {
           next_state++;
         }
-        DFA_transition_table[{a, state}] = it2->second;
+        DFA_transition_function[{a, state}] = it2->second;
       }
     }
 
@@ -182,7 +171,7 @@ namespace cyy::computation {
       state_map.emplace(DFA_state, subset);
     }
 
-    return {{DFA_states, alphabet->get_name(), 0, DFA_transition_table,
+    return {{DFA_states, alphabet->get_name(), 0, DFA_transition_function,
              DFA_final_states},
             state_map};
   }

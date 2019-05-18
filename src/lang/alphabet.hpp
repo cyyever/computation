@@ -1,5 +1,5 @@
 /*!
- * \file lang.hpp
+ * \file alphabet.hpp
  *
  * \author cyy
  * \date 2018-03-03
@@ -9,17 +9,14 @@
 
 #include <functional>
 #include <iostream>
-#include <map>
 #include <memory>
-#include <sstream>
 #include <string>
-#include <string_view>
 
 #include "../exception.hpp"
+#include "symbol.hpp"
 
 namespace cyy::computation {
 
-  using symbol_type = char32_t;
   class ALPHABET {
   public:
     virtual ~ALPHABET() = default;
@@ -33,21 +30,15 @@ namespace cyy::computation {
         const std::function<void(const symbol_type &)> &callback) const = 0;
     virtual bool contain(symbol_type s) const = 0;
     virtual size_t size() const = 0;
-    void print(std::ostream &os, symbol_type symbol) const {
-      if (symbol == get_epsilon()) {
-        os << "'epsilon'";
-      } else if (symbol == get_endmarker()) {
-        os << "$";
-      } else if (contain(symbol)) {
-        print_symbol(os, symbol);
-      } else {
-        os << "(unkown symbol)";
-      }
-      return;
-    }
+    void print(std::ostream &os, symbol_type symbol) const;
 
     std::string get_name() const { return name; }
 
+    bool operator==(const ALPHABET &rhs) const {
+      return (this == &rhs) || this->name == rhs.name;
+    }
+
+    bool operator!=(const ALPHABET &rhs) const { return !operator==(rhs); }
     static void regist(const std::string &name);
     static std::shared_ptr<ALPHABET> get(const std::string &name);
 
@@ -70,11 +61,6 @@ namespace cyy::computation {
   protected:
     std::string name;
   };
-
-  using symbol_string = std::basic_string<symbol_type>;
-  using symbol_string_view = std::basic_string_view<symbol_type>;
-  using symbol_istringstream = std::basic_istringstream<symbol_type>;
-  using symbol_istream = std::basic_istream<symbol_type>;
 
   void print_symbol_string(std::ostream &os, const symbol_string &str,
                            const ALPHABET &alphabet);

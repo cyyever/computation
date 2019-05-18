@@ -7,12 +7,13 @@
 
 #pragma once
 
+#include <map>
 #include <set>
 #include <string>
 #include <vector>
 
 #include "../formal_grammar/grammar.hpp"
-#include "../lang/lang.hpp"
+#include "../lang/alphabet.hpp"
 #include "cfg_production.hpp"
 
 namespace cyy::computation {

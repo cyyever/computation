@@ -9,10 +9,11 @@
 
 #include <map>
 #include <optional>
+#include <range/v3/algorithm.hpp>
 #include <set>
 #include <string>
 
-#include "../lang/lang.hpp"
+#include "../lang/alphabet.hpp"
 
 namespace cyy::computation {
 
@@ -36,8 +37,7 @@ namespace cyy::computation {
       for (auto const &final_state : final_states) {
         if (!states.count(final_state)) {
           throw cyy::computation::exception::no_finite_automaton(
-              std::string("unexisted start state ") +
-              std::to_string(final_state));
+              std::string("unexisted state ") + std::to_string(final_state));
         }
       }
     }
@@ -67,6 +67,10 @@ namespace cyy::computation {
 
     bool is_final_state(state_type final_state) const {
       return final_states.count(final_state) > 0;
+    }
+
+    bool includes(const std::set<state_type> &T) const {
+      return ranges::v3::includes(states, T);
     }
 
   protected:

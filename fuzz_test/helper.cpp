@@ -6,7 +6,7 @@
  * \date 2019-02-12
  */
 #include "helper.hpp"
-#include "../src/lang/lang.hpp"
+#include "../src/lang/alphabet.hpp"
 
 using namespace cyy::computation;
 std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>

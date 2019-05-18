@@ -6,6 +6,7 @@
  */
 
 #include "lr_grammar.hpp"
+#include <iostream>
 
 namespace cyy::computation {
 

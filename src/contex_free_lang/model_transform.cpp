@@ -18,7 +18,7 @@ namespace cyy::computation {
       return std::string("S") + std::to_string(state);
     };
 
-    for (auto const &[p, next_states] : nfa.get_transition_table()) {
+    for (auto const &[p, next_states] : nfa.get_transition_function()) {
       auto const &[cur_state, symbol] = p;
       for (auto const &next_state : next_states) {
         if (symbol != nfa.get_alphabet().get_epsilon()) {

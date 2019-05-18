@@ -36,8 +36,9 @@ namespace cyy::computation {
     return {{start_state, start_state + 1},
             alphabet.get_name(),
             start_state,
-            {{{alphabet.get_epsilon(), start_state}, {start_state + 1}}},
-            {start_state + 1}};
+            {},
+            {start_state + 1},
+            {{start_state, {start_state + 1}}}};
   }
 
   void regex::epsilon_node::assign_position(
@@ -59,11 +60,13 @@ namespace cyy::computation {
 
     NFA nfa({start_state, final_state}, alphabet.get_name(), start_state, {},
             {});
-    nfa.add_sub_NFA(left_NFA, true);
-    nfa.add_sub_NFA(right_NFA, true);
+    nfa.add_sub_NFA(left_NFA);
+    nfa.add_epsilon_transition(start_state, {left_NFA.get_start_state()});
+    nfa.add_sub_NFA(right_NFA);
+    nfa.add_epsilon_transition(start_state, {right_NFA.get_start_state()});
 
     for (auto const &s : nfa.get_final_states()) {
-      nfa.get_transition_table()[{alphabet.get_epsilon(), s}] = {final_state};
+      nfa.replace_epsilon_transition(s, {final_state});
     }
     nfa.replace_final_states({final_state});
     return nfa;
@@ -100,7 +103,7 @@ namespace cyy::computation {
     auto right_NFA_start_state = *(left_final_states.begin());
     auto right_NFA = right_node->to_NFA(alphabet, right_NFA_start_state);
     const auto &right_final_states = right_NFA.get_final_states();
-    left_NFA.add_sub_NFA(right_NFA, false);
+    left_NFA.add_sub_NFA(right_NFA);
     left_NFA.replace_final_states(right_final_states);
 
     return left_NFA;
@@ -154,14 +157,14 @@ namespace cyy::computation {
 
     NFA nfa({start_state, final_state}, alphabet.get_name(), start_state, {},
             {});
-    nfa.add_sub_NFA(inner_NFA, true);
+    nfa.add_sub_NFA(inner_NFA);
+    nfa.add_epsilon_transition(start_state, {inner_NFA.get_start_state()});
 
-    nfa.get_transition_table()[{alphabet.get_epsilon(), start_state}].insert(
-        final_state);
+    nfa.add_epsilon_transition(start_state, {final_state});
 
     for (auto const &inner_final_state : inner_final_states) {
-      nfa.get_transition_table()[{alphabet.get_epsilon(), inner_final_state}] =
-          {inner_start_state, final_state};
+      nfa.replace_epsilon_transition(inner_final_state,
+                                     {inner_start_state, final_state});
     }
 
     nfa.replace_final_states({final_state});

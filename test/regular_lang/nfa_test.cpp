@@ -14,20 +14,16 @@
 
 using namespace cyy::computation;
 TEST_CASE("simulate NFA") {
-  auto epsilon = ALPHABET::get("ab_set")->get_epsilon();
 
   NFA nfa({0, 1, 2, 3, 4}, "ab_set", 0,
           {
-
-              {{epsilon, 0}, {1, 3}},
-
               {{'a', 1}, {2}},
               {{'a', 2}, {2}},
 
               {{'b', 3}, {4}},
               {{'b', 4}, {4}},
           },
-          {2, 4});
+          {2, 4}, {{0, {1, 3}}});
 
   SUBCASE("a") {
     symbol_string str = {'a'};
@@ -55,42 +51,26 @@ TEST_CASE("simulate NFA") {
 }
 
 TEST_CASE("NFA to DFA") {
-  auto epsilon = ALPHABET::get("ab_set")->get_epsilon();
   NFA nfa({0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, "ab_set", 0,
           {
 
-              {{
-                   epsilon,
-                   0,
-               },
-               {1, 7}},
-              {{
-                   epsilon,
-                   1,
-               },
-               {2, 4}},
               {{'a', 2}, {3}},
-              {{
-                   epsilon,
-                   3,
-               },
-               {6}},
               {{'b', 4}, {5}},
-              {{
-                   epsilon,
-                   5,
-               },
-               {6}},
-              {{
-                   epsilon,
-                   6,
-               },
-               {1, 7}},
               {{'a', 7}, {8}},
               {{'b', 8}, {9}},
               {{'b', 9}, {10}},
           },
-          {10});
+          {10},
+
+          {
+
+              {0, {1, 7}},
+              {1, {2, 4}},
+
+              {3, {6}},
+              {5, {6}},
+              {6, {1, 7}},
+          });
 
   DFA dfa({0, 1, 2, 3, 4}, "ab_set", 0,
           {
