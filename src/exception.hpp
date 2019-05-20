@@ -26,6 +26,11 @@ namespace cyy::computation::exception {
     using invalid_argument::invalid_argument;
   };
 
+  class no_DFA : public std::invalid_argument {
+  public:
+    using invalid_argument::invalid_argument;
+  };
+
   class unexisted_finite_automaton_state : public std::invalid_argument {
   public:
     using invalid_argument::invalid_argument;

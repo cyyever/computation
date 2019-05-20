@@ -13,7 +13,7 @@
 #include "dfa.hpp"
 
 namespace cyy::computation {
-  bool DFA::equivalent_with(const DFA &rhs) {
+  bool DFA::equivalent_with(const DFA &rhs) const {
 
     if (alphabet != rhs.alphabet) {
       return false;
@@ -30,7 +30,6 @@ namespace cyy::computation {
     }
 
     std::map<state_type, state_type> state_map{{start_state, rhs.start_state}};
-    std::map<state_type, bool> check_flags{{start_state, false}};
     while (true) {
 
       bool new_mapping = false;
@@ -67,12 +66,9 @@ namespace cyy::computation {
       return false;
     }
 
-    for (auto const &final_state : final_states) {
-      if (!rhs.final_states.count(state_map[final_state])) {
-        return false;
-      }
-    }
-    return true;
+    return ranges::v3::all_of(final_states, [&rhs](auto s) {
+      return rhs.final_states.count(s) != 0;
+    });
   }
 
   DFA DFA::minimize() const {

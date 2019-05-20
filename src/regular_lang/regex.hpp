@@ -26,12 +26,32 @@ namespace cyy::computation {
       virtual ~syntax_node() = default;
       virtual NFA to_NFA(std::string_view alphabet_name,
                          NFA::state_type start_state) const = 0;
+      virtual bool is_empty_set_node() const = 0;
+      virtual bool is_epsilon_node() const = 0;
       virtual bool nullable() const = 0;
       virtual void
       assign_position(std::map<uint64_t, symbol_type> &position_to_symbol) = 0;
       virtual std::set<uint64_t> first_pos() const = 0;
       virtual std::set<uint64_t> last_pos() const = 0;
       virtual std::map<uint64_t, std::set<uint64_t>> follow_pos() const = 0;
+      virtual std::shared_ptr<syntax_node> simplify() const { return {}; }
+    };
+
+    class empty_set_node final : public syntax_node {
+    public:
+      explicit empty_set_node() = default;
+      NFA to_NFA(std::string_view alphabet_name,
+                 NFA::state_type start_state) const override;
+      bool is_empty_set_node() const override { return true; }
+      bool is_epsilon_node() const override { return false; }
+      bool nullable() const noexcept override { return true; }
+      void assign_position(
+          std::map<uint64_t, symbol_type> &position_to_symbol) override;
+      std::set<uint64_t> first_pos() const override;
+      std::set<uint64_t> last_pos() const override;
+      std::map<uint64_t, std::set<uint64_t>> follow_pos() const override {
+        return {};
+      }
     };
 
     class epsilon_node final : public syntax_node {
@@ -40,6 +60,8 @@ namespace cyy::computation {
       NFA to_NFA(std::string_view alphabet_name,
                  NFA::state_type start_state) const override;
       bool nullable() const noexcept override { return true; }
+      bool is_empty_set_node() const override { return false; }
+      bool is_epsilon_node() const override { return true; }
       void assign_position(std::map<uint64_t, symbol_type>
                                &position_to_symbol) noexcept override;
       std::set<uint64_t> first_pos() const override;
@@ -54,6 +76,8 @@ namespace cyy::computation {
       explicit basic_node(symbol_type symbol_) noexcept : symbol(symbol_) {}
       NFA to_NFA(std::string_view alphabet_name,
                  NFA::state_type start_state) const override;
+      bool is_empty_set_node() const override { return false; }
+      bool is_epsilon_node() const override { return false; }
       bool nullable() const noexcept override { return false; }
       void assign_position(
           std::map<uint64_t, symbol_type> &position_to_symbol) override;
@@ -83,6 +107,9 @@ namespace cyy::computation {
       std::set<uint64_t> first_pos() const override;
       std::set<uint64_t> last_pos() const override;
       std::map<uint64_t, std::set<uint64_t>> follow_pos() const override;
+      bool is_empty_set_node() const override;
+      bool is_epsilon_node() const override;
+      std::shared_ptr<syntax_node> simplify() const override;
 
     private:
       std::shared_ptr<syntax_node> left_node, right_node;
@@ -103,6 +130,9 @@ namespace cyy::computation {
       std::set<uint64_t> first_pos() const override;
       std::set<uint64_t> last_pos() const override;
       std::map<uint64_t, std::set<uint64_t>> follow_pos() const override;
+      bool is_empty_set_node() const override;
+      bool is_epsilon_node() const override;
+      std::shared_ptr<syntax_node> simplify() const override;
 
     private:
       std::shared_ptr<syntax_node> left_node, right_node;
@@ -119,6 +149,9 @@ namespace cyy::computation {
           std::map<uint64_t, symbol_type> &position_to_symbol) override;
       std::set<uint64_t> first_pos() const override;
       std::set<uint64_t> last_pos() const override;
+      bool is_empty_set_node() const override;
+      bool is_epsilon_node() const override;
+      std::shared_ptr<syntax_node> simplify() const override;
 
     private:
       std::shared_ptr<syntax_node> inner_node;
@@ -130,6 +163,9 @@ namespace cyy::computation {
         : alphabet(ALPHABET::get(alphabet_name)) {
       syntax_tree = parse(view);
     }
+    regex(std::string_view alphabet_name,
+          std::shared_ptr<regex::syntax_node> syntax_tree_)
+        : alphabet(ALPHABET::get(alphabet_name)), syntax_tree(syntax_tree_) {}
 
     NFA to_NFA(NFA::state_type start_state = 0) const {
       return syntax_tree->to_NFA(alphabet->get_name(), start_state);

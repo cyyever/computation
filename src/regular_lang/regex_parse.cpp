@@ -165,11 +165,7 @@ namespace cyy::computation {
 
           // escape-sequence -> '\' printable-ASCII
           if (head == "escape-sequence") {
-            if (pos == 1) {
-              in_escape_sequence = true;
-            } else {
-              in_escape_sequence = false;
-            }
+            in_escape_sequence = (pos == 1);
           }
 
           // character-class-element -> 'printable-ASCII except backslash and ]'

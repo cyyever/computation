@@ -25,9 +25,15 @@ namespace cyy::computation {
         const transition_function_type &transition_function_,
         const std::set<state_type> &final_states_)
         : finite_automaton(states_, alphabet_name, start_state_, final_states_),
-          transition_function(transition_function_) {}
+          transition_function(transition_function_) {
 
-    bool equivalent_with(const DFA &rhs);
+      if (transition_function.size() != alphabet->size() * states.size()) {
+        throw exception::no_DFA(
+            "some combinations of states and symbols lack next state");
+      }
+    }
+
+    bool equivalent_with(const DFA &rhs) const;
 
     bool simulate(symbol_string_view view) const {
       auto s = start_state;
@@ -44,6 +50,7 @@ namespace cyy::computation {
 
     DFA minimize() const;
 
+  private:
     std::optional<state_type> move(state_type s, symbol_type a) const {
       auto it = transition_function.find({a, s});
       if (it != transition_function.end()) {
