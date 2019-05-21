@@ -37,8 +37,7 @@ namespace cyy::computation {
 
     CFG(const std::string &alphabet_name, nonterminal_type start_symbol_,
         std::map<nonterminal_type, std::vector<CFG_production::body_type>>
-            productions_,
-        std::set<nonterminal_type> epsilon_productions = {});
+            productions_);
 
     CFG(const CFG &) = default;
     CFG &operator=(const CFG &) = default;
