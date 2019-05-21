@@ -37,7 +37,8 @@ namespace cyy::computation {
 
     CFG(const std::string &alphabet_name, nonterminal_type start_symbol_,
         std::map<nonterminal_type, std::vector<CFG_production::body_type>>
-            productions_);
+            productions_,
+        std::set<nonterminal_type> epsilon_productions = {});
 
     CFG(const CFG &) = default;
     CFG &operator=(const CFG &) = default;
@@ -115,6 +116,7 @@ namespace cyy::computation {
     nonterminal_type start_symbol;
     std::map<nonterminal_type, std::vector<CFG_production::body_type>>
         productions;
+    std::set<nonterminal_type> epsilon_productions;
 
   private:
     mutable std::map<nonterminal_type, std::set<terminal_type>> first_sets;
