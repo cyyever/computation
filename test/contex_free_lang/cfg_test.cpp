@@ -99,7 +99,8 @@ TEST_CASE("eliminate_left_recursion") {
   productions["A"] = {
       {"A", 'c'},
       {"S", 'd'},
-      {ALPHABET::get("common_tokens")->get_epsilon()},
+      //{ALPHABET::get("common_tokens")->get_epsilon()},
+      {},
   };
 
   CFG cfg("common_tokens", "S", productions);
@@ -118,7 +119,7 @@ TEST_CASE("eliminate_left_recursion") {
   reduced_productions["A'"] = {
       {'c', "A'"},
       {'a', 'd', "A'"},
-      {ALPHABET::get("common_tokens")->get_epsilon()},
+      {},
   };
 
   CHECK(cfg == CFG("common_tokens", "S", reduced_productions));
@@ -144,7 +145,7 @@ TEST_CASE("left_factoring") {
   };
   reduced_productions["S'"] = {
       {'e', "S"},
-      {ALPHABET::get("common_tokens")->get_epsilon()},
+      {},
   };
   reduced_productions["E"] = {{'b'}};
   CHECK(cfg == CFG("common_tokens", "S", reduced_productions));

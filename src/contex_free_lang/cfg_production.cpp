@@ -15,11 +15,14 @@ namespace cyy::computation {
 
   void CFG_production::print(std::ostream &os, const ALPHABET &alphabet) const {
     os << head << " -> ";
-    for (const auto &grammal_symbol : body) {
-      grammal_symbol.print(os, alphabet);
-      os << ' ';
+    if (body.empty()) {
+      os << "'epsilon'";
+    } else {
+      for (const auto &grammal_symbol : body) {
+        grammal_symbol.print(os, alphabet);
+        os << ' ';
+      }
     }
     os << '\n';
   }
-
 } // namespace cyy::computation

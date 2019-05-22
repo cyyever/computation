@@ -43,6 +43,18 @@ namespace cyy::computation {
       return std::get_if<nonterminal_type>(this);
     }
 
+    const nonterminal_type &get_nonterminal() const noexcept {
+      return *std::get_if<nonterminal_type>(this);
+    }
+    bool operator==(const terminal_type &t) const {
+      return is_terminal() && get_terminal() == t;
+    }
+    bool operator!=(const terminal_type &t) const { return !operator==(t); }
+    bool operator==(const nonterminal_type &t) const {
+      return is_nonterminal() && *get_nonterminal_ptr() == t;
+    }
+    bool operator!=(const nonterminal_type &t) const { return !operator==(t); }
+
     void print(std::ostream &os, const ALPHABET &alphabet) const {
       if (is_terminal()) {
         alphabet.print(os, *get_terminal_ptr());

@@ -5,6 +5,7 @@
  * \date 2018-03-04
  */
 
+#include <algorithm>
 #include <cassert>
 #include <range/v3/algorithm.hpp>
 #include <unordered_map>
@@ -24,22 +25,16 @@ namespace cyy::computation {
     eliminate_useless_symbols();
     normalize_productions();
 
-    bool has_start_symbol = false;
+    if (!productions.count(start_symbol)) {
+      throw exception::no_CFG("no productions for start symbol");
+    }
     for (const auto &[head, bodies] : productions) {
-      if (!has_start_symbol && head == start_symbol) {
-        has_start_symbol = true;
-      }
-
       if (bodies.empty()) {
         throw exception::invalid_CFG_production(
             std::string("no body for head ") + head);
       }
 
       for (auto const &body : bodies) {
-        if (body.empty()) {
-          throw exception::invalid_CFG_production(
-              std::string("an empty body for head ") + head);
-        }
         for (auto const &symbol : body) {
           auto terminal_ptr = symbol.get_terminal_ptr();
           if (terminal_ptr && !alphabet->is_epsilon(*terminal_ptr) &&
@@ -50,9 +45,6 @@ namespace cyy::computation {
           }
         }
       }
-    }
-    if (!has_start_symbol) {
-      throw exception::no_CFG("no productions for start symbol");
     }
   }
 
@@ -113,44 +105,15 @@ namespace cyy::computation {
   void CFG::normalize_productions() {
     decltype(productions) new_productions;
     for (auto &[head, bodies] : productions) {
-      std::set<CFG_production::body_type> bodies_set;
-      for (auto &body : bodies) {
-        if (body.empty()) {
-          continue;
-        }
-
-        auto it =
-            ranges::v3::remove_if(body, [this](const auto &grammal_symbol) {
-              return grammal_symbol.is_epsilon(*alphabet);
-            });
-        if (it > body.begin()) {
-          bodies_set.emplace(std::move_iterator(body.begin()),
-                             std::move_iterator(it));
-        } else {
-          bodies_set.emplace(1, symbol_type(alphabet->get_epsilon()));
-        }
+      if (bodies.empty()) {
+        continue;
       }
-      if (!bodies_set.empty()) {
-        new_productions[head] = {std::move_iterator(bodies_set.begin()),
-                                 std::move_iterator(bodies_set.end())};
-      }
+      std::set<CFG_production::body_type> bodies_set(
+          std::move_iterator(bodies.begin()), std::move_iterator(bodies.end()));
+      new_productions[head] = {std::move_iterator(bodies_set.begin()),
+                               std::move_iterator(bodies_set.end())};
     }
     productions = std::move(new_productions);
-  }
-
-  void CFG::eliminate_empty_productions() {
-    for (auto &[_, bodies] : productions) {
-      bodies.erase(ranges::v3::remove_if(
-                       bodies, [](const auto &body) { return body.empty(); }),
-                   bodies.end());
-    }
-    for (auto it = productions.begin(); it != productions.end();) {
-      if (it->second.empty()) {
-        productions.erase(it++);
-      } else {
-        ++it;
-      }
-    }
   }
 
   void CFG::eliminate_useless_symbols() {
@@ -180,7 +143,6 @@ namespace cyy::computation {
         break;
       }
     }
-
     for (auto it = productions.begin(); it != productions.end();) {
       if (reachable_heads.count(it->first) == 0) {
         productions.erase(it++);
@@ -190,60 +152,32 @@ namespace cyy::computation {
     }
 
     std::set<nonterminal_type> in_use_heads;
-    std::map<nonterminal_type, std::vector<std::set<nonterminal_type>>>
-        depedency_heads;
 
-    eliminate_empty_productions();
-
-    for (const auto &[head, bodies] : productions) {
-      for (const auto &body : bodies) {
-        std::set<nonterminal_type> body_depedency_heads;
-        for (auto const &symbol : body) {
-          auto nonterminal_ptr = symbol.get_nonterminal_ptr();
-          if (!nonterminal_ptr) { // terminal
+    decltype(productions) new_productions;
+    bool has_new_production = true;
+    while (has_new_production) {
+      has_new_production = false;
+      for (auto &[head, bodies] : productions) {
+        for (size_t i = 0; i < bodies.size();) {
+          if (ranges::v3::all_of(
+                  bodies[i], [&in_use_heads](auto const &symbol) {
+                    return symbol.is_terminal() ||
+                           in_use_heads.count(*symbol.get_nonterminal_ptr());
+                  })) {
+            in_use_heads.insert(head);
+            new_productions[head].emplace_back(std::move(bodies[i]));
+            has_new_production = true;
+            if (i + 1 < bodies.size()) {
+              std::swap(bodies[i], *bodies.rbegin());
+            }
+            bodies.pop_back();
             continue;
           }
-          body_depedency_heads.insert(*nonterminal_ptr);
+          i++;
         }
-        if (body_depedency_heads.empty()) {
-          in_use_heads.emplace(head);
-        }
-        depedency_heads[head].emplace_back(std::move(body_depedency_heads));
       }
     }
-
-    while (true) {
-      auto prev_size = in_use_heads.size();
-      for (auto &[head, bodies] : productions) {
-        auto &bodies_depedency_heads = depedency_heads[head];
-        for (size_t i = 0; i < bodies.size(); i++) {
-          std::set<nonterminal_type> diff;
-          ranges::v3::set_difference(bodies_depedency_heads[i], in_use_heads,
-                                     ranges::v3::inserter(diff, diff.begin()));
-
-          if (diff.empty()) {
-            in_use_heads.insert(head);
-          }
-          bodies_depedency_heads[i] = std::move(diff);
-        }
-      }
-
-      if (prev_size == in_use_heads.size()) {
-        break;
-      }
-    }
-
-    for (auto &[head, bodies] : productions) {
-      auto &bodies_depedency_heads = depedency_heads[head];
-      for (size_t i = 0; i < bodies.size(); i++) {
-        if (bodies_depedency_heads[i].empty()) {
-          continue;
-        }
-        bodies[i].clear();
-      }
-    }
-
-    eliminate_empty_productions();
+    productions = std::move(new_productions);
   }
 
   void CFG::eliminate_left_recursion(std::vector<nonterminal_type> old_heads) {
@@ -274,13 +208,11 @@ namespace cyy::computation {
           if (new_bodies.empty()) {
             return;
           }
-          new_bodies.emplace_back(1, symbol_type(alphabet->get_epsilon()));
+          new_bodies.emplace_back();
           productions[new_head] = new_bodies;
 
           for (auto &body : bodies) {
-            if (!body.empty()) {
-              body.emplace_back(new_head);
-            }
+            body.emplace_back(new_head);
           }
         };
 
@@ -353,14 +285,9 @@ namespace cyy::computation {
               std::move_iterator(body.begin() + static_cast<std::ptrdiff_t>(
                                                     common_prefix.size())),
               std::move_iterator(body.end()));
-          if (productions[new_head].back().empty()) {
-            productions[new_head].back().emplace_back(alphabet->get_epsilon());
-          }
-
           body.erase(body.begin() +
                          static_cast<std::ptrdiff_t>(common_prefix.size()),
                      body.end());
-
           body.emplace_back(new_head);
         }
 

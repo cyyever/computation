@@ -65,8 +65,6 @@ namespace cyy::computation {
 
     void eliminate_left_recursion(std::vector<nonterminal_type> old_heads = {});
 
-    void eliminate_empty_productions();
-
     void eliminate_epsilon_productions();
 
     void eliminate_single_productions();

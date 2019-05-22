@@ -19,11 +19,10 @@ using namespace cyy::computation;
 TEST_CASE("eliminate_epsilon_productions") {
   std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
       productions;
-  auto epsilon = ALPHABET::get("ab_set")->get_epsilon();
   productions["S"] = {
       {'a', "S", 'b', "S"},
       {'b', "S", 'a', "S"},
-      {epsilon},
+      {},
   };
   CFG cfg("ab_set", "S", productions);
   SUBCASE("nullable") {
@@ -97,11 +96,10 @@ TEST_CASE("eliminate_single_productions") {
 TEST_CASE("to_CNF") {
   std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
       productions;
-  auto epsilon = ALPHABET::get("ab_set")->get_epsilon();
   productions["S"] = {
       {'a', "S", 'b', "S"},
       {'b', "S", 'a', "S"},
-      {epsilon},
+      {},
   };
   CFG cfg("ab_set", "S", productions);
   cfg.to_CNF();

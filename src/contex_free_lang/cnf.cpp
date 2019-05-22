@@ -5,67 +5,60 @@
  * \date 2018-03-04
  */
 
+#include <range/v3/algorithm.hpp>
+
 #include "cfg.hpp"
 
 namespace cyy::computation {
 
   void CFG::eliminate_epsilon_productions() {
     auto nullable_nonterminals = nullable();
-
     if (nullable_nonterminals.empty()) {
       return;
     }
-    CFG_production::body_type epsilon_production{alphabet->get_epsilon()};
 
-    auto heads = get_heads();
-    while (!heads.empty()) {
-      auto checking_heads = std::move(heads);
-      heads.clear();
-      for (auto const &head : checking_heads) {
+    auto checking_heads = get_heads();
+    while (!checking_heads.empty()) {
+      auto head = checking_heads.extract(checking_heads.begin()).value();
+      auto &bodies = productions[head];
 
-        std::vector<CFG_production::body_type> new_bodies;
-        for (auto &body : productions[head]) {
-          if (body.empty()) {
+      bodies.erase(ranges::v3::remove_if(bodies,
+                                         [](auto const &production) {
+                                           return production.empty();
+                                         }),
+                   bodies.end());
+
+      if (bodies.empty()) {
+        productions.erase(head);
+        continue;
+      }
+      std::vector<CFG_production::body_type> new_bodies;
+      for (auto &body : bodies) {
+        for (auto it = body.begin(); it != body.end(); it++) {
+          auto ptr = it->get_nonterminal_ptr();
+          if (!ptr || !nullable_nonterminals.count(*ptr)) {
             continue;
           }
-          if (body == epsilon_production) {
-            body.clear();
-            continue;
+          nonterminal_type new_head;
+          if (it + 1 != body.end()) {
+            new_head = get_new_head(head);
+            productions[new_head].emplace_back(std::move_iterator(it + 1),
+                                               std::move_iterator(body.end()));
+            body.erase(it + 1, body.end());
+            body.emplace_back(new_head);
+            checking_heads.insert(new_head);
           }
-          for (size_t i = 0; i < body.size(); i++) {
-            auto ptr = body[i].get_nonterminal_ptr();
-            if (ptr && nullable_nonterminals.count(*ptr)) {
-              nonterminal_type new_head;
-              if (i + 1 < body.size()) {
-                new_head = get_new_head(head);
-                productions[new_head].emplace_back(
-                    std::move_iterator(body.begin() +
-                                       static_cast<std::ptrdiff_t>(i + 1)),
-                    std::move_iterator(body.end()));
-                body.erase(body.begin() + static_cast<std::ptrdiff_t>(i + 1),
-                           body.end());
-                body.emplace_back(new_head);
-                heads.insert(new_head);
-              }
 
-              new_bodies.emplace_back(
-                  body.begin(), body.begin() + static_cast<std::ptrdiff_t>(i));
+          new_bodies.emplace_back(body.begin(), it);
 
-              if (!new_head.empty()) {
-                new_bodies.back().push_back(new_head);
-              }
-
-              if (new_bodies.back().empty()) {
-                new_bodies.pop_back();
-              }
-              break;
-            }
+          if (!new_head.empty()) {
+            new_bodies.back().push_back(new_head);
           }
+          break;
         }
-        if (!new_bodies.empty()) {
-          productions[head].insert(productions[head].end(), new_bodies.begin(),
-                                   new_bodies.end());
-        }
+      }
+      if (!new_bodies.empty()) {
+        bodies.insert(bodies.end(), new_bodies.begin(), new_bodies.end());
       }
     }
     eliminate_useless_symbols();
@@ -73,43 +66,25 @@ namespace cyy::computation {
   }
 
   std::set<CFG::nonterminal_type> CFG::nullable() const {
-    std::set<CFG::nonterminal_type> res;
-    while (true) {
-      bool has_insert = false;
+    std::set<CFG::nonterminal_type> nullable_nonterminals;
 
+    bool has_new_nullable_nonterminals = true;
+    while (has_new_nullable_nonterminals) {
+      has_new_nullable_nonterminals = false;
       for (auto &[head, bodies] : productions) {
-        if (res.count(head)) {
-          continue;
-        }
         for (auto const &body : bodies) {
-          bool body_nullable = true;
-          for (auto const &symbol : body) {
-            auto terminal_ptr = symbol.get_terminal_ptr();
-            if (terminal_ptr) {
-              if (!alphabet->is_epsilon(*terminal_ptr)) {
-                body_nullable = false;
-                break;
-              }
-              continue;
-            }
-
-            if (res.count(*symbol.get_nonterminal_ptr()) == 0) {
-              body_nullable = false;
-              break;
-            }
-          }
-          if (body_nullable) {
-            res.insert(head);
-            has_insert = true;
-            break;
+          if (ranges::v3::all_of(body, [&](auto const &symbol) {
+                return symbol.is_nonterminal() &&
+                       nullable_nonterminals.count(
+                           *symbol.get_nonterminal_ptr()) != 0;
+              })) {
+            has_new_nullable_nonterminals =
+                nullable_nonterminals.emplace(head).second;
           }
         }
-      }
-      if (!has_insert) {
-        break;
       }
     }
-    return res;
+    return nullable_nonterminals;
   }
 
   void CFG::eliminate_single_productions() {
@@ -120,20 +95,19 @@ namespace cyy::computation {
 
     // find immediate single productions
     for (auto &[head, bodies] : productions) {
-      for (auto &body : bodies) {
-        if (body.size() != 1) {
-          continue;
-        }
-        auto ptr = body.front().get_nonterminal_ptr();
-        if (!ptr) {
-          continue;
-        }
-
-        if (*ptr != head) {
-          single_productions[head].insert(*ptr);
-        }
-        body.clear();
-      }
+      auto &this_head = head;
+      bodies.erase(ranges::v3::remove_if(
+                       bodies,
+                       [&this_head, &single_productions](auto const &body) {
+                         bool res =
+                             body.size() == 1 && body[0].is_nonterminal();
+                         if (res && body[0] != this_head) {
+                           single_productions[this_head].insert(
+                               body[0].get_nonterminal());
+                         }
+                         return res;
+                       }),
+                   bodies.end());
     }
 
     if (single_productions.empty()) {
@@ -165,54 +139,47 @@ namespace cyy::computation {
       }
     }
 
-    auto heads = get_heads();
-    while (!heads.empty()) {
-      auto checking_heads = std::move(heads);
-      heads.clear();
-      for (auto const &head : checking_heads) {
-        std::vector<CFG_production::body_type> new_bodies;
-        for (auto &body : productions[head]) {
-          if (body.empty()) {
+    auto checking_heads = get_heads();
+    while (!checking_heads.empty()) {
+      auto head = checking_heads.extract(checking_heads.begin()).value();
+
+      auto &bodies = productions[head];
+
+      std::vector<CFG_production::body_type> new_bodies;
+
+      for (auto &body : bodies) {
+        for (auto it = body.begin(); it != body.end(); it++) {
+          auto ptr = it->get_nonterminal_ptr();
+          if (!ptr) {
             continue;
           }
-          for (size_t i = 0; i < body.size(); i++) {
-            auto ptr = body[i].get_nonterminal_ptr();
-            if (!ptr) {
-              continue;
-            }
 
-            auto it = single_productions.find(*ptr);
-            if (it == single_productions.end()) {
-              continue;
-            }
+          auto it2 = single_productions.find(*ptr);
+          if (it2 == single_productions.end()) {
+            continue;
+          }
 
-            nonterminal_type new_head;
-            if (i + 1 < body.size()) {
-              new_head = get_new_head(head);
-              productions[new_head].emplace_back(
-                  std::move_iterator(body.begin() +
-                                     static_cast<std::ptrdiff_t>(i + 1)),
-                  std::move_iterator(body.end()));
-              body.erase(body.begin() + static_cast<std::ptrdiff_t>(i + 1),
-                         body.end());
-              body.emplace_back(new_head);
-              heads.insert(new_head);
-            }
+          nonterminal_type new_head;
+          if (it + 1 != body.end()) {
+            new_head = get_new_head(head);
+            productions[new_head].emplace_back(std::move_iterator(it + 1),
+                                               std::move_iterator(body.end()));
+            body.erase(it + 1, body.end());
+            body.emplace_back(new_head);
+            checking_heads.insert(new_head);
+          }
 
-            for (auto const &derived_nonterminal : it->second) {
-              new_bodies.emplace_back(
-                  body.begin(), body.begin() + static_cast<std::ptrdiff_t>(i));
-              new_bodies.back().push_back(derived_nonterminal);
-              if (!new_head.empty()) {
-                new_bodies.back().push_back(new_head);
-              }
+          for (auto const &derived_nonterminal : it2->second) {
+            new_bodies.emplace_back(body.begin(), it);
+            new_bodies.back().push_back(derived_nonterminal);
+            if (!new_head.empty()) {
+              new_bodies.back().push_back(new_head);
             }
           }
         }
-        if (!new_bodies.empty()) {
-          productions[head].insert(productions[head].end(), new_bodies.begin(),
-                                   new_bodies.end());
-        }
+      }
+      if (!new_bodies.empty()) {
+        bodies.insert(bodies.end(), new_bodies.begin(), new_bodies.end());
       }
     }
     normalize_productions();
