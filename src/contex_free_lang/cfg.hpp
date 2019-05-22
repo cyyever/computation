@@ -76,7 +76,8 @@ namespace cyy::computation {
 
     bool recursive_descent_parse(symbol_string_view view) const;
 
-    const std::map<nonterminal_type, std::set<terminal_type>> &first() const;
+    const std::map<nonterminal_type, std::tuple<std::set<terminal_type>, bool>>
+        &first() const;
 
     std::map<nonterminal_type, std::set<terminal_type>> follow() const;
 
@@ -113,10 +114,11 @@ namespace cyy::computation {
     nonterminal_type start_symbol;
     std::map<nonterminal_type, std::vector<CFG_production::body_type>>
         productions;
-    std::set<nonterminal_type> epsilon_productions;
 
   private:
-    mutable std::map<nonterminal_type, std::set<terminal_type>> first_sets;
+    mutable std::map<nonterminal_type,
+                     std::tuple<std::set<terminal_type>, bool>>
+        first_sets;
   };
 
 } // namespace cyy::computation
