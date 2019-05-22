@@ -31,7 +31,7 @@ namespace cyy::computation {
       auto it = cfg.get_productions().find(nonkernel_item);
       for (auto const &body : it->second) {
         if (body.empty()) {
-          kernel_items.emplace(LR_0_item{{it->first, body}, 1});
+          kernel_items.emplace(LR_0_item{{it->first, body}, 0});
           continue;
         }
 
@@ -96,7 +96,7 @@ namespace cyy::computation {
 
     for (auto const &new_body : it->second) {
       if (new_body.empty()) {
-        LR_0_item new_item{{*ptr, new_body}, 1};
+        LR_0_item new_item{{*ptr, new_body}, 0};
         kernel_items[new_item] = nonkernel_items[*ptr];
         continue;
       }

@@ -170,7 +170,7 @@ TEST_CASE("canonical_LR(1) parse") {
 
     auto parse_tree = grammar.get_parse_tree(symbol_string{});
     REQUIRE(parse_tree);
-    CHECK(parse_tree->children.size() == 1);
+    CHECK(parse_tree->children.size() == 0);
 
     parse_tree = grammar.get_parse_tree(symbol_string{'a'});
     REQUIRE(parse_tree);
