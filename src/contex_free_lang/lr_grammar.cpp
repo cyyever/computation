@@ -15,20 +15,16 @@ namespace cyy::computation {
     parse_node_ptr parent;
     std::vector<parse_node_ptr> viable_prefix;
 
-    const auto epsilon = alphabet->get_epsilon();
     if (parse(
             view,
             [&viable_prefix](auto terminal) {
               viable_prefix.push_back(std::make_shared<parse_node>(terminal));
             },
 
-            [&viable_prefix, &parent, this, epsilon](auto const &production) {
+            [&viable_prefix, &parent](auto const &production) {
               parent = std::make_shared<parse_node>(production.get_head());
 
-              if (production.is_epsilon(*alphabet)) {
-                parent->children.push_back(
-                    std::make_shared<parse_node>(epsilon));
-              } else {
+              if (!production.is_epsilon()) {
                 const auto body_size = production.get_body().size();
                 parent->children = {
                     std::move_iterator(viable_prefix.end() -
@@ -84,9 +80,7 @@ namespace cyy::computation {
       auto const &body = std::get<CFG_production>(it->second).get_body();
       reduction_callback(production);
 
-      if (!production.is_epsilon(*alphabet)) {
-        stack.resize(stack.size() - body.size());
-      }
+      stack.resize(stack.size() - body.size());
       auto it2 = goto_table.find({stack.back(), head});
       if (it2 == goto_table.end()) {
         std::cerr << "goto table no find for head:" << head << std::endl;

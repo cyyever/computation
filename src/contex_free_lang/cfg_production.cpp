@@ -9,9 +9,7 @@
 
 namespace cyy::computation {
 
-  bool CFG_production::is_epsilon(const ALPHABET &alphabet) const {
-    return body.size() == 1 && body[0].is_epsilon(alphabet);
-  }
+  bool CFG_production::is_epsilon() const { return body.empty(); }
 
   void CFG_production::print(std::ostream &os, const ALPHABET &alphabet) const {
     os << head << " -> ";

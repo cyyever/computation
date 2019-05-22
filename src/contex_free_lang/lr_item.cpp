@@ -30,7 +30,7 @@ namespace cyy::computation {
 
       auto it = cfg.get_productions().find(nonkernel_item);
       for (auto const &body : it->second) {
-        if (body[0].is_epsilon(cfg.get_alphabet())) {
+        if (body.empty()) {
           kernel_items.emplace(LR_0_item{{it->first, body}, 1});
           continue;
         }
@@ -73,10 +73,10 @@ namespace cyy::computation {
     }
 
     view = view.subspan(1);
-    auto real_lookahead_set = cfg.first(view);
+    auto [real_lookahead_set, epsilon_in_first] = cfg.first(view);
 
-    if (real_lookahead_set.erase(cfg.get_alphabet().get_epsilon())) {
-      real_lookahead_set.merge(std::set<CFG::terminal_type>(lookahead_set));
+    if (epsilon_in_first) {
+      real_lookahead_set.insert(lookahead_set.begin(), lookahead_set.end());
     }
 
     decltype(real_lookahead_set) diff;
@@ -95,8 +95,7 @@ namespace cyy::computation {
     auto it = cfg.get_productions().find(*ptr);
 
     for (auto const &new_body : it->second) {
-      if (new_body.size() == 1 && new_body[0].is_epsilon(cfg.get_alphabet())) {
-
+      if (new_body.empty()) {
         LR_0_item new_item{{*ptr, new_body}, 1};
         kernel_items[new_item] = nonkernel_items[*ptr];
         continue;

@@ -36,7 +36,7 @@ namespace cyy::computation {
     bool operator<(const CFG_production &rhs) const {
       return head < rhs.head || (head == rhs.head && body < rhs.body);
     }
-    bool is_epsilon(const ALPHABET &alphabet) const;
+    bool is_epsilon() const;
 
     void print(std::ostream &os, const ALPHABET &alphabet) const;
 

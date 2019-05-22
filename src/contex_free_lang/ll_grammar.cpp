@@ -17,29 +17,28 @@ namespace cyy::computation {
     auto follow_sets = follow();
     for (const auto &[head, bodies] : productions) {
       for (auto const &body : bodies) {
-        auto first_set = first({body});
+        auto const [first_set, epsilon_in_first] = first({body});
 
-        for (auto const &terminal : first_set) {
-          if (alphabet->is_epsilon(terminal)) {
-            auto it = follow_sets.find(head);
-            if (it != follow_sets.end()) {
-              for (auto const &follow_terminal : it->second) {
+        if (epsilon_in_first) {
+          auto it = follow_sets.find(head);
+          if (it != follow_sets.end()) {
+            for (auto const &follow_terminal : it->second) {
 
-                auto [it2, has_inserted] = parsing_table.try_emplace(
-                    std::pair{follow_terminal, head}, body);
-                // not LL1
-                if (!has_inserted) {
-                  std::cerr << "head and terminal confliction:" << head << ' ';
-                  alphabet->print(std::cerr, follow_terminal);
-                  std::cerr << ' ';
-                  alphabet->print(std::cerr, it2->first.first);
-                  std::cerr << std::endl;
-                  throw cyy::computation::exception::no_LL_grammar("");
-                }
+              auto [it2, has_inserted] = parsing_table.try_emplace(
+                  std::pair{follow_terminal, head}, body);
+              // not LL1
+              if (!has_inserted) {
+                std::cerr << "head and terminal confliction:" << head << ' ';
+                alphabet->print(std::cerr, follow_terminal);
+                std::cerr << ' ';
+                alphabet->print(std::cerr, it2->first.first);
+                std::cerr << std::endl;
+                throw cyy::computation::exception::no_LL_grammar("");
               }
             }
-            continue;
           }
+        }
+        for (auto const &terminal : first_set) {
 
           auto [it, has_inserted] =
               parsing_table.try_emplace(std::pair{terminal, head}, body);
@@ -76,16 +75,14 @@ namespace cyy::computation {
       stack.pop_back();
 
       if (auto ptr = top_symbol.get_terminal_ptr()) {
-        if (!alphabet->is_epsilon(*ptr)) {
-          if (terminal != *ptr) {
-            std::cerr << "symbol does not match terminal:";
-            alphabet->print(std::cerr, terminal);
-            alphabet->print(std::cerr, *ptr);
-            std::cerr << std::endl;
-            return false;
-          }
-          view.remove_prefix(1);
+        if (terminal != *ptr) {
+          std::cerr << "symbol does not match terminal:";
+          alphabet->print(std::cerr, terminal);
+          alphabet->print(std::cerr, *ptr);
+          std::cerr << std::endl;
+          return false;
         }
+        view.remove_prefix(1);
 
         assert(!callback_arguments_stack.empty());
         while (!callback_arguments_stack.empty()) {

@@ -85,7 +85,7 @@ namespace cyy::computation {
 
     std::set<nonterminal_type> nullable() const;
 
-    std::set<terminal_type>
+    std::pair<std::set<terminal_type>, bool>
     first(const grammar_symbol_const_span_type &alpha) const;
 
   protected:

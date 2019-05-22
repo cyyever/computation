@@ -37,8 +37,7 @@ namespace cyy::computation {
       for (auto const &body : bodies) {
         for (auto const &symbol : body) {
           auto terminal_ptr = symbol.get_terminal_ptr();
-          if (terminal_ptr && !alphabet->is_epsilon(*terminal_ptr) &&
-              !alphabet->contain(*terminal_ptr)) {
+          if (terminal_ptr && !alphabet->contain(*terminal_ptr)) {
             throw exception::invalid_CFG_production(
                 std::string("alphabet [") + alphabet->get_name() +
                 "] does not contain terminal " + std::to_string(*terminal_ptr));
@@ -429,15 +428,15 @@ namespace cyy::computation {
     return first_sets;
   }
 
-  std::set<CFG::terminal_type>
+  std::pair<std::set<CFG::terminal_type>, bool>
   CFG::first(const grammar_symbol_const_span_type &alpha) const {
 
     first();
     std::set<terminal_type> view_first_set;
     for (auto const &symbol : alpha) {
-
       if (symbol.is_terminal()) {
-        return {*symbol.get_terminal_ptr()};
+        view_first_set.insert(symbol.get_terminal());
+        return {view_first_set, false};
       }
       const auto &nonterminal = *symbol.get_nonterminal_ptr();
 
@@ -446,12 +445,10 @@ namespace cyy::computation {
       auto [first_set, epsilon_in_first] = it->second;
       view_first_set.merge(first_set);
       if (!epsilon_in_first) {
-        return view_first_set;
+        return {view_first_set, false};
       }
     }
-    view_first_set.insert(alphabet->get_epsilon());
-
-    return view_first_set;
+    return {view_first_set, true};
   }
 
   std::map<CFG::nonterminal_type, std::set<CFG::terminal_type>>
@@ -473,23 +470,18 @@ namespace cyy::computation {
 
             const auto &nonterminal = *(body[i].get_nonterminal_ptr());
 
-            auto first_set = first(grammar_symbol_const_span_type(body).subspan(
-                static_cast<std::ptrdiff_t>(i + 1)));
-
-            bool has_epsilon = false;
+            auto const &[first_set, epsilon_in_first] =
+                first(grammar_symbol_const_span_type(body).subspan(
+                    static_cast<std::ptrdiff_t>(i + 1)));
 
             auto &follow_set = follow_sets[nonterminal];
             for (auto const &terminal : first_set) {
-              if (alphabet->is_epsilon(terminal)) {
-                has_epsilon = true;
-              } else {
-                if (follow_set.insert(terminal).second) {
-                  has_add = true;
-                }
+              if (follow_set.insert(terminal).second) {
+                has_add = true;
               }
             }
 
-            if (has_epsilon) {
+            if (epsilon_in_first) {
               for (auto const &terminal : follow_sets[head]) {
                 if (follow_set.insert(terminal).second) {
                   has_add = true;

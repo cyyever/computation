@@ -29,6 +29,9 @@ namespace cyy::computation {
       auto it = productions.find(nonkernel_item);
 
       for (auto const &body : it->second) {
+        if (body.empty()) {
+          continue;
+        }
         LR_0_item new_kernel_item{{nonkernel_item, body}, 1};
         res[body[0]].add_kernel_item(*this, std::move(new_kernel_item));
       }

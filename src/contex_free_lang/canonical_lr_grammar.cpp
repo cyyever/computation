@@ -31,6 +31,9 @@ namespace cyy::computation {
       auto it = productions.find(nonterminal);
 
       for (auto const &body : it->second) {
+        if(body.empty()) {
+          continue;
+        }
         LR_0_item new_kernel_item{{nonterminal, body}, 1};
         res[body[0]].add_kernel_item(*this, new_kernel_item, lookahead_set);
       }
