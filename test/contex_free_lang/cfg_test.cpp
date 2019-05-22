@@ -165,7 +165,6 @@ TEST_CASE("recursive_descent_parse") {
 TEST_CASE("first_and_follow") {
   std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
       productions;
-  auto epsilon = ALPHABET::get("common_tokens")->get_epsilon();
   auto endmarker = ALPHABET::get("common_tokens")->get_endmarker();
   auto id = static_cast<CFG::terminal_type>(common_token::id);
   productions["E"] = {
@@ -189,13 +188,13 @@ TEST_CASE("first_and_follow") {
   CFG cfg("common_tokens", "E", productions);
   auto first_sets = cfg.first();
 
-  CHECK(std::get<0>(first_sets["F"]) == std::set<CFG::terminal_type>{'(', id});
-  CHECK(std::get<0>(first_sets["T"]) == std::set<CFG::terminal_type>{'(', id});
-  CHECK(std::get<0>(first_sets["E"]) == std::set<CFG::terminal_type>{'(', id});
-  CHECK(std::get<0>(first_sets["E'"]) == std::set<CFG::terminal_type>{'+'});
-  CHECK(std::get<0>(first_sets["T'"]) == std::set<CFG::terminal_type>{'*'});
-  CHECK(std::get<1>(first_sets["E'"]));
-  CHECK(std::get<1>(first_sets["T'"]));
+  CHECK(first_sets["F"].first == std::set<CFG::terminal_type>{'(', id});
+  CHECK(first_sets["T"].first == std::set<CFG::terminal_type>{'(', id});
+  CHECK(first_sets["E"].first == std::set<CFG::terminal_type>{'(', id});
+  CHECK(first_sets["E'"].first == std::set<CFG::terminal_type>{'+'});
+  CHECK(first_sets["T'"].first == std::set<CFG::terminal_type>{'*'});
+  CHECK(first_sets["E'"].second);
+  CHECK(first_sets["T'"].second);
   auto follow_sets = cfg.follow();
 
   CHECK(follow_sets["E"] == std::set<CFG::terminal_type>{')', endmarker});

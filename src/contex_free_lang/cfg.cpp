@@ -366,7 +366,7 @@ namespace cyy::computation {
   }
 
   const std::map<CFG::nonterminal_type,
-                 std::tuple<std::set<CFG::terminal_type>, bool>> &
+                 std::pair<std::set<CFG::terminal_type>, bool>> &
   CFG::first() const {
 
     if (!first_sets.empty()) {
@@ -407,13 +407,12 @@ namespace cyy::computation {
 
             auto const &nonterminal = *(body[i].get_nonterminal_ptr());
 
-            for (auto const &first_terminal :
-                 std::get<0>(first_sets[nonterminal])) {
+            for (auto const &first_terminal : first_sets[nonterminal].first) {
               if (first_set.insert(first_terminal).second) {
                 add_new_terminal = true;
               }
             }
-            if (!std::get<1>(first_sets[nonterminal])) {
+            if (!first_sets[nonterminal].second) {
               break;
             }
           }

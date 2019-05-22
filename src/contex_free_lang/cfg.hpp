@@ -76,8 +76,8 @@ namespace cyy::computation {
 
     bool recursive_descent_parse(symbol_string_view view) const;
 
-    const std::map<nonterminal_type, std::tuple<std::set<terminal_type>, bool>>
-        &first() const;
+    const std::map<nonterminal_type, std::pair<std::set<terminal_type>, bool>> &
+    first() const;
 
     std::map<nonterminal_type, std::set<terminal_type>> follow() const;
 
@@ -116,8 +116,7 @@ namespace cyy::computation {
         productions;
 
   private:
-    mutable std::map<nonterminal_type,
-                     std::tuple<std::set<terminal_type>, bool>>
+    mutable std::map<nonterminal_type, std::pair<std::set<terminal_type>, bool>>
         first_sets;
   };
 
