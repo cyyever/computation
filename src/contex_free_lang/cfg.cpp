@@ -85,8 +85,7 @@ namespace cyy::computation {
     for (auto const &[_, bodies] : productions) {
       for (auto const &body : bodies) {
         for (auto const &symbol : body) {
-          if (auto ptr = symbol.get_terminal_ptr();
-              ptr && !alphabet->is_epsilon(*ptr)) {
+          if (auto ptr = symbol.get_terminal_ptr(); ptr) {
             terminals.insert(*ptr);
           }
         }
@@ -375,9 +374,13 @@ namespace cyy::computation {
     // process all terminals
     for (auto const &[head, bodies] : productions) {
       for (auto const &body : bodies) {
-        auto terminal_ptr = body[0].get_terminal_ptr();
-        if (terminal_ptr) {
-          first_sets[head].insert(*terminal_ptr);
+        if (body.empty()) {
+          first_sets[head].insert(alphabet->get_epsilon());
+        } else {
+          auto terminal_ptr = body[0].get_terminal_ptr();
+          if (terminal_ptr) {
+            first_sets[head].insert(*terminal_ptr);
+          }
         }
       }
     }

@@ -64,21 +64,20 @@ TEST_CASE("eliminate_useless_symbols") {
 TEST_CASE("get_terminals") {
   std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
       productions;
-  auto epsilon = ALPHABET::get("common_tokens")->get_epsilon();
   auto id = static_cast<CFG::terminal_type>(common_token::id);
   productions["E"] = {
       {"T", "E'"},
   };
   productions["E'"] = {
       {'+', "T", "E'"},
-      {epsilon},
+      {},
   };
   productions["T"] = {
       {"F", "T'"},
   };
   productions["T'"] = {
       {'*', "F", "T'"},
-      {epsilon},
+      {},
   };
   productions["F"] = {
       {'(', "E", ')'}, {id} // i for id
@@ -99,7 +98,6 @@ TEST_CASE("eliminate_left_recursion") {
   productions["A"] = {
       {"A", 'c'},
       {"S", 'd'},
-      //{ALPHABET::get("common_tokens")->get_epsilon()},
       {},
   };
 
@@ -175,14 +173,14 @@ TEST_CASE("first_and_follow") {
   };
   productions["E'"] = {
       {'+', "T", "E'"},
-      {epsilon},
+      {},
   };
   productions["T"] = {
       {"F", "T'"},
   };
   productions["T'"] = {
       {'*', "F", "T'"},
-      {epsilon},
+      {},
   };
   productions["F"] = {
       {'(', "E", ')'}, {id} // i for id
