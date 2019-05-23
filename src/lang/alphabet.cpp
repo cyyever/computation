@@ -34,9 +34,7 @@ namespace cyy::computation {
   }
 
   void ALPHABET::print(std::ostream &os, symbol_type symbol) const {
-    if (symbol == get_epsilon()) {
-      os << "'epsilon'";
-    } else if (symbol == get_endmarker()) {
+    if (symbol == get_endmarker()) {
       os << "$";
     } else if (contain(symbol)) {
       print_symbol(os, symbol);

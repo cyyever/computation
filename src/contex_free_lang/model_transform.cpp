@@ -21,20 +21,23 @@ namespace cyy::computation {
     for (auto const &[p, next_states] : nfa.get_transition_function()) {
       auto const &[cur_state, symbol] = p;
       for (auto const &next_state : next_states) {
-        if (symbol != nfa.get_alphabet().get_epsilon()) {
-          productions[state_to_nonterminal(cur_state)].emplace_back(
-              CFG_production::body_type{{symbol},
-                                        {state_to_nonterminal(next_state)}});
-        } else {
-          productions[state_to_nonterminal(cur_state)].push_back(
-              CFG_production::body_type{{state_to_nonterminal(next_state)}});
-        }
+        productions[state_to_nonterminal(cur_state)].emplace_back(
+            CFG_production::body_type{{symbol},
+                                      {state_to_nonterminal(next_state)}});
+      }
+    }
+
+    for (auto const &[cur_state, next_states] :
+         nfa.get_epsilon_transition_function()) {
+      for (auto const &next_state : next_states) {
+        productions[state_to_nonterminal(cur_state)].push_back(
+            CFG_production::body_type{{state_to_nonterminal(next_state)}});
       }
     }
 
     for (auto const &final_state : nfa.get_final_states()) {
       productions[state_to_nonterminal(final_state)].push_back(
-          CFG_production::body_type{{nfa.get_alphabet().get_epsilon()}});
+          CFG_production::body_type{});
     }
 
     return {nfa.get_alphabet().get_name(),

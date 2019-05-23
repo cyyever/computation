@@ -62,11 +62,6 @@ namespace cyy::computation {
         os << *get_nonterminal_ptr();
       }
     }
-
-    bool is_epsilon(const ALPHABET &alphabet) const {
-      auto terminal_ptr = get_terminal_ptr();
-      return terminal_ptr && alphabet.is_epsilon(*terminal_ptr);
-    }
   };
 
   using grammar_symbol_string_type = std::vector<grammar_symbol_type>;

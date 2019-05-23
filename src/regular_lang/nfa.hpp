@@ -64,6 +64,9 @@ namespace cyy::computation {
       return transition_function;
     }
 
+    auto get_epsilon_transition_function() const noexcept -> auto const & {
+      return epsilon_transition_function;
+    }
     void replace_epsilon_transition(state_type from_state,
                                     std::set<state_type> end_states) {
       epsilon_transition_function[from_state].clear();

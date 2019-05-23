@@ -79,18 +79,20 @@ namespace cyy::computation {
   NFA regex::union_node::to_NFA(std::string_view alphabet_name,
                                 NFA::state_type start_state) const {
     auto left_NFA = left_node->to_NFA(alphabet_name, start_state + 1);
-    auto &left_final_states = left_NFA.get_final_states();
+    auto left_final_states = left_NFA.get_final_states();
+    auto const &left_start_state = left_NFA.get_start_state();
 
     auto right_NFA =
         right_node->to_NFA(alphabet_name, *(left_final_states.begin()) + 1);
-    auto &right_final_states = right_NFA.get_final_states();
+    auto const &right_final_states = right_NFA.get_final_states();
     auto final_state = (*right_final_states.begin()) + 1;
+    auto right_start_state = right_NFA.get_start_state();
 
     NFA nfa({start_state, final_state}, alphabet_name, start_state, {}, {});
-    nfa.add_sub_NFA(left_NFA);
-    nfa.add_epsilon_transition(start_state, {left_NFA.get_start_state()});
-    nfa.add_sub_NFA(right_NFA);
-    nfa.add_epsilon_transition(start_state, {right_NFA.get_start_state()});
+    nfa.add_sub_NFA(std::move(left_NFA));
+    nfa.add_epsilon_transition(start_state, {left_start_state});
+    nfa.add_sub_NFA(std::move(right_NFA));
+    nfa.add_epsilon_transition(start_state, {right_start_state});
 
     for (auto const &s : nfa.get_final_states()) {
       nfa.replace_epsilon_transition(s, {final_state});
@@ -149,8 +151,8 @@ namespace cyy::computation {
 
     auto right_NFA_start_state = *(left_final_states.begin());
     auto right_NFA = right_node->to_NFA(alphabet_name, right_NFA_start_state);
-    const auto &right_final_states = right_NFA.get_final_states();
-    left_NFA.add_sub_NFA(right_NFA);
+    auto right_final_states = right_NFA.get_final_states();
+    left_NFA.add_sub_NFA(std::move(right_NFA));
     left_NFA.replace_final_states(right_final_states);
 
     return left_NFA;
@@ -234,9 +236,8 @@ namespace cyy::computation {
     auto final_state = (*inner_final_states.begin()) + 1;
 
     NFA nfa({start_state, final_state}, alphabet_name, start_state, {}, {});
-    nfa.add_sub_NFA(inner_NFA);
-    nfa.add_epsilon_transition(start_state, {inner_NFA.get_start_state()});
-
+    nfa.add_sub_NFA(std::move(inner_NFA));
+    nfa.add_epsilon_transition(start_state, {inner_start_state});
     nfa.add_epsilon_transition(start_state, {final_state});
 
     for (auto const &inner_final_state : inner_final_states) {
