@@ -89,7 +89,7 @@ namespace cyy::computation {
                                    ranges::v3::inserter(diff, diff.begin()));
 
         if (!diff.empty()) {
-          prev_epsilon_closure.merge(diff);
+          prev_epsilon_closure.merge(std::move(diff));
         }
       }
       unstable_states.erase(sorted_state);
@@ -108,7 +108,7 @@ namespace cyy::computation {
                                    ranges::v3::inserter(diff, diff.begin()));
 
         if (!diff.empty()) {
-          prev_epsilon_closure.merge(diff);
+          prev_epsilon_closure.merge(std::move(diff));
           unstable_states.insert(prev_state);
         }
       }

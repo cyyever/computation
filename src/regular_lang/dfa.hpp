@@ -12,7 +12,7 @@
 #include <set>
 #include <string>
 
-#include "automaton.hpp"
+#include "../automaton/automaton.hpp"
 
 namespace cyy::computation {
 
