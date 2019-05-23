@@ -39,7 +39,6 @@ namespace cyy::computation {
           }
         }
         for (auto const &terminal : first_set) {
-
           auto [it, has_inserted] =
               parsing_table.try_emplace(std::pair{terminal, head}, body);
           // not LL1
@@ -111,12 +110,30 @@ namespace cyy::computation {
 
       match_callback(CFG_production{*ptr, it->second}, 0);
       auto pos = it->second.size();
+
+      if (pos == 0) {
+        assert(!callback_arguments_stack.empty());
+        while (!callback_arguments_stack.empty()) {
+          auto const &[it, pos] = callback_arguments_stack.back();
+          auto const &head = it->first.second;
+          auto const &body = it->second;
+          match_callback({head, body}, pos);
+          bool finish_production = (pos == body.size());
+          callback_arguments_stack.pop_back();
+          if (!finish_production) {
+            break;
+          }
+        }
+        continue;
+      }
+
       for (auto rit = it->second.rbegin(); rit != it->second.rend();
            rit++, pos--) {
         stack.push_back(*rit);
         callback_arguments_stack.emplace_back(it, pos);
       }
     }
+    assert(callback_arguments_stack.empty());
 
     if (!view.empty()) {
       std::cerr << "there are symbols remain after parse:";

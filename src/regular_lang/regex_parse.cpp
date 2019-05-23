@@ -59,17 +59,16 @@ namespace cyy::computation {
 
     std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
         productions;
-    auto epsilon = regex_alphabet->get_epsilon();
     productions["rexpr"] = {{"rterm", "rexpr'"}};
-    productions["rexpr'"] = {{'|', "rterm", "rexpr'"}, {epsilon}};
+    productions["rexpr'"] = {{'|', "rterm", "rexpr'"}, {}};
     productions["rterm"] = {
         {"rfactor", "rterm'"},
     };
-    productions["rterm'"] = {{"rfactor", "rterm'"}, {epsilon}};
+    productions["rterm'"] = {{"rfactor", "rterm'"}, {}};
     productions["rfactor"] = {
         {"rprimary", "rfactor'"},
     };
-    productions["rfactor'"] = {{"closure-operator"}, {epsilon}};
+    productions["rfactor'"] = {{"closure-operator"}, {}};
     productions["closure-operator"] = {
         {'*'},
         {'+'},
@@ -85,7 +84,7 @@ namespace cyy::computation {
         {"character-class-element", "character-class'"}};
 
     productions["character-class'"] = {
-        {"character-class-element", "character-class'"}, {epsilon}};
+        {"character-class-element", "character-class'"}, {}};
 
     productions["character-class-element"] = {{"escape-sequence"}};
 
@@ -184,8 +183,8 @@ namespace cyy::computation {
                 node_stack.emplace_back(
                     make_complemented_character_class({'\n', '\r'}));
               } else {
-                node_stack.emplace_back(std::make_shared<regex::basic_node>(
-                    *(body[0].get_terminal_ptr())));
+                node_stack.emplace_back(
+                    std::make_shared<regex::basic_node>(symbol));
               }
             }
             // rprimary -> '[' character-class ']'
