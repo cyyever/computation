@@ -63,11 +63,11 @@ namespace cyy::computation {
     if (parsing_table.empty()) {
       construct_parsing_table();
     }
-    std::vector<grammar_symbol_type> stack{start_symbol};
+    const auto endmarker = alphabet->get_endmarker();
+    std::vector<grammar_symbol_type> stack{endmarker, start_symbol};
     std::vector<
         std::pair<decltype(this->parsing_table)::const_iterator, size_t>>
         callback_arguments_stack;
-    const auto endmarker = alphabet->get_endmarker();
     while (!stack.empty()) {
       const auto terminal = view.empty() ? endmarker : view.front();
       auto top_symbol = std::move(stack.back());
@@ -81,69 +81,43 @@ namespace cyy::computation {
           std::cerr << std::endl;
           return false;
         }
-        view.remove_prefix(1);
-
-        assert(!callback_arguments_stack.empty());
-        while (!callback_arguments_stack.empty()) {
-          auto const &[it, pos] = callback_arguments_stack.back();
-          auto const &head = it->first.second;
-          auto const &body = it->second;
-          match_callback({head, body}, pos);
-          bool finish_production = (pos == body.size());
-          callback_arguments_stack.pop_back();
-          if (!finish_production) {
-            break;
-          }
+        if (!view.empty()) {
+          view.remove_prefix(1);
         }
-        continue;
-      }
-
-      auto ptr = top_symbol.get_nonterminal_ptr();
-      auto it = parsing_table.find({terminal, *ptr});
-      if (it == parsing_table.end()) {
-        std::cerr << "no rule for parsing ";
-        alphabet->print(std::cerr, terminal);
-        std::cerr << ' ' << *ptr;
-        std::cerr << std::endl;
-        return false;
-      }
-
-      match_callback(CFG_production{*ptr, it->second}, 0);
-      auto pos = it->second.size();
-
-      if (pos == 0) {
-        assert(!callback_arguments_stack.empty());
-        while (!callback_arguments_stack.empty()) {
-          auto const &[it, pos] = callback_arguments_stack.back();
-          auto const &head = it->first.second;
-          auto const &body = it->second;
-          match_callback({head, body}, pos);
-          bool finish_production = (pos == body.size());
-          callback_arguments_stack.pop_back();
-          if (!finish_production) {
-            break;
-          }
+      } else {
+        auto it =
+            parsing_table.find({terminal, *top_symbol.get_nonterminal_ptr()});
+        if (it == parsing_table.end()) {
+          std::cerr << "no rule for parsing ";
+          alphabet->print(std::cerr, terminal);
+          std::cerr << ' ' << *ptr;
+          std::cerr << std::endl;
+          return false;
         }
-        continue;
+
+        auto pos = it->second.size();
+        for (auto rit = it->second.rbegin(); rit != it->second.rend();
+             rit++, pos--) {
+          stack.push_back(*rit);
+          callback_arguments_stack.emplace_back(it, pos);
+        }
+        callback_arguments_stack.emplace_back(it, 0);
       }
 
-      for (auto rit = it->second.rbegin(); rit != it->second.rend();
-           rit++, pos--) {
-        stack.push_back(*rit);
-        callback_arguments_stack.emplace_back(it, pos);
+      while (!callback_arguments_stack.empty()) {
+        auto const &[it, pos] = callback_arguments_stack.back();
+        auto const &head = it->first.second;
+        auto const &body = it->second;
+        match_callback({head, body}, pos);
+        bool finish_production = (pos == body.size());
+        callback_arguments_stack.pop_back();
+        if (!finish_production) {
+          break;
+        }
       }
     }
     assert(callback_arguments_stack.empty());
-
-    if (!view.empty()) {
-      std::cerr << "there are symbols remain after parse:";
-      for (auto const &terminal : view) {
-        alphabet->print(std::cerr, terminal);
-      }
-      std::cerr << std::endl;
-      return false;
-    }
-
+    assert(view.empty());
     return true;
   }
 
