@@ -36,10 +36,7 @@ namespace cyy::computation {
             "unexisted start state");
       }
       for (auto const &final_state : final_states) {
-        if (!states.count(final_state)) {
-          throw cyy::computation::exception::no_finite_automaton(
-              std::string("unexisted state ") + std::to_string(final_state));
-        }
+        check_state(final_state);
       }
     }
 
@@ -72,6 +69,16 @@ namespace cyy::computation {
 
     bool includes(const std::set<state_type> &T) const {
       return ranges::v3::includes(states, T);
+    }
+
+    size_t get_state_number() const { return states.size(); }
+
+  protected:
+    void check_state(state_type s) const {
+      if (!states.count(s)) {
+        throw cyy::computation::exception::no_finite_automaton(
+            std::string("unexisted state ") + std::to_string(s));
+      }
     }
 
   protected:

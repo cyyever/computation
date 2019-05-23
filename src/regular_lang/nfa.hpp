@@ -48,16 +48,19 @@ namespace cyy::computation {
 
     void add_final_states(std::set<state_type> final_states_) {
       for (auto const &final_state : final_states_) {
-        if (!states.count(final_state)) {
-          throw exception::unexisted_finite_automaton_state(
-              std::to_string(final_state));
-        }
+        check_state(final_state);
       }
       final_states.merge(final_states_);
     }
+
     void replace_final_states(const std::set<state_type> &final_states_) {
       final_states.clear();
       add_final_states(final_states_);
+    }
+    void add_state(state_type s) { states.insert(s); }
+    void change_start_state(state_type s) {
+      check_state(s);
+      start_state = s;
     }
 
     auto get_transition_function() const noexcept -> auto const & {

@@ -88,17 +88,18 @@ namespace cyy::computation {
     auto final_state = (*right_final_states.begin()) + 1;
     auto right_start_state = right_NFA.get_start_state();
 
-    NFA nfa({start_state, final_state}, alphabet_name, start_state, {}, {});
-    nfa.add_sub_NFA(std::move(left_NFA));
-    nfa.add_epsilon_transition(start_state, {left_start_state});
-    nfa.add_sub_NFA(std::move(right_NFA));
-    nfa.add_epsilon_transition(start_state, {right_start_state});
+    left_NFA.add_state(start_state);
+    left_NFA.add_state(final_state);
+    left_NFA.change_start_state(start_state);
+    left_NFA.add_epsilon_transition(start_state, {left_start_state});
+    left_NFA.add_sub_NFA(std::move(right_NFA));
+    left_NFA.add_epsilon_transition(start_state, {right_start_state});
 
-    for (auto const &s : nfa.get_final_states()) {
-      nfa.replace_epsilon_transition(s, {final_state});
+    for (auto const &s : left_NFA.get_final_states()) {
+      left_NFA.replace_epsilon_transition(s, {final_state});
     }
-    nfa.replace_final_states({final_state});
-    return nfa;
+    left_NFA.replace_final_states({final_state});
+    return left_NFA;
   }
 
   void regex::union_node::assign_position(
