@@ -33,6 +33,9 @@ namespace cyy::computation {
       }
     }
 
+    auto get_transition_function() const -> const auto & {
+      return transition_function;
+    }
     bool equivalent_with(const DFA &rhs) const;
 
     bool simulate(symbol_string_view view) const {

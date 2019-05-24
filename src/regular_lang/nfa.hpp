@@ -33,6 +33,14 @@ namespace cyy::computation {
           transition_function(transition_function_),
           epsilon_transition_function(epsilon_transition_function_) {}
 
+    bool operator==(const NFA &rhs) const {
+      return (this == &rhs) ||
+             (finite_automaton::operator==(rhs) &&
+              transition_function == rhs.transition_function &&
+              epsilon_transition_function == rhs.epsilon_transition_function);
+    }
+    bool operator!=(const NFA &rhs) const { return !operator==(rhs); }
+
     void add_sub_NFA(NFA rhs) {
       if (*alphabet != *rhs.alphabet) {
         throw std::invalid_argument("sub NFA has different alphabet name");
@@ -46,22 +54,10 @@ namespace cyy::computation {
       epsilon_closures.clear();
     }
 
-    void add_final_states(std::set<state_type> final_states_) {
-      for (auto const &final_state : final_states_) {
-        check_state(final_state);
-      }
-      final_states.merge(final_states_);
-    }
-
-    void replace_final_states(const std::set<state_type> &final_states_) {
-      final_states.clear();
-      add_final_states(final_states_);
-    }
-    void add_state(state_type s) { states.insert(s); }
-    void change_start_state(state_type s) {
-      check_state(s);
-      start_state = s;
-    }
+    using finite_automaton::add_final_states;
+    using finite_automaton::add_new_state;
+    using finite_automaton::change_final_states;
+    using finite_automaton::change_start_state;
 
     auto get_transition_function() const noexcept -> auto const & {
       return transition_function;
@@ -100,14 +96,6 @@ namespace cyy::computation {
     std::pair<DFA, std::unordered_map<state_type, std::set<state_type>>>
     to_DFA_with_mapping() const;
     DFA to_DFA() const;
-
-    bool operator==(const NFA &rhs) const {
-      return (this == &rhs) ||
-             (finite_automaton::operator==(rhs) &&
-              transition_function == rhs.transition_function &&
-              epsilon_transition_function == rhs.epsilon_transition_function);
-    }
-    bool operator!=(const NFA &rhs) const { return !operator==(rhs); }
 
   private:
     std::set<state_type> epsilon_closure(const std::set<state_type> &T) const;
