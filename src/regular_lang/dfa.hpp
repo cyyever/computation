@@ -32,6 +32,11 @@ namespace cyy::computation {
             "some combinations of states and symbols lack next state");
       }
     }
+    DFA(const DFA &) = default;
+    DFA &operator=(const DFA &) = default;
+    DFA(DFA &&) = default;
+    DFA &operator=(DFA &&) = default;
+    ~DFA() = default;
 
     auto get_transition_function() const -> const auto & {
       return transition_function;
@@ -53,7 +58,6 @@ namespace cyy::computation {
 
     DFA minimize() const;
 
-  private:
     std::optional<state_type> move(state_type s, symbol_type a) const {
       auto it = transition_function.find({a, s});
       if (it != transition_function.end()) {

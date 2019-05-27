@@ -40,7 +40,10 @@ namespace cyy::computation {
       }
     }
     finite_automaton(const finite_automaton &) = default;
+    finite_automaton &operator=(const finite_automaton &) = default;
     finite_automaton(finite_automaton &&) = default;
+    finite_automaton &operator=(finite_automaton &&) = default;
+    ~finite_automaton() = default;
 
     auto get_states() const noexcept -> auto const & { return states; }
     auto get_alphabet() const noexcept -> auto const & { return *alphabet; }

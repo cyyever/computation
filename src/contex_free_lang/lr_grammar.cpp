@@ -88,15 +88,6 @@ namespace cyy::computation {
       }
       stack.push_back(it2->second);
     }
-
-    if (!view.empty()) {
-      std::cerr << "have symbols remain after parse:";
-      for (auto const &terminal : view) {
-        alphabet->print(std::cerr, terminal);
-      }
-      std::cerr << std::endl;
-      return false;
-    }
     return true;
   }
 } // namespace cyy::computation
