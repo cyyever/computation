@@ -47,7 +47,8 @@ NFA fuzzing_NFA(const uint8_t *Data, size_t Size) {
 
   std::set<NFA::state_type> states;
   NFA::state_type start_state = 0;
-  NFA::transition_table_type transition_table;
+  NFA::transition_function_type transition_function;
+  NFA::epsilon_transition_function_type epsilon_transition_function;
   std::set<NFA::state_type> final_states;
   auto alphabet = ALPHABET::get("ab_set");
   size_t i = 0;
@@ -90,17 +91,16 @@ NFA fuzzing_NFA(const uint8_t *Data, size_t Size) {
     if (i < Size) {
       alphabet->foreach_symbol([&](auto s) {
         if (s >= Data[i]) {
-          transition_table.try_emplace({s, from_state}, to_states);
+          transition_function.try_emplace({s, from_state}, to_states);
         }
       });
       i++;
     }
     if (i < Size) {
-      transition_table.try_emplace({alphabet->get_epsilon(), from_state},
-                                   to_states);
+      epsilon_transition_function.try_emplace(from_state, to_states);
       i++;
     }
   }
-  return NFA(states, alphabet->get_name(), start_state, transition_table,
+  return NFA(states, alphabet->get_name(), start_state, transition_function,
              final_states);
 }

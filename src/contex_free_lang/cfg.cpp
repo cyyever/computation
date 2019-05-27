@@ -309,9 +309,10 @@ namespace cyy::computation {
 
   bool CFG::recursive_descent_parse(symbol_string_view view) const {
 
-    auto match_nonterminal =
-        [&](auto &&self, const nonterminal_type &nonterminal,
-            bool check_endmark, size_t &pos, const CFG &cfg) -> bool {
+    auto match_nonterminal = [&](auto &&self,
+                                 const nonterminal_type &nonterminal,
+                                 bool check_endmark, size_t &pos,
+                                 const CFG &cfg) {
       if (pos >= view.size()) {
         return false;
       }

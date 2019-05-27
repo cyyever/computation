@@ -41,7 +41,6 @@ namespace cyy::computation {
     } else {
       os << "(unkown symbol)";
     }
-    return;
   }
 
   void print_symbol_string(std::ostream &os, const symbol_string &str,
