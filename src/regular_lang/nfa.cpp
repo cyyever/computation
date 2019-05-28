@@ -118,46 +118,22 @@ namespace cyy::computation {
 
   std::pair<DFA, std::unordered_map<DFA::state_type, std::set<NFA::state_type>>>
   NFA::to_DFA_with_mapping() const {
+    state_type next_state = 1;
+    DFA::transition_function_type DFA_transition_function;
     std::map<std::set<state_type>, state_type> subsets{
         {epsilon_closure(start_state), 0}};
-    state_type next_state = 1;
-
-    std::optional<state_type> empty_set_state;
-    DFA::transition_function_type DFA_transition_function;
-
-    std::set<symbol_type> active_symbols;
-    for (auto const &[p, _] : transition_function) {
-      active_symbols.insert(p.first);
-    }
-    std::set<symbol_type> inactive_symbols;
-    alphabet->foreach_symbol(
-        [&active_symbols, &inactive_symbols](auto const &a) {
-          if (active_symbols.count(a) == 0) {
-            inactive_symbols.insert(a);
-          }
-        });
-
-    for (auto const &[subset, state] : subsets) {
-      for (auto a : inactive_symbols) {
-        if (!empty_set_state) {
-          auto [_, has_emplaced] = subsets.try_emplace({}, next_state);
-          assert(has_emplaced);
-          empty_set_state = next_state;
-          next_state++;
-        }
-        DFA_transition_function[{a, empty_set_state.value()}] =
-            empty_set_state.value();
-      }
-
-      for (auto a : active_symbols) {
+    std::vector<decltype(subsets.begin())> states{subsets.begin()};
+    for (size_t i = 0; i < states.size(); i++) {
+      alphabet->foreach_symbol([&](auto a) {
+        auto const &[subset, state] = *states[i];
         auto res = move(subset, a);
-        auto [it2, has_emplaced] =
-            subsets.try_emplace(std::move(res), next_state);
+        auto [it, has_emplaced] = subsets.emplace(std::move(res), next_state);
         if (has_emplaced) {
+          states.emplace_back(it);
           next_state++;
         }
-        DFA_transition_function[{a, state}] = it2->second;
-      }
+        DFA_transition_function[{a, state}] = it->second;
+      });
     }
 
     std::set<state_type> DFA_states;
