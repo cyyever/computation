@@ -17,10 +17,8 @@ fuzzing_CFG_productions(const uint8_t *Data, size_t Size) {
   size_t i = 0;
   while (i < Size) {
     CFG::nonterminal_type header;
-    if (i < Size) {
-      header = CFG::nonterminal_type(1, to_printable_ASCII(Data[i]));
-      i++;
-    }
+    header = CFG::nonterminal_type(1, to_printable_ASCII(Data[i]));
+    i++;
 
     if (i < Size) {
       CFG_production::body_type body;

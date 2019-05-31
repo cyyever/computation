@@ -25,21 +25,8 @@ namespace cyy::computation {
                  std::shared_ptr<regex::syntax_node>>;
     explicit GNFA(const DFA &dfa);
 
-    /*
-    GNFA(const std::set<state_type> &states_, std::string_view alphabet_name,
-         state_type start_state_,
-         const transition_function_type &transition_function_,
-         const std::set<state_type> &final_states_,
-         const epsilon_transition_function_type &epsilon_transition_function_ =
-             {})
-        : finite_automaton(states_, alphabet_name, start_state_, final_states_),
-          transition_function(transition_function_),
-          epsilon_transition_function(epsilon_transition_function_) {}
-
-    auto get_transition_function() const noexcept -> auto const & {
-      return transition_function;
-    }
-    */
+  private:
+    void remove_state(state_type removed_state);
 
   private:
     transition_function_type transition_function;
