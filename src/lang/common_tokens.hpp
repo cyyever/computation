@@ -24,9 +24,11 @@ namespace cyy::computation {
     __end,
   };
 
-  class common_tokens final
-      : public range_alphabet<0, static_cast<symbol_type>(common_token::__end) -
-                                     1> {
+  class common_tokens final : public range_alphabet {
+  public:
+    common_tokens()
+        : range_alphabet(0, static_cast<symbol_type>(common_token::__end) - 1,
+                         "common_tokens") {}
 
   private:
     void print_symbol(std::ostream &os, symbol_type symbol) const override;

@@ -10,17 +10,20 @@
 #include <algorithm>
 #include <set>
 
+#include "../exception.hpp"
 #include "alphabet.hpp"
 
 namespace cyy::computation {
 
-  class set_alphabet final : public ALPHABET {
+  class set_alphabet : public ALPHABET {
   public:
-    explicit set_alphabet(const std::set<symbol_type> &explicit_set_)
-        : explicit_set(explicit_set_) {
+    explicit set_alphabet(std::set<symbol_type> explicit_set_,
+                          std::string_view name_)
+        : explicit_set(std::move(explicit_set_)) {
       if (explicit_set.empty()) {
-        throw std::invalid_argument("explicit set is empty");
+        throw exception::empty_alphabet("explicit set is empty");
       }
+      name = name_;
     }
 
     void foreach_symbol(const std::function<void(const symbol_type &)>
@@ -33,6 +36,8 @@ namespace cyy::computation {
       return explicit_set.count(s) != 0;
     }
     size_t size() const noexcept override { return explicit_set.size(); }
+
+    std::set<symbol_type> get_symbols() const override { return explicit_set; }
 
   private:
     void print_symbol(std::ostream &os, symbol_type symbol) const override {

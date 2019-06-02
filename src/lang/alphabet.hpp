@@ -9,7 +9,9 @@
 
 #include <functional>
 #include <iostream>
+#include <map>
 #include <memory>
+#include <set>
 #include <string>
 #include <string_view>
 
@@ -22,7 +24,6 @@ namespace cyy::computation {
   public:
     virtual ~ALPHABET() = default;
 
-    //   symbol_type get_epsilon() const { return add_max_symbol(1); }
     symbol_type get_endmarker() const { return add_max_symbol(2); }
     symbol_type get_unincluded_symbol() const { return add_max_symbol(3); }
 
@@ -39,8 +40,11 @@ namespace cyy::computation {
     }
 
     bool operator!=(const ALPHABET &rhs) const { return !operator==(rhs); }
+    virtual std::set<symbol_type> get_symbols() const;
+
     static void regist(const std::string &name);
     static std::shared_ptr<ALPHABET> get(std::string_view name);
+    static void set(std::shared_ptr<ALPHABET> alphabet);
 
   private:
     virtual void print_symbol(std::ostream &os, symbol_type symbol) const = 0;
@@ -60,6 +64,9 @@ namespace cyy::computation {
 
   protected:
     std::string name;
+
+  private:
+    static inline std::map<std::string, std::shared_ptr<ALPHABET>> factory;
   };
 
   void print_symbol_string(std::ostream &os, const symbol_string &str,

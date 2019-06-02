@@ -181,9 +181,7 @@ namespace cyy::computation {
     std::shared_ptr<syntax_node> make_complemented_character_class(
         const std::set<symbol_type> &symbol_set) const;
 
-    static const LL_grammar &get_grammar();
-    static inline std::shared_ptr<ALPHABET> regex_alphabet{
-        ALPHABET::get("printable-ASCII")};
+    const LL_grammar &get_grammar(std::string_view alphabet_name) const;
 
   private:
     std::shared_ptr<ALPHABET> alphabet;

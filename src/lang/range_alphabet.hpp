@@ -11,9 +11,17 @@
 
 namespace cyy::computation {
 
-  template <symbol_type min_symbol, symbol_type max_symbol>
   class range_alphabet : public ALPHABET {
   public:
+    range_alphabet(symbol_type min_symbol_, symbol_type max_symbol_,
+                   std::string_view name_)
+        : min_symbol{min_symbol_}, max_symbol{max_symbol_} {
+      if (max_symbol < min_symbol) {
+        throw exception::empty_alphabet("range is empty");
+      }
+      name = name_;
+    }
+
     void foreach_symbol(const std::function<void(const symbol_type &)>
                             &callback) const override {
       for (symbol_type i = min_symbol; i <= max_symbol; i++) {
@@ -36,5 +44,9 @@ namespace cyy::computation {
 
     symbol_type get_max_symbol() const override { return max_symbol; }
     symbol_type get_min_symbol() const override { return min_symbol; }
+
+  private:
+    symbol_type min_symbol;
+    symbol_type max_symbol;
   };
 } // namespace cyy::computation

@@ -7,11 +7,11 @@
 
 #pragma once
 
-#include "../lang/alphabet.hpp"
-#include "canonical_lr_grammar.hpp"
-#include "lr_item.hpp"
 #include <functional>
 #include <set>
+
+#include "canonical_lr_grammar.hpp"
+#include "lr_item.hpp"
 
 namespace cyy::computation {
 
