@@ -14,6 +14,7 @@ namespace cyy::computation {
   class ASCII final : public range_alphabet {
   public:
     ASCII() : range_alphabet(0, 127, "ASCII") {}
+    bool contains_ASCII() const override { return true; }
   };
 
   class printable_ASCII final : public range_alphabet {

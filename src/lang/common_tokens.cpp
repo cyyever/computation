@@ -12,37 +12,37 @@ namespace cyy::computation {
     switch (static_cast<common_token>(symbol)) {
       case common_token::ascii_char:
         os << "\"ascii char\"";
-        break;
+        return;
       case common_token::escape_sequence:
         os << "\"escape sequence\"";
-        break;
+        return;
       case common_token::id:
         os << "\"id\"";
-        break;
+        return;
       case common_token::whitespace:
         os << "\"whitespace\"";
-        break;
+        return;
       case common_token::digit:
         os << "\"digit\"";
-        break;
+        return;
       case common_token::number:
         os << "\"number\"";
-        break;
+        return;
       case common_token::INT:
         os << "\"int\"";
-        break;
+        return;
       case common_token::FLOAT:
         os << "\"float\"";
-        break;
+        return;
       case common_token::record:
         os << "\"record\"";
-        break;
+        return;
       case common_token::CLASS:
         os << "\"class\"";
-        break;
-      default:
-        os << '\'' << static_cast<char>(symbol) << '\'';
-        break;
+        return;
+      case common_token::__end:
+        return;
     }
+    os << '\'' << static_cast<char>(symbol) << '\'';
   }
 } // namespace cyy::computation

@@ -33,7 +33,8 @@ namespace cyy::computation {
      closure-operator -> '+'
      closure-operator -> '?'
 
-     rprimary -> 'non-operator-char'
+     rprimary -> 'non-operator-symbol'
+     rprimary -> '.'
      rprimary -> escape-sequence
      rprimary -> '(' rexpr ')'
      rprimary -> '[' character-class ']'
@@ -43,11 +44,11 @@ namespace cyy::computation {
      character-class' -> character-class-element character-class'
      character-class' -> epsilon
 
-     character-class-element -> 'printable-ASCII except backslash and ]'
+     character-class-element -> 'symbol except backslash and ]'
      character-class-element -> escape-sequence
 
-     escape-sequence -> '\' printable-ASCII
-     printable-ASCII -> 'printable-ASCII'
+     escape-sequence -> '\' symbol
+     symbol -> 'symbol'
   */
   const LL_grammar &regex::get_grammar(std::string_view alphabet_name) const {
     static std::map<std::string_view, std::shared_ptr<LL_grammar>> factory;
@@ -57,7 +58,7 @@ namespace cyy::computation {
     }
 
     std::set<CFG::terminal_type> operators{'|', '*', '(', '\\', ')',
-                                           '+', '?', '[', ']'};
+                                           '+', '?', '[', ']',  '.'};
 
     std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
         productions;
@@ -80,6 +81,7 @@ namespace cyy::computation {
         {"escape-sequence"},
         {'(', "rexpr", ')'},
         {'[', "character-class", ']'},
+        {'.'},
     };
 
     productions["character-class"] = {
@@ -91,7 +93,7 @@ namespace cyy::computation {
     productions["character-class-element"] = {{"escape-sequence"}};
 
     productions["escape-sequence"] = {
-        {'\\', "printable-ASCII"},
+        {'\\', "symbol"},
     };
 
     auto symbol_set = alphabet->get_symbols();
@@ -101,7 +103,7 @@ namespace cyy::computation {
     ALPHABET::set(regex_alphabet);
 
     regex_alphabet->foreach_symbol([&](auto const &a) {
-      productions["printable-ASCII"].emplace_back(CFG_production::body_type{a});
+      productions["symbol"].emplace_back(CFG_production::body_type{a});
 
       if (!operators.count(a)) {
         productions["rprimary"].emplace_back(CFG_production::body_type{a});
@@ -123,21 +125,24 @@ namespace cyy::computation {
 
     using syntax_node_ptr = std::shared_ptr<regex::syntax_node>;
 
-    auto escape_symbol = [](symbol_type symbol) -> symbol_type {
-      switch (symbol) {
-        case 'f':
-          return '\f';
-        case 'n':
-          return '\n';
-        case 'r':
-          return '\r';
-        case 't':
-          return '\t';
-        case 'v':
-          return '\v';
-        default:
-          return symbol;
+    auto escape_symbol = [this](symbol_type symbol) -> symbol_type {
+      if (alphabet->contains_ASCII()) {
+        switch (symbol) {
+          case 'f':
+            return '\f';
+          case 'n':
+            return '\n';
+          case 'r':
+            return '\r';
+          case 't':
+            return '\t';
+          case 'v':
+            return '\v';
+          default:
+            return symbol;
+        }
       }
+      return symbol;
     };
 
     std::vector<std::shared_ptr<regex::syntax_node>> node_stack;
@@ -156,8 +161,8 @@ namespace cyy::computation {
               auto const &body = production.get_body();
               bool finish_production = (pos == body.size());
 
-              // printable-ASCII -> 'printable-ASCII'
-              if (head == "printable-ASCII" && finish_production) {
+              // symbol -> 'symbol'
+              if (head == "symbol" && finish_production) {
                 last_symbol = *(body[0].get_terminal_ptr());
 
                 if (in_escape_sequence) {
@@ -172,13 +177,12 @@ namespace cyy::computation {
                 }
               }
 
-              // escape-sequence -> '\' printable-ASCII
+              // escape-sequence -> '\' symbol
               if (head == "escape-sequence") {
                 in_escape_sequence = (pos == 1);
               }
 
-              // character-class-element -> 'printable-ASCII except backslash
-              // and ]'
+              // character-class-element -> 'symbol except backslash and ]'
               if (head == "character-class-element") {
                 if (finish_production && body[0].is_terminal()) {
                   class_content.push_back(*(body[0].get_terminal_ptr()));
@@ -187,12 +191,18 @@ namespace cyy::computation {
 
               if (head == "rprimary") {
                 // rprimary -> 'non-operator-char'
+                // rprimary -> '.'
                 if (finish_production && body.size() == 1 &&
                     body[0].is_terminal()) {
                   auto symbol = *(body[0].get_terminal_ptr());
                   if (symbol == '.') {
-                    node_stack.emplace_back(
-                        make_complemented_character_class({'\n', '\r'}));
+                    if (alphabet->contains_ASCII()) {
+                      node_stack.emplace_back(
+                          make_complemented_character_class({'\n', '\r'}));
+                    } else {
+                      node_stack.emplace_back(
+                          make_complemented_character_class({}));
+                    }
                   } else {
                     node_stack.emplace_back(
                         std::make_shared<regex::basic_node>(symbol));
