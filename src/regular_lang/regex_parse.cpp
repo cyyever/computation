@@ -40,6 +40,7 @@ namespace cyy::computation {
      rprimary -> '[' character-class ']'
 
      character-class -> character-class-element character-class'
+     character-class -> '^' character-class'
 
      character-class' -> character-class-element character-class'
      character-class' -> epsilon
@@ -50,15 +51,15 @@ namespace cyy::computation {
      escape-sequence -> '\' symbol
      symbol -> 'symbol'
   */
-  const LL_grammar &regex::get_grammar(std::string_view alphabet_name) const {
-    static std::map<std::string_view, std::shared_ptr<LL_grammar>> factory;
+  const LL_grammar &regex::get_grammar(std::string alphabet_name) const {
+    static std::map<std::string, std::shared_ptr<LL_grammar>> factory;
     auto &regex_grammar = factory[alphabet_name];
     if (regex_grammar) {
       return *regex_grammar;
     }
 
-    std::set<CFG::terminal_type> operators{'|', '*', '(', '\\', ')',
-                                           '+', '?', '[', ']',  '.'};
+    std::set<CFG::terminal_type> operators{'|', '*', '(', '\\', ')', '+',
+                                           '?', '[', ']', '.',  '^'};
 
     std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
         productions;
@@ -87,6 +88,10 @@ namespace cyy::computation {
     productions["character-class"] = {
         {"character-class-element", "character-class'"}};
 
+    if (!alphabet->contain('^')) {
+      productions["character-class"].emplace_back(
+          CFG_production::body_type{'^', "character-class'"});
+    }
     productions["character-class'"] = {
         {"character-class-element", "character-class'"}, {}};
 
@@ -96,13 +101,7 @@ namespace cyy::computation {
         {'\\', "symbol"},
     };
 
-    auto symbol_set = alphabet->get_symbols();
-    symbol_set.merge(std::set<symbol_type>(operators));
-    auto regex_alphabet = std::make_shared<set_alphabet>(
-        symbol_set, alphabet->get_name() + "_regex");
-    ALPHABET::set(regex_alphabet);
-
-    regex_alphabet->foreach_symbol([&](auto const &a) {
+    alphabet->foreach_symbol([&](auto const &a) {
       productions["symbol"].emplace_back(CFG_production::body_type{a});
 
       if (!operators.count(a)) {
@@ -114,6 +113,12 @@ namespace cyy::computation {
             CFG_production::body_type{a});
       }
     });
+
+    auto symbol_set = alphabet->get_symbols();
+    symbol_set.merge(std::set<symbol_type>(operators));
+    auto regex_alphabet = std::make_shared<set_alphabet>(
+        symbol_set, alphabet->get_name() + "_regex");
+    ALPHABET::set(regex_alphabet);
 
     regex_grammar = std::make_shared<LL_grammar>(regex_alphabet->get_name(),
                                                  "rexpr", productions);
@@ -189,6 +194,12 @@ namespace cyy::computation {
                 }
               }
 
+              // character-class -> '^' character-class'
+              if (head == "character-class" && pos == 1 &&
+                  body[0].is_terminal()) {
+                class_content.push_back(*(body[0].get_terminal_ptr()));
+              }
+
               if (head == "rprimary") {
                 // rprimary -> 'non-operator-char'
                 // rprimary -> '.'
@@ -208,6 +219,7 @@ namespace cyy::computation {
                         std::make_shared<regex::basic_node>(symbol));
                   }
                 }
+
                 // rprimary -> '[' character-class ']'
                 if (body[0].is_terminal() &&
                     *(body[0].get_terminal_ptr()) == '[') {
@@ -217,9 +229,24 @@ namespace cyy::computation {
                   } else if (pos == 3) {
                     in_class = false;
                     const auto class_size = class_content.size();
-                    assert(class_size != 0);
+                    if (class_size == 0) {
+                      throw cyy::computation::exception::no_regular_expression(
+                          "empty character class");
+                    }
 
+                    bool complemented = false;
+
+                    if (class_content[0] == '^') {
+                      complemented = true;
+                    }
                     if (class_size == 1) {
+
+                      if (complemented) {
+                        throw cyy::computation::exception::
+                            no_regular_expression(
+                                "empty complemented character class");
+                      }
+
                       node_stack.emplace_back(
                           std::make_shared<regex::basic_node>(
                               class_content[0]));
@@ -229,10 +256,7 @@ namespace cyy::computation {
                     std::set<symbol_type> symbol_set;
 
                     size_t i = 0;
-                    bool complemented = false;
-
-                    if (class_content[0] == '^') {
-                      complemented = true;
+                    if (complemented) {
                       i++;
                     }
 

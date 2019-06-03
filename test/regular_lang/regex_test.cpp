@@ -10,6 +10,7 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 
+#include "../../src/exception.hpp"
 #include "../../src/regular_lang/regex.hpp"
 
 using namespace cyy::computation;
@@ -184,15 +185,21 @@ TEST_CASE("parse extended regex and to NFA") {
     CHECK(!dfa.simulate(U"\r"));
   }
 
-  SUBCASE("[^]") {
-    symbol_string expr = U"[^]";
-    regex reg("printable-ASCII", expr);
+  SUBCASE("[^a]") {
+    symbol_string expr = U"[^a]";
+    regex reg("ab_set", expr);
 
     auto nfa = reg.to_NFA();
     auto dfa = reg.to_DFA().minimize();
 
-    CHECK(nfa.simulate(U"^"));
-    CHECK(dfa.simulate(U"^"));
+    CHECK(nfa.simulate(U"b"));
+    CHECK(dfa.simulate(U"b"));
+  }
+
+  SUBCASE("[^]") {
+    symbol_string expr = U"[^]";
+    CHECK_THROWS_AS(regex("ab_set", expr),
+                    const cyy::computation::exception::no_regular_expression &);
   }
 
   SUBCASE("[-]") {

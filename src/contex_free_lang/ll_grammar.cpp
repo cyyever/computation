@@ -73,7 +73,8 @@ namespace cyy::computation {
       auto top_symbol = std::move(stack.back());
       stack.pop_back();
 
-      if (auto ptr = top_symbol.get_terminal_ptr()) {
+      if (top_symbol.is_terminal()) {
+        auto ptr = top_symbol.get_terminal_ptr();
         if (terminal != *ptr) {
           std::cerr << "symbol does not match terminal:";
           alphabet->print(std::cerr, terminal);
@@ -85,12 +86,12 @@ namespace cyy::computation {
           view.remove_prefix(1);
         }
       } else {
-        auto it =
-            parsing_table.find({terminal, *top_symbol.get_nonterminal_ptr()});
+        auto ptr = top_symbol.get_nonterminal_ptr();
+        auto it = parsing_table.find({terminal, *ptr});
         if (it == parsing_table.end()) {
           std::cerr << "no rule for parsing ";
           alphabet->print(std::cerr, terminal);
-          std::cerr << ' ' << *ptr;
+          std::cerr << " for " << *ptr;
           std::cerr << std::endl;
           return false;
         }
