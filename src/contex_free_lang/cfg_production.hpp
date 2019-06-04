@@ -44,6 +44,9 @@ namespace cyy::computation {
     auto get_body() const -> auto const & { return body; }
 
   private:
+    void print_body(std::ostream &os, const ALPHABET &alphabet) const;
+
+  private:
     grammar_symbol_type::nonterminal_type head;
     body_type body;
   };

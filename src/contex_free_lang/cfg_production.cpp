@@ -13,6 +13,11 @@ namespace cyy::computation {
 
   void CFG_production::print(std::ostream &os, const ALPHABET &alphabet) const {
     os << head << " -> ";
+    print_body(os, alphabet);
+    os << '\n';
+  }
+  void CFG_production::print_body(std::ostream &os,
+                                  const ALPHABET &alphabet) const {
     if (body.empty()) {
       os << "'epsilon'";
     } else {
@@ -21,6 +26,5 @@ namespace cyy::computation {
         os << ' ';
       }
     }
-    os << '\n';
   }
 } // namespace cyy::computation

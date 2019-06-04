@@ -28,11 +28,11 @@ namespace cyy::computation {
                   std::pair{follow_terminal, head}, body);
               // not LL1
               if (!has_inserted) {
-                std::cerr << "head and terminal confliction:" << head << ' ';
+                std::cerr << "follow terminal ";
                 alphabet->print(std::cerr, follow_terminal);
-                std::cerr << ' ';
-                alphabet->print(std::cerr, it2->first.first);
-                std::cerr << std::endl;
+                std::cerr << " confliction for production:\n";
+                CFG_production(it2->first.second, it2->second)
+                    .print(std::cerr, *alphabet);
                 throw cyy::computation::exception::no_LL_grammar("");
               }
             }
@@ -43,11 +43,12 @@ namespace cyy::computation {
               parsing_table.try_emplace(std::pair{terminal, head}, body);
           // not LL1
           if (!has_inserted) {
-            std::cerr << "head and terminal confliction:" << head << ' ';
+
+            std::cerr << "first terminal ";
             alphabet->print(std::cerr, terminal);
-            std::cerr << ' ';
-            alphabet->print(std::cerr, it->first.first);
-            std::cerr << std::endl;
+            std::cerr << " confliction for production:\n";
+            CFG_production(it->first.second, it->second)
+                .print(std::cerr, *alphabet);
             throw cyy::computation::exception::no_LL_grammar("");
           }
         }

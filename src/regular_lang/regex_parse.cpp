@@ -15,6 +15,54 @@
 
 namespace cyy::computation {
 
+  namespace {
+    class character_class {
+    public:
+      character_class() = default;
+      void reset() {
+        content.clear();
+        in_range = false;
+        last_symbol = {};
+        range_begin = {};
+        is_complemented = false;
+      }
+
+      void set_complemented() { is_complemented = true; }
+      void add_symbol(symbol_type s) {
+        if (in_range) {
+          if (content.empty() || s < range_begin) {
+            throw cyy::computation::exception::no_regular_expression(
+                std::string("invalid character range ") +
+                static_cast<char>(range_begin) + '-' + static_cast<char>(s));
+          }
+          for (auto i = range_begin; i <= s; i++) {
+            content.insert(i);
+          }
+          in_range = false;
+        }
+        last_symbol = s;
+        content.insert(s);
+      }
+      bool set_last_symbol_in_range() {
+        if (in_range || content.empty()) {
+          return false;
+        }
+
+        in_range = true;
+        range_begin = last_symbol;
+        return true;
+      }
+      auto get_content() const -> const auto & { return content; }
+
+    private:
+      std::set<symbol_type> content;
+      symbol_type last_symbol{};
+      symbol_type range_begin{};
+      int in_range{false};
+      bool is_complemented{false};
+    };
+  } // namespace
+
   /*
      rexpr -> rterm rexpr'
      rexpr' -> '|' rterm rexpr'
@@ -43,14 +91,16 @@ namespace cyy::computation {
      character-class -> '^' character-class'
 
      character-class' -> character-class-element character-class'
+     character-class' -> '-' character-class-element character-class'
      character-class' -> epsilon
 
-     character-class-element -> 'symbol except backslash and ]'
+     character-class-element -> 'symbol except \ and ] and - and ^'
      character-class-element -> escape-sequence
 
      escape-sequence -> '\' symbol
      symbol -> 'symbol'
   */
+
   const LL_grammar &regex::get_grammar(std::string alphabet_name) const {
     static std::map<std::string, std::shared_ptr<LL_grammar>> factory;
     auto &regex_grammar = factory[alphabet_name];
@@ -59,7 +109,7 @@ namespace cyy::computation {
     }
 
     std::set<CFG::terminal_type> operators{'|', '*', '(', '\\', ')', '+',
-                                           '?', '[', ']', '.',  '^'};
+                                           '?', '[', ']', '.',  '^', '-'};
 
     std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
         productions;
@@ -88,12 +138,12 @@ namespace cyy::computation {
     productions["character-class"] = {
         {"character-class-element", "character-class'"}};
 
-    if (!alphabet->contain('^')) {
-      productions["character-class"].emplace_back(
-          CFG_production::body_type{'^', "character-class'"});
-    }
+    productions["character-class"].emplace_back(
+        CFG_production::body_type{'^', "character-class'"});
     productions["character-class'"] = {
-        {"character-class-element", "character-class'"}, {}};
+        {'-', "character-class-element", "character-class'"},
+        {"character-class-element", "character-class'"},
+        {}};
 
     productions["character-class-element"] = {{"escape-sequence"}};
 
@@ -108,7 +158,7 @@ namespace cyy::computation {
         productions["rprimary"].emplace_back(CFG_production::body_type{a});
       }
 
-      if (a != '\\' && a != ']') {
+      if (a != '\\' && a != ']' && a != '-' && a != '^') {
         productions["character-class-element"].emplace_back(
             CFG_production::body_type{a});
       }
@@ -152,15 +202,14 @@ namespace cyy::computation {
 
     std::vector<std::shared_ptr<regex::syntax_node>> node_stack;
 
-    symbol_type last_symbol = '\0';
-
     bool in_class = false;
+    bool in_complemented_class = false;
     bool in_escape_sequence = false;
-    std::vector<symbol_type> class_content;
+    character_class cls;
     auto parse_res =
         get_grammar(alphabet->get_name())
-            .parse(view, [&node_stack, &last_symbol, &escape_symbol, &in_class,
-                          &in_escape_sequence, &class_content,
+            .parse(view, [&node_stack, &escape_symbol, &in_class, &cls,
+                          &in_complemented_class, &in_escape_sequence,
                           this](auto const &production, auto const &pos) {
               auto const &head = production.get_head();
               auto const &body = production.get_body();
@@ -168,18 +217,19 @@ namespace cyy::computation {
 
               // symbol -> 'symbol'
               if (head == "symbol" && finish_production) {
-                last_symbol = *(body[0].get_terminal_ptr());
+                auto s = *(body[0].get_terminal_ptr());
 
                 if (in_escape_sequence) {
-                  last_symbol = escape_symbol(last_symbol);
+                  s = escape_symbol(s);
                 }
 
                 if (in_class) {
-                  class_content.push_back(last_symbol);
+                  cls.add_symbol(s);
                 } else {
                   node_stack.emplace_back(
-                      std::make_shared<regex::basic_node>(last_symbol));
+                      std::make_shared<regex::basic_node>(s));
                 }
+                return;
               }
 
               // escape-sequence -> '\' symbol
@@ -190,14 +240,24 @@ namespace cyy::computation {
               // character-class-element -> 'symbol except backslash and ]'
               if (head == "character-class-element") {
                 if (finish_production && body[0].is_terminal()) {
-                  class_content.push_back(*(body[0].get_terminal_ptr()));
+                  cls.add_symbol(*(body[0].get_terminal_ptr()));
                 }
               }
 
               // character-class -> '^' character-class'
-              if (head == "character-class" && pos == 1 &&
-                  body[0].is_terminal()) {
-                class_content.push_back(*(body[0].get_terminal_ptr()));
+              if (head == "character-class" && pos == 0 && body[0] == '^') {
+                in_complemented_class = true;
+              }
+
+              // character-class' -> '-' character-class-element
+              // character-class'
+              if (head == "character-class'") {
+                if (pos == 1 && body[0] == '-') {
+                  if (!cls.set_last_symbol_in_range()) {
+                    throw cyy::computation::exception::no_regular_expression(
+                        std::string("invalid character range "));
+                  }
+                }
               }
 
               if (head == "rprimary") {
@@ -224,72 +284,23 @@ namespace cyy::computation {
                 if (body[0].is_terminal() &&
                     *(body[0].get_terminal_ptr()) == '[') {
                   if (pos == 1) {
+                    cls.reset();
                     in_class = true;
-                    class_content.clear();
+                    in_complemented_class = false;
                   } else if (pos == 3) {
                     in_class = false;
-                    const auto class_size = class_content.size();
-                    if (class_size == 0) {
+                    const auto &class_content = cls.get_content();
+                    if (class_content.empty()) {
                       throw cyy::computation::exception::no_regular_expression(
                           "empty character class");
                     }
 
-                    bool complemented = false;
-
-                    if (class_content[0] == '^') {
-                      complemented = true;
-                    }
-                    if (class_size == 1) {
-
-                      if (complemented) {
-                        throw cyy::computation::exception::
-                            no_regular_expression(
-                                "empty complemented character class");
-                      }
-
-                      node_stack.emplace_back(
-                          std::make_shared<regex::basic_node>(
-                              class_content[0]));
-                      return;
-                    }
-
-                    std::set<symbol_type> symbol_set;
-
-                    size_t i = 0;
-                    if (complemented) {
-                      i++;
-                    }
-
-                    while (i < class_size) {
-                      const symbol_type cur_symbol = class_content[i];
-
-                      if (i + 2 < class_size && class_content[i + 1] == '-') {
-                        auto end_symbol = class_content[i + 2];
-
-                        if (cur_symbol > end_symbol) {
-                          throw cyy::computation::exception::
-                              no_regular_expression(
-                                  std::string("invalid character range ") +
-                                  static_cast<char>(cur_symbol) + '-' +
-                                  static_cast<char>(end_symbol));
-                        }
-
-                        for (symbol_type j = cur_symbol; j <= end_symbol; j++) {
-                          symbol_set.emplace(j);
-                        }
-                        i += 3;
-                        continue;
-                      }
-                      symbol_set.insert(cur_symbol);
-                      i++;
-                    }
-
-                    if (complemented) {
+                    if (in_complemented_class) {
                       node_stack.push_back(
-                          make_complemented_character_class(symbol_set));
+                          make_complemented_character_class(class_content));
                       return;
                     }
-                    node_stack.push_back(make_character_class(symbol_set));
+                    node_stack.push_back(make_character_class(class_content));
                     return;
                   }
                 }

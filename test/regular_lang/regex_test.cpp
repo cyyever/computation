@@ -3,6 +3,7 @@
  *
  * \brief 测试cfg
  */
+#define DOCTEST_CONFIG_NO_EXCEPTIONS_BUT_WITH_ALL_ASSERTS
 #if __has_include(<CppCoreCheck\Warnings.h>)
 #include <CppCoreCheck\Warnings.h>
 #pragma warning(disable : ALL_CPPCORECHECK_WARNINGS)
@@ -203,7 +204,7 @@ TEST_CASE("parse extended regex and to NFA") {
   }
 
   SUBCASE("[-]") {
-    symbol_string expr = U"[-]";
+    symbol_string expr = U"[\\-]";
     regex reg("printable-ASCII", expr);
 
     auto nfa = reg.to_NFA();
@@ -211,10 +212,13 @@ TEST_CASE("parse extended regex and to NFA") {
 
     CHECK(nfa.simulate(U"-"));
     CHECK(dfa.simulate(U"-"));
+
+    CHECK_THROWS_AS(regex("ab_set", expr),
+                    const cyy::computation::exception::no_regular_expression &);
   }
 
   SUBCASE("[^-]") {
-    symbol_string expr = U"[^-]";
+    symbol_string expr = U"[^\\-]";
     regex reg("printable-ASCII", expr);
 
     auto nfa = reg.to_NFA();
@@ -224,6 +228,8 @@ TEST_CASE("parse extended regex and to NFA") {
     CHECK(!dfa.simulate(U"-"));
     CHECK(nfa.simulate(U"a"));
     CHECK(dfa.simulate(U"a"));
+    CHECK_THROWS_AS(regex("ab_set", expr),
+                    const cyy::computation::exception::no_regular_expression &);
   }
 
   SUBCASE("[a-c]") {
@@ -244,9 +250,23 @@ TEST_CASE("parse extended regex and to NFA") {
     CHECK(!nfa.simulate(U"-"));
     CHECK(!dfa.simulate(U"-"));
   }
+  SUBCASE("[a-b]") {
+    symbol_string expr = U"[a-b]";
+    regex reg("ab_set", expr);
 
-  SUBCASE("[a-c-z]") {
-    symbol_string expr = U"[a-c-z]";
+    auto nfa = reg.to_NFA();
+    auto dfa = reg.to_DFA().minimize();
+
+    CHECK(nfa.simulate(U"a"));
+    CHECK(dfa.simulate(U"a"));
+    CHECK(nfa.simulate(U"b"));
+    CHECK(dfa.simulate(U"b"));
+    CHECK(!nfa.simulate(U"c"));
+    CHECK(!dfa.simulate(U"c"));
+  }
+
+  SUBCASE("[a-c\\-z]") {
+    symbol_string expr = U"[a-c\\-z]";
     regex reg("printable-ASCII", expr);
 
     auto nfa = reg.to_NFA();
