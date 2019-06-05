@@ -24,10 +24,8 @@ namespace cyy::computation {
         in_range = false;
         last_symbol = {};
         range_begin = {};
-        is_complemented = false;
       }
 
-      void set_complemented() { is_complemented = true; }
       void add_symbol(symbol_type s) {
         if (in_range) {
           if (content.empty() || s < range_begin) {
@@ -59,7 +57,6 @@ namespace cyy::computation {
       symbol_type last_symbol{};
       symbol_type range_begin{};
       int in_range{false};
-      bool is_complemented{false};
     };
   } // namespace
 
