@@ -148,7 +148,7 @@ namespace cyy::computation {
         {'\\', "symbol"},
     };
 
-    alphabet->foreach_symbol([&](auto const &a) {
+    for (auto a : *alphabet) {
       productions["symbol"].emplace_back(CFG_production::body_type{a});
 
       if (!operators.count(a)) {
@@ -159,7 +159,7 @@ namespace cyy::computation {
         productions["character-class-element"].emplace_back(
             CFG_production::body_type{a});
       }
-    });
+    };
 
     std::set<symbol_type> symbol_set;
     for (auto s : *alphabet) {
@@ -383,11 +383,11 @@ namespace cyy::computation {
 
     std::set<symbol_type> complemented_symbol_set;
 
-    alphabet->foreach_symbol([&](auto const &a) {
+    for (auto a : *alphabet) {
       if (!symbol_set.count(a)) {
         complemented_symbol_set.insert(a);
       }
-    });
+    }
 
     return make_character_class(complemented_symbol_set);
   }

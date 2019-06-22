@@ -105,13 +105,13 @@ namespace cyy::computation {
           bool in_new_group = true;
           for (auto &sub_group : sub_groups) {
             bool in_group = true;
-            alphabet->foreach_symbol([&](auto const &a) {
+            for (auto a : *alphabet) {
               if (in_group &&
                   state_location[move(*(sub_group.begin()), a).value()] !=
                       state_location[move(state, a).value()]) {
                 in_group = false;
               }
-            });
+            };
             if (in_group) {
               sub_group.insert(state);
               in_new_group = false;
@@ -149,11 +149,11 @@ namespace cyy::computation {
         }
       }
 
-      alphabet->foreach_symbol([&](auto const &a) {
+      for (auto a : *alphabet) {
         auto next_state = move(*(groups[i].begin()), a).value();
 
         minimize_DFA_transition_function[{a, i}] = state_location[next_state];
-      });
+      };
     }
     return {minimize_DFA_states, alphabet->get_name(), minimize_DFA_start_state,
             minimize_DFA_transition_function, minimize_DFA_final_states};

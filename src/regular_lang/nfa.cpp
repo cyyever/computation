@@ -124,7 +124,7 @@ namespace cyy::computation {
         {epsilon_closure(start_state), 0}};
     std::vector<decltype(subsets.begin())> states{subsets.begin()};
     for (size_t i = 0; i < states.size(); i++) {
-      alphabet->foreach_symbol([&](auto a) {
+      for (auto a : *alphabet) {
         auto const &[subset, state] = *states[i];
         auto res = move(subset, a);
         auto [it, has_emplaced] = subsets.emplace(std::move(res), next_state);
@@ -133,7 +133,7 @@ namespace cyy::computation {
           next_state++;
         }
         DFA_transition_function[{a, state}] = it->second;
-      });
+      };
     }
 
     std::set<state_type> DFA_states;

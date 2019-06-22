@@ -35,7 +35,7 @@ namespace cyy::computation {
       }
       flags[i] = true;
 
-      alphabet->foreach_symbol([&](auto const &a) {
+      for(auto a:*alphabet) {
         std::set<uint64_t> follow_pos_set;
         for (auto const pos : position_sets[i]) {
           if (position_to_symbol[pos] == a) {
@@ -60,7 +60,7 @@ namespace cyy::computation {
         }
 
         DFA_transition_function[{a, i}] = j;
-      });
+      };
     }
 
     for (size_t i = 0; i < position_sets.size(); i++) {
