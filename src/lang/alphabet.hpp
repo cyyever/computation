@@ -21,11 +21,34 @@
 namespace cyy::computation {
 
   class ALPHABET {
+
+  public:
+    class iterator {
+    public:
+      iterator(const ALPHABET *ptr_, size_t index_)
+          : ptr(ptr_), index(index_) {}
+      iterator operator++() {
+        ++index;
+        return *this;
+      }
+      bool operator!=(const iterator &other) const {
+        return ptr != other.ptr || index != other.index;
+      }
+      symbol_type operator*() const { return ptr->get_symbol(index); }
+
+    private:
+      const ALPHABET *ptr;
+      size_t index;
+    };
+
   public:
     virtual ~ALPHABET() = default;
 
     symbol_type get_endmarker() const { return add_max_symbol(2); }
     symbol_type get_unincluded_symbol() const { return add_max_symbol(3); }
+
+    iterator begin() const { return iterator(this, 0); }
+    iterator end() const { return iterator(this, size()); }
 
     virtual void foreach_symbol(
         const std::function<void(const symbol_type &)> &callback) const = 0;
@@ -40,7 +63,6 @@ namespace cyy::computation {
     }
 
     bool operator!=(const ALPHABET &rhs) const { return !operator==(rhs); }
-    virtual std::set<symbol_type> get_symbols() const;
     virtual bool contains_ASCII() const { return false; }
 
     static void regist(const std::string &name);
@@ -52,6 +74,7 @@ namespace cyy::computation {
 
     virtual symbol_type get_min_symbol() const = 0;
     virtual symbol_type get_max_symbol() const = 0;
+    virtual symbol_type get_symbol(size_t index) const = 0;
 
     symbol_type add_max_symbol(size_t inc) const {
       const symbol_type max_symbol = get_max_symbol();

@@ -161,7 +161,11 @@ namespace cyy::computation {
       }
     });
 
-    auto symbol_set = alphabet->get_symbols();
+    std::set<symbol_type> symbol_set;
+    for (auto s : *alphabet) {
+      symbol_set.insert(s);
+    }
+
     symbol_set.merge(std::set<symbol_type>(operators));
     auto regex_alphabet = std::make_shared<set_alphabet>(
         symbol_set, alphabet->get_name() + "_regex");

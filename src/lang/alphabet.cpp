@@ -39,12 +39,6 @@ namespace cyy::computation {
     factory[alphabet->get_name()] = alphabet;
   }
 
-  std::set<symbol_type> ALPHABET::get_symbols() const {
-    std::set<symbol_type> symbols;
-    foreach_symbol([&symbols](auto const s) { symbols.insert(s); });
-    return symbols;
-  }
-
   void ALPHABET::print(std::ostream &os, symbol_type symbol) const {
     if (symbol == get_endmarker()) {
       os << "$";

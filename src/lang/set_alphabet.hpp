@@ -8,6 +8,7 @@
 #pragma once
 
 #include <algorithm>
+#include <range/v3/algorithm.hpp>
 #include <set>
 
 #include "../exception.hpp"
@@ -17,9 +18,9 @@ namespace cyy::computation {
 
   class set_alphabet : public ALPHABET {
   public:
-    explicit set_alphabet(std::set<symbol_type> explicit_set_,
+    explicit set_alphabet(const std::set<symbol_type> &explicit_set_,
                           std::string_view name_)
-        : explicit_set(std::move(explicit_set_)) {
+        : explicit_set(explicit_set_.begin(), explicit_set_.end()) {
       if (explicit_set.empty()) {
         throw exception::empty_alphabet("explicit set is empty");
       }
@@ -33,11 +34,9 @@ namespace cyy::computation {
       }
     }
     bool contain(symbol_type s) const noexcept override {
-      return explicit_set.count(s) != 0;
+      return ranges::v3::binary_search(explicit_set, s);
     }
     size_t size() const noexcept override { return explicit_set.size(); }
-
-    std::set<symbol_type> get_symbols() const override { return explicit_set; }
 
   private:
     void print_symbol(std::ostream &os, symbol_type symbol) const override {
@@ -52,8 +51,14 @@ namespace cyy::computation {
       return *explicit_set.rbegin();
     }
 
+    symbol_type get_symbol(size_t index) const noexcept override {
+      auto it = explicit_set.begin();
+      std::advance(it, index);
+      return *it;
+    }
+
   private:
-    std::set<symbol_type> explicit_set;
+    std::vector<symbol_type> explicit_set;
   };
 
 } // namespace cyy::computation
