@@ -22,12 +22,6 @@ namespace cyy::computation {
       name = name_;
     }
 
-    void foreach_symbol(const std::function<void(const symbol_type &)>
-                            &callback) const override {
-      for (symbol_type i = min_symbol; i <= max_symbol; i++) {
-        callback(i);
-      }
-    }
     bool contain(symbol_type s) const noexcept override {
       return s >= min_symbol && s <= max_symbol;
     }

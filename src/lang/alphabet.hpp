@@ -50,8 +50,6 @@ namespace cyy::computation {
     iterator begin() const { return iterator(this, 0); }
     iterator end() const { return iterator(this, size()); }
 
-    virtual void foreach_symbol(
-        const std::function<void(const symbol_type &)> &callback) const = 0;
     virtual bool contain(symbol_type s) const = 0;
     virtual size_t size() const = 0;
     void print(std::ostream &os, symbol_type symbol) const;

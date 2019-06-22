@@ -27,12 +27,6 @@ namespace cyy::computation {
       name = name_;
     }
 
-    void foreach_symbol(const std::function<void(const symbol_type &)>
-                            &callback) const override {
-      for (const auto &symbol : explicit_set) {
-        callback(symbol);
-      }
-    }
     bool contain(symbol_type s) const noexcept override {
       return ranges::v3::binary_search(explicit_set, s);
     }
