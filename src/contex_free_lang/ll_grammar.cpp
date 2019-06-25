@@ -75,11 +75,11 @@ namespace cyy::computation {
       stack.pop_back();
 
       if (top_symbol.is_terminal()) {
-        auto ptr = top_symbol.get_terminal_ptr();
-        if (terminal != *ptr) {
+        auto  s= top_symbol.get_terminal();
+        if (terminal != s) {
           std::cerr << "symbol does not match terminal:";
           alphabet->print(std::cerr, terminal);
-          alphabet->print(std::cerr, *ptr);
+          alphabet->print(std::cerr, s);
           std::cerr << std::endl;
           return false;
         }

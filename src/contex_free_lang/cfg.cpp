@@ -35,8 +35,7 @@ namespace cyy::computation {
 
       for (auto const &body : bodies) {
         for (auto const &symbol : body) {
-          auto terminal_ptr = symbol.get_terminal_ptr();
-          if (terminal_ptr && !alphabet->contain(*terminal_ptr)) {
+          if (symbol.is_terminal() && !alphabet->contain(symbol.get_terminal())) {
             throw exception::invalid_CFG_production(
                 std::string("alphabet [") + alphabet->get_name() +
                 "] does not contain terminal " + std::to_string(*terminal_ptr));
@@ -83,8 +82,8 @@ namespace cyy::computation {
     for (auto const &[_, bodies] : productions) {
       for (auto const &body : bodies) {
         for (auto const &symbol : body) {
-          if (auto ptr = symbol.get_terminal_ptr(); ptr) {
-            terminals.insert(*ptr);
+          if(symbol.is_terminal()) {
+            terminals.insert(symbol.get_terminal());
           }
         }
       }
@@ -325,7 +324,7 @@ namespace cyy::computation {
           auto const &grammal_symbol = body[i];
 
           if (grammal_symbol.is_terminal()) {
-            const auto terminal = *(grammal_symbol.get_terminal_ptr());
+            const auto terminal = grammal_symbol.get_terminal();
             if (terminal == view[local_pos]) {
               local_pos++;
             } else {
@@ -378,11 +377,8 @@ namespace cyy::computation {
         auto &[first_set, epsilon_in_first] = first_sets[head];
         if (body.empty()) {
           epsilon_in_first = true;
-        } else {
-          auto terminal_ptr = body[0].get_terminal_ptr();
-          if (terminal_ptr) {
-            first_set.insert(*terminal_ptr);
-          }
+        } else if(body[0].is_terminal()) {
+            first_set.insert(body[0].get_terminal());
         }
       }
     }
@@ -398,7 +394,7 @@ namespace cyy::computation {
           size_t i = 0;
           for (; i < body.size(); i++) {
             if (body[i].is_terminal()) {
-              if (first_set.insert(*body[i].get_terminal_ptr()).second) {
+              if (first_set.insert(body[i].get_terminal()).second) {
                 add_new_terminal = true;
               }
               break;

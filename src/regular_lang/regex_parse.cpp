@@ -218,8 +218,7 @@ namespace cyy::computation {
 
               // symbol -> 'symbol'
               if (head == "symbol" && finish_production) {
-                auto s = *(body[0].get_terminal_ptr());
-
+                auto s = body[0].get_terminal();
                 if (in_escape_sequence) {
                   s = escape_symbol(s);
                 }
@@ -241,7 +240,7 @@ namespace cyy::computation {
               // character-class-element -> 'symbol except backslash and ]'
               if (head == "character-class-element") {
                 if (finish_production && body[0].is_terminal()) {
-                  cls.add_symbol(*(body[0].get_terminal_ptr()));
+                  cls.add_symbol(body[0].get_terminal());
                 }
               }
 
@@ -266,7 +265,7 @@ namespace cyy::computation {
                 // rprimary -> '.'
                 if (finish_production && body.size() == 1 &&
                     body[0].is_terminal()) {
-                  auto symbol = *(body[0].get_terminal_ptr());
+                  auto symbol = body[0].get_terminal();
                   if (symbol == '.') {
                     if (alphabet->contains_ASCII()) {
                       node_stack.emplace_back(
@@ -282,8 +281,7 @@ namespace cyy::computation {
                 }
 
                 // rprimary -> '[' character-class ']'
-                if (body[0].is_terminal() &&
-                    *(body[0].get_terminal_ptr()) == '[') {
+                if ( body[0] == '[') {
                   if (pos == 1) {
                     cls.reset();
                     in_class = true;
@@ -309,7 +307,7 @@ namespace cyy::computation {
               if (head == "closure-operator" && finish_production) {
                 auto const &inner_tree = node_stack.back();
                 syntax_node_ptr node;
-                auto closure_operator = *(body[0].get_terminal_ptr());
+                auto closure_operator = body[0].get_terminal();
                 if (closure_operator == '*') {
                   node =
                       std::make_shared<regex::kleene_closure_node>(inner_tree);

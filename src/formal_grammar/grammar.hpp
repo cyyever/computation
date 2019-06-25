@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <range/v3/span.hpp>
+#include <range/v3/view/span.hpp>
 #include <string>
 #include <string_view>
 #include <utility>
@@ -31,9 +31,6 @@ namespace cyy::computation {
       return std::holds_alternative<nonterminal_type>(*this);
     }
 
-    const terminal_type *get_terminal_ptr() const noexcept {
-      return std::get_if<terminal_type>(this);
-    }
 
     terminal_type get_terminal() const noexcept {
       return std::get<terminal_type>(*this);
@@ -57,7 +54,7 @@ namespace cyy::computation {
 
     void print(std::ostream &os, const ALPHABET &alphabet) const {
       if (is_terminal()) {
-        alphabet.print(os, *get_terminal_ptr());
+        alphabet.print(os, get_terminal());
       } else {
         os << *get_nonterminal_ptr();
       }
