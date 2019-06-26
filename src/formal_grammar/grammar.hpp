@@ -8,6 +8,8 @@
 #pragma once
 
 #include <range/v3/view/span.hpp>
+#include <range/v3/view/filter.hpp>
+#include <range/v3/view/transform.hpp>
 #include <string>
 #include <string_view>
 #include <utility>
@@ -61,7 +63,17 @@ namespace cyy::computation {
     }
   };
 
-  using grammar_symbol_string_type = std::vector<grammar_symbol_type>;
+  class grammar_symbol_string_type : public std::vector<grammar_symbol_type> {
+    public:
+      using std::vector<grammar_symbol_type>::vector;
+      auto get_terminal_view() const -> auto {
+        return *this | ranges::v3::view::filter([](auto g){return g.is_terminal();}) |
+      ranges::v3::view::transform([](auto g){return g.get_terminal();})
+          ;
+      }
+  };
+
+  //using grammar_symbol_string_type = std::vector<grammar_symbol_type>;
   using grammar_symbol_const_span_type =
       ranges::v3::span<const grammar_symbol_type>;
 } // namespace cyy::computation

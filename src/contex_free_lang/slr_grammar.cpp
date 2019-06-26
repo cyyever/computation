@@ -94,7 +94,7 @@ namespace cyy::computation {
       if (ptr) {
         goto_table[{p.first, *ptr}] = next_state;
       } else {
-        action_table[{p.first, *p.second.get_terminal_ptr()}] = next_state;
+        action_table[{p.first, p.second.get_terminal()}] = next_state;
       }
     }
 

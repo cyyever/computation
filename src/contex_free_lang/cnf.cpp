@@ -200,19 +200,19 @@ namespace cyy::computation {
           }
 
           for (auto &symbol : body) {
-            auto terminal_ptr = symbol.get_terminal_ptr();
-            if (!terminal_ptr) {
+            if (!symbol.is_terminal()) {
               continue;
             }
-            auto it = terminal_productions.find(*terminal_ptr);
+            auto s=symbol.get_terminal();
+            auto it = terminal_productions.find(s);
             if (it != terminal_productions.end()) {
               symbol = it->second;
             } else {
               auto new_head = get_new_head("Z", heads);
               heads.insert(new_head);
-              terminal_productions[*terminal_ptr] = new_head;
+              terminal_productions[s] = new_head;
               new_productions[new_head].emplace_back(
-                  CFG_production::body_type{*terminal_ptr});
+                  CFG_production::body_type{s});
               symbol = new_head;
             }
           }

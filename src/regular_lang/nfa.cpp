@@ -8,6 +8,7 @@
 #include <cassert>
 #include <iterator>
 #include <range/v3/algorithm.hpp>
+#include <range/v3/iterator/insert_iterators.hpp>
 #include <vector>
 
 #include "../util.hpp"

@@ -7,6 +7,7 @@
 
 #include <iterator>
 #include <range/v3/algorithm.hpp>
+#include <range/v3/iterator/insert_iterators.hpp>
 #include <set>
 #include <vector>
 
@@ -153,7 +154,7 @@ namespace cyy::computation {
         auto next_state = move(*(groups[i].begin()), a).value();
 
         minimize_DFA_transition_function[{a, i}] = state_location[next_state];
-      };
+      }
     }
     return {minimize_DFA_states, alphabet->get_name(), minimize_DFA_start_state,
             minimize_DFA_transition_function, minimize_DFA_final_states};

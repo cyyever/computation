@@ -69,7 +69,7 @@ namespace cyy::computation {
 
     void eliminate_single_productions();
 
-    //! brief covert grammar to Chomsky normal form
+    //! convert grammar to Chomsky normal form
     void to_CNF();
 
     void left_factoring();
