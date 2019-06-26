@@ -203,7 +203,7 @@ namespace cyy::computation {
             if (!symbol.is_terminal()) {
               continue;
             }
-            auto s=symbol.get_terminal();
+            auto s = symbol.get_terminal();
             auto it = terminal_productions.find(s);
             if (it != terminal_productions.end()) {
               symbol = it->second;

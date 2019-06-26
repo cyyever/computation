@@ -75,7 +75,7 @@ namespace cyy::computation {
       stack.pop_back();
 
       if (top_symbol.is_terminal()) {
-        auto  s= top_symbol.get_terminal();
+        auto s = top_symbol.get_terminal();
         if (terminal != s) {
           std::cerr << "symbol does not match terminal:";
           alphabet->print(std::cerr, terminal);

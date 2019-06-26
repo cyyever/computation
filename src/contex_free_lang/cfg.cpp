@@ -34,8 +34,8 @@ namespace cyy::computation {
       }
 
       for (auto const &body : bodies) {
-        for (auto const &t: body.get_terminal_view()) {
-          if ( !alphabet->contain(t)) {
+        for (auto const &t : body.get_terminal_view()) {
+          if (!alphabet->contain(t)) {
             throw exception::invalid_CFG_production(
                 std::string("alphabet [") + alphabet->get_name() +
                 "] does not contain terminal " + std::to_string(t));
@@ -81,8 +81,8 @@ namespace cyy::computation {
     std::set<terminal_type> terminals;
     for (auto const &[_, bodies] : productions) {
       for (auto const &body : bodies) {
-        for (auto const &s: body.get_terminal_view()) {
-            terminals.insert(s);
+        for (auto const s : body.get_terminal_view()) {
+          terminals.insert(s);
         }
       }
     }
@@ -125,12 +125,8 @@ namespace cyy::computation {
           continue;
         }
         for (const auto &body : bodies) {
-          for (auto const &symbol : body) {
-            auto nonterminal_ptr = symbol.get_nonterminal_ptr();
-            if (!nonterminal_ptr) { // terminal
-              continue;
-            }
-            reachable_heads.insert(*nonterminal_ptr);
+          for (auto const &nt : body.get_nonterminal_view()) {
+            reachable_heads.insert(nt);
           }
         }
       }
@@ -191,7 +187,7 @@ namespace cyy::computation {
 
           for (auto &body : bodies) {
 
-            if (body.front()==head) {
+            if (body.front() == head) {
               body.erase(body.begin());
               body.emplace_back(new_head);
               new_bodies.emplace_back(std::move(body));
@@ -219,7 +215,7 @@ namespace cyy::computation {
             continue;
           }
 
-               if(body.front() != old_heads[j]) {
+          if (body.front() != old_heads[j]) {
             new_bodies.emplace_back(std::move(body));
             continue;
           }
@@ -373,8 +369,8 @@ namespace cyy::computation {
         auto &[first_set, epsilon_in_first] = first_sets[head];
         if (body.empty()) {
           epsilon_in_first = true;
-        } else if(body[0].is_terminal()) {
-            first_set.insert(body[0].get_terminal());
+        } else if (body[0].is_terminal()) {
+          first_set.insert(body[0].get_terminal());
         }
       }
     }
@@ -460,12 +456,11 @@ namespace cyy::computation {
               continue;
             }
 
-            const auto &nonterminal = *(body[i].get_nonterminal_ptr());
-
             auto const &[first_set, epsilon_in_first] =
                 first(grammar_symbol_const_span_type(body).subspan(
                     static_cast<std::ptrdiff_t>(i + 1)));
 
+            const auto &nonterminal = *(body[i].get_nonterminal_ptr());
             auto &follow_set = follow_sets[nonterminal];
             for (auto const &terminal : first_set) {
               if (follow_set.insert(terminal).second) {

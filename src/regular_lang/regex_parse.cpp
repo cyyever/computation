@@ -281,7 +281,7 @@ namespace cyy::computation {
                 }
 
                 // rprimary -> '[' character-class ']'
-                if ( body[0] == '[') {
+                if (body[0] == '[') {
                   if (pos == 1) {
                     cls.reset();
                     in_class = true;
