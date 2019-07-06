@@ -33,6 +33,7 @@
 
 # Vim backups
 *~
+*.swp
 
 # build dir
 build
