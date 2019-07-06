@@ -67,18 +67,18 @@ namespace cyy::computation {
     public:
       using std::vector<grammar_symbol_type>::vector;
       auto get_terminal_view() const -> auto {
-        return *this | ranges::v3::view::filter([](auto g){return g.is_terminal();}) |
-          ranges::v3::view::transform([](auto g){return g.get_terminal();})
+        return *this | ranges::view::filter([](auto g){return g.is_terminal();}) |
+          ranges::view::transform([](auto g){return g.get_terminal();})
           ;
       }
       auto get_nonterminal_view() const -> auto {
-        return *this | ranges::v3::view::filter([](auto g){return g.is_nonterminal();}) |
-          ranges::v3::view::transform([](auto g){return *g.get_nonterminal_ptr();})
+        return *this | ranges::view::filter([](auto g){return g.is_nonterminal();}) |
+          ranges::view::transform([](auto g){return *g.get_nonterminal_ptr();})
           ;
       }
   };
 
   //using grammar_symbol_string_type = std::vector<grammar_symbol_type>;
   using grammar_symbol_const_span_type =
-      ranges::v3::span<const grammar_symbol_type>;
+      ranges::span<const grammar_symbol_type>;
 } // namespace cyy::computation

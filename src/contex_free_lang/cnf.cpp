@@ -22,7 +22,7 @@ namespace cyy::computation {
       auto head = checking_heads.extract(checking_heads.begin()).value();
       auto &bodies = productions[head];
 
-      bodies.erase(ranges::v3::remove_if(bodies,
+      bodies.erase(ranges::remove_if(bodies,
                                          [](auto const &production) {
                                            return production.empty();
                                          }),
@@ -73,7 +73,7 @@ namespace cyy::computation {
       has_new_nullable_nonterminals = false;
       for (auto &[head, bodies] : productions) {
         for (auto const &body : bodies) {
-          if (ranges::v3::all_of(body, [&](auto const &symbol) {
+          if (ranges::all_of(body, [&](auto const &symbol) {
                 return symbol.is_nonterminal() &&
                        nullable_nonterminals.count(
                            *symbol.get_nonterminal_ptr()) != 0;
@@ -96,7 +96,7 @@ namespace cyy::computation {
     // find immediate single productions
     for (auto &[head, bodies] : productions) {
       auto &this_head = head;
-      bodies.erase(ranges::v3::remove_if(
+      bodies.erase(ranges::remove_if(
                        bodies,
                        [&this_head, &single_productions](auto const &body) {
                          bool res =

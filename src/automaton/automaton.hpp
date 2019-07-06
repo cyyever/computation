@@ -79,7 +79,7 @@ namespace cyy::computation {
     }
 
     bool includes(const std::set<state_type> &T) const {
-      return ranges::v3::includes(states, T);
+      return ranges::includes(states, T);
     }
 
   protected:

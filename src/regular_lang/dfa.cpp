@@ -67,16 +67,16 @@ namespace cyy::computation {
       return false;
     }
 
-    return ranges::v3::all_of(final_states, [&rhs](auto s) {
+    return ranges::all_of(final_states, [&rhs](auto s) {
       return rhs.final_states.count(s) != 0;
     });
   }
 
   DFA DFA::minimize() const {
     std::set<state_type> non_final_states;
-    ranges::v3::set_difference(
+    ranges::set_difference(
         states, final_states,
-        ranges::v3::inserter(non_final_states, non_final_states.begin()));
+        ranges::inserter(non_final_states, non_final_states.begin()));
 
     std::vector<std::set<state_type>> groups{non_final_states, final_states};
     std::map<state_type, size_t> state_location;

@@ -56,7 +56,7 @@ namespace cyy::computation {
       std::set<symbol_type> content;
       symbol_type last_symbol{};
       symbol_type range_begin{};
-      int in_range{false};
+      bool in_range{false};
     };
   } // namespace
 
@@ -98,7 +98,7 @@ namespace cyy::computation {
      symbol -> 'symbol'
   */
 
-  const LL_grammar &regex::get_grammar(std::string alphabet_name) const {
+  const LL_grammar &regex::get_grammar(const std::string &alphabet_name) const {
     static std::map<std::string, std::shared_ptr<LL_grammar>> factory;
     auto &regex_grammar = factory[alphabet_name];
     if (regex_grammar) {

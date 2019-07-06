@@ -85,9 +85,9 @@ namespace cyy::computation {
         std::set<state_type> diff;
         auto &prev_epsilon_closure = epsilon_closures[prev_state];
         auto &unstable_epsilon_closure = epsilon_closures[sorted_state];
-        ranges::v3::set_difference(unstable_epsilon_closure,
+        ranges::set_difference(unstable_epsilon_closure,
                                    prev_epsilon_closure,
-                                   ranges::v3::inserter(diff, diff.begin()));
+                                   ranges::inserter(diff, diff.begin()));
 
         if (!diff.empty()) {
           prev_epsilon_closure.merge(std::move(diff));
@@ -104,9 +104,9 @@ namespace cyy::computation {
         std::set<state_type> diff;
         auto &prev_epsilon_closure = epsilon_closures[prev_state];
         auto &unstable_epsilon_closure = epsilon_closures[unstable_state];
-        ranges::v3::set_difference(unstable_epsilon_closure,
+        ranges::set_difference(unstable_epsilon_closure,
                                    prev_epsilon_closure,
-                                   ranges::v3::inserter(diff, diff.begin()));
+                                   ranges::inserter(diff, diff.begin()));
 
         if (!diff.empty()) {
           prev_epsilon_closure.merge(std::move(diff));
