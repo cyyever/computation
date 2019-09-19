@@ -29,7 +29,7 @@ namespace cyy::computation {
   }
 
   std::set<uint64_t> regex::basic_node::first_pos() const { return {position}; }
-  std::set<uint64_t> regex::basic_node::last_pos() const { return {position}; }
+  std::set<uint64_t> regex::basic_node::last_pos() const { return first_pos(); }
 
   NFA regex::epsilon_node::to_NFA(std::string_view alphabet_name,
                                   NFA::state_type start_state) const {
