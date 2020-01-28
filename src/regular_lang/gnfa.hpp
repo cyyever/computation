@@ -26,11 +26,9 @@ namespace cyy::computation {
     explicit GNFA(const DFA &dfa);
 
     GNFA &operator=(const GNFA &) = default;
-    GNFA(GNFA &&) = default;
-    GNFA &operator=(GNFA &&) = default;
     ~GNFA() = default;
 
-    std::shared_ptr<regex::syntax_node>  to_regex() const;
+    std::shared_ptr<regex::syntax_node> to_regex() const;
 
   private:
     GNFA remove_state(state_type removed_state) const;

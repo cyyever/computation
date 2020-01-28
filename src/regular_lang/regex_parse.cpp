@@ -159,7 +159,7 @@ namespace cyy::computation {
         productions["character-class-element"].emplace_back(
             CFG_production::body_type{a});
       }
-    };
+    }
 
     std::set<symbol_type> symbol_set;
     for (auto s : *alphabet) {

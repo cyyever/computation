@@ -32,27 +32,28 @@ namespace cyy::computation {
     change_final_states({new_final_state});
   }
 
-    std::shared_ptr<regex::syntax_node> GNFA::to_regex() const {
+  std::shared_ptr<regex::syntax_node> GNFA::to_regex() const {
 
-		    bool flag=true;
-	    while (flag) {
-		    flag=false;
-		    for(auto s: states) {
-			    if (s != start_state and !final_states.count(s)==1) {
-			    remove_state(s);
-			    flag =true;
-			    break;
-			    }
-		    }
+    GNFA new_gnfg(*this);
 
-	    }
-		return transition_function[{from_state, to_state}];
+    bool flag = true;
+    while (flag) {
+      flag = false;
+      for (auto s : states) {
+        if (s != start_state && (final_states.count(s) != 1)) {
+          remove_state(s);
+          flag = true;
+          break;
+        }
+      }
     }
+    return new_gnfg.transition_function.begin()->second;
+  }
 
-  GNFA GNFA::remove_state(state_type removed_state) {
-	CNFA new_gnfg(*this);
-	new_gnfg.states.erase(removed_state);
-	new_gnfg.transition_function.clear()
+  GNFA GNFA::remove_state(state_type removed_state) const {
+    GNFA new_gnfg(*this);
+    new_gnfg.states.erase(removed_state);
+    new_gnfg.transition_function.clear();
 
     for (auto from_state : states) {
       if (from_state == removed_state || is_final_state(from_state)) {
@@ -62,42 +63,38 @@ namespace cyy::computation {
         if (to_state == removed_state || to_state == start_state) {
           continue;
         }
-        auto &from_to_regex_expr =transition_function[{from_state, to_state}];
-        if (!from_to_regex_expr) {
-          from_to_regex_expr = std::make_shared<regex::empty_set_node>();
-        }
-        auto &from_removed_regex_expr =
-            transition_function[{from_state, removed_state}];
-        if (!from_removed_regex_expr) {
-          from_removed_regex_expr = std::make_shared<regex::empty_set_node>();
-        }
+        auto it1 = transition_function.find({from_state, to_state});
+        auto it2 = transition_function.find({from_state, removed_state});
+        auto it3 = transition_function.find({removed_state, removed_state});
+        auto it4 = transition_function.find({removed_state, to_state});
 
-        auto &removed_removed_regex_expr =
-            transition_function[{removed_state, to_state}];
-        if (!removed_removed_regex_expr) {
-          removed_removed_regex_expr =
-              std::make_shared<regex::empty_set_node>();
-        }
-        auto &removed_to_regex_expr =
-            transition_function[{removed_state, to_state}];
-        if (!removed_to_regex_expr) {
-          removed_to_regex_expr = std::make_shared<regex::empty_set_node>();
-        }
-        from_to_regex_expr =
+        auto from_to_regex_expr =
             std::make_shared<regex::union_node>(
-                from_to_regex_expr,
+                (it1 != transition_function.end()
+                     ? it1->second
+                     : std::make_shared<regex::empty_set_node>()),
                 std::make_shared<regex::concat_node>(
-                    from_removed_regex_expr,
+                    (it2 != transition_function.end()
+                         ? it2->second
+                         : std::make_shared<regex::empty_set_node>()),
                     std::make_shared<regex::concat_node>(
                         std::make_shared<regex::kleene_closure_node>(
-                            removed_removed_regex_expr),
-                        removed_to_regex_expr))
+                            (it3 != transition_function.end()
+                                 ? it3->second
+                                 : std::make_shared<regex::empty_set_node>())
+
+                                ),
+
+                        (it4 != transition_function.end()
+                             ? it4->second
+                             : std::make_shared<regex::empty_set_node>())))
 
                     )
                 ->simplify();
-	new_gnfg.transition_function[{from_state,to_state}]=from_to_regex_expr;
+        new_gnfg.transition_function[{from_state, to_state}] =
+            from_to_regex_expr;
       }
     }
-return new_gnfg;
+    return new_gnfg;
   }
 } // namespace cyy::computation

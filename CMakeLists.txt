@@ -11,6 +11,7 @@ find_package(range-v3 REQUIRED)
 add_library(MyComputationLib ${SOURCE})
 
 target_link_libraries(MyComputationLib PUBLIC range-v3)
+target_compile_definitions(MyComputationLib PUBLIC RANGES_NO_STD_FORWARD_DECLARATIONS)
 
 # test
 option(BUILD_TEST "Build test" ON)
