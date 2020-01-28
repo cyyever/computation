@@ -39,9 +39,9 @@ namespace cyy::computation {
     bool flag = true;
     while (flag) {
       flag = false;
-      for (auto s : states) {
-        if (s != start_state && (final_states.count(s) != 1)) {
-          remove_state(s);
+      for (auto s : new_gnfg.states) {
+        if (s != new_gnfg.start_state && new_gnfg.final_states.count(s) != 1) {
+          new_gnfg = new_gnfg.remove_state(s);
           flag = true;
           break;
         }

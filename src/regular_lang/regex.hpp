@@ -35,6 +35,7 @@ namespace cyy::computation {
       virtual std::set<uint64_t> last_pos() const = 0;
       virtual std::map<uint64_t, std::set<uint64_t>> follow_pos() const = 0;
       virtual std::shared_ptr<syntax_node> simplify() const { return {}; }
+      virtual symbol_string to_string() const = 0;
     };
 
     class empty_set_node final : public syntax_node {
@@ -52,6 +53,7 @@ namespace cyy::computation {
       std::map<uint64_t, std::set<uint64_t>> follow_pos() const override {
         return {};
       }
+      symbol_string to_string() const override { return {}; }
     };
 
     class epsilon_node final : public syntax_node {
@@ -69,6 +71,7 @@ namespace cyy::computation {
       std::map<uint64_t, std::set<uint64_t>> follow_pos() const override {
         return {};
       }
+      symbol_string to_string() const override { return {}; }
     };
 
     class basic_node final : public syntax_node {
@@ -86,6 +89,7 @@ namespace cyy::computation {
       std::map<uint64_t, std::set<uint64_t>> follow_pos() const override {
         return {};
       }
+      symbol_string to_string() const override { return {symbol}; }
 
     private:
       symbol_type symbol;
@@ -110,6 +114,27 @@ namespace cyy::computation {
       bool is_empty_set_node() const override;
       bool is_epsilon_node() const override;
       std::shared_ptr<syntax_node> simplify() const override;
+      symbol_string to_string() const override {
+        symbol_string str;
+        auto left_str = left_node->to_string();
+        if (left_str.size() > 1) {
+          str += '(';
+          str += left_str;
+          str += ')';
+        } else {
+          str += left_str;
+        }
+        str += '|';
+        auto right_str = right_node->to_string();
+        if (right_str.size() > 1) {
+          str += '(';
+          str += right_str;
+          str += ')';
+        } else {
+          str += right_str;
+        }
+        return str;
+      }
 
     private:
       std::shared_ptr<syntax_node> left_node, right_node;
@@ -133,6 +158,9 @@ namespace cyy::computation {
       bool is_empty_set_node() const override;
       bool is_epsilon_node() const override;
       std::shared_ptr<syntax_node> simplify() const override;
+      symbol_string to_string() const override {
+        return left_node->to_string() + right_node->to_string();
+      }
 
     private:
       std::shared_ptr<syntax_node> left_node, right_node;
@@ -152,6 +180,19 @@ namespace cyy::computation {
       bool is_empty_set_node() const override;
       bool is_epsilon_node() const override;
       std::shared_ptr<syntax_node> simplify() const override;
+      symbol_string to_string() const override {
+        symbol_string str;
+        auto inner_string = inner_node->to_string();
+        if (inner_string.size() > 1) {
+          str += '(';
+          str += inner_string;
+          str += ')';
+        } else {
+          str = inner_string;
+        }
+        str += '*';
+        return str;
+      }
 
     private:
       std::shared_ptr<syntax_node> inner_node;

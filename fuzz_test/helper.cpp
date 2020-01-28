@@ -87,11 +87,11 @@ NFA fuzzing_NFA(const uint8_t *Data, size_t Size) {
     }
 
     if (i < Size) {
-      alphabet->foreach_symbol([&](auto s) {
+      for (auto s : *alphabet) {
         if (s >= Data[i]) {
           transition_function.try_emplace({s, from_state}, to_states);
         }
-      });
+      }
       i++;
     }
     if (i < Size) {
