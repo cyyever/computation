@@ -32,16 +32,37 @@ namespace cyy::computation {
     change_final_states({new_final_state});
   }
 
-  void GNFA::remove_state(state_type removed_state) {
+    std::shared_ptr<regex::syntax_node> GNFA::to_regex() const {
+
+		    bool flag=true;
+	    while (flag) {
+		    flag=false;
+		    for(auto s: states) {
+			    if (s != start_state and !final_states.count(s)==1) {
+			    remove_state(s);
+			    flag =true;
+			    break;
+			    }
+		    }
+
+	    }
+		return transition_function[{from_state, to_state}];
+    }
+
+  GNFA GNFA::remove_state(state_type removed_state) {
+	CNFA new_gnfg(*this);
+	new_gnfg.states.erase(removed_state);
+	new_gnfg.transition_function.clear()
+
     for (auto from_state : states) {
-      if (from_state == removed_state || is_final_state(removed_state)) {
+      if (from_state == removed_state || is_final_state(from_state)) {
         continue;
       }
       for (auto to_state : states) {
         if (to_state == removed_state || to_state == start_state) {
           continue;
         }
-        auto &from_to_regex_expr = transition_function[{from_state, to_state}];
+        auto &from_to_regex_expr =transition_function[{from_state, to_state}];
         if (!from_to_regex_expr) {
           from_to_regex_expr = std::make_shared<regex::empty_set_node>();
         }
@@ -74,8 +95,9 @@ namespace cyy::computation {
 
                     )
                 ->simplify();
+	new_gnfg.transition_function[{from_state,to_state}]=from_to_regex_expr;
       }
     }
-    states.erase(removed_state);
+return new_gnfg;
   }
 } // namespace cyy::computation
