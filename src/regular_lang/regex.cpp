@@ -60,7 +60,7 @@ namespace cyy::computation {
         }
 
         DFA_transition_function[{a, i}] = j;
-      };
+      }
     }
 
     for (size_t i = 0; i < position_sets.size(); i++) {
