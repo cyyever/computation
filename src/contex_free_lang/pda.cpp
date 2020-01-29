@@ -13,16 +13,17 @@
 
 namespace cyy::computation {
 
-  std::set<std::pair<std::vector<symbol_type>, PDA::state_type>>
-  PDA::move(const std::set<std::pair<std::vector<symbol_type>, state_type>>
-                &configuration,
-            symbol_type a) const {
+  std::set<std::pair<std::vector<PDA::stack_symbol_type>, PDA::state_type>>
+  PDA::move(
+      const std::set<std::pair<std::vector<stack_symbol_type>, state_type>>
+          &configuration,
+      input_symbol_type a) const {
 
-    std::set<std::pair<std::vector<symbol_type>, PDA::state_type>>
+    std::set<std::pair<std::vector<stack_symbol_type>, PDA::state_type>>
         direct_reachable;
     for (auto const &[stack, s] : configuration) {
       if (!stack.empty()) {
-        auto it = transition_function.find({stack.back(), s, a});
+        auto it = transition_function.find({a, s, stack.back()});
         if (it != transition_function.end()) {
           for (auto const &[next_state, next_stack_symbol] : it->second) {
             auto next_stack = stack;
@@ -34,7 +35,8 @@ namespace cyy::computation {
           }
         }
       }
-      auto it = transition_function.find({std::optional<symbol_type>{}, s, a});
+      auto it =
+          transition_function.find({a, s, std::optional<stack_symbol_type>{}});
       if (it != transition_function.end()) {
         for (auto const &[next_state, next_stack_symbol] : it->second) {
           auto next_stack = stack;
@@ -48,9 +50,9 @@ namespace cyy::computation {
     return move(std::move(direct_reachable));
   }
 
-  std::set<std::pair<std::vector<symbol_type>, PDA::state_type>> PDA::move(
-      std::set<std::pair<std::vector<symbol_type>, state_type>> configuration)
-      const {
+  std::set<std::pair<std::vector<PDA::stack_symbol_type>, PDA::state_type>>
+  PDA::move(std::set<std::pair<std::vector<stack_symbol_type>, state_type>>
+                configuration) const {
     auto result = std::move(configuration);
     while (true) {
       decltype(result) new_result;
@@ -58,7 +60,7 @@ namespace cyy::computation {
       for (auto const &[stack, s] : result) {
         if (!stack.empty()) {
           auto it = transition_function.find(
-              {stack.back(), s, std::optional<symbol_type>{}});
+              {std::optional<input_symbol_type>{}, s, stack.back()});
           if (it != transition_function.end()) {
             for (auto const &[next_state, next_stack_symbol] : it->second) {
               auto next_stack = stack;
@@ -70,8 +72,9 @@ namespace cyy::computation {
             }
           }
         }
-        auto it = transition_function.find(
-            {std::optional<symbol_type>{}, s, std::optional<symbol_type>{}});
+        auto it =
+            transition_function.find({std::optional<input_symbol_type>{}, s,
+                                      std::optional<stack_symbol_type>{}});
         if (it != transition_function.end()) {
           for (auto const &[next_state, next_stack_symbol] : it->second) {
             auto next_stack = stack;
@@ -92,8 +95,8 @@ namespace cyy::computation {
     return result;
   }
   bool PDA::simulate(symbol_string_view view) const {
-    std::set<std::pair<std::vector<symbol_type>, state_type>> configuration{
-        {{}, start_state}};
+    std::set<std::pair<std::vector<stack_symbol_type>, state_type>>
+        configuration{{{}, start_state}};
     configuration = move(std::move(configuration));
     for (auto const &symbol : view) {
       configuration = move(configuration, symbol);
