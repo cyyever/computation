@@ -7,8 +7,6 @@
 
 #include <cassert>
 #include <iterator>
-#include <range/v3/algorithm.hpp>
-#include <range/v3/iterator/insert_iterators.hpp>
 #include <vector>
 
 #include "pda.hpp"
@@ -47,8 +45,13 @@ namespace cyy::computation {
         }
       }
     }
+    return move(std::move(direct_reachable));
+  }
 
-    auto result = std::move(direct_reachable);
+  std::set<std::pair<std::vector<symbol_type>, PDA::state_type>> PDA::move(
+      std::set<std::pair<std::vector<symbol_type>, state_type>> configuration)
+      const {
+    auto result = std::move(configuration);
     while (true) {
       decltype(result) new_result;
 
@@ -88,15 +91,22 @@ namespace cyy::computation {
 
     return result;
   }
-  /* bool PDA::simulate(symbol_string_view view) const { */
-  /*   auto s = epsilon_closure(start_state); */
-  /*   for (auto const &symbol : view) { */
-  /*     s = move(s, symbol); */
-  /*     if (s.empty()) { */
-  /*       return false; */
-  /*     } */
-  /*   } */
-  /*   return contain_final_state(s); */
-  /* } */
+  bool PDA::simulate(symbol_string_view view) const {
+    std::set<std::pair<std::vector<symbol_type>, state_type>> configuration{
+        {{}, start_state}};
+    configuration = move(std::move(configuration));
+    for (auto const &symbol : view) {
+      configuration = move(configuration, symbol);
+      if (configuration.empty()) {
+        return false;
+      }
+    }
+    for (auto const &[_, s] : configuration) {
+      if (is_final_state(s)) {
+        return true;
+      }
+    }
+    return false;
+  }
 
 } // namespace cyy::computation

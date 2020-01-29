@@ -48,22 +48,21 @@ namespace cyy::computation {
       return transition_function;
     }
 
-    /* bool simulate(symbol_string_view view) const; */
+    bool simulate(symbol_string_view view) const;
 
   private:
-    /* std::set<state_type> epsilon_closure(const std::set<state_type> &T)
-     * const; */
-    /* const std::set<state_type> &epsilon_closure(state_type s) const; */
-
     std::set<std::pair<std::vector<symbol_type>, state_type>>
     move(const std::set<std::pair<std::vector<symbol_type>, state_type>>
              &configuration,
          symbol_type a) const;
 
+    std::set<std::pair<std::vector<symbol_type>, state_type>> move(
+        std::set<std::pair<std::vector<symbol_type>, state_type>> configuration)
+        const;
+
   private:
     std::shared_ptr<ALPHABET> stack_alphabet;
     transition_function_type transition_function;
-    /* mutable std::map<state_type, std::set<state_type>> epsilon_closures; */
   };
 
 } // namespace cyy::computation
