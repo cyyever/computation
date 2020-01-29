@@ -7,7 +7,7 @@
  */
 #pragma once
 
-#include "../src/contex_free_lang/cfg.hpp"
+#include "../src/context_free_lang/cfg.hpp"
 #include "../src/regular_lang/nfa.hpp"
 
 inline char to_printable_ASCII(uint8_t data) { return data % 94 + 32; }

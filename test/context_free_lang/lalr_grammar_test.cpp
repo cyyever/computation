@@ -8,10 +8,11 @@
 #pragma warning(disable : ALL_CPPCORECHECK_WARNINGS)
 #endif
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#define DOCTEST_CONFIG_NO_EXCEPTIONS_BUT_WITH_ALL_ASSERTS
 #include <doctest/doctest.h>
 #include <iostream>
 
-#include "../../src/contex_free_lang/slr_grammar.hpp"
+#include "../../src/context_free_lang/lalr_grammar.hpp"
 #include "../../src/lang/common_tokens.hpp"
 
 using namespace cyy::computation;
@@ -19,125 +20,114 @@ using namespace cyy::computation;
 TEST_CASE("canonical_collection") {
   std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
       productions;
+  auto endmarker = ALPHABET::get("common_tokens")->get_endmarker();
   auto id = static_cast<CFG::terminal_type>(common_token::id);
-  productions["E"] = {
-      {"E", '+', "T"},
-      {"T"},
-  };
-  productions["T"] = {
-      {"T", '*', "F"},
-      {"F"},
-  };
-  productions["F"] = {
-      {'(', "E", ')'}, {id} // i for id
+  productions["S"] = {
+      {"L", '=', "R"},
+      {"R"},
   };
 
-  SLR_grammar grammar("common_tokens", "E", productions);
+  productions["L"] = {
+      {'*', "R"},
+      {id},
+  };
+  productions["R"] = {
+      {"L"},
+  };
 
-  std::unordered_set<LR_0_item_set> sets;
+  LALR_grammar grammar("common_tokens", "S", productions);
 
+  std::unordered_set<LR_1_item_set> sets;
   {
-    LR_0_item_set set;
+    LR_1_item_set set;
 
-    set.add_kernel_item(grammar, LR_0_item{CFG_production{"E'", {"E"}}, 0});
-
+    set.add_kernel_item(grammar, LR_0_item{CFG_production{"S'", {"S"}}, 0},
+                        {endmarker});
     sets.emplace(std::move(set));
   }
 
   {
-    LR_0_item_set set;
+    LR_1_item_set set;
 
-    set.add_kernel_item(grammar, LR_0_item{CFG_production{"E'", {"E"}}, 1});
+    set.add_kernel_item(grammar, LR_0_item{CFG_production{"S'", {"S"}}, 1},
+                        {endmarker});
+    sets.emplace(std::move(set));
+  }
+
+  {
+    LR_1_item_set set;
 
     set.add_kernel_item(grammar,
-                        LR_0_item{CFG_production{"E", {"E", '+', "T"}}, 1});
+                        LR_0_item{CFG_production{"S", {{"L", '=', "R"}}}, 1},
+                        {endmarker});
+    set.add_kernel_item(grammar, LR_0_item{CFG_production{"R", {{"L"}}}, 1},
+                        {endmarker});
     sets.emplace(std::move(set));
   }
 
   {
-    LR_0_item_set set;
+    LR_1_item_set set;
 
-    set.add_kernel_item(grammar, LR_0_item{CFG_production{"E", {"T"}}, 1});
-    set.add_kernel_item(grammar,
-                        LR_0_item{CFG_production{"T", {"T", '*', "F"}}, 1});
+    set.add_kernel_item(grammar, LR_0_item{CFG_production{"S", {"R"}}, 1},
+                        {endmarker});
+
     sets.emplace(std::move(set));
   }
 
   {
-    LR_0_item_set set;
+    LR_1_item_set set;
 
-    set.add_kernel_item(grammar, LR_0_item{CFG_production{"T", {"F"}}, 1});
+    set.add_kernel_item(grammar, LR_0_item{CFG_production{"L", {'*', "R"}}, 1},
+                        {'=', endmarker});
+
     sets.emplace(std::move(set));
   }
 
   {
-    LR_0_item_set set;
+    LR_1_item_set set;
 
-    set.add_kernel_item(grammar,
-                        LR_0_item{CFG_production{"F", {'(', "E", ')'}}, 1});
+    set.add_kernel_item(grammar, LR_0_item{CFG_production{"L", {id}}, 1},
+                        {'=', endmarker});
     sets.emplace(std::move(set));
   }
 
   {
-    LR_0_item_set set;
+    LR_1_item_set set;
 
-    set.add_kernel_item(grammar, LR_0_item{CFG_production{"F", {id}}, 1});
+    set.add_kernel_item(grammar,
+                        LR_0_item{CFG_production{"S", {{"L", '=', "R"}}}, 2},
+                        {endmarker});
+
     sets.emplace(std::move(set));
   }
 
   {
-    LR_0_item_set set;
+    LR_1_item_set set;
 
-    set.add_kernel_item(grammar,
-                        LR_0_item{CFG_production{"E", {"E", '+', "T"}}, 2});
+    set.add_kernel_item(grammar, LR_0_item{CFG_production{"L", {'*', "R"}}, 2},
+                        {'=', endmarker});
+
     sets.emplace(std::move(set));
   }
 
   {
-    LR_0_item_set set;
+    LR_1_item_set set;
 
-    set.add_kernel_item(grammar,
-                        LR_0_item{CFG_production{"T", {"T", '*', "F"}}, 2});
+    set.add_kernel_item(grammar, LR_0_item{CFG_production{"R", {"L"}}, 1},
+                        {'=', endmarker});
     sets.emplace(std::move(set));
   }
 
   {
-    LR_0_item_set set;
+    LR_1_item_set set;
 
     set.add_kernel_item(grammar,
-                        LR_0_item{CFG_production{"E", {"E", '+', "T"}}, 1});
-    set.add_kernel_item(grammar,
-                        LR_0_item{CFG_production{"F", {'(', "E", ')'}}, 2});
+                        LR_0_item{CFG_production{"S", {{"L", '=', "R"}}}, 3},
+                        {endmarker});
     sets.emplace(std::move(set));
   }
 
-  {
-    LR_0_item_set set;
-
-    set.add_kernel_item(grammar,
-                        LR_0_item{CFG_production{"E", {"E", '+', "T"}}, 3});
-    set.add_kernel_item(grammar,
-                        LR_0_item{CFG_production{"T", {"T", '*', "F"}}, 1});
-    sets.emplace(std::move(set));
-  }
-
-  {
-    LR_0_item_set set;
-
-    set.add_kernel_item(grammar,
-                        LR_0_item{CFG_production{"T", {"T", '*', "F"}}, 3});
-    sets.emplace(std::move(set));
-  }
-
-  {
-    LR_0_item_set set;
-
-    set.add_kernel_item(grammar,
-                        LR_0_item{CFG_production{"F", {'(', "E", ')'}}, 3});
-    sets.emplace(std::move(set));
-  }
-
-  std::unordered_set<LR_0_item_set> collection;
+  std::unordered_set<LR_1_item_set> collection;
   for (auto &[set, _] : grammar.canonical_collection().first) {
     collection.emplace(set);
   }
@@ -145,7 +135,7 @@ TEST_CASE("canonical_collection") {
   CHECK(sets == collection);
 }
 
-TEST_CASE("SLR(1) parse") {
+TEST_CASE("LALR(1) parse") {
   SUBCASE("parse expression grammar") {
 
     std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
@@ -169,7 +159,7 @@ TEST_CASE("SLR(1) parse") {
         {'(', "E", ')'}, {id} // i for id
     };
 
-    SLR_grammar grammar("common_tokens", "E", productions);
+    LALR_grammar grammar("common_tokens", "E", productions);
 
     auto parse_tree =
         grammar.get_parse_tree(symbol_string{id, '+', id, '*', id});
@@ -186,7 +176,7 @@ TEST_CASE("SLR(1) parse") {
         {},
     };
 
-    SLR_grammar grammar("common_tokens", "E", productions);
+    LALR_grammar grammar("common_tokens", "E", productions);
 
     auto parse_tree = grammar.get_parse_tree(symbol_string{});
     REQUIRE(parse_tree);

@@ -11,7 +11,7 @@
 #include <doctest/doctest.h>
 #include <iostream>
 
-#include "../../src/contex_free_lang/cfg.hpp"
+#include "../../src/context_free_lang/cfg.hpp"
 #include "../../src/lang/common_tokens.hpp"
 
 using namespace cyy::computation;

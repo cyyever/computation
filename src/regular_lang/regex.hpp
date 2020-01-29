@@ -11,7 +11,7 @@
 #include <set>
 #include <string_view>
 
-#include "../contex_free_lang/ll_grammar.hpp"
+#include "../context_free_lang/ll_grammar.hpp"
 #include "dfa.hpp"
 #include "nfa.hpp"
 

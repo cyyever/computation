@@ -1,12 +1,12 @@
 /*!
- * \file slr_grammar_fuzzing.cpp
+ * \file ll_grammar_fuzzing.cpp
  *
  * \brief
  * \author cyy
  * \date 2019-02-14
  */
 
-#include "../../src/contex_free_lang/slr_grammar.hpp"
+#include "../../src/context_free_lang/ll_grammar.hpp"
 #include "../../src/lang/common_tokens.hpp"
 #include "../helper.hpp"
 
@@ -21,7 +21,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
   }
 
   try {
-    SLR_grammar grammar("common_tokens", start_symbol, productions);
+    LL_grammar grammar("common_tokens", start_symbol, productions);
   } catch (const std::invalid_argument &) {
   }
   return 0; // Non-zero return values are reserved for future use.

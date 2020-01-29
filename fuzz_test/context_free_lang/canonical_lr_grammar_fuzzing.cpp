@@ -1,12 +1,12 @@
 /*!
- * \file lalr_grammar_fuzzing.cpp
+ * \file canonical_lr_grammar_fuzzing.cpp
  *
  * \brief
  * \author cyy
  * \date 2019-02-14
  */
 
-#include "../../src/contex_free_lang/lalr_grammar.hpp"
+#include "../../src/context_free_lang/canonical_lr_grammar.hpp"
 #include "../../src/lang/common_tokens.hpp"
 #include "../helper.hpp"
 
@@ -21,7 +21,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
   }
 
   try {
-    LALR_grammar grammar("common_tokens", start_symbol, productions);
+    canonical_LR_grammar grammar("common_tokens", start_symbol, productions);
   } catch (const std::invalid_argument &) {
   }
   return 0; // Non-zero return values are reserved for future use.
