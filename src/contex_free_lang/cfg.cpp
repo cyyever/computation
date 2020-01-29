@@ -34,7 +34,7 @@ namespace cyy::computation {
       }
 
       for (auto const &body : bodies) {
-        for (auto const &t : body.get_terminal_view()) {
+        for (auto const t : body.get_terminal_view()) {
           if (!alphabet->contain(t)) {
             throw exception::invalid_CFG_production(
                 std::string("alphabet [") + alphabet->get_name() +
@@ -92,8 +92,7 @@ namespace cyy::computation {
   bool CFG::has_production(const CFG_production &production) const {
     auto it = productions.find(production.get_head());
     return it != productions.end() &&
-           ranges::find(it->second, production.get_body()) !=
-               it->second.end();
+           ranges::find(it->second, production.get_body()) != it->second.end();
   }
 
   void CFG::normalize_productions() {
@@ -150,11 +149,10 @@ namespace cyy::computation {
       has_new_production = false;
       for (auto &[head, bodies] : productions) {
         for (size_t i = 0; i < bodies.size();) {
-          if (ranges::all_of(
-                  bodies[i], [&in_use_heads](auto const &symbol) {
-                    return symbol.is_terminal() ||
-                           in_use_heads.count(*symbol.get_nonterminal_ptr());
-                  })) {
+          if (ranges::all_of(bodies[i], [&in_use_heads](auto const &symbol) {
+                return symbol.is_terminal() ||
+                       in_use_heads.count(*symbol.get_nonterminal_ptr());
+              })) {
             in_use_heads.insert(head);
             new_productions[head].emplace_back(std::move(bodies[i]));
             has_new_production = true;

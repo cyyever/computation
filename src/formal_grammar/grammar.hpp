@@ -68,13 +68,13 @@ namespace cyy::computation {
     public:
       using std::vector<grammar_symbol_type>::vector;
       auto get_terminal_view() const -> auto {
-        return *this | ranges::view::filter([](auto g){return g.is_terminal();}) |
-          ranges::view::transform([](auto g){return g.get_terminal();})
+        return *this | ranges::views::filter([](auto g){return g.is_terminal();}) |
+          ranges::views::transform([](auto g){return g.get_terminal();})
           ;
       }
       auto get_nonterminal_view() const -> auto {
-        return *this | ranges::view::filter([](auto g){return g.is_nonterminal();}) |
-          ranges::view::transform([](auto g){return *g.get_nonterminal_ptr();})
+        return *this | ranges::views::filter([](auto g){return g.is_nonterminal();}) |
+          ranges::views::transform([](auto g){return *g.get_nonterminal_ptr();})
           ;
       }
   };

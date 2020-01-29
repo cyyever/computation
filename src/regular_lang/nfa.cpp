@@ -85,9 +85,8 @@ namespace cyy::computation {
         std::set<state_type> diff;
         auto &prev_epsilon_closure = epsilon_closures[prev_state];
         auto &unstable_epsilon_closure = epsilon_closures[sorted_state];
-        ranges::set_difference(unstable_epsilon_closure,
-                                   prev_epsilon_closure,
-                                   ranges::inserter(diff, diff.begin()));
+        ranges::set_difference(unstable_epsilon_closure, prev_epsilon_closure,
+                               ranges::inserter(diff, diff.begin()));
 
         if (!diff.empty()) {
           prev_epsilon_closure.merge(std::move(diff));
@@ -104,9 +103,8 @@ namespace cyy::computation {
         std::set<state_type> diff;
         auto &prev_epsilon_closure = epsilon_closures[prev_state];
         auto &unstable_epsilon_closure = epsilon_closures[unstable_state];
-        ranges::set_difference(unstable_epsilon_closure,
-                                   prev_epsilon_closure,
-                                   ranges::inserter(diff, diff.begin()));
+        ranges::set_difference(unstable_epsilon_closure, prev_epsilon_closure,
+                               ranges::inserter(diff, diff.begin()));
 
         if (!diff.empty()) {
           prev_epsilon_closure.merge(std::move(diff));
@@ -123,14 +121,14 @@ namespace cyy::computation {
     DFA::transition_function_type DFA_transition_function;
     std::map<std::set<state_type>, state_type> subsets{
         {epsilon_closure(start_state), 0}};
-    std::vector<decltype(subsets.begin())> states{subsets.begin()};
-    for (size_t i = 0; i < states.size(); i++) {
+    std::vector<decltype(subsets.begin())> tmp_states{subsets.begin()};
+    for (size_t i = 0; i < tmp_states.size(); i++) {
       for (auto a : *alphabet) {
-        auto const &[subset, state] = *states[i];
+        auto const &[subset, state] = *tmp_states[i];
         auto res = move(subset, a);
         auto [it, has_emplaced] = subsets.emplace(std::move(res), next_state);
         if (has_emplaced) {
-          states.emplace_back(it);
+          tmp_states.emplace_back(it);
           next_state++;
         }
         DFA_transition_function[{a, state}] = it->second;
