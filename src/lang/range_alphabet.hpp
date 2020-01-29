@@ -39,7 +39,7 @@ namespace cyy::computation {
     symbol_type get_max_symbol() const override { return max_symbol; }
     symbol_type get_min_symbol() const override { return min_symbol; }
     symbol_type get_symbol(size_t index) const noexcept override {
-      return min_symbol+index;
+      return static_cast<symbol_type>(min_symbol + index);
     }
 
   private:

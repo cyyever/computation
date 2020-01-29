@@ -35,8 +35,7 @@ namespace cyy::computation {
           }
         }
       }
-      auto it =
-          transition_function.find({a, s, std::optional<stack_symbol_type>{}});
+      auto it = transition_function.find({a, s, {}});
       if (it != transition_function.end()) {
         for (auto const &[next_state, next_stack_symbol] : it->second) {
           auto next_stack = stack;
@@ -59,8 +58,7 @@ namespace cyy::computation {
 
       for (auto const &[stack, s] : result) {
         if (!stack.empty()) {
-          auto it = transition_function.find(
-              {std::optional<input_symbol_type>{}, s, stack.back()});
+          auto it = transition_function.find({{}, s, stack.back()});
           if (it != transition_function.end()) {
             for (auto const &[next_state, next_stack_symbol] : it->second) {
               auto next_stack = stack;
@@ -72,9 +70,7 @@ namespace cyy::computation {
             }
           }
         }
-        auto it =
-            transition_function.find({std::optional<input_symbol_type>{}, s,
-                                      std::optional<stack_symbol_type>{}});
+        auto it = transition_function.find({{}, s, {}});
         if (it != transition_function.end()) {
           for (auto const &[next_state, next_stack_symbol] : it->second) {
             auto next_stack = stack;
