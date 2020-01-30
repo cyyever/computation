@@ -181,17 +181,13 @@ namespace cyy::computation {
       bool is_epsilon_node() const override;
       std::shared_ptr<syntax_node> simplify() const override;
       symbol_string to_string() const override {
-        symbol_string str;
         auto inner_string = inner_node->to_string();
         if (inner_string.size() > 1) {
-          str += '(';
-          str += inner_string;
-          str += ')';
-        } else {
-          str = inner_string;
+          inner_string.insert(inner_string.begin(), '(');
+          inner_string.push_back(')');
         }
-        str += '*';
-        return str;
+        inner_string.push_back('*');
+        return inner_string;
       }
 
     private:
