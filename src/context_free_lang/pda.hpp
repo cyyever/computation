@@ -14,6 +14,7 @@
 #include <unordered_map>
 
 #include "../automaton/automaton.hpp"
+#include "../exception.hpp"
 
 namespace cyy::computation {
 
@@ -51,21 +52,22 @@ namespace cyy::computation {
     bool simulate(symbol_string_view view) const;
 
     struct stack_node final {
-      stack_node(stack_symbol_type content_, std::vector<stack_node> *stack_,
-                 const std::optional<size_t> &prev_index_ = {})
-          : content{content_}, prev_index{prev_index_}, stack{stack_} {
-        index = stack->size();
-        stack->push_back(*this);
-      }
+      stack_node(stack_symbol_type content_, size_t index_,
+                 std::vector<stack_node> *stack_, size_t prev_index_ = 0)
+          : content{content_}, index{index_},
+            prev_index{prev_index_}, stack{stack_} {}
 
-      std::optional<stack_node> pop() const {
-        if (prev_index.has_value()) {
-          return (*stack)[*prev_index];
-        }
-        return {};
+      stack_node pop_and_push(const std::optional<stack_symbol_type> &s) const {
+        auto prev_node = pop();
+        return prev_node.push(s);
       }
-      stack_node push(stack_symbol_type content_) const {
-        return stack_node(content_, stack, index);
+      stack_node push(const std::optional<stack_symbol_type> &content_) const {
+        if (!content_.has_value()) {
+          return *this;
+        }
+        auto cur_size = stack->size();
+        stack->emplace_back(*content_, cur_size, stack, index);
+        return stack->back();
       }
 
       bool operator==(const stack_node &rhs) const {
@@ -79,43 +81,42 @@ namespace cyy::computation {
         auto i = prev_index;
         auto j = prev_index;
 
-        while (true) {
-          if (!i.has_value() && !j.has_value()) {
-            break;
-          }
-          if (!i.has_value() || !j.has_value()) {
+        while (i != 0 && j != 0) {
+          if ((*stack)[i].content != (*stack)[j].content) {
             return false;
           }
-
-          if ((*stack)[*i].content != (*stack)[*j].content) {
-            return false;
+          if ((*stack)[i].index == (*stack)[j].index) {
+            return true;
           }
-          if ((*stack)[*i].index == (*stack)[*j].index) {
-            break;
-          }
-          i = (*stack)[*i].prev_index;
-          j = (*stack)[*j].prev_index;
+          i = (*stack)[i].prev_index;
+          j = (*stack)[j].prev_index;
         }
-        return true;
+        return i == j;
       }
-
-      size_t index;
       stack_symbol_type content;
-      std::optional<size_t> prev_index{};
+      size_t index;
+      size_t prev_index{0};
       std::vector<stack_node> *stack{nullptr};
+
+    private:
+      stack_node pop() const {
+        if (index == 0) {
+          throw exception::pop_empty_stack("");
+        }
+        return (*stack)[prev_index];
+      }
     };
 
   private:
-    std::unordered_set<std::pair<std::optional<stack_node>, state_type>>
-    move(std::vector<stack_node> &stack,
-         const std::unordered_set<
-             std::pair<std::optional<stack_node>, state_type>> &configuration,
+    std::unordered_set<std::pair<stack_node, state_type>>
+    move(const std::unordered_set<std::pair<stack_node, state_type>>
+             &configuration,
          input_symbol_type a) const;
 
-    std::unordered_set<std::pair<std::optional<stack_node>, state_type>>
-    move(std::vector<stack_node> &stack,
-         const std::unordered_set<std::pair<std::optional<stack_node>,
-                                            state_type>> &configuration) const;
+    std::unordered_set<std::pair<stack_node, state_type>>
+    move(const std::unordered_set<std::pair<stack_node, state_type>>
+             &configuration) const;
+    std::vector<stack_node> create_stack() const;
 
   private:
     std::shared_ptr<ALPHABET> stack_alphabet;
@@ -132,11 +133,10 @@ namespace std {
     }
   };
   template <>
-  struct hash<std::pair<std::optional<cyy::computation::PDA::stack_node>,
+  struct hash<std::pair<cyy::computation::PDA::stack_node,
                         cyy::computation::PDA::state_type>> {
-    size_t
-    operator()(const std::pair<std::optional<cyy::computation::PDA::stack_node>,
-                               cyy::computation::PDA::state_type> &x
+    size_t operator()(const std::pair<cyy::computation::PDA::stack_node,
+                                      cyy::computation::PDA::state_type> &x
 
     ) const noexcept {
       return ::std::hash<decltype(x.first)>()(x.first) ^

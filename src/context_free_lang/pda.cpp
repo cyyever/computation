@@ -13,14 +13,13 @@
 
 namespace cyy::computation {
   bool PDA::simulate(symbol_string_view view) const {
-    std::vector<stack_node> stack;
+    auto stack = create_stack();
 
-    std::unordered_set<
-        std::pair<std::optional<PDA::stack_node>, PDA::state_type>>
-        configuration{{{}, start_state}};
-    configuration = move(stack, std::move(configuration));
+    std::unordered_set<std::pair<PDA::stack_node, PDA::state_type>>
+        configuration{{stack[0], start_state}};
+    configuration = move(std::move(configuration));
     for (auto const &symbol : view) {
-      configuration = move(stack, configuration, symbol);
+      configuration = move(configuration, symbol);
       if (configuration.empty()) {
         return false;
       }
@@ -33,91 +32,56 @@ namespace cyy::computation {
     return false;
   }
 
-  std::unordered_set<std::pair<std::optional<PDA::stack_node>, PDA::state_type>>
-  PDA::move(
-      std::vector<stack_node> &stack,
-      const std::unordered_set<std::pair<std::optional<stack_node>, state_type>>
-          &configuration,
-      input_symbol_type a) const {
-    std::unordered_set<
-        std::pair<std::optional<PDA::stack_node>, PDA::state_type>>
+  std::unordered_set<std::pair<PDA::stack_node, PDA::state_type>>
+  PDA::move(const std::unordered_set<std::pair<stack_node, state_type>>
+                &configuration,
+            input_symbol_type a) const {
+    std::unordered_set<std::pair<PDA::stack_node, PDA::state_type>>
         direct_reachable;
-    for (auto const &[top_node_opt, s] : configuration) {
-      if (top_node_opt.has_value()) {
-        const auto &top_node = *top_node_opt;
+    for (auto const &[top_node, s] : configuration) {
+      if (top_node.index != 0) {
         auto it = transition_function.find({a, s, top_node.content});
         if (it != transition_function.end()) {
           for (auto const &[next_state, next_stack_symbol] : it->second) {
-            auto cur_node_opt = top_node.pop();
-            if (next_stack_symbol.has_value()) {
-              if (cur_node_opt.has_value()) {
-                cur_node_opt = cur_node_opt->push(*next_stack_symbol);
-              } else {
-                cur_node_opt = stack_node(*next_stack_symbol, &stack);
-              }
-            }
-            direct_reachable.emplace(cur_node_opt, next_state);
+            auto new_top_node = top_node.pop_and_push(next_stack_symbol);
+            direct_reachable.emplace(new_top_node, next_state);
           }
         }
       }
       auto it = transition_function.find({a, s, {}});
       if (it != transition_function.end()) {
         for (auto const &[next_state, next_stack_symbol] : it->second) {
-          auto cur_node_opt = top_node_opt;
-          if (next_stack_symbol.has_value()) {
-            if (cur_node_opt.has_value()) {
-              cur_node_opt = cur_node_opt->push(*next_stack_symbol);
-            } else {
-              cur_node_opt = stack_node(*next_stack_symbol, &stack);
-            }
-          }
-          direct_reachable.emplace(cur_node_opt, next_state);
+          auto new_top_node = top_node.push(next_stack_symbol);
+          direct_reachable.emplace(new_top_node, next_state);
         }
       }
     }
-    return move(stack, std::move(direct_reachable));
+    return move(std::move(direct_reachable));
   }
 
-  std::unordered_set<std::pair<std::optional<PDA::stack_node>, PDA::state_type>>
-  PDA::move(
-      std::vector<stack_node> &stack,
-      const std::unordered_set<std::pair<std::optional<stack_node>, state_type>>
-          &configuration) const {
+  std::unordered_set<std::pair<PDA::stack_node, PDA::state_type>>
+  PDA::move(const std::unordered_set<std::pair<stack_node, state_type>>
+                &configuration) const {
 
     auto result = std::move(configuration);
     while (true) {
       decltype(result) new_result;
 
-      for (auto const &[top_node_opt, s] : result) {
-        if (top_node_opt.has_value()) {
-          const auto &top_node = *top_node_opt;
+      for (auto const &[top_node, s] : result) {
+        if (top_node.index != 0) {
           auto it = transition_function.find({{}, s, top_node.content});
           if (it != transition_function.end()) {
             for (auto const &[next_state, next_stack_symbol] : it->second) {
-              auto cur_node_opt = top_node.pop();
-              if (next_stack_symbol.has_value()) {
-                if (cur_node_opt.has_value()) {
-                  cur_node_opt = cur_node_opt->push(*next_stack_symbol);
-                } else {
-                  cur_node_opt = stack_node(*next_stack_symbol, &stack);
-                }
-              }
-              new_result.emplace(cur_node_opt, next_state);
+              auto new_top_node = top_node.pop_and_push(next_stack_symbol);
+              new_result.emplace(new_top_node, next_state);
             }
           }
         }
         auto it = transition_function.find({{}, s, {}});
         if (it != transition_function.end()) {
           for (auto const &[next_state, next_stack_symbol] : it->second) {
-            auto cur_node_opt = top_node_opt;
-            if (next_stack_symbol.has_value()) {
-              if (cur_node_opt.has_value()) {
-                cur_node_opt = cur_node_opt->push(*next_stack_symbol);
-              } else {
-                cur_node_opt = stack_node(*next_stack_symbol, &stack);
-              }
-            }
-            new_result.emplace(cur_node_opt, next_state);
+            auto new_top_node = top_node.push(next_stack_symbol);
+            new_result.emplace(new_top_node, next_state);
           }
         }
       }
@@ -131,4 +95,9 @@ namespace cyy::computation {
     return result;
   }
 
+  std::vector<PDA::stack_node> PDA::create_stack() const {
+    std::vector<stack_node> stack;
+    stack.emplace_back(0, 0, &stack);
+    return stack;
+  }
 } // namespace cyy::computation
