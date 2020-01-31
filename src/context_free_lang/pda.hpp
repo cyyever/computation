@@ -50,15 +50,82 @@ namespace cyy::computation {
 
     bool simulate(symbol_string_view view) const;
 
+    struct stack_node final {
+      stack_node(stack_symbol_type content_, std::vector<stack_node> *stack_,
+                 const std::optional<size_t> &prev_index_ = {})
+          : content{content_}, prev_index{prev_index_}, stack{stack_} {
+        index = stack->size();
+        stack->push_back(*this);
+      }
+
+      std::optional<stack_node> pop() const {
+        /* valid = false; */
+        /* (*stack)[index].valid = false; */
+        /* while (!stack->empty() && !stack->back().valid) { */
+        /*   stack->pop_back(); */
+        /* } */
+        if (prev_index.has_value()) {
+          return (*stack)[*prev_index];
+        }
+        return {};
+      }
+      stack_node push(stack_symbol_type content_) const {
+        return stack_node(content_, stack, index);
+      }
+
+      bool operator==(const stack_node &rhs) const {
+        if (this == &rhs) {
+          return true;
+        }
+
+        /* if (!valid || !rhs.valid) { */
+        /*   return false; */
+        /* } */
+
+        if (stack != rhs.stack || content != rhs.content) {
+          return false;
+        }
+        auto i = prev_index;
+        auto j = prev_index;
+
+        while (true) {
+          if (!i.has_value() && !j.has_value()) {
+            break;
+          }
+          if (!i.has_value() || !j.has_value()) {
+            return false;
+          }
+
+          if ((*stack)[*i].content != (*stack)[*j].content) {
+            return false;
+          }
+          if ((*stack)[*i].index == (*stack)[*j].index) {
+            break;
+          }
+          i = (*stack)[*i].prev_index;
+          j = (*stack)[*j].prev_index;
+        }
+        return true;
+      }
+
+      size_t index;
+      stack_symbol_type content;
+      std::optional<size_t> prev_index{};
+      std::vector<stack_node> *stack{nullptr};
+      bool valid{true};
+    };
+
   private:
-    std::set<std::pair<std::vector<stack_symbol_type>, state_type>>
-    move(const std::set<std::pair<std::vector<stack_symbol_type>, state_type>>
-             &configuration,
+    std::unordered_set<std::pair<std::optional<stack_node>, state_type>>
+    move(std::vector<stack_node> &stack,
+         const std::unordered_set<
+             std::pair<std::optional<stack_node>, state_type>> &configuration,
          input_symbol_type a) const;
 
-    std::set<std::pair<std::vector<stack_symbol_type>, state_type>> move(
-        std::set<std::pair<std::vector<stack_symbol_type>, state_type>> configuration)
-        const;
+    std::unordered_set<std::pair<std::optional<stack_node>, state_type>>
+    move(std::vector<stack_node> &stack,
+         const std::unordered_set<std::pair<std::optional<stack_node>,
+                                            state_type>> &configuration) const;
 
   private:
     std::shared_ptr<ALPHABET> stack_alphabet;
@@ -66,3 +133,27 @@ namespace cyy::computation {
   };
 
 } // namespace cyy::computation
+
+namespace std {
+  template <> struct hash<cyy::computation::PDA::stack_node> {
+    size_t operator()(const cyy::computation::PDA::stack_node &x) const
+        noexcept {
+      return ::std::hash<decltype(x.content)>()(x.content);
+    }
+  };
+  template <>
+  struct hash<std::pair<std::optional<cyy::computation::PDA::stack_node>,
+                        cyy::computation::PDA::state_type>> {
+    size_t
+    operator()(const std::pair<std::optional<cyy::computation::PDA::stack_node>,
+                               cyy::computation::PDA::state_type> &x
+
+    ) const noexcept {
+      return ::std::hash<decltype(x.first)>()(x.first) ^
+             ::std::hash<decltype(x.second)>()(x.second)
+
+          ;
+    }
+  };
+
+} // namespace std

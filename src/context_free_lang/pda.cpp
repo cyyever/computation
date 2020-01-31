@@ -12,72 +12,113 @@
 #include "pda.hpp"
 
 namespace cyy::computation {
+  bool PDA::simulate(symbol_string_view view) const {
+    std::vector<stack_node> stack;
 
-  std::set<std::pair<std::vector<PDA::stack_symbol_type>, PDA::state_type>>
+    std::unordered_set<
+        std::pair<std::optional<PDA::stack_node>, PDA::state_type>>
+        configuration{{{}, start_state}};
+    configuration = move(stack, std::move(configuration));
+    for (auto const &symbol : view) {
+      configuration = move(stack, configuration, symbol);
+      if (configuration.empty()) {
+        return false;
+      }
+    }
+    std::cout<<"stack size is "<<stack.size()<<std::endl;
+    for (auto const &[_, s] : configuration) {
+      if (is_final_state(s)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  std::unordered_set<std::pair<std::optional<PDA::stack_node>, PDA::state_type>>
   PDA::move(
-      const std::set<std::pair<std::vector<stack_symbol_type>, state_type>>
+      std::vector<stack_node> &stack,
+      const std::unordered_set<std::pair<std::optional<stack_node>, state_type>>
           &configuration,
       input_symbol_type a) const {
-
-    std::set<std::pair<std::vector<stack_symbol_type>, PDA::state_type>>
+    std::unordered_set<
+        std::pair<std::optional<PDA::stack_node>, PDA::state_type>>
         direct_reachable;
-    for (auto const &[stack, s] : configuration) {
-      if (!stack.empty()) {
-        auto it = transition_function.find({a, s, stack.back()});
+    for (auto const &[top_node_opt, s] : configuration) {
+      if (top_node_opt.has_value()) {
+        const auto &top_node = *top_node_opt;
+        auto it = transition_function.find({a, s, top_node.content});
         if (it != transition_function.end()) {
           for (auto const &[next_state, next_stack_symbol] : it->second) {
-            auto next_stack = stack;
-            next_stack.pop_back();
+            auto cur_node_opt = top_node.pop();
             if (next_stack_symbol.has_value()) {
-              next_stack.push_back(*next_stack_symbol);
+              if (cur_node_opt.has_value()) {
+                cur_node_opt = cur_node_opt->push(*next_stack_symbol);
+              } else {
+                cur_node_opt = stack_node(*next_stack_symbol, &stack);
+              }
             }
-            direct_reachable.emplace(next_stack, next_state);
+            direct_reachable.emplace(cur_node_opt, next_state);
           }
         }
       }
       auto it = transition_function.find({a, s, {}});
       if (it != transition_function.end()) {
         for (auto const &[next_state, next_stack_symbol] : it->second) {
-          auto next_stack = stack;
+          auto cur_node_opt = top_node_opt;
           if (next_stack_symbol.has_value()) {
-            next_stack.push_back(*next_stack_symbol);
+            if (cur_node_opt.has_value()) {
+              cur_node_opt = cur_node_opt->push(*next_stack_symbol);
+            } else {
+              cur_node_opt = stack_node(*next_stack_symbol, &stack);
+            }
           }
-          direct_reachable.emplace(next_stack, next_state);
+          direct_reachable.emplace(cur_node_opt, next_state);
         }
       }
     }
-    return move(std::move(direct_reachable));
+    return move(stack, std::move(direct_reachable));
   }
 
-  std::set<std::pair<std::vector<PDA::stack_symbol_type>, PDA::state_type>>
-  PDA::move(std::set<std::pair<std::vector<stack_symbol_type>, state_type>>
-                configuration) const {
+  std::unordered_set<std::pair<std::optional<PDA::stack_node>, PDA::state_type>>
+  PDA::move(
+      std::vector<stack_node> &stack,
+      const std::unordered_set<std::pair<std::optional<stack_node>, state_type>>
+          &configuration) const {
+
     auto result = std::move(configuration);
     while (true) {
       decltype(result) new_result;
 
-      for (auto const &[stack, s] : result) {
-        if (!stack.empty()) {
-          auto it = transition_function.find({{}, s, stack.back()});
+      for (auto const &[top_node_opt, s] : result) {
+        if (top_node_opt.has_value()) {
+          const auto &top_node = *top_node_opt;
+          auto it = transition_function.find({{}, s, top_node.content});
           if (it != transition_function.end()) {
             for (auto const &[next_state, next_stack_symbol] : it->second) {
-              auto next_stack = stack;
-              next_stack.pop_back();
+              auto cur_node_opt = top_node.pop();
               if (next_stack_symbol.has_value()) {
-                next_stack.push_back(*next_stack_symbol);
+                if (cur_node_opt.has_value()) {
+                  cur_node_opt = cur_node_opt->push(*next_stack_symbol);
+                } else {
+                  cur_node_opt = stack_node(*next_stack_symbol, &stack);
+                }
               }
-              new_result.emplace(next_stack, next_state);
+              new_result.emplace(cur_node_opt, next_state);
             }
           }
         }
         auto it = transition_function.find({{}, s, {}});
         if (it != transition_function.end()) {
           for (auto const &[next_state, next_stack_symbol] : it->second) {
-            auto next_stack = stack;
+            auto cur_node_opt = top_node_opt;
             if (next_stack_symbol.has_value()) {
-              next_stack.push_back(*next_stack_symbol);
+              if (cur_node_opt.has_value()) {
+                cur_node_opt = cur_node_opt->push(*next_stack_symbol);
+              } else {
+                cur_node_opt = stack_node(*next_stack_symbol, &stack);
+              }
             }
-            new_result.emplace(next_stack, next_state);
+            new_result.emplace(cur_node_opt, next_state);
           }
         }
       }
@@ -89,23 +130,6 @@ namespace cyy::computation {
     }
 
     return result;
-  }
-  bool PDA::simulate(symbol_string_view view) const {
-    std::set<std::pair<std::vector<stack_symbol_type>, state_type>>
-        configuration{{{}, start_state}};
-    configuration = move(std::move(configuration));
-    for (auto const &symbol : view) {
-      configuration = move(configuration, symbol);
-      if (configuration.empty()) {
-        return false;
-      }
-    }
-    for (auto const &[_, s] : configuration) {
-      if (is_final_state(s)) {
-        return true;
-      }
-    }
-    return false;
   }
 
 } // namespace cyy::computation
