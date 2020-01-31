@@ -25,7 +25,6 @@ namespace cyy::computation {
         return false;
       }
     }
-    std::cout<<"stack size is "<<stack.size()<<std::endl;
     for (auto const &[_, s] : configuration) {
       if (is_final_state(s)) {
         return true;

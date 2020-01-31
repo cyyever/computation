@@ -59,11 +59,6 @@ namespace cyy::computation {
       }
 
       std::optional<stack_node> pop() const {
-        /* valid = false; */
-        /* (*stack)[index].valid = false; */
-        /* while (!stack->empty() && !stack->back().valid) { */
-        /*   stack->pop_back(); */
-        /* } */
         if (prev_index.has_value()) {
           return (*stack)[*prev_index];
         }
@@ -77,10 +72,6 @@ namespace cyy::computation {
         if (this == &rhs) {
           return true;
         }
-
-        /* if (!valid || !rhs.valid) { */
-        /*   return false; */
-        /* } */
 
         if (stack != rhs.stack || content != rhs.content) {
           return false;
@@ -112,7 +103,6 @@ namespace cyy::computation {
       stack_symbol_type content;
       std::optional<size_t> prev_index{};
       std::vector<stack_node> *stack{nullptr};
-      bool valid{true};
     };
 
   private:
@@ -150,9 +140,7 @@ namespace std {
 
     ) const noexcept {
       return ::std::hash<decltype(x.first)>()(x.first) ^
-             ::std::hash<decltype(x.second)>()(x.second)
-
-          ;
+             ::std::hash<decltype(x.second)>()(x.second);
     }
   };
 
