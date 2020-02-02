@@ -5,6 +5,7 @@
  * \date 2018-03-04
  */
 
+#include <cassert>
 #include <range/v3/algorithm.hpp>
 
 #include "cfg.hpp"
@@ -23,9 +24,9 @@ namespace cyy::computation {
       auto &bodies = productions[head];
 
       bodies.erase(ranges::remove_if(bodies,
-                                         [](auto const &production) {
-                                           return production.empty();
-                                         }),
+                                     [](auto const &production) {
+                                       return production.empty();
+                                     }),
                    bodies.end());
 
       if (bodies.empty()) {
@@ -49,10 +50,12 @@ namespace cyy::computation {
             checking_heads.insert(new_head);
           }
 
-          new_bodies.emplace_back(body.begin(), it);
+          if (body.begin() != it) {
+            new_bodies.emplace_back(body.begin(), it);
 
-          if (!new_head.empty()) {
-            new_bodies.back().push_back(new_head);
+            if (!new_head.empty()) {
+              new_bodies.back().push_back(new_head);
+            }
           }
           break;
         }
@@ -63,6 +66,7 @@ namespace cyy::computation {
     }
     eliminate_useless_symbols();
     normalize_productions();
+    assert(nullable().empty());
   }
 
   std::set<CFG::nonterminal_type> CFG::nullable() const {
@@ -88,7 +92,6 @@ namespace cyy::computation {
   }
 
   void CFG::eliminate_single_productions() {
-
     eliminate_epsilon_productions();
 
     std::map<nonterminal_type, std::set<nonterminal_type>> single_productions;
@@ -249,13 +252,14 @@ namespace cyy::computation {
             return false;
           }
         } else if (body.size() == 2) {
-
           if (!body[0].is_nonterminal()) {
             return false;
           }
           if (!body[1].is_nonterminal()) {
             return false;
           }
+        } else {
+          return false;
         }
       }
     }
