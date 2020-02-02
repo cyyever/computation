@@ -120,7 +120,7 @@ TEST_CASE("eliminate_left_recursion") {
       {},
   };
 
-  CHECK(cfg == CFG("common_tokens", "S", reduced_productions));
+  CHECK_EQ(cfg, CFG("common_tokens", "S", reduced_productions));
 }
 
 TEST_CASE("left_factoring") {
@@ -203,4 +203,39 @@ TEST_CASE("first_and_follow") {
   CHECK(follow_sets["T'"] == std::set<CFG::terminal_type>{'+', ')', endmarker});
   CHECK(follow_sets["F"] ==
         std::set<CFG::terminal_type>{'+', '*', ')', endmarker});
+}
+
+TEST_CASE("to_PDA") {
+  std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
+      productions;
+  productions["S"] = {{'a', "T", 'b'}, {'c', 'd'}, {'b'}};
+  productions["T"] = {
+      {"T", 'a'},
+      {},
+  };
+
+  CFG cfg("common_tokens", "S", productions);
+  cfg.eliminate_left_recursion();
+  auto pda = cfg.to_PDA();
+  SUBCASE("aab") {
+    symbol_string str = U"aab";
+    CHECK(pda.simulate(str));
+  }
+  SUBCASE("cd") {
+    symbol_string str = U"cd";
+    CHECK(pda.simulate(str));
+  }
+  SUBCASE("ab") {
+    symbol_string str = U"ab";
+    CHECK(pda.simulate(str));
+  }
+
+  SUBCASE("b") {
+    symbol_string str = U"b";
+    CHECK(pda.simulate(str));
+  }
+  SUBCASE("a") {
+    symbol_string str = U"a";
+    CHECK(!pda.simulate(str));
+  }
 }

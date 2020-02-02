@@ -5,6 +5,7 @@
  * \date 2018-03-03
  */
 
+#include <limits>
 #include <string_view>
 
 #include "../exception.hpp"
@@ -27,6 +28,9 @@ namespace cyy::computation {
       factory.emplace(alphabet->get_name(), alphabet);
       alphabet = std::make_shared<set_alphabet>(std::set<symbol_type>{'0', '1'},
                                                 "01_set");
+      factory.emplace(alphabet->get_name(), alphabet);
+      alphabet = std::make_shared<range_alphabet>(
+          0, std::numeric_limits<symbol_type>::max(), "all");
       factory.emplace(alphabet->get_name(), alphabet);
     }
 

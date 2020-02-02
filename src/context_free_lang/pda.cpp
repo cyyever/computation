@@ -60,8 +60,8 @@ namespace cyy::computation {
   }
 
   std::unordered_set<std::pair<PDA::stack_node, PDA::state_type>>
-  PDA::move(const std::unordered_set<std::pair<stack_node, state_type>>
-                &configuration) const {
+  PDA::move(std::unordered_set<std::pair<stack_node, state_type>> configuration)
+      const {
 
     auto result = std::move(configuration);
     while (true) {
@@ -86,7 +86,7 @@ namespace cyy::computation {
         }
       }
       auto prev_size = result.size();
-      result.merge(new_result);
+      result.merge(std::move(new_result));
       if (result.size() == prev_size) {
         break;
       }

@@ -15,6 +15,7 @@
 #include "../formal_grammar/grammar.hpp"
 #include "../lang/alphabet.hpp"
 #include "cfg_production.hpp"
+#include "pda.hpp"
 
 namespace cyy::computation {
 
@@ -87,6 +88,8 @@ namespace cyy::computation {
 
     std::pair<std::set<terminal_type>, bool>
     first(const grammar_symbol_const_span_type &alpha) const;
+
+    PDA to_PDA() const;
 
   protected:
     nonterminal_type get_new_head(nonterminal_type advise_head) const {

@@ -74,19 +74,29 @@ namespace cyy::computation {
         if (this == &rhs) {
           return true;
         }
+        if (stack != rhs.stack) {
+          throw std::logic_error("different stacks");
+        }
 
-        if (stack != rhs.stack || content != rhs.content) {
+        if (index == 0 && rhs.index == 0) {
+          return true;
+        }
+        if (index == 0 || rhs.index == 0) {
+          return false;
+        }
+
+        if (content != rhs.content) {
           return false;
         }
         auto i = prev_index;
-        auto j = prev_index;
+        auto j = rhs.prev_index;
 
-        while (i != 0 && j != 0) {
+        while (i && j) {
+          if (i == j) {
+            return true;
+          }
           if ((*stack)[i].content != (*stack)[j].content) {
             return false;
-          }
-          if ((*stack)[i].index == (*stack)[j].index) {
-            return true;
           }
           i = (*stack)[i].prev_index;
           j = (*stack)[j].prev_index;
@@ -114,8 +124,8 @@ namespace cyy::computation {
          input_symbol_type a) const;
 
     std::unordered_set<std::pair<stack_node, state_type>>
-    move(const std::unordered_set<std::pair<stack_node, state_type>>
-             &configuration) const;
+    move(std::unordered_set<std::pair<stack_node, state_type>> configuration)
+        const;
     std::vector<stack_node> create_stack() const;
 
   private:

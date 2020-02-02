@@ -184,7 +184,9 @@ namespace cyy::computation {
           auto &bodies = productions[head];
 
           for (auto &body : bodies) {
-
+            if (body.empty()) {
+              continue;
+            }
             if (body.front() == head) {
               body.erase(body.begin());
               body.emplace_back(new_head);

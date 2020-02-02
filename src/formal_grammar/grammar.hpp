@@ -8,8 +8,8 @@
 #pragma once
 
 #include <gsl/span>
-#include <range/v3/view/span.hpp>
 #include <range/v3/view/filter.hpp>
+#include <range/v3/view/span.hpp>
 #include <range/v3/view/transform.hpp>
 #include <string>
 #include <string_view>
@@ -33,7 +33,6 @@ namespace cyy::computation {
     bool is_nonterminal() const noexcept {
       return std::holds_alternative<nonterminal_type>(*this);
     }
-
 
     terminal_type get_terminal() const noexcept {
       return std::get<terminal_type>(*this);
@@ -65,21 +64,20 @@ namespace cyy::computation {
   };
 
   class grammar_symbol_string_type : public std::vector<grammar_symbol_type> {
-    public:
-      using std::vector<grammar_symbol_type>::vector;
-      auto get_terminal_view() const -> auto {
-        return *this | ranges::views::filter([](auto g){return g.is_terminal();}) |
-          ranges::views::transform([](auto g){return g.get_terminal();})
-          ;
-      }
-      auto get_nonterminal_view() const -> auto {
-        return *this | ranges::views::filter([](auto g){return g.is_nonterminal();}) |
-          ranges::views::transform([](auto g){return *g.get_nonterminal_ptr();})
-          ;
-      }
+  public:
+    using std::vector<grammar_symbol_type>::vector;
+    auto get_terminal_view() const -> auto {
+      return *this |
+             ranges::views::filter([](auto g) { return g.is_terminal(); }) |
+             ranges::views::transform([](auto g) { return g.get_terminal(); });
+    }
+    auto get_nonterminal_view() const -> auto {
+      return *this |
+             ranges::views::filter([](auto g) { return g.is_nonterminal(); }) |
+             ranges::views::transform(
+                 [](auto g) { return *g.get_nonterminal_ptr(); });
+    }
   };
 
-  //using grammar_symbol_string_type = std::vector<grammar_symbol_type>;
-  using grammar_symbol_const_span_type =
-      gsl::span<const grammar_symbol_type>;
+  using grammar_symbol_const_span_type = gsl::span<const grammar_symbol_type>;
 } // namespace cyy::computation
