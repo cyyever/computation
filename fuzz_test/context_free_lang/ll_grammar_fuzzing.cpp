@@ -12,6 +12,7 @@
 
 using namespace cyy::computation;
 
+extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size);
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
   auto productions = fuzzing_CFG_productions(Data, Size);
 

@@ -27,16 +27,15 @@ namespace cyy::computation {
                    std::optional<stack_symbol_type>>,
         std::set<std::pair<state_type, std::optional<stack_symbol_type>>>>;
 
-    PDA(const std::set<state_type> &states_,
-        std::string_view input_alphabet_name,
+    PDA(std::set<state_type> states_, std::string_view input_alphabet_name,
         std::string_view stack_alphabet_name, state_type start_state_,
-        const transition_function_type &transition_function_,
-        const std::set<state_type> &final_states_)
-        : finite_automaton(states_, input_alphabet_name, start_state_,
-                           final_states_),
+        transition_function_type transition_function_,
+        std::set<state_type> final_states_)
+        : finite_automaton(std::move(states_), input_alphabet_name,
+                           start_state_, std::move(final_states_)),
           stack_alphabet(
               ::cyy::computation::ALPHABET::get(stack_alphabet_name)),
-          transition_function(transition_function_) {}
+          transition_function(std::move(transition_function_)) {}
 
     bool operator==(const PDA &rhs) const {
       return (this == &rhs) || (finite_automaton::operator==(rhs) &&

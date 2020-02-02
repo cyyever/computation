@@ -6,6 +6,7 @@
 #include "../../src/regular_lang/regex.hpp"
 #include "../helper.hpp"
 
+extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size);
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
   using namespace cyy::computation;
   symbol_string expr;
