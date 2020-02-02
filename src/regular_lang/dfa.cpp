@@ -112,7 +112,7 @@ namespace cyy::computation {
                       state_location[move(state, a).value()]) {
                 in_group = false;
               }
-            };
+            }
             if (in_group) {
               sub_group.insert(state);
               in_new_group = false;
