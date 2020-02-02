@@ -23,6 +23,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
   try {
     CFG cfg("common_tokens", start_symbol, productions);
     cfg.eliminate_left_recursion();
+    auto old_cfg = cfg;
     cfg = old_cfg;
     cfg.left_factoring();
   } catch (const std::invalid_argument &) {
