@@ -219,7 +219,7 @@ namespace cyy::computation {
     std::shared_ptr<syntax_node> make_complemented_character_class(
         const std::set<symbol_type> &symbol_set) const;
 
-    const LL_grammar &get_grammar(const std::string &alphabet_name) const;
+    const LL_grammar &get_grammar() const;
 
   private:
     std::shared_ptr<ALPHABET> alphabet;
