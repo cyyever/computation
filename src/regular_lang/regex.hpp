@@ -207,6 +207,7 @@ namespace cyy::computation {
     NFA to_NFA(NFA::state_type start_state = 0) const {
       return syntax_tree->to_NFA(alphabet->get_name(), start_state);
     }
+    auto get_syntax_tree() const -> const auto & { return syntax_tree; }
 
     //基于McNaughton-Yamada算法
     DFA to_DFA() const;

@@ -17,3 +17,5 @@ std::map<cyy::computation::CFG::nonterminal_type,
 fuzzing_CFG_productions(const uint8_t *Data, size_t Size);
 
 cyy::computation::NFA fuzzing_NFA(const uint8_t *Data, size_t Size);
+cyy::computation::symbol_string fuzzing_symbol_string(const uint8_t *Data,
+                                                      size_t Size);

@@ -16,6 +16,9 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
   }
   try {
     regex reg("printable-ASCII", expr);
+    auto nfa = reg.to_NFA();
+    auto dfa = reg.to_DFA();
+    auto str = reg.get_syntax_tree()->to_string();
   } catch (const std::invalid_argument &) {
   }
   return 0; // Non-zero return values are reserved for future use.
