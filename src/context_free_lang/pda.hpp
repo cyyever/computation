@@ -65,7 +65,10 @@ namespace cyy::computation {
           return *this;
         }
         auto cur_size = stack->size();
+        std::cout << cur_size << std::endl;
         stack->emplace_back(*content_, cur_size, stack, index);
+        std::cout << stack->size()<< std::endl;
+
         return stack->back();
       }
 
@@ -125,7 +128,6 @@ namespace cyy::computation {
     std::unordered_set<std::pair<stack_node, state_type>>
     move(std::unordered_set<std::pair<stack_node, state_type>> configuration)
         const;
-    std::vector<stack_node> create_stack() const;
 
   private:
     std::shared_ptr<ALPHABET> stack_alphabet;
