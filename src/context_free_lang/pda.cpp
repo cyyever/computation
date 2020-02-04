@@ -13,7 +13,8 @@
 
 namespace cyy::computation {
   bool PDA::simulate(symbol_string_view view) const {
-    auto stack = create_stack();
+    std::vector<stack_node> stack;
+    stack.emplace_back(0, 0, &stack);
 
     std::unordered_set<std::pair<PDA::stack_node, PDA::state_type>>
         configuration{{stack[0], start_state}};
@@ -93,11 +94,5 @@ namespace cyy::computation {
     }
 
     return result;
-  }
-
-  std::vector<PDA::stack_node> PDA::create_stack() const {
-    std::vector<stack_node> stack;
-    stack.emplace_back(0, 0, &stack);
-    return stack;
   }
 } // namespace cyy::computation
