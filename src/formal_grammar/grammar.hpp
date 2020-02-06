@@ -26,6 +26,8 @@ namespace cyy::computation {
     using terminal_type = symbol_type;
     using nonterminal_type = std::string;
     using std::variant<symbol_type, std::string>::variant;
+    grammar_symbol_type(char c)
+        : grammar_symbol_type(static_cast<symbol_type>(c)) {}
 
     bool is_terminal() const noexcept {
       return std::holds_alternative<terminal_type>(*this);

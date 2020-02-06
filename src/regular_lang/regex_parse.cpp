@@ -111,7 +111,7 @@ namespace cyy::computation {
     std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
         productions;
     productions["rexpr"] = {{"rterm", "rexpr'"}};
-    productions["rexpr'"] = {{U'|', "rterm", "rexpr'"}, {}};
+    productions["rexpr'"] = {{'|', "rterm", "rexpr'"}, {}};
     productions["rterm"] = {
         {"rfactor", "rterm'"},
     };
@@ -121,32 +121,34 @@ namespace cyy::computation {
     };
     productions["rfactor'"] = {{"closure-operator"}, {}};
     productions["closure-operator"] = {
-        {U'*'},
-        {U'+'},
-        {U'?'},
+        {'*'},
+        {'+'},
+        {'?'},
     };
     productions["rprimary"] = {
         {"escape-sequence"},
-        {U'(', "rexpr", U')'},
-        {U'[', "character-class", U']'},
-        {U'.'},
+        {'(', "rexpr", ')'},
+        {'[', "character-class", ']'},
+        {'.'},
     };
 
     productions["character-class"] = {
         {"character-class-element", "character-class'"}};
 
     productions["character-class"].emplace_back(
-        CFG_production::body_type{U'^', "character-class'"});
+        CFG_production::body_type{'^', "character-class'"});
     productions["character-class'"] = {
-        {U'-', "character-class-element", "character-class'"},
+        {'-', "character-class-element", "character-class'"},
         {"character-class-element", "character-class'"},
         {}};
 
     productions["character-class-element"] = {{"escape-sequence"}};
 
     productions["escape-sequence"] = {
-        {U'\\', "symbol"},
+        {'\\', "symbol"},
     };
+    std::cout << (char)productions["escape-sequence"][0][0].get_terminal()
+              << std::endl;
 
     for (auto a : *alphabet) {
       productions["symbol"].emplace_back(CFG_production::body_type{a});
