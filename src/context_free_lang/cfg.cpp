@@ -243,7 +243,6 @@ namespace cyy::computation {
         return {};
       }
       auto common_prefix = bodies.front();
-      bool is_common_prefix = false;
       std::vector<size_t> indexes{0};
       for (size_t j = 1; j < bodies.size(); j++) {
         size_t i = 0;
@@ -253,19 +252,18 @@ namespace cyy::computation {
           }
         }
         if (i > 0) {
-          is_common_prefix = true;
           common_prefix.resize(i);
           indexes.push_back(j);
           continue;
         }
 
-        if (is_common_prefix) {
+        if (!common_prefix.empty()) {
           break;
         }
         common_prefix = bodies[j];
         indexes = {j};
       }
-      if (is_common_prefix) {
+      if (!common_prefix.empty()) {
         auto new_head = get_new_head(head);
         for (auto &index : indexes) {
           auto &body = bodies[index];
