@@ -49,6 +49,8 @@ namespace cyy::computation {
             std::cerr << " confliction for production:\n";
             CFG_production(it->first.second, it->second)
                 .print(std::cerr, *alphabet);
+            std::cerr << " and production:\n";
+            CFG_production(head, body).print(std::cerr, *alphabet);
             throw cyy::computation::exception::no_LL_grammar("");
           }
         }

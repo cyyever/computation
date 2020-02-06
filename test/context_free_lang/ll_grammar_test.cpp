@@ -24,18 +24,18 @@ TEST_CASE("LL(1) parse tree") {
       {"T", "E'"},
   };
   productions["E'"] = {
-      {'+', "T", "E'"},
+      {U'+', "T", "E'"},
       {},
   };
   productions["T"] = {
       {"F", "T'"},
   };
   productions["T'"] = {
-      {'*', "F", "T'"},
+      {U'*', "F", "T'"},
       {},
   };
   productions["F"] = {
-      {'(', "E", ')'}, {id} // i for id
+      {U'(', "E", U')'}, {id} // i for id
   };
 
   LL_grammar grammar("common_tokens", "E", productions);
@@ -53,18 +53,18 @@ TEST_CASE("LL(1) parse") {
       {"T", "E'"},
   };
   productions["E'"] = {
-      {'+', "T", "E'"},
+      {U'+', "T", "E'"},
       {},
   };
   productions["T"] = {
       {"F", "T'"},
   };
   productions["T'"] = {
-      {'*', "F", "T'"},
+      {U'*', "F", "T'"},
       {},
   };
   productions["F"] = {
-      {'(', "E", ')'}, {id} // i for id
+      {U'(', "E", U')'}, {id} // i for id
   };
 
   LL_grammar grammar("common_tokens", "E", productions);

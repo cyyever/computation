@@ -10,6 +10,8 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 
+#include "../../src/context_free_lang/ll_grammar.hpp"
+#include "../../src/context_free_lang/model_transform.hpp"
 #include "../../src/regular_lang/nfa.hpp"
 
 using namespace cyy::computation;
@@ -25,29 +27,14 @@ TEST_CASE("simulate NFA") {
           },
           {2, 4}, {{0, {1, 3}}});
 
-  SUBCASE("a") {
-    symbol_string str = {'a'};
-    CHECK(nfa.simulate(str));
-  }
+  SUBCASE("a") { CHECK(nfa.simulate(U"a")); }
 
-  SUBCASE("aa") {
-    symbol_string str = {'a', 'a'};
-    CHECK(nfa.simulate(str));
-  }
+  SUBCASE("aa") { CHECK(nfa.simulate(U"aa")); }
 
-  SUBCASE("b") {
-    symbol_string str = {'b'};
-    CHECK(nfa.simulate(str));
-  }
+  SUBCASE("b") { CHECK(nfa.simulate(U"b")); }
 
-  SUBCASE("bb") {
-    symbol_string str = {'b', 'b'};
-    CHECK(nfa.simulate(str));
-  }
-  SUBCASE("ab") {
-    symbol_string str = {'a', 'b'};
-    CHECK(!nfa.simulate(str));
-  }
+  SUBCASE("bb") { CHECK(nfa.simulate(U"bb")); }
+  SUBCASE("ab") { CHECK(!nfa.simulate(U"ab")); }
 }
 
 TEST_CASE("NFA to DFA") {
@@ -90,4 +77,18 @@ TEST_CASE("NFA to DFA") {
           {4});
 
   CHECK(dfa.equivalent_with(nfa.to_DFA()));
+}
+
+TEST_CASE("NFA to CFG") {
+  NFA nfa({0, 1, 2, 3, 4}, "ab_set", 0,
+          {
+              {{'a', 1}, {2}},
+              {{'a', 2}, {2}},
+
+              {{'b', 3}, {4}},
+              {{'b', 4}, {4}},
+          },
+          {2, 4}, {{0, {1, 3}}});
+  auto cfg = NFA_to_CFG(nfa);
+  CHECK(cfg.recursive_descent_parse(U"a"));
 }

@@ -20,8 +20,8 @@ TEST_CASE("eliminate_epsilon_productions") {
   std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
       productions;
   productions["S"] = {
-      {'a', "S", 'b', "S"},
-      {'b', "S", 'a', "S"},
+      {U'a', "S", U'b', "S"},
+      {U'b', "S", U'a', "S"},
       {},
   };
   CFG cfg("ab_set", "S", productions);
@@ -34,18 +34,18 @@ TEST_CASE("eliminate_epsilon_productions") {
     std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
         new_productions;
     new_productions["S"] = {
-        {'a', "S", "S'"},
-        {'a', "S'"},
-        {'b', "S", "S''"},
-        {'b', "S''"},
+        {U'a', "S", "S'"},
+        {U'a', "S'"},
+        {U'b', "S", "S''"},
+        {U'b', "S''"},
     };
     new_productions["S'"] = {
-        {'b', "S"},
-        {'b'},
+        {U'b', "S"},
+        {U'b'},
     };
     new_productions["S''"] = {
-        {'a', "S"},
-        {'a'},
+        {U'a', "S"},
+        {U'a'},
     };
     CHECK(cfg == CFG("ab_set", "S", new_productions));
   }
@@ -56,10 +56,10 @@ TEST_CASE("eliminate_single_productions") {
   std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
       productions;
   auto id = static_cast<CFG::terminal_type>(common_token::id);
-  productions["E"] = {{"E", '+', "T"}, {"T"}};
-  productions["T"] = {{"T", '*', "F"}, {"F"}};
+  productions["E"] = {{"E", U'+', "T"}, {"T"}};
+  productions["T"] = {{"T", U'*', "F"}, {"F"}};
   productions["F"] = {
-      {'(', "E", ')'}, {id} // i for id
+      {U'(', "E", U')'}, {id} // i for id
   };
 
   CFG cfg("common_tokens", "E", productions);
@@ -75,21 +75,21 @@ TEST_CASE("eliminate_single_productions") {
       {"T", "E'"},
   };
   new_productions["E'"] = {
-      {'+', "F"},
-      {'+', "T"},
+      {U'+', "F"},
+      {U'+', "T"},
   };
   new_productions["F"] = {
-      {'(', "F", "F'"},
-      {'(', "E", "F'"},
-      {'(', "T", "F'"},
+      {U'(', "F", "F'"},
+      {U'(', "E", "F'"},
+      {U'(', "T", "F'"},
       {id},
   };
-  new_productions["F'"] = {{')'}};
+  new_productions["F'"] = {{U')'}};
   new_productions["T"] = {
       {"F", "T'"},
       {"T", "T'"},
   };
-  new_productions["T'"] = {{'*', "F"}};
+  new_productions["T'"] = {{U'*', "F"}};
   CHECK(cfg == CFG("common_tokens", "E", new_productions));
 }
 
@@ -97,8 +97,8 @@ TEST_CASE("to_CNF") {
   std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
       productions;
   productions["S"] = {
-      {'a', "S", 'b', "S"},
-      {'b', "S", 'a', "S"},
+      {U'a', "S", U'b', "S"},
+      {U'b', "S", U'a', "S"},
       {},
   };
   CFG cfg("ab_set", "S", productions);

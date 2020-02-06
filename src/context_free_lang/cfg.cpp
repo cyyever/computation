@@ -298,6 +298,7 @@ namespace cyy::computation {
   }
 
   bool CFG::recursive_descent_parse(symbol_string_view view) const {
+    /*
 
     auto match_nonterminal = [&](auto &&self,
                                  const nonterminal_type &nonterminal,
@@ -327,7 +328,7 @@ namespace cyy::computation {
             auto const &this_nonterminal =
                 *(grammal_symbol.get_nonterminal_ptr());
             if (self(self, this_nonterminal,
-                     check_endmark && (i == body.size() - 1), local_pos, cfg)) {
+                     check_endmark && (i + 1 == body.size()), local_pos, cfg)) {
               continue;
             }
             match = false;
@@ -353,6 +354,9 @@ namespace cyy::computation {
     size_t start_pos = 0;
     return match_nonterminal(match_nonterminal, start_symbol, true, start_pos,
                              *this);
+                             */
+    // TODO 尉氏县
+    return false;
   }
 
   const std::map<CFG::nonterminal_type,

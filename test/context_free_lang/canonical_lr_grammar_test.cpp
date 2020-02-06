@@ -26,8 +26,8 @@ TEST_CASE("canonical_collection") {
       {"C", "C"},
   };
   productions["C"] = {
-      {'c', "C"},
-      {'d'},
+      {U'c', "C"},
+      {U'd'},
   };
 
   canonical_LR_grammar grammar("common_tokens", "S", productions);
@@ -60,8 +60,8 @@ TEST_CASE("canonical_collection") {
   {
     LR_1_item_set set;
 
-    set.add_kernel_item(grammar, LR_0_item{CFG_production{"C", {'c', "C"}}, 1},
-                        {'c', 'd'});
+    set.add_kernel_item(grammar, LR_0_item{CFG_production{"C", {U'c', "C"}}, 1},
+                        {U'c', U'd'});
 
     sets.emplace(std::move(set));
   }
@@ -69,8 +69,8 @@ TEST_CASE("canonical_collection") {
   {
     LR_1_item_set set;
 
-    set.add_kernel_item(grammar, LR_0_item{CFG_production{"C", {'d'}}, 1},
-                        {'c', 'd'});
+    set.add_kernel_item(grammar, LR_0_item{CFG_production{"C", {U'd'}}, 1},
+                        {U'c', U'd'});
 
     sets.emplace(std::move(set));
   }
@@ -86,7 +86,7 @@ TEST_CASE("canonical_collection") {
   {
     LR_1_item_set set;
 
-    set.add_kernel_item(grammar, LR_0_item{CFG_production{"C", {'c', "C"}}, 1},
+    set.add_kernel_item(grammar, LR_0_item{CFG_production{"C", {U'c', "C"}}, 1},
                         {endmarker});
 
     sets.emplace(std::move(set));
@@ -95,7 +95,7 @@ TEST_CASE("canonical_collection") {
   {
     LR_1_item_set set;
 
-    set.add_kernel_item(grammar, LR_0_item{CFG_production{"C", {'d'}}, 1},
+    set.add_kernel_item(grammar, LR_0_item{CFG_production{"C", {U'd'}}, 1},
                         {endmarker});
 
     sets.emplace(std::move(set));
@@ -104,15 +104,15 @@ TEST_CASE("canonical_collection") {
   {
     LR_1_item_set set;
 
-    set.add_kernel_item(grammar, LR_0_item{CFG_production{"C", {'c', "C"}}, 2},
-                        {'c', 'd'});
+    set.add_kernel_item(grammar, LR_0_item{CFG_production{"C", {U'c', "C"}}, 2},
+                        {U'c', U'd'});
     sets.emplace(std::move(set));
   }
 
   {
     LR_1_item_set set;
 
-    set.add_kernel_item(grammar, LR_0_item{CFG_production{"C", {'c', "C"}}, 2},
+    set.add_kernel_item(grammar, LR_0_item{CFG_production{"C", {U'c', "C"}}, 2},
                         {endmarker});
     sets.emplace(std::move(set));
   }
@@ -135,24 +135,24 @@ TEST_CASE("canonical_LR(1) parse") {
         {"T", "E'"},
     };
     productions["E'"] = {
-        {'+', "T", "E'"},
+        {U'+', "T", "E'"},
         {},
     };
     productions["T"] = {
         {"F", "T'"},
     };
     productions["T'"] = {
-        {'*', "F", "T'"},
+        {U'*', "F", "T'"},
         {},
     };
     productions["F"] = {
-        {'(', "E", ')'}, {id} // i for id
+        {U'(', "E", U')'}, {id} // i for id
     };
 
     canonical_LR_grammar grammar("common_tokens", "E", productions);
 
     auto parse_tree =
-        grammar.get_parse_tree(symbol_string{id, '+', id, '*', id});
+        grammar.get_parse_tree(symbol_string{id, U'+', id, U'*', id});
     REQUIRE(parse_tree);
     CHECK(parse_tree->children.size() == 2);
   }
@@ -162,7 +162,7 @@ TEST_CASE("canonical_LR(1) parse") {
     std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
         productions;
     productions["E"] = {
-        {'a', "E"},
+        {U'a', "E"},
         {},
     };
 
@@ -172,10 +172,10 @@ TEST_CASE("canonical_LR(1) parse") {
     REQUIRE(parse_tree);
     CHECK(parse_tree->children.size() == 0);
 
-    parse_tree = grammar.get_parse_tree(symbol_string{'a'});
+    parse_tree = grammar.get_parse_tree(symbol_string{U'a'});
     REQUIRE(parse_tree);
     CHECK(parse_tree->children.size() == 2);
-    parse_tree = grammar.get_parse_tree(symbol_string{'a', 'a'});
+    parse_tree = grammar.get_parse_tree(symbol_string{U'a', U'a'});
     REQUIRE(parse_tree);
     CHECK(parse_tree->children.size() == 2);
   }

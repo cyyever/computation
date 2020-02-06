@@ -12,9 +12,6 @@
 
 namespace cyy::computation {
 
-  enum class special_symbol {
-    epsilon
-  };
   using symbol_type = char32_t;
   using symbol_string = std::basic_string<symbol_type>;
   using symbol_string_view = std::basic_string_view<symbol_type>;

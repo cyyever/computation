@@ -89,7 +89,7 @@ namespace cyy::computation {
     std::pair<std::set<terminal_type>, bool>
     first(const grammar_symbol_const_span_type &alpha) const;
 
-    PDA to_PDA() const;
+    const nonterminal_type &get_start_symbol() const { return start_symbol; }
 
   protected:
     nonterminal_type get_new_head(nonterminal_type advise_head) const {

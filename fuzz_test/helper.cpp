@@ -106,7 +106,7 @@ NFA fuzzing_NFA(const uint8_t *Data, size_t Size) {
 symbol_string fuzzing_symbol_string(const uint8_t *Data, size_t Size) {
   symbol_string str;
   for (size_t i = 0; i < Size; i++) {
-    str.push_back(to_printable_ASCII(Data[i]));
+    str.push_back(static_cast<symbol_type>(to_printable_ASCII(Data[i])));
   }
   return str;
 }
