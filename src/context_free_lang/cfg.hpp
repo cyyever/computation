@@ -24,6 +24,8 @@ namespace cyy::computation {
   public:
     using terminal_type = grammar_symbol_type::terminal_type;
     using nonterminal_type = grammar_symbol_type::nonterminal_type;
+    using production_set_type =
+        std::map<nonterminal_type, std::vector<CFG_production::body_type>>;
 
     struct parse_node;
     using parse_node_ptr = std::shared_ptr<parse_node>;
@@ -32,13 +34,15 @@ namespace cyy::computation {
           : grammar_symbol(std::move(grammar_symbol_)) {}
 
       grammar_symbol_type grammar_symbol;
-
       std::vector<parse_node_ptr> children;
+
+      static parse_node_ptr
+      make_parse_node(nonterminal_type head,
+                      CFG_production::body_span_type body);
     };
 
     CFG(const std::string &alphabet_name, nonterminal_type start_symbol_,
-        std::map<nonterminal_type, std::vector<CFG_production::body_type>>
-            productions_);
+        production_set_type productions_);
 
     CFG(const CFG &) = default;
     CFG &operator=(const CFG &) = default;
@@ -99,6 +103,7 @@ namespace cyy::computation {
       return advise_head;
     }
 
+    void normalize_productions();
     static nonterminal_type
     get_new_head(nonterminal_type advise_head,
                  const std::set<nonterminal_type> &heads) {
@@ -107,8 +112,6 @@ namespace cyy::computation {
       } while (heads.contains(advise_head));
       return advise_head;
     }
-
-    void normalize_productions();
 
     friend std::ostream &operator<<(std::ostream &os, const CFG &cfg);
 

@@ -18,6 +18,7 @@ namespace cyy::computation {
   public:
     using head_type = grammar_symbol_type::nonterminal_type;
     using body_type = grammar_symbol_string_type;
+    using body_span_type = grammar_symbol_const_span_type;
 
     CFG_production(head_type head_, body_type body_)
         : head{std::move(head_)}, body{std::move(body_)} {}

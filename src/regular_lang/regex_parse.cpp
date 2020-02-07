@@ -147,8 +147,6 @@ namespace cyy::computation {
     productions["escape-sequence"] = {
         {'\\', "symbol"},
     };
-    std::cout << (char)productions["escape-sequence"][0][0].get_terminal()
-              << std::endl;
 
     for (auto a : *alphabet) {
       productions["symbol"].emplace_back(CFG_production::body_type{a});

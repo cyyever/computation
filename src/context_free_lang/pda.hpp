@@ -65,10 +65,7 @@ namespace cyy::computation {
           return *this;
         }
         auto cur_size = stack->size();
-        std::cout << cur_size << std::endl;
         stack->emplace_back(*content_, cur_size, stack, index);
-        std::cout << stack->size()<< std::endl;
-
         return stack->back();
       }
 

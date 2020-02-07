@@ -15,8 +15,7 @@
 namespace cyy::computation {
 
   CFG::CFG(const std::string &alphabet_name, nonterminal_type start_symbol_,
-           std::map<nonterminal_type, std::vector<CFG_production::body_type>>
-               productions_)
+           production_set_type productions_)
       : alphabet(ALPHABET::get(alphabet_name)),
         start_symbol(std::move(start_symbol_)),
         productions(std::move(productions_)) {
@@ -257,13 +256,13 @@ namespace cyy::computation {
           continue;
         }
 
-        if (!common_prefix.empty()) {
+        if (!common_prefix.empty() && indexes.size() > 1) {
           break;
         }
         common_prefix = bodies[j];
         indexes = {j};
       }
-      if (!common_prefix.empty()) {
+      if (!common_prefix.empty() && indexes.size() > 1) {
         auto new_head = get_new_head(head);
         for (auto &index : indexes) {
           auto &body = bodies[index];
@@ -293,68 +292,6 @@ namespace cyy::computation {
     }
 
     normalize_productions();
-  }
-
-  bool CFG::recursive_descent_parse(symbol_string_view view) const {
-    /*
-
-    auto match_nonterminal = [&](auto &&self,
-                                 const nonterminal_type &nonterminal,
-                                 bool check_endmark, size_t &pos,
-                                 const CFG &cfg) {
-      if (pos >= view.size()) {
-        return false;
-      }
-
-      auto it = cfg.productions.find(nonterminal);
-      for (auto const &body : it->second) {
-        auto local_pos = pos;
-        bool match = true;
-        for (size_t i = 0; i < body.size(); i++) {
-
-          auto const &grammal_symbol = body[i];
-
-          if (grammal_symbol.is_terminal()) {
-            const auto terminal = grammal_symbol.get_terminal();
-            if (terminal == view[local_pos]) {
-              local_pos++;
-            } else {
-              match = false;
-              break;
-            }
-          } else {
-            auto const &this_nonterminal =
-                *(grammal_symbol.get_nonterminal_ptr());
-            if (self(self, this_nonterminal,
-                     check_endmark && (i + 1 == body.size()), local_pos, cfg)) {
-              continue;
-            }
-            match = false;
-            break;
-          }
-        }
-
-        if (match) {
-          if (check_endmark && local_pos < view.size()) {
-            match = false;
-          }
-        }
-
-        if (match) {
-          pos = local_pos;
-          return true;
-        }
-      }
-
-      return false;
-    };
-
-    size_t start_pos = 0;
-    return match_nonterminal(match_nonterminal, start_symbol, true, start_pos,
-                             *this);
-                             */
-    // TODO 尉氏县
-    return false;
   }
 
   const std::map<CFG::nonterminal_type,
@@ -485,4 +422,15 @@ namespace cyy::computation {
     return follow_sets;
   }
 
+  CFG::parse_node_ptr
+  CFG::parse_node::make_parse_node(CFG::nonterminal_type head,
+                                   CFG_production::body_span_type body) {
+
+    auto node = std::make_shared<parse_node>(std::move(head));
+    node->children.reserve(body.size());
+    for (auto const &grammar_symbol : body) {
+      node->children.push_back(std::make_shared<parse_node>(grammar_symbol));
+    }
+    return node;
+  }
 } // namespace cyy::computation

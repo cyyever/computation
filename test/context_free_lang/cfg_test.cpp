@@ -128,9 +128,9 @@ TEST_CASE("left_factoring") {
   std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
       productions;
   productions["S"] = {
-      {U'i', "E", U't', "S"},
-      {U'i', "E", U't', "S", U'e', "S"},
-      {U'a'},
+      {'i', "E", 't', "S"},
+      {'i', "E", 't', "S", 'e', "S"},
+      {'a'},
   };
   productions["E"] = {{U'b'}};
 
@@ -147,7 +147,7 @@ TEST_CASE("left_factoring") {
       {},
   };
   reduced_productions["E"] = {{U'b'}};
-  CHECK(cfg == CFG("common_tokens", "S", reduced_productions));
+  CHECK_EQ(cfg, CFG("common_tokens", "S", reduced_productions));
 }
 
 TEST_CASE("recursive_descent_parse") {
@@ -200,8 +200,10 @@ TEST_CASE("first_and_follow") {
 
   CHECK(follow_sets["E"] == std::set<CFG::terminal_type>{U')', endmarker});
   CHECK(follow_sets["E'"] == std::set<CFG::terminal_type>{U')', endmarker});
-  CHECK(follow_sets["T"] == std::set<CFG::terminal_type>{U'+', U')', endmarker});
-  CHECK(follow_sets["T'"] == std::set<CFG::terminal_type>{U'+', U')', endmarker});
+  CHECK(follow_sets["T"] ==
+        std::set<CFG::terminal_type>{U'+', U')', endmarker});
+  CHECK(follow_sets["T'"] ==
+        std::set<CFG::terminal_type>{U'+', U')', endmarker});
   CHECK(follow_sets["F"] ==
         std::set<CFG::terminal_type>{U'+', U'*', U')', endmarker});
 }
