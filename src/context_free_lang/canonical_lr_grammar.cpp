@@ -114,9 +114,9 @@ namespace cyy::computation {
 
         for (const auto &lookahead : lookahead_set) {
           // conflict
-          if (action_table.count({state, lookahead}) != 0) {
-            std::cerr << "conflict with follow_terminal" << static_cast<int>(lookahead)
-                      << std::endl;
+          if (action_table.contains({state, lookahead})) {
+            std::cerr << "conflict with follow_terminal"
+                      << static_cast<int>(lookahead) << std::endl;
             throw cyy::computation::exception::no_canonical_LR_grammar("");
           }
           action_table[{state, lookahead}] = kernel_item.production;

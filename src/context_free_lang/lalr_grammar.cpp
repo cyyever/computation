@@ -28,7 +28,7 @@ namespace cyy::computation {
            next_item_set.get_kernel_items()) {
         bool propagation = false;
         std::set<CFG::terminal_type> spontaneous_lookahead_set;
-        if (lookahead_set.count(unincluded_symbol)) {
+        if (lookahead_set.contains(unincluded_symbol)) {
           propagation = true;
         }
         spontaneous_lookahead_set.insert(lookahead_set.begin(),

@@ -9,6 +9,8 @@
 #pragma once
 
 #include <map>
+#include <string>
+#include <vector>
 
 namespace cyy::computation {
 
@@ -134,7 +136,7 @@ namespace cyy::computation {
       }
 
       // check state
-      if (final_states.count(s) != 0) {
+      if (final_states.contains(s)) {
         auto word_size = final_states[s];
         if (i == str.size()) {
           i--;

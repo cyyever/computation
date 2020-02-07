@@ -113,7 +113,7 @@ namespace cyy::computation {
              follow_sets[kernel_item.production.get_head()]) {
 
           // conflict
-          if (action_table.count({state, follow_terminal}) != 0) {
+          if (action_table.contains({state, follow_terminal})) {
             std::cerr << "conflict with follow_terminal ";
             alphabet->print(std::cerr, follow_terminal);
             std::cerr << std::endl;

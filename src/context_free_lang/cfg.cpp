@@ -24,7 +24,7 @@ namespace cyy::computation {
     eliminate_useless_symbols();
     normalize_productions();
 
-    if (!productions.count(start_symbol)) {
+    if (!productions.contains(start_symbol)) {
       throw exception::no_CFG("no productions for start symbol");
     }
     for (const auto &[head, bodies] : productions) {
@@ -120,7 +120,7 @@ namespace cyy::computation {
     while (true) {
       auto prev_size = reachable_heads.size();
       for (const auto &[head, bodies] : productions) {
-        if (reachable_heads.count(head) == 0) {
+        if (!reachable_heads.contains(head)) {
           continue;
         }
         for (const auto &body : bodies) {
@@ -134,7 +134,7 @@ namespace cyy::computation {
       }
     }
     for (auto it = productions.begin(); it != productions.end();) {
-      if (reachable_heads.count(it->first) == 0) {
+      if (!reachable_heads.contains(it->first)) {
         productions.erase(it++);
       } else {
         ++it;
@@ -151,7 +151,7 @@ namespace cyy::computation {
         for (size_t i = 0; i < bodies.size();) {
           if (ranges::all_of(bodies[i], [&in_use_heads](auto const &symbol) {
                 return symbol.is_terminal() ||
-                       in_use_heads.count(*symbol.get_nonterminal_ptr());
+                       in_use_heads.contains(*symbol.get_nonterminal_ptr());
               })) {
             in_use_heads.insert(head);
             new_productions[head].emplace_back(std::move(bodies[i]));

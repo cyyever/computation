@@ -153,7 +153,7 @@ namespace cyy::computation {
     for (auto a : *alphabet) {
       productions["symbol"].emplace_back(CFG_production::body_type{a});
 
-      if (!operators.count(a)) {
+      if (!operators.contains(a)) {
         productions["rprimary"].emplace_back(CFG_production::body_type{a});
       }
 
@@ -381,7 +381,7 @@ namespace cyy::computation {
     std::set<symbol_type> complemented_symbol_set;
 
     for (auto a : *alphabet) {
-      if (!symbol_set.count(a)) {
+      if (!symbol_set.contains(a)) {
         complemented_symbol_set.insert(a);
       }
     }

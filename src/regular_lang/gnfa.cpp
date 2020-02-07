@@ -40,7 +40,7 @@ namespace cyy::computation {
     while (flag) {
       flag = false;
       for (auto s : new_gnfg.states) {
-        if (s != new_gnfg.start_state && new_gnfg.final_states.count(s) != 1) {
+        if (s != new_gnfg.start_state && !new_gnfg.final_states.contains(s)) {
           new_gnfg = new_gnfg.remove_state(s);
           flag = true;
           break;

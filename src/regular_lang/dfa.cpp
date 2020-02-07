@@ -67,9 +67,8 @@ namespace cyy::computation {
       return false;
     }
 
-    return ranges::all_of(final_states, [&rhs](auto s) {
-      return rhs.final_states.count(s) != 0;
-    });
+    return ranges::all_of(
+        final_states, [&rhs](auto s) { return rhs.final_states.contains(s); });
   }
 
   DFA DFA::minimize() const {
@@ -139,12 +138,12 @@ namespace cyy::computation {
     transition_function_type minimize_DFA_transition_function;
     for (size_t i = 0; i < groups.size(); i++) {
       minimize_DFA_states.insert(i);
-      if (groups[i].count(this->start_state) != 0) {
+      if (groups[i].contains(this->start_state)) {
         minimize_DFA_start_state = i;
       }
 
       for (auto const &state : groups[i]) {
-        if (final_states.count(state) != 0) {
+        if (final_states.contains(state)) {
           minimize_DFA_final_states.insert(i);
           break;
         }

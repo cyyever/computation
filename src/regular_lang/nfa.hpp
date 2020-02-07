@@ -76,13 +76,13 @@ namespace cyy::computation {
                                 std::set<state_type> end_states) {
       if (!includes(end_states)) {
         for (auto const &state : end_states) {
-          if (!states.count(state)) {
+          if (!states.contains(state)) {
             throw exception::unexisted_finite_automaton_state(
                 std::to_string(state));
           }
         }
       }
-      if (!states.count(from_state)) {
+      if (!states.contains(from_state)) {
         throw exception::unexisted_finite_automaton_state(
             std::to_string(from_state));
       }

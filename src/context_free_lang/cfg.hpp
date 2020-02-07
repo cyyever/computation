@@ -95,7 +95,7 @@ namespace cyy::computation {
     nonterminal_type get_new_head(nonterminal_type advise_head) const {
       do {
         advise_head.push_back('\'');
-      } while (productions.count(advise_head));
+      } while (productions.contains(advise_head));
       return advise_head;
     }
 
@@ -104,7 +104,7 @@ namespace cyy::computation {
                  const std::set<nonterminal_type> &heads) {
       do {
         advise_head.push_back('\'');
-      } while (heads.count(advise_head));
+      } while (heads.contains(advise_head));
       return advise_head;
     }
 

@@ -16,7 +16,7 @@ namespace cyy::computation {
       auto const &symbol =
           kernel_item.production.get_body()[kernel_item.dot_pos];
       if (auto ptr = symbol.get_nonterminal_ptr(); ptr) {
-        if (nonkernel_items.count(*ptr) == 0) {
+        if (!nonkernel_items.contains(*ptr)) {
           tmp_nonkernel_items.push_back(*ptr);
         }
       }
@@ -36,7 +36,7 @@ namespace cyy::computation {
         }
 
         if (auto ptr = body[0].get_nonterminal_ptr(); ptr) {
-          if (nonkernel_items.count(*ptr) == 0) {
+          if (!nonkernel_items.contains(*ptr)) {
             tmp_nonkernel_items.push_back(*ptr);
           }
         }

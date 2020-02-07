@@ -31,7 +31,7 @@ namespace cyy::computation {
       if (states.empty()) {
         throw cyy::computation::exception::no_finite_automaton("no state");
       }
-      if (!states.count(start_state)) {
+      if (!states.contains(start_state)) {
         throw cyy::computation::exception::no_finite_automaton(
             "unexisted start state");
       }
@@ -75,7 +75,7 @@ namespace cyy::computation {
     }
 
     bool is_final_state(state_type final_state) const {
-      return final_states.count(final_state) > 0;
+      return final_states.contains(final_state) > 0;
     }
 
     bool includes(const std::set<state_type> &T) const {
@@ -98,7 +98,7 @@ namespace cyy::computation {
       start_state = s;
     }
     void check_state(state_type s) const {
-      if (!states.count(s)) {
+      if (!states.contains(s)) {
         throw cyy::computation::exception::no_finite_automaton(
             std::string("unexisted state ") + std::to_string(s));
       }

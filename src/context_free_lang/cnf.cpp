@@ -37,7 +37,7 @@ namespace cyy::computation {
       for (auto &body : bodies) {
         for (auto it = body.begin(); it != body.end(); it++) {
           auto ptr = it->get_nonterminal_ptr();
-          if (!ptr || !nullable_nonterminals.count(*ptr)) {
+          if (!ptr || !nullable_nonterminals.contains(*ptr)) {
             continue;
           }
           nonterminal_type new_head;
@@ -79,8 +79,8 @@ namespace cyy::computation {
         for (auto const &body : bodies) {
           if (ranges::all_of(body, [&](auto const &symbol) {
                 return symbol.is_nonterminal() &&
-                       nullable_nonterminals.count(
-                           *symbol.get_nonterminal_ptr()) != 0;
+                       nullable_nonterminals.contains(
+                           *symbol.get_nonterminal_ptr());
               })) {
             has_new_nullable_nonterminals =
                 nullable_nonterminals.emplace(head).second;

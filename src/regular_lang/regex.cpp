@@ -64,7 +64,7 @@ namespace cyy::computation {
     }
 
     for (size_t i = 0; i < position_sets.size(); i++) {
-      if (position_sets[i].count(final_position) != 0) {
+      if (position_sets[i].contains(final_position)) {
         DFA_final_states.insert(i);
       }
     }
