@@ -75,7 +75,7 @@ namespace cyy::computation {
     }
 
     bool is_final_state(state_type final_state) const {
-      return final_states.contains(final_state) > 0;
+      return final_states.contains(final_state);
     }
 
     bool includes(const std::set<state_type> &T) const {
