@@ -117,6 +117,8 @@ namespace cyy::computation {
       }
     };
 
+    void normalize_transitions();
+
   private:
     std::unordered_set<std::pair<stack_node, state_type>>
     move(const std::unordered_set<std::pair<stack_node, state_type>>
@@ -126,8 +128,6 @@ namespace cyy::computation {
     std::unordered_set<std::pair<stack_node, state_type>>
     move(std::unordered_set<std::pair<stack_node, state_type>> configuration)
         const;
-
-    void normalize_transitions();
 
   private:
     std::shared_ptr<ALPHABET> stack_alphabet;

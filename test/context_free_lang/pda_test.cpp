@@ -61,4 +61,11 @@ TEST_CASE("simulate PDA") {
     symbol_string str = U"1001";
     CHECK(pda.simulate(str));
   }
+  SUBCASE("normalize") {
+    pda.normalize_transitions();
+    symbol_string str = U"1001";
+    CHECK(pda.simulate(str));
+    str = U"0101";
+    CHECK(!pda.simulate(str));
+  }
 }
