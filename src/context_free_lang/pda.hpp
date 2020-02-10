@@ -11,6 +11,7 @@
 #include <set>
 #include <string>
 #include <string_view>
+#include <tuple>
 #include <unordered_map>
 
 #include "../automaton/automaton.hpp"
@@ -125,6 +126,8 @@ namespace cyy::computation {
     std::unordered_set<std::pair<stack_node, state_type>>
     move(std::unordered_set<std::pair<stack_node, state_type>> configuration)
         const;
+
+    void normalize_transitions();
 
   private:
     std::shared_ptr<ALPHABET> stack_alphabet;

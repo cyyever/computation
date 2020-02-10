@@ -95,4 +95,32 @@ namespace cyy::computation {
 
     return result;
   }
+
+  void PDA::normalize_transitions() {
+    transition_function_type new_trainsition;
+    auto new_stack_symbol = *stack_alphabet->begin();
+    for (const auto &[k, v] : transition_function) {
+      auto const &top_symbol = std::get<2>(k);
+      for (const auto &next_step : v) {
+        state_type next_state = states.size();
+        auto const &new_top_symbol = next_step.second;
+        if (top_symbol.has_value() && new_top_symbol.has_value()) {
+          states.insert(next_state);
+          new_trainsition[k] = {{next_state, {}}};
+          new_trainsition[{{}, next_state, {}}] = {
+              {next_step.first, new_top_symbol}};
+          next_state++;
+          continue;
+        }
+        if (!top_symbol.has_value() && !new_top_symbol.has_value()) {
+          states.insert(next_state);
+          new_trainsition[k] = {{next_state, new_stack_symbol}};
+          new_trainsition[{{}, next_state, new_stack_symbol}] = {
+              {next_step.first, {}}};
+          next_state++;
+          continue;
+        }
+      }
+    }
+  }
 } // namespace cyy::computation
