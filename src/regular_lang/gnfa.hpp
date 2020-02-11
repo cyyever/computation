@@ -25,7 +25,11 @@ namespace cyy::computation {
                  std::shared_ptr<regex::syntax_node>>;
     explicit GNFA(const DFA &dfa);
 
+    GNFA(const GNFA &) = default;
     GNFA &operator=(const GNFA &) = default;
+
+    GNFA(GNFA &&) noexcept = default;
+    GNFA &operator=(GNFA &&) noexcept = default;
     ~GNFA() = default;
 
     std::shared_ptr<regex::syntax_node> to_regex() const;

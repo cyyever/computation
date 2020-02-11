@@ -168,7 +168,7 @@ namespace cyy::computation {
         return true;
       }
       if (!node->use_next_body()) {
-        return false;
+        break;
       }
     }
     return false;
