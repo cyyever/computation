@@ -11,8 +11,7 @@
 namespace cyy::computation {
 
   CFG NFA_to_CFG(const NFA &nfa) {
-    std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
-        productions;
+    CFG::production_set_type productions;
 
     auto const state_to_nonterminal = [](finite_automaton::state_type state) {
       return std::string("S") + std::to_string(state);
