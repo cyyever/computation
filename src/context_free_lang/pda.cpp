@@ -118,7 +118,10 @@ namespace cyy::computation {
       auto const &top_symbol = std::get<2>(k);
       for (const auto &next_step : v) {
         auto const &new_top_symbol = next_step.second;
-        if (top_symbol.has_value() && new_top_symbol.has_value()) {
+        if (top_symbol.has_value() != new_top_symbol.has_value()) {
+          continue;
+        }
+        if (top_symbol.has_value()) {
           auto next_state = states.size();
           states.insert(next_state);
           new_transition[k] = {{next_state, {}}};
@@ -126,7 +129,7 @@ namespace cyy::computation {
               {next_step.first, new_top_symbol}};
           continue;
         }
-        if (!top_symbol.has_value() && !new_top_symbol.has_value()) {
+        if (!top_symbol.has_value()) {
           auto next_state = states.size();
           states.insert(next_state);
           new_transition[k] = {{next_state, new_stack_symbol}};
@@ -136,7 +139,25 @@ namespace cyy::computation {
         }
       }
     }
+
+    for (auto &[k, v] : transition_function) {
+      auto const &top_symbol = std::get<2>(k);
+      std::erase_if(v, [&top_symbol](const auto e) {
+        return e.second.has_value() == top_symbol.has_value();
+      });
+    }
+    std::erase_if(transition_function,
+                  [](const auto p) { return p.second.empty(); });
     transition_function.merge(std::move(new_transition));
+    assert(final_states.size() == 1);
+
+    for (const auto &[k, v] : transition_function) {
+      auto const &top_symbol = std::get<2>(k);
+      for (const auto &next_step : v) {
+        auto const &new_top_symbol = next_step.second;
+        assert(top_symbol.has_value() != new_top_symbol.has_value());
+      }
+    }
   }
   std::set<PDA::stack_symbol_type> PDA::get_used_stack_symbols() const {
     std::set<PDA::stack_symbol_type> res;

@@ -9,6 +9,7 @@
 #endif
 #include <doctest/doctest.h>
 
+#include "../../src/context_free_lang/model_transform.hpp"
 #include "../../src/context_free_lang/pda.hpp"
 #include "../../src/lang/alphabet.hpp"
 #include "../../src/lang/set_alphabet.hpp"
@@ -66,5 +67,12 @@ TEST_CASE("simulate PDA") {
     CHECK(pda.simulate(str));
     str = U"0101";
     CHECK(!pda.simulate(str));
+  }
+  SUBCASE("to_CFG") {
+    auto cfg = PDA_to_CFG(PDA(pda));
+    symbol_string str = U"1001";
+    /* CHECK(cfg.recursive_descent_parse(str)); */
+    str = U"0101";
+    /* CHECK(!cfg.recursive_descent_parse(str)); */
   }
 }
