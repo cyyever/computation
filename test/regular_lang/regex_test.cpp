@@ -3,12 +3,10 @@
  *
  * \brief 测试cfg
  */
-#define DOCTEST_CONFIG_NO_EXCEPTIONS_BUT_WITH_ALL_ASSERTS
 #if __has_include(<CppCoreCheck\Warnings.h>)
 #include <CppCoreCheck\Warnings.h>
 #pragma warning(disable : ALL_CPPCORECHECK_WARNINGS)
 #endif
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 
 #include "../../src/exception.hpp"

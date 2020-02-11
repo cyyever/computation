@@ -7,10 +7,7 @@
 #include <CppCoreCheck\Warnings.h>
 #pragma warning(disable : ALL_CPPCORECHECK_WARNINGS)
 #endif
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#define DOCTEST_CONFIG_NO_EXCEPTIONS_BUT_WITH_ALL_ASSERTS
 #include <doctest/doctest.h>
-#include <iostream>
 
 #include "../../src/context_free_lang/lalr_grammar.hpp"
 #include "../../src/lang/common_tokens.hpp"

@@ -9,9 +9,7 @@
 #pragma warning(disable : ALL_CPPCORECHECK_WARNINGS)
 #endif
 
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
-#include <iostream>
 
 #include "../../src/context_free_lang/canonical_lr_grammar.hpp"
 #include "../../src/lang/common_tokens.hpp"
