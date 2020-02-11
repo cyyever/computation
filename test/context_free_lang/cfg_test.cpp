@@ -17,8 +17,7 @@
 using namespace cyy::computation;
 TEST_CASE("eliminate_useless_symbols") {
   SUBCASE("have productions after eliminate") {
-    std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
-        productions;
+    CFG::production_set_type productions;
     productions["S"] = {
         {"A"},
         {"C"},
@@ -44,8 +43,7 @@ TEST_CASE("eliminate_useless_symbols") {
   }
 
   SUBCASE("no production after eliminate") {
-    std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
-        productions;
+    CFG::production_set_type productions;
 
     productions["S"] = {{"A"}};
     productions["A"] = {{"S"}};
@@ -61,8 +59,7 @@ TEST_CASE("eliminate_useless_symbols") {
 }
 
 TEST_CASE("get_terminals") {
-  std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
-      productions;
+  CFG::production_set_type productions;
   auto id = static_cast<CFG::terminal_type>(common_token::id);
   productions["E"] = {
       {"T", "E'"},
@@ -88,8 +85,7 @@ TEST_CASE("get_terminals") {
 }
 
 TEST_CASE("eliminate_left_recursion") {
-  std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
-      productions;
+  CFG::production_set_type productions;
   productions["S"] = {
       {"A", U'a'},
       {U'b'},
@@ -123,8 +119,7 @@ TEST_CASE("eliminate_left_recursion") {
 }
 
 TEST_CASE("left_factoring") {
-  std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
-      productions;
+  CFG::production_set_type productions;
   productions["S"] = {
       {'i', "E", 't', "S"},
       {'i', "E", 't', "S", 'e', "S"},
@@ -149,8 +144,7 @@ TEST_CASE("left_factoring") {
 }
 
 TEST_CASE("recursive_descent_parse") {
-  std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
-      productions;
+  CFG::production_set_type productions;
   productions["S"] = {
       {U'a', "S", U'a'},
       {U'a', U'a'},
@@ -162,8 +156,7 @@ TEST_CASE("recursive_descent_parse") {
 }
 
 TEST_CASE("first_and_follow") {
-  std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
-      productions;
+  CFG::production_set_type productions;
   auto endmarker = ALPHABET::get("common_tokens")->get_endmarker();
   auto id = static_cast<CFG::terminal_type>(common_token::id);
   productions["E"] = {

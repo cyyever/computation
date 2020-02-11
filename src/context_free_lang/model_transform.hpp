@@ -12,8 +12,7 @@
 #include "pda.hpp"
 
 namespace cyy::computation {
-
   CFG NFA_to_CFG(const NFA &nfa);
-
   PDA CFG_to_PDA(CFG cfg);
+  CFG PDA_to_CFG(PDA pda);
 } // namespace cyy::computation

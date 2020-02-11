@@ -95,32 +95,63 @@ namespace cyy::computation {
 
     return result;
   }
+  void PDA::add_epsilon_transition(state_type from_state, state_type to_state) {
+    transition_function[{{}, from_state, {}}] = {{to_state, {}}};
+  }
 
   void PDA::normalize_transitions() {
-    transition_function_type new_trainsition;
+    auto new_state = add_new_state();
+    for (auto final_state : final_states) {
+      add_epsilon_transition(final_state, new_state);
+    }
+    for (auto const used_stack_symbol : get_used_stack_symbols()) {
+      transition_function[{{}, new_state, used_stack_symbol}] = {
+          {new_state, {}}};
+    }
+    auto new_final_state = add_new_state();
+    add_epsilon_transition(new_state, new_final_state);
+    change_final_states({new_final_state});
+
+    transition_function_type new_transition;
     auto new_stack_symbol = *stack_alphabet->begin();
     for (const auto &[k, v] : transition_function) {
       auto const &top_symbol = std::get<2>(k);
       for (const auto &next_step : v) {
-        state_type next_state = states.size();
         auto const &new_top_symbol = next_step.second;
         if (top_symbol.has_value() && new_top_symbol.has_value()) {
+          auto next_state = states.size();
           states.insert(next_state);
-          new_trainsition[k] = {{next_state, {}}};
-          new_trainsition[{{}, next_state, {}}] = {
+          new_transition[k] = {{next_state, {}}};
+          new_transition[{{}, next_state, {}}] = {
               {next_step.first, new_top_symbol}};
-          next_state++;
           continue;
         }
         if (!top_symbol.has_value() && !new_top_symbol.has_value()) {
+          auto next_state = states.size();
           states.insert(next_state);
-          new_trainsition[k] = {{next_state, new_stack_symbol}};
-          new_trainsition[{{}, next_state, new_stack_symbol}] = {
+          new_transition[k] = {{next_state, new_stack_symbol}};
+          new_transition[{{}, next_state, new_stack_symbol}] = {
               {next_step.first, {}}};
-          next_state++;
           continue;
         }
       }
     }
+    transition_function.merge(std::move(new_transition));
+  }
+  std::set<PDA::stack_symbol_type> PDA::get_used_stack_symbols() const {
+    std::set<PDA::stack_symbol_type> res;
+    for (auto const &[k, v] : transition_function) {
+      auto const &top_symbol = std::get<2>(k);
+      if (top_symbol.has_value()) {
+        res.insert(*top_symbol);
+      }
+      for (const auto &next_step : v) {
+        auto const &new_top_symbol = next_step.second;
+        if (new_top_symbol.has_value()) {
+          res.insert(*new_top_symbol);
+        }
+      }
+    }
+    return res;
   }
 } // namespace cyy::computation

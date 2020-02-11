@@ -122,4 +122,13 @@ namespace cyy::computation {
     return PDA(std::move(states), cfg.get_alphabet().get_name(), "all",
                start_state, std::move(transition_function), {final_state});
   }
+  CFG PDA_to_CFG(PDA pda) {
+    pda.normalize_transitions();
+    CFG::production_set_type productions;
+    for (auto const s : pda.get_states()) {
+      productions["A_" + std::to_string(s) + "_" + std::to_string(s)] = {{}};
+    }
+
+    return CFG(pda.get_alphabet().get_name(), "", productions);
+  }
 } // namespace cyy::computation

@@ -51,6 +51,9 @@ namespace cyy::computation {
 
     bool simulate(symbol_string_view view) const;
 
+    void normalize_transitions();
+
+  public:
     struct stack_node final {
       stack_node(stack_symbol_type content_, size_t index_,
                  std::vector<stack_node> *stack_, size_t prev_index_ = 0)
@@ -117,8 +120,6 @@ namespace cyy::computation {
       }
     };
 
-    void normalize_transitions();
-
   private:
     std::unordered_set<std::pair<stack_node, state_type>>
     move(const std::unordered_set<std::pair<stack_node, state_type>>
@@ -128,6 +129,9 @@ namespace cyy::computation {
     std::unordered_set<std::pair<stack_node, state_type>>
     move(std::unordered_set<std::pair<stack_node, state_type>> configuration)
         const;
+
+    std::set<stack_symbol_type> get_used_stack_symbols() const;
+    void add_epsilon_transition(state_type from_state, state_type to_state);
 
   private:
     std::shared_ptr<ALPHABET> stack_alphabet;
