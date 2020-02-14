@@ -70,9 +70,10 @@ TEST_CASE("simulate PDA") {
   }
   SUBCASE("to_CFG") {
     auto cfg = PDA_to_CFG(PDA(pda));
+    cfg.eliminate_left_recursion();
     symbol_string str = U"1001";
-    /* CHECK(cfg.recursive_descent_parse(str)); */
+    CHECK(cfg.recursive_descent_parse(str));
     str = U"0101";
-    /* CHECK(!cfg.recursive_descent_parse(str)); */
+    CHECK(!cfg.recursive_descent_parse(str));
   }
 }

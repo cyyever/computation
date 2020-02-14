@@ -10,9 +10,7 @@
 #include "../src/context_free_lang/cfg.hpp"
 #include "../src/regular_lang/nfa.hpp"
 
-inline char to_printable_ASCII(uint8_t data) {
-  return data % 94 + 32;
-}
+inline char to_printable_ASCII(uint8_t data) { return data % 95 + 32; }
 
 std::map<cyy::computation::CFG::nonterminal_type,
          std::vector<cyy::computation::CFG_production::body_type>>

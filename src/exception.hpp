@@ -55,6 +55,10 @@ namespace cyy::computation::exception {
   public:
     using invalid_argument::invalid_argument;
   };
+  class left_recursion_CFG : public std::invalid_argument {
+  public:
+    using invalid_argument::invalid_argument;
+  };
 
   class no_LL_grammar : public std::invalid_argument {
   public:

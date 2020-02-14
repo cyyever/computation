@@ -68,6 +68,7 @@ namespace cyy::computation {
 
     void eliminate_useless_symbols();
 
+    bool has_left_recursion() const;
     void eliminate_left_recursion(std::vector<nonterminal_type> old_heads = {});
 
     void eliminate_epsilon_productions();
@@ -115,11 +116,14 @@ namespace cyy::computation {
 
     friend std::ostream &operator<<(std::ostream &os, const CFG &cfg);
 
+  private:
+    std::map<nonterminal_type, std::set<nonterminal_type>>
+    get_head_dependency() const;
+
   protected:
     std::shared_ptr<ALPHABET> alphabet;
     nonterminal_type start_symbol;
-    std::map<nonterminal_type, std::vector<CFG_production::body_type>>
-        productions;
+    production_set_type productions;
 
   private:
     mutable std::map<nonterminal_type, std::pair<std::set<terminal_type>, bool>>

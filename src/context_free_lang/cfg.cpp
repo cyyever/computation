@@ -140,8 +140,8 @@ namespace cyy::computation {
       }
     }
 
+    // eliminate unused productions
     std::set<nonterminal_type> in_use_heads;
-
     decltype(productions) new_productions;
     bool has_new_production = true;
     while (has_new_production) {
@@ -166,6 +166,56 @@ namespace cyy::computation {
       }
     }
     productions = std::move(new_productions);
+
+    // eliminate empty production only head
+    std::set<nonterminal_type> non_empty_heads;
+    auto flag = true;
+    while (flag) {
+      flag = false;
+      for (auto &[head, bodies] : productions) {
+        for (const auto &body : bodies) {
+          if (ranges::any_of(body, [&non_empty_heads](auto const &symbol) {
+                return symbol.is_terminal() ||
+                       non_empty_heads.contains(*symbol.get_nonterminal_ptr());
+              })) {
+            if (non_empty_heads.emplace(head).second) {
+              flag = true;
+            }
+          }
+        }
+      }
+    }
+
+    for (auto const &head : get_heads()) {
+      if (head == start_symbol) {
+        continue;
+      }
+      if (non_empty_heads.contains(head)) {
+        continue;
+      }
+      productions.erase(head);
+      for (auto &[_, bodies] : productions) {
+        for (auto &body : bodies) {
+          body.erase(std::remove(body.begin(), body.end(), head), body.end());
+        }
+      }
+    }
+    for (auto &[head, bodies] : productions) {
+      auto const &real_head = head;
+      std::erase_if(bodies, [&real_head](const auto body) {
+        return body.size() == 1 && body[0] == real_head;
+      });
+    }
+  }
+  bool CFG::has_left_recursion() const {
+    auto head_dependency = get_head_dependency();
+    for (auto const &[head, derivations] : head_dependency) {
+      if (derivations.contains(head)) {
+        std::cerr << "left recursion head is " << head << std::endl;
+        return true;
+      }
+    }
+    return false;
   }
 
   void CFG::eliminate_left_recursion(std::vector<nonterminal_type> old_heads) {
@@ -209,8 +259,8 @@ namespace cyy::computation {
       for (size_t j = 0; j < i; j++) {
         std::vector<CFG_production::body_type> new_bodies;
         for (auto &body : productions[old_heads[i]]) {
-
           if (body.empty()) {
+            new_bodies.emplace_back(std::move(body));
             continue;
           }
 
@@ -229,6 +279,7 @@ namespace cyy::computation {
       }
       eliminate_immediate_left_recursion(old_heads[i]);
     }
+    eliminate_useless_symbols();
     normalize_productions();
   }
 
@@ -331,7 +382,7 @@ namespace cyy::computation {
               break;
             }
 
-            auto const &nonterminal = *(body[i].get_nonterminal_ptr());
+            auto const &nonterminal = body[i].get_nonterminal();
 
             for (auto const &first_terminal : first_sets[nonterminal].first) {
               if (first_set.insert(first_terminal).second) {
@@ -432,5 +483,40 @@ namespace cyy::computation {
       node->children.push_back(std::make_shared<parse_node>(grammar_symbol));
     }
     return node;
+  }
+
+  std::map<CFG::nonterminal_type, std::set<CFG::nonterminal_type>>
+  CFG::get_head_dependency() const {
+    std::map<CFG::nonterminal_type, std::set<CFG::nonterminal_type>> result;
+
+    for (const auto &[head, bodies] : productions) {
+      for (const auto &body : bodies) {
+        if (!body.empty() && body[0].is_nonterminal()) {
+          result[head].insert(body[0].get_nonterminal());
+        }
+      }
+    }
+
+    bool flag = true;
+    while (flag) {
+      flag = false;
+      for (auto &[k, v_set] : result) {
+        for (auto &v : v_set) {
+          if (v == k) {
+            continue;
+          }
+          auto it = result.find(v);
+          if (it == result.end()) {
+            continue;
+          }
+          auto prev_size = v_set.size();
+          v_set.merge(std::set<CFG::nonterminal_type>(it->second));
+          if (v_set.size() > prev_size) {
+            flag = true;
+          }
+        }
+      }
+    }
+    return result;
   }
 } // namespace cyy::computation

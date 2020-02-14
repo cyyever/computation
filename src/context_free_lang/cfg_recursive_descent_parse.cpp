@@ -10,15 +10,17 @@
 #include <unordered_map>
 #include <utility>
 
+#include "../exception.hpp"
 #include "cfg.hpp"
 
 namespace cyy::computation {
   namespace {
 
-    struct recursive_descent_parse_node;
+    class recursive_descent_parse_node;
     using recursive_descent_parse_node_ptr =
         std::shared_ptr<recursive_descent_parse_node>;
-    struct recursive_descent_parse_node {
+    class recursive_descent_parse_node {
+    public:
       using iter_type = CFG::production_set_type::mapped_type::const_iterator;
 
       recursive_descent_parse_node(const CFG &cfg_,
@@ -35,9 +37,7 @@ namespace cyy::computation {
       }
 
       bool use_next_body() {
-        puts("begin use_next_body");
         if (cur_body_it_opt == end_body_it_opt) {
-        puts("end use_next_body");
           return false;
         }
         if (!children.empty()) {
@@ -46,36 +46,48 @@ namespace cyy::computation {
               for (auto it2 = children.rbegin(); it2 < it; it2++) {
                 (*it2)->reset_iter();
               }
-        puts("end use_next_body");
               return true;
             }
           }
         }
-        if (cur_body_it_opt.has_value()) {
-          cur_body_it_opt = *cur_body_it_opt + 1;
+        return use_next_body_of_root();
+      }
+      bool use_next_body_of_root() {
+        if (cur_body_it_opt == end_body_it_opt) {
+          return false;
         }
+        assert(grammar_symbol.is_nonterminal());
+        cur_body_it_opt = *cur_body_it_opt + 1;
+        children.clear();
         if (cur_body_it_opt != end_body_it_opt) {
-          auto const &body = *(*cur_body_it_opt);
-          children.clear();
-          for (auto const &s : body) {
-            children.push_back(
-                std::make_shared<recursive_descent_parse_node>(cfg, s));
-          }
-        puts("end use_next_body");
+          set_children();
           return true;
         }
-        puts("end use_next_body");
         return false;
       }
 
       std::pair<bool, symbol_string_view>
-      match_nonterminal(symbol_string_view view) {
+      match_nonterminal(symbol_string_view view, bool match_all = false) {
         assert(cur_body_it_opt);
         assert(end_body_it_opt);
         while (cur_body_it_opt != end_body_it_opt) {
           auto const &body = *(*cur_body_it_opt);
           if (body.empty()) {
+            if (match_all) {
+              if (view.empty()) {
+                return {true, view};
+              }
+              use_next_body_of_root();
+              continue;
+            }
             return {true, view};
+          }
+
+          if (std::count_if(body.begin(), body.end(), [](auto const &g) {
+                return g.is_terminal();
+              }) > view.size()) {
+            use_next_body_of_root();
+            continue;
           }
 
           std::vector<symbol_string_view> view_stack{view};
@@ -94,10 +106,8 @@ namespace cyy::computation {
                 continue;
               }
             } else {
-      puts("begin match_nonterminal");
               auto [result, remain_view] =
                   children[i]->match_nonterminal(cur_view);
-      puts("end match_nonterminal");
               if (result) {
                 view_stack.push_back(remain_view);
                 i++;
@@ -121,7 +131,7 @@ namespace cyy::computation {
               i--;
             }
             if (!backtrack_succ) {
-              use_next_body();
+              use_next_body_of_root();
               break;
             }
           }
@@ -132,11 +142,9 @@ namespace cyy::computation {
         return {false, view};
       }
 
-      grammar_symbol_type grammar_symbol;
-
-      std::vector<recursive_descent_parse_node_ptr> children;
-
     private:
+      grammar_symbol_type grammar_symbol;
+      std::vector<recursive_descent_parse_node_ptr> children;
       const CFG &cfg;
       std::optional<iter_type> begin_body_it_opt;
       std::optional<iter_type> cur_body_it_opt;
@@ -144,7 +152,12 @@ namespace cyy::computation {
 
     private:
       void reset_iter() {
-        cur_body_it_opt = begin_body_it_opt;
+        if (grammar_symbol.is_nonterminal()) {
+          cur_body_it_opt = begin_body_it_opt;
+          set_children();
+        }
+      }
+      void set_children() {
         assert(cur_body_it_opt != end_body_it_opt);
         auto const &body = *(*cur_body_it_opt);
         children.clear();
@@ -158,18 +171,26 @@ namespace cyy::computation {
   } // namespace
 
   bool CFG::recursive_descent_parse(symbol_string_view view) const {
+    if (has_left_recursion()) {
+      throw exception::left_recursion_CFG("");
+    }
+    auto terminals = get_terminals();
+    for (auto s : view) {
+      if (!terminals.contains(s)) {
+        return false;
+      }
+    }
     auto node =
         std::make_shared<recursive_descent_parse_node>(*this, start_symbol);
     while (true) {
-      puts("begin match_nonterminal");
-      auto [res, remain_view] = node->match_nonterminal(view);
-      puts("end match_nonterminal");
+      auto [res, remain_view] = node->match_nonterminal(view, true);
       if (!res) {
         return false;
       }
       if (remain_view.empty()) {
         return true;
       }
+
       if (!node->use_next_body()) {
         break;
       }
