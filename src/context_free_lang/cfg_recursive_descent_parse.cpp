@@ -29,43 +29,42 @@ namespace cyy::computation {
               cfg.get_productions().find(grammar_symbol.get_nonterminal());
           assert(it != cfg.get_productions().end());
           begin_body_it_opt = it->second.begin();
-          cur_body_it_opt = it->second.begin();
           end_body_it_opt = it->second.end();
-          auto const &body = *(*cur_body_it_opt);
-          for (auto const &s : body) {
-            children.emplace_back(
-                std::make_shared<recursive_descent_parse_node>(cfg, s));
-          }
+          reset_iter();
         }
       }
 
       bool use_next_body() {
+        puts("begin use_next_body");
+        if (cur_body_it_opt == end_body_it_opt) {
+        puts("end use_next_body");
+          return false;
+        }
         if (!children.empty()) {
-          size_t i = children.size() - 1;
-          while (true) {
-            if (children[i]->use_next_body()) {
-              for (auto j = i + 1; j < children.size(); j++) {
-                children[j]->reset_iter();
+          for (auto it = children.rbegin(); it != children.rend(); it++) {
+            if ((*it)->use_next_body()) {
+              for (auto it2 = children.rbegin(); it2 < it; it2++) {
+                (*it2)->reset_iter();
               }
+        puts("end use_next_body");
               return true;
             }
-            if (i == 0) {
-              break;
-            }
-            i--;
           }
         }
-        if (cur_body_it_opt.has_value() &&
-            *cur_body_it_opt != *end_body_it_opt) {
-          cur_body_it_opt = (*cur_body_it_opt) + 1;
+        if (cur_body_it_opt.has_value()) {
+          cur_body_it_opt = *cur_body_it_opt + 1;
+        }
+        if (cur_body_it_opt != end_body_it_opt) {
           auto const &body = *(*cur_body_it_opt);
           children.clear();
           for (auto const &s : body) {
             children.push_back(
                 std::make_shared<recursive_descent_parse_node>(cfg, s));
           }
+        puts("end use_next_body");
           return true;
         }
+        puts("end use_next_body");
         return false;
       }
 
@@ -74,11 +73,8 @@ namespace cyy::computation {
         assert(cur_body_it_opt);
         assert(end_body_it_opt);
         while (cur_body_it_opt != end_body_it_opt) {
-          auto cur_body_it = *cur_body_it_opt;
-          auto end_body_it = *end_body_it_opt;
-
-          auto const &body = *cur_body_it;
-          if (body.empty() && view.empty()) {
+          auto const &body = *(*cur_body_it_opt);
+          if (body.empty()) {
             return {true, view};
           }
 
@@ -86,8 +82,7 @@ namespace cyy::computation {
           size_t i = 0;
           bool backtrack_succ = true;
           while (i < body.size()) {
-            backtrack_succ = true;
-            assert(!view_stack.empty());
+            assert(view_stack.size() == i + 1);
             auto cur_view = view_stack.back();
             auto const &grammal_symbol = body[i];
             if (grammal_symbol.is_terminal()) {
@@ -99,8 +94,10 @@ namespace cyy::computation {
                 continue;
               }
             } else {
+      puts("begin match_nonterminal");
               auto [result, remain_view] =
                   children[i]->match_nonterminal(cur_view);
+      puts("end match_nonterminal");
               if (result) {
                 view_stack.push_back(remain_view);
                 i++;
@@ -148,8 +145,12 @@ namespace cyy::computation {
     private:
       void reset_iter() {
         cur_body_it_opt = begin_body_it_opt;
-        for (const auto &child : children) {
-          child->reset_iter();
+        assert(cur_body_it_opt != end_body_it_opt);
+        auto const &body = *(*cur_body_it_opt);
+        children.clear();
+        for (auto const &s : body) {
+          children.push_back(
+              std::make_shared<recursive_descent_parse_node>(cfg, s));
         }
       }
     };
@@ -160,7 +161,9 @@ namespace cyy::computation {
     auto node =
         std::make_shared<recursive_descent_parse_node>(*this, start_symbol);
     while (true) {
+      puts("begin match_nonterminal");
       auto [res, remain_view] = node->match_nonterminal(view);
+      puts("end match_nonterminal");
       if (!res) {
         return false;
       }
