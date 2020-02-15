@@ -151,8 +151,10 @@ TEST_CASE("recursive_descent_parse") {
   };
 
   CFG cfg("common_tokens", "S", productions);
-  std::vector<symbol_type> terminals(4, U'a');
-  CHECK(cfg.recursive_descent_parse({terminals.data(), terminals.size()}));
+    auto terminals=U"aaaa";
+  CHECK(cfg.recursive_descent_parse(terminals));
+    terminals=U"aaaaaa";
+  CHECK(cfg.recursive_descent_parse(terminals));
 }
 
 TEST_CASE("first_and_follow") {
