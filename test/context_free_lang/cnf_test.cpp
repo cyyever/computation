@@ -71,4 +71,10 @@ TEST_CASE("to_CNF") {
   CFG cfg("ab_set", "S", productions);
   cfg.to_CNF();
   CNF cnf(cfg);
+  SUBCASE("parse") {
+    auto str = U"ab";
+    CHECK(cnf.parse(str));
+    str = U"aa";
+    CHECK(!cnf.parse(str));
+  }
 }

@@ -111,6 +111,9 @@ namespace cyy::computation {
           std::swap(bodies[i], *bodies.rbegin());
           bodies.pop_back();
           flag = true;
+          if (head == derived_head) {
+            continue;
+          }
           for (auto const &derived_body : productions[derived_head]) {
             if (derived_body.size() == 1 && derived_body[0].is_nonterminal() &&
                 deleted_single_productions.contains(

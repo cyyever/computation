@@ -40,11 +40,16 @@ namespace cyy::computation {
     CNF(CNF &&) noexcept = default;
     CNF &operator=(CNF &&) noexcept = default;
 
-    virtual ~CNF() = default;
+    ~CNF() override = default;
 
     [[nodiscard]] bool parse(symbol_string_view view) const;
 
   private:
     bool valid() const;
+    void make_reverse_productions() const;
+
+  private:
+    mutable std::map<CFG_production::body_type, std::set<nonterminal_type>>
+        reverse_productions;
   };
 } // namespace cyy::computation
