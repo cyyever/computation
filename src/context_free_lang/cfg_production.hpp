@@ -9,7 +9,7 @@
 
 #include <iosfwd>
 
-#include "../formal_grammar/grammar.hpp"
+#include "../formal_grammar/grammar_symbol.hpp"
 
 namespace cyy::computation {
 

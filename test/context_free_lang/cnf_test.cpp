@@ -15,37 +15,27 @@
 using namespace cyy::computation;
 
 TEST_CASE("eliminate_epsilon_productions") {
-  std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
-      productions;
+  CFG::production_set_type productions;
+  productions["S'"] = {{"S"}};
   productions["S"] = {
-      {U'a', "S", U'b', "S"},
-      {U'b', "S", U'a', "S"},
+      {'a', "S", 'b', "S"},
+      {'b', "S", 'a', "S"},
       {},
   };
-  CFG cfg("ab_set", "S", productions);
+  CFG cfg("ab_set", "S'", productions);
   SUBCASE("nullable") {
     auto nullable_nonterminals = cfg.nullable();
-    CHECK(nullable_nonterminals == std::set<CFG::nonterminal_type>{"S"});
+    CHECK_EQ(nullable_nonterminals, std::set<CFG::nonterminal_type>{"S", "S'"});
   }
   SUBCASE("eliminate_epsilon_productions") {
-    cfg.eliminate_epsilon_productions();
-    std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
-        new_productions;
+    CFG::production_set_type new_productions;
+    new_productions["S'"] = {{"S"}, {}};
     new_productions["S"] = {
-        {U'a', "S", "S'"},
-        {U'a', "S'"},
-        {U'b', "S", "S''"},
-        {U'b', "S''"},
+        {'a', "S", 'b', "S"}, {'a', 'b', "S"}, {'a', "S", 'b'}, {'a', 'b'},
+        {'b', "S", 'a', "S"}, {'b', 'a', "S"}, {'b', "S", 'a'}, {'b', 'a'},
     };
-    new_productions["S'"] = {
-        {U'b', "S"},
-        {U'b'},
-    };
-    new_productions["S''"] = {
-        {U'a', "S"},
-        {U'a'},
-    };
-    CHECK(cfg == CFG("ab_set", "S", new_productions));
+    cfg.eliminate_epsilon_productions();
+    CHECK_EQ(cfg, CFG("ab_set", "S'", new_productions));
   }
 }
 
@@ -54,49 +44,29 @@ TEST_CASE("eliminate_single_productions") {
   std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
       productions;
   auto id = static_cast<CFG::terminal_type>(common_token::id);
-  productions["E"] = {{"E", U'+', "T"}, {"T"}};
-  productions["T"] = {{"T", U'*', "F"}, {"F"}};
-  productions["F"] = {
-      {U'(', "E", U')'}, {id} // i for id
-  };
+  productions["E"] = {{"E", '+', "T"}, {"T"}};
+  productions["T"] = {{"T", '*', "F"}, {"F"}};
+  productions["F"] = {{'(', "E", ')'}, {id}};
 
   CFG cfg("common_tokens", "E", productions);
 
   cfg.eliminate_single_productions();
 
-  std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
-      new_productions;
-
+  CFG::production_set_type new_productions;
   new_productions["E"] = {
-      {"E", "E'"},
-      {"F", "E'"},
-      {"T", "E'"},
-  };
-  new_productions["E'"] = {
-      {U'+', "F"},
-      {U'+', "T"},
-  };
-  new_productions["F"] = {
-      {U'(', "F", "F'"},
-      {U'(', "E", "F'"},
-      {U'(', "T", "F'"},
-      {id},
-  };
-  new_productions["F'"] = {{U')'}};
-  new_productions["T"] = {
-      {"F", "T'"},
-      {"T", "T'"},
-  };
-  new_productions["T'"] = {{U'*', "F"}};
-  CHECK(cfg == CFG("common_tokens", "E", new_productions));
+      {"E", '+', "T"}, {"F", '*', "F"}, {'(', "E", ')'}, {id}};
+  new_productions["F"] = {{'(', "E", ')'}, {id}};
+  new_productions["T"] = {{"F", '*', "F"}, {'(', "E", ')'}, {id}};
+  CHECK_EQ(cfg, CFG("common_tokens", "E", new_productions));
 }
 
+#if 0
 TEST_CASE("to_CNF") {
   std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
       productions;
   productions["S"] = {
-      {U'a', "S", U'b', "S"},
-      {U'b', "S", U'a', "S"},
+      {'a', "S", 'b', "S"},
+      {'b', "S", 'a', "S"},
       {},
   };
   CFG cfg("ab_set", "S", productions);
@@ -104,3 +74,4 @@ TEST_CASE("to_CNF") {
 
   CHECK(cfg.is_CNF());
 }
+#endif

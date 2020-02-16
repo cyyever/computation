@@ -9,7 +9,6 @@
 
 #include <gsl/span>
 #include <range/v3/view/filter.hpp>
-#include <range/v3/view/span.hpp>
 #include <range/v3/view/transform.hpp>
 #include <string>
 #include <string_view>

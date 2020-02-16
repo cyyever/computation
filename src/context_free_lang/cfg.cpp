@@ -155,9 +155,7 @@ namespace cyy::computation {
             in_use_heads.insert(head);
             new_productions[head].emplace_back(std::move(bodies[i]));
             has_new_production = true;
-            if (i + 1 < bodies.size()) {
-              std::swap(bodies[i], *bodies.rbegin());
-            }
+            std::swap(bodies[i], *bodies.rbegin());
             bodies.pop_back();
             continue;
           }
@@ -200,6 +198,7 @@ namespace cyy::computation {
         }
       }
     }
+    // eliminate productions A => A
     for (auto &[head, bodies] : productions) {
       auto const &real_head = head;
       std::erase_if(bodies, [&real_head](const auto body) {

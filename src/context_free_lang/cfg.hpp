@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 
-#include "../formal_grammar/grammar.hpp"
+#include "../formal_grammar/grammar_symbol.hpp"
 #include "../lang/alphabet.hpp"
 #include "cfg_production.hpp"
 #include "pda.hpp"
