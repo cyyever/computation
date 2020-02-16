@@ -110,7 +110,7 @@ namespace cyy::computation {
       }
     }
 
-    void change_final_states(const std::initializer_list<state_type> & T) {
+    void change_final_states(const std::initializer_list<state_type> &T) {
       final_states.clear();
       for (auto s : T) {
         add_final_states(s);

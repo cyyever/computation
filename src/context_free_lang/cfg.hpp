@@ -87,8 +87,6 @@ namespace cyy::computation {
 
     std::map<nonterminal_type, std::set<terminal_type>> follow() const;
 
-    bool is_CNF() const;
-
     std::set<nonterminal_type> nullable() const;
 
     std::pair<std::set<terminal_type>, bool>
