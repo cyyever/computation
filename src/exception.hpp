@@ -77,6 +77,10 @@ namespace cyy::computation::exception {
   public:
     using invalid_argument::invalid_argument;
   };
+  class no_CNF : public std::invalid_argument {
+  public:
+    using invalid_argument::invalid_argument;
+  };
   class pop_empty_stack : public std::logic_error {
   public:
     using logic_error::logic_error;

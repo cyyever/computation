@@ -9,7 +9,7 @@
 #endif
 #include <doctest/doctest.h>
 
-#include "../../src/context_free_lang/cfg.hpp"
+#include "../../src/context_free_lang/cnf.hpp"
 #include "../../src/lang/common_tokens.hpp"
 
 using namespace cyy::computation;
@@ -70,6 +70,5 @@ TEST_CASE("to_CNF") {
   };
   CFG cfg("ab_set", "S", productions);
   cfg.to_CNF();
-
-  CHECK(cfg.is_CNF());
+  CNF cnf(cfg);
 }
