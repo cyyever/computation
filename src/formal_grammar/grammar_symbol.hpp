@@ -44,7 +44,7 @@ namespace cyy::computation {
     }
 
     const nonterminal_type &get_nonterminal() const noexcept {
-      return *std::get_if<nonterminal_type>(this);
+      return std::get<nonterminal_type>(*this);
     }
     bool operator==(const terminal_type &t) const {
       return is_terminal() && get_terminal() == t;

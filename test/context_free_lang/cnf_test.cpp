@@ -54,13 +54,12 @@ TEST_CASE("eliminate_single_productions") {
 
   CFG::production_set_type new_productions;
   new_productions["E"] = {
-      {"E", '+', "T"}, {"F", '*', "F"}, {'(', "E", ')'}, {id}};
+      {"E", '+', "T"}, {"T", '*', "F"}, {'(', "E", ')'}, {id}};
   new_productions["F"] = {{'(', "E", ')'}, {id}};
-  new_productions["T"] = {{"F", '*', "F"}, {'(', "E", ')'}, {id}};
+  new_productions["T"] = {{"T", '*', "F"}, {'(', "E", ')'}, {id}};
   CHECK_EQ(cfg, CFG("common_tokens", "E", new_productions));
 }
 
-#if 0
 TEST_CASE("to_CNF") {
   std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
       productions;
@@ -74,4 +73,3 @@ TEST_CASE("to_CNF") {
 
   CHECK(cfg.is_CNF());
 }
-#endif

@@ -65,56 +65,6 @@ namespace cyy::computation {
       productions[start_symbol].emplace_back();
     }
 
-    /*
-    auto checking_heads = get_heads();
-    while (!checking_heads.empty()) {
-      auto head = checking_heads.extract(checking_heads.begin()).value();
-      auto &bodies = productions[head];
-
-      bodies.erase(ranges::remove_if(bodies,
-                                     [](auto const &production) {
-                                       return production.empty();
-                                     }),
-                   bodies.end());
-
-      if (bodies.empty()) {
-        productions.erase(head);
-        continue;
-      }
-      std::vector<CFG_production::body_type> new_bodies;
-      for (auto &body : bodies) {
-        for (auto it = body.begin(); it != body.end(); it++) {
-          if (it->is_terminal() ||
-              !nullable_nonterminals.contains(it->get_nonterminal())) {
-            continue;
-          }
-          nonterminal_type new_head;
-          if (it + 1 != body.end()) {
-            new_head = get_new_head(head);
-            productions[new_head].emplace_back(std::move_iterator(it + 1),
-                                               std::move_iterator(body.end()));
-            body.erase(it + 1, body.end());
-            body.emplace_back(new_head);
-            checking_heads.insert(new_head);
-          }
-
-          if (body.begin() != it) {
-            new_bodies.emplace_back(body.begin(), it);
-
-            if (!new_head.empty()) {
-              new_bodies.back().push_back(new_head);
-            }
-          }
-          break;
-        }
-      }
-      if (!new_bodies.empty()) {
-        bodies.insert(bodies.end(), new_bodies.begin(), new_bodies.end());
-      }
-    }
-    eliminate_useless_symbols();
-    */
-
     normalize_productions();
     assert(nullable().size() <= 1);
   }
@@ -151,10 +101,8 @@ namespace cyy::computation {
     while (flag) {
       flag = false;
       for (auto &[head, bodies] : productions) {
-        std::cout<<"check head"<<head<<std::endl;
         for (size_t i = 0; i < bodies.size();) {
-        std::cout<<"i is "<<i<<std::endl;
-          if (bodies[i].size() != 1 || bodies[i][0].is_nonterminal()) {
+          if (bodies[i].size() != 1 || bodies[i][0].is_terminal()) {
             i++;
             continue;
           }
@@ -174,102 +122,35 @@ namespace cyy::computation {
         }
       }
     }
-
-    /*
-    // find immediate single productions
-    for (auto &[head, bodies] : productions) {
-      auto &this_head = head;
-    }
-
-    if (single_productions.empty()) {
-      return;
-    }
-
-    // get all single productions by derivation
-    while (true) {
-      bool has_new_derivation = false;
-      for (auto &[head, derived_nonterminals] : single_productions) {
-        for (auto &derived_nonterminal : derived_nonterminals) {
-          auto it = single_productions.find(derived_nonterminal);
-          if (it == single_productions.end()) {
-            continue;
-          }
-          for (const auto &tmp : it->second) {
-            if (head == tmp) {
-              continue;
-            }
-            auto has_insert = derived_nonterminals.insert(tmp).second;
-            if (has_insert) {
-              has_new_derivation = true;
-            }
-          }
-        }
-      }
-      if (!has_new_derivation) {
-        break;
-      }
-    }
-
-    auto checking_heads = get_heads();
-    while (!checking_heads.empty()) {
-      auto head = checking_heads.extract(checking_heads.begin()).value();
-
-      auto &bodies = productions[head];
-
-      std::vector<CFG_production::body_type> new_bodies;
-
-      for (auto &body : bodies) {
-        for (auto it = body.begin(); it != body.end(); it++) {
-          auto ptr = it->get_nonterminal_ptr();
-          if (!ptr) {
-            continue;
-          }
-
-          auto it2 = single_productions.find(*ptr);
-          if (it2 == single_productions.end()) {
-            continue;
-          }
-
-          nonterminal_type new_head;
-          if (it + 1 != body.end()) {
-            new_head = get_new_head(head);
-            productions[new_head].emplace_back(std::move_iterator(it + 1),
-                                               std::move_iterator(body.end()));
-            body.erase(it + 1, body.end());
-            body.emplace_back(new_head);
-            checking_heads.insert(new_head);
-          }
-
-          for (auto const &derived_nonterminal : it2->second) {
-            new_bodies.emplace_back(body.begin(), it);
-            new_bodies.back().push_back(derived_nonterminal);
-            if (!new_head.empty()) {
-              new_bodies.back().push_back(new_head);
-            }
-          }
-        }
-      }
-      if (!new_bodies.empty()) {
-        bodies.insert(bodies.end(), new_bodies.begin(), new_bodies.end());
-      }
-    }
-    */
     normalize_productions();
   }
 
   void CFG::to_CNF() {
     auto new_start_symbol = get_new_head(start_symbol);
     productions[new_start_symbol] = {{start_symbol}};
+    start_symbol = new_start_symbol;
     eliminate_single_productions();
 
-    std::map<terminal_type, nonterminal_type> terminal_productions;
+    std::map<terminal_type, nonterminal_type> terminal_to_nonterminal;
+
     auto heads = get_heads();
+    auto get_terminal_head = [&terminal_to_nonterminal,
+                              &heads](terminal_type s) {
+      auto it = terminal_to_nonterminal.find(s);
+      if (it != terminal_to_nonterminal.end()) {
+        return it->second;
+      }
+      auto new_head = get_new_head("T_" + std::to_string(s), heads);
+      heads.insert(new_head);
+      terminal_to_nonterminal[s] = new_head;
+      return new_head;
+    };
 
     while (true) {
       decltype(productions) new_productions;
       for (auto &[head, bodies] : productions) {
         for (auto &body : bodies) {
-          if (body.size() == 1) {
+          if (body.size() <= 1) {
             continue;
           }
 
@@ -278,17 +159,8 @@ namespace cyy::computation {
               continue;
             }
             auto s = symbol.get_terminal();
-            auto it = terminal_productions.find(s);
-            if (it != terminal_productions.end()) {
-              symbol = it->second;
-            } else {
-              auto new_head = get_new_head("Z", heads);
-              heads.insert(new_head);
-              terminal_productions[s] = new_head;
-              new_productions[new_head].emplace_back(
-                  CFG_production::body_type{s});
-              symbol = new_head;
-            }
+            auto head = get_terminal_head(s);
+            symbol = head;
           }
 
           if (body.size() == 2) {
@@ -312,25 +184,35 @@ namespace cyy::computation {
         break;
       }
     }
+    for (auto const &[terminal, head] : terminal_to_nonterminal) {
+      productions[head].emplace_back(CFG_production::body_type{terminal});
+    }
     normalize_productions();
   }
 
   bool CFG::is_CNF() const {
-    for (auto &[_, bodies] : productions) {
+    for (auto &[head, bodies] : productions) {
       for (auto &body : bodies) {
-        if (body.size() == 1) {
+        auto body_size = body.size();
+        if (body_size > 2) {
+          return false;
+        }
+        if (body_size == 0) {
+          if (head != start_symbol) {
+            return false;
+          }
+        }
+        if (body_size == 1) {
           if (!body[0].is_terminal()) {
             return false;
           }
-        } else if (body.size() == 2) {
-          if (!body[0].is_nonterminal()) {
+        }
+        if (body_size == 2) {
+          if (std::any_of(body.begin(), body.end(), [*this](auto const &g) {
+                return g.is_terminal() || g == start_symbol;
+              })) {
             return false;
           }
-          if (!body[1].is_nonterminal()) {
-            return false;
-          }
-        } else {
-          return false;
         }
       }
     }
