@@ -19,13 +19,12 @@ namespace cyy::computation {
 
   class set_alphabet : public ALPHABET {
   public:
-    explicit set_alphabet(const std::set<symbol_type> &symbol_set,
-                          std::string_view name_)
-        : symbols(symbol_set.begin(), symbol_set.end()) {
+    set_alphabet(const std::set<symbol_type> &symbol_set,
+                 std::string_view name_)
+        : ALPHABET(name_), symbols(symbol_set.begin(), symbol_set.end()) {
       if (symbols.empty()) {
         throw exception::empty_alphabet("symbol set is empty");
       }
-      name = name_;
     }
 
     bool contain(symbol_type s) const noexcept override {
@@ -36,7 +35,6 @@ namespace cyy::computation {
   private:
     void print_symbol(std::ostream &os, symbol_type symbol) const override {
       os << '\'' << static_cast<char>(symbol) << '\'';
-      return;
     }
 
     symbol_type get_max_symbol() const noexcept override {
@@ -51,7 +49,7 @@ namespace cyy::computation {
     }
 
   private:
-    std::vector<symbol_type> symbols;
+    std::vector<symbol_type> symbols{};
   };
 
 } // namespace cyy::computation

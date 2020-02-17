@@ -42,7 +42,7 @@ namespace cyy::computation {
     return it->second;
   }
 
-  void ALPHABET::set(std::shared_ptr<ALPHABET> alphabet) {
+  void ALPHABET::set(const std::shared_ptr<ALPHABET> &alphabet) {
     factory[alphabet->get_name()] = alphabet;
   }
 

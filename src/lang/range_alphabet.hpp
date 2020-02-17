@@ -15,11 +15,10 @@ namespace cyy::computation {
   public:
     range_alphabet(symbol_type min_symbol_, symbol_type max_symbol_,
                    std::string_view name_)
-        : min_symbol{min_symbol_}, max_symbol{max_symbol_} {
+        : ALPHABET(name_), min_symbol{min_symbol_}, max_symbol{max_symbol_} {
       if (max_symbol < min_symbol) {
         throw exception::empty_alphabet("range is empty");
       }
-      name = name_;
     }
 
     bool contain(symbol_type s) const noexcept override {
@@ -33,7 +32,6 @@ namespace cyy::computation {
   private:
     void print_symbol(std::ostream &os, symbol_type symbol) const override {
       os << '\'' << static_cast<char>(symbol) << '\'';
-      return;
     }
 
     symbol_type get_max_symbol() const override { return max_symbol; }

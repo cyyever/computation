@@ -50,7 +50,8 @@ namespace cyy::computation {
         range_begin = last_symbol;
         return true;
       }
-      [[nodiscard]] auto get_content() const -> const auto & { return content; }
+      /* auto get_content() const -> const auto & { return content; } */
+      const auto &get_content() const { return content; }
 
     private:
       std::set<symbol_type> content;

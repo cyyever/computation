@@ -42,6 +42,12 @@ namespace cyy::computation {
     };
 
   public:
+    explicit ALPHABET(std::string_view name_) : name(name_) {}
+    ALPHABET(const ALPHABET &) = default;
+    ALPHABET &operator=(const ALPHABET &) = default;
+
+    ALPHABET(ALPHABET &&) noexcept = default;
+    ALPHABET &operator=(ALPHABET &&) noexcept = default;
     virtual ~ALPHABET() = default;
 
     symbol_type get_endmarker() const { return add_max_symbol(2); }
@@ -65,7 +71,7 @@ namespace cyy::computation {
 
     static void regist(const std::string &name);
     static std::shared_ptr<ALPHABET> get(std::string_view name);
-    static void set(std::shared_ptr<ALPHABET> alphabet);
+    static void set(const std::shared_ptr<ALPHABET> &alphabet);
 
   private:
     virtual void print_symbol(std::ostream &os, symbol_type symbol) const = 0;
@@ -85,6 +91,7 @@ namespace cyy::computation {
     }
 
   protected:
+  private:
     std::string name;
 
   private:
