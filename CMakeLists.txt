@@ -16,6 +16,9 @@ target_compile_definitions(MyComputationLib PUBLIC RANGES_NO_STD_FORWARD_DECLARA
 if(CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
   find_package(libcxx REQUIRED)
   target_link_libraries(MyComputationLib PUBLIC libcxx::libcxx)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  find_package(MicrosoftSTL REQUIRED)
+  target_link_libraries(MyComputationLib PUBLIC Microsoft::STL)
 endif()
 
 # test

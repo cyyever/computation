@@ -162,8 +162,7 @@ namespace cyy::computation {
               continue;
             }
             auto s = symbol.get_terminal();
-            auto head = get_terminal_head(s);
-            symbol = head;
+            symbol = get_terminal_head(s);
           }
 
           if (body.size() == 2) {

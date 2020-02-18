@@ -83,9 +83,10 @@ namespace cyy::computation {
             return {true, view};
           }
 
-          if (std::count_if(body.begin(), body.end(), [](auto const &g) {
-                return g.is_terminal();
-              }) > view.size()) {
+          if (static_cast<size_t>(
+                  std::count_if(body.begin(), body.end(), [](auto const &g) {
+                    return g.is_terminal();
+                  })) > view.size()) {
             use_next_body_of_root();
             continue;
           }
