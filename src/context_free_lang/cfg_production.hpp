@@ -31,12 +31,16 @@ namespace cyy::computation {
 
     ~CFG_production() = default;
 
-    bool operator==(const CFG_production &rhs) const {
-      return head == rhs.head && body == rhs.body;
+    std::strong_ordering operator<=>(const CFG_production &rhs) const {
+      if (std::tie(head, body) < std::tie(rhs.head, rhs.body)) {
+        return std::strong_ordering::less;
+      } 
+      if (std::tie(head, body) == std::tie(rhs.head, rhs.body)) {
+        return std::strong_ordering::equal;
+      }
+      return std::strong_ordering::greater;
     }
-    bool operator<(const CFG_production &rhs) const {
-      return head < rhs.head || (head == rhs.head && body < rhs.body);
-    }
+
     bool is_epsilon() const;
 
     void print(std::ostream &os, const ALPHABET &alphabet) const;
