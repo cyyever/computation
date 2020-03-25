@@ -13,7 +13,7 @@
 
 namespace cyy::computation {
   bool DPDA::simulate(symbol_string_view view) const {
-    configuration_type configuration{{}, start_state};
+    configuration_type configuration{start_state, {}};
 
     for (auto const &symbol : view) {
       auto configuration_opt = move(configuration, symbol);

@@ -146,6 +146,7 @@ namespace cyy::computation {
     transition_function.merge(std::move(new_transition));
     assert(final_states.size() == 1);
 
+#ifndef NDEBUG
     for (const auto &[k, v] : transition_function) {
       auto const &top_symbol = std::get<2>(k);
       for (const auto &next_step : v) {
@@ -153,6 +154,7 @@ namespace cyy::computation {
         assert(top_symbol.has_value() != new_top_symbol.has_value());
       }
     }
+#endif
   }
   std::set<PDA::stack_symbol_type> PDA::get_used_stack_symbols() const {
     std::set<PDA::stack_symbol_type> res;
