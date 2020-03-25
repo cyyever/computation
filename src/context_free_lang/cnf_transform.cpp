@@ -108,7 +108,9 @@ namespace cyy::computation {
           }
           auto derived_head = bodies[i][0].get_nonterminal();
           deleted_single_productions.emplace(head, derived_head);
-          std::swap(bodies[i], *bodies.rbegin());
+          if (i + 1 < bodies.size()) {
+            std::swap(bodies[i], *bodies.rbegin());
+          }
           bodies.pop_back();
           flag = true;
           if (head == derived_head) {

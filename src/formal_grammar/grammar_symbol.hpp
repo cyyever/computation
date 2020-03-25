@@ -29,14 +29,6 @@ namespace cyy::computation {
     grammar_symbol_type(char c)
         : grammar_symbol_type(static_cast<symbol_type>(c)) {}
 
-    std::strong_ordering operator<=>(const grammar_symbol_type &rhs) const {
-      if (*this < rhs) {
-        return std::strong_ordering::less;
-      } else if (*this == rhs) {
-        return std::strong_ordering::equal;
-      }
-      return std::strong_ordering::greater;
-    }
     bool is_terminal() const noexcept {
       return std::holds_alternative<terminal_type>(*this);
     }

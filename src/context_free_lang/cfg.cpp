@@ -155,7 +155,9 @@ namespace cyy::computation {
             in_use_heads.insert(head);
             new_productions[head].emplace_back(std::move(bodies[i]));
             has_new_production = true;
-            std::swap(bodies[i], *bodies.rbegin());
+            if (i + 1 != bodies.size()) {
+              std::swap(bodies[i], *bodies.rbegin());
+            }
             bodies.pop_back();
             continue;
           }

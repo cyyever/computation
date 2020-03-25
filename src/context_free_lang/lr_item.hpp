@@ -21,7 +21,8 @@ namespace cyy::computation {
     CFG_production production;
     size_t dot_pos{0};
     bool operator==(const LR_0_item &rhs) const noexcept {
-      return std::tie(production, dot_pos) == std::tie(rhs.production, rhs.dot_pos);
+      return std::tie(production, dot_pos) ==
+             std::tie(rhs.production, rhs.dot_pos);
     }
   };
 
@@ -37,15 +38,6 @@ namespace std {
              ::std::hash<decltype(x.dot_pos)>()(x.dot_pos);
     }
   };
-
-  template <> struct less<cyy::computation::LR_0_item> {
-    bool operator()(const cyy::computation::LR_0_item &lhs,
-                    const cyy::computation::LR_0_item &rhs) const noexcept {
-      return std::tie(lhs.dot_pos, lhs.production) <
-             std::tie(rhs.dot_pos, rhs.production);
-    }
-  };
-
 } // namespace std
 
 namespace cyy::computation {
@@ -68,7 +60,7 @@ namespace cyy::computation {
     }
 
   private:
-    std::set<LR_0_item> kernel_items;
+    std::unordered_set<LR_0_item> kernel_items;
     std::unordered_set<CFG::nonterminal_type> nonkernel_items;
   };
 } // namespace cyy::computation
@@ -106,8 +98,8 @@ namespace cyy::computation {
                             const std::set<CFG::terminal_type> &lookahead_set);
 
   private:
-    std::map<LR_0_item, std::set<CFG::terminal_type>> kernel_items;
-    std::map<CFG::nonterminal_type, std::set<CFG::terminal_type>>
+    std::unordered_map<LR_0_item, std::set<CFG::terminal_type>> kernel_items;
+    std::unordered_map<CFG::nonterminal_type, std::set<CFG::terminal_type>>
         nonkernel_items;
   };
 

@@ -10,19 +10,13 @@
 #include "slr_grammar.hpp"
 
 namespace cyy::computation {
-  std::map<
-      grammar_symbol_type,
-      std::map<CFG_production, std::pair<bool, std::set<CFG::terminal_type>>>>
+  LALR_grammar::lookahead_map_type
   LALR_grammar::check_lookahead(const LR_0_item &item) const {
     LR_1_item_set item_set;
     auto const unincluded_symbol = alphabet->get_unincluded_symbol();
     item_set.add_kernel_item(*this, item, {unincluded_symbol});
 
-    std::map<
-        grammar_symbol_type,
-        std::map<CFG_production,
-                 std::pair<bool, std::set<grammar_symbol_type::terminal_type>>>>
-        res;
+    lookahead_map_type res;
     for (const auto &[grammar_symbol, next_item_set] : GOTO(item_set)) {
       for (auto const &[next_kernel_item, lookahead_set] :
            next_item_set.get_kernel_items()) {

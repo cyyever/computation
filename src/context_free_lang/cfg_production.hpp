@@ -31,10 +31,13 @@ namespace cyy::computation {
 
     ~CFG_production() = default;
 
+    bool operator==(const CFG_production &rhs) const {
+      return std::tie(head, body) == std::tie(rhs.head, rhs.body);
+    }
     std::strong_ordering operator<=>(const CFG_production &rhs) const {
       if (std::tie(head, body) < std::tie(rhs.head, rhs.body)) {
         return std::strong_ordering::less;
-      } 
+      }
       if (std::tie(head, body) == std::tie(rhs.head, rhs.body)) {
         return std::strong_ordering::equal;
       }

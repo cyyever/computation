@@ -25,9 +25,10 @@ namespace cyy::computation {
     canonical_collection() const override;
 
   private:
-    std::map<grammar_symbol_type,
-             std::map<CFG_production, std::pair<bool, std::set<terminal_type>>>>
-    check_lookahead(const LR_0_item &item) const;
+    using lookahead_map_type = std::map<
+        grammar_symbol_type,
+        std::map<CFG_production, std::pair<bool, std::set<terminal_type>>>>;
+    lookahead_map_type check_lookahead(const LR_0_item &item) const;
     void construct_parsing_table() const override;
   };
 } // namespace cyy::computation
