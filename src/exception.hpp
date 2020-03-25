@@ -85,4 +85,8 @@ namespace cyy::computation::exception {
   public:
     using logic_error::logic_error;
   };
+  class no_DPDA : public std::invalid_argument {
+  public:
+    using invalid_argument::invalid_argument;
+  };
 } // namespace cyy::computation::exception
