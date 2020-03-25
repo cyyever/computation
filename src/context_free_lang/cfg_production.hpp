@@ -10,6 +10,7 @@
 #include <iosfwd>
 
 #include "../formal_grammar/grammar_symbol.hpp"
+#include "../hash.hpp"
 
 namespace cyy::computation {
 
@@ -34,16 +35,6 @@ namespace cyy::computation {
     bool operator==(const CFG_production &rhs) const {
       return std::tie(head, body) == std::tie(rhs.head, rhs.body);
     }
-    std::strong_ordering operator<=>(const CFG_production &rhs) const {
-      if (std::tie(head, body) < std::tie(rhs.head, rhs.body)) {
-        return std::strong_ordering::less;
-      }
-      if (std::tie(head, body) == std::tie(rhs.head, rhs.body)) {
-        return std::strong_ordering::equal;
-      }
-      return std::strong_ordering::greater;
-    }
-
     bool is_epsilon() const;
 
     void print(std::ostream &os, const ALPHABET &alphabet) const;
@@ -60,3 +51,19 @@ namespace cyy::computation {
   };
 
 } // namespace cyy::computation
+namespace std {
+  template <> struct hash<cyy::computation::CFG_production> {
+    std::size_t operator()(const cyy::computation::CFG_production &x) const
+        noexcept {
+      size_t seed = 0;
+
+      auto const &head = x.get_head();
+      auto const &body = x.get_body();
+      boost::hash_combine(
+          seed, std::hash<cyy::computation::CFG_production::head_type>()(head));
+      boost::hash_combine(
+          seed, std::hash<cyy::computation::CFG_production::body_type>()(body));
+      return seed;
+    }
+  };
+} // namespace std

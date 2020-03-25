@@ -9,6 +9,7 @@
 
 #include "lr_grammar.hpp"
 #include "lr_item.hpp"
+#include "../hash.hpp"
 
 namespace cyy::computation {
 
@@ -16,14 +17,15 @@ namespace cyy::computation {
 
   public:
     using LR_grammar::LR_grammar;
+    using collection_type = std::unordered_map<LR_1_item_set, state_type>;
+    using goto_transition_set_type =
+        std::unordered_map<std::pair<state_type, grammar_symbol_type>, state_type>;
 
-    virtual std::pair<
-        std::unordered_map<LR_1_item_set, state_type>,
-        std::map<std::pair<state_type, grammar_symbol_type>, state_type>>
+    virtual std::pair<collection_type, goto_transition_set_type>
     canonical_collection() const;
 
   protected:
-    std::map<grammar_symbol_type, LR_1_item_set>
+    std::unordered_map<grammar_symbol_type, LR_1_item_set>
     GOTO(const LR_1_item_set &set) const;
     void construct_parsing_table() const override;
 

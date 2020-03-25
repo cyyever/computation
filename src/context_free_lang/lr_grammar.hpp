@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "cfg.hpp"
+#include "../hash.hpp"
 
 namespace cyy::computation {
 
@@ -37,11 +38,11 @@ namespace cyy::computation {
 
   protected:
     using action_table_type =
-        std::map<std::pair<state_type, terminal_type>,
+        std::unordered_map<std::pair<state_type, terminal_type>,
                  std::variant<state_type, CFG_production, bool>>;
     mutable action_table_type action_table;
     using goto_table_type =
-        std::map<std::pair<state_type, nonterminal_type>, state_type>;
+        std::unordered_map<std::pair<state_type, nonterminal_type>, state_type>;
     mutable goto_table_type goto_table;
   };
 } // namespace cyy::computation

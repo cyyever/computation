@@ -6,6 +6,7 @@
  */
 
 #include <iterator>
+#include <memory>
 #include <range/v3/algorithm.hpp>
 #include <range/v3/iterator/insert_iterators.hpp>
 #include <set>
@@ -78,7 +79,7 @@ namespace cyy::computation {
         ranges::inserter(non_final_states, non_final_states.begin()));
 
     std::vector<std::set<state_type>> groups{non_final_states, final_states};
-    std::map<state_type, size_t> state_location;
+    std::unordered_map<state_type, size_t> state_location;
 
     while (true) {
       for (size_t i = 0; i < groups.size(); i++) {

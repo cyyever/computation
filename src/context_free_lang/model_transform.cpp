@@ -7,6 +7,7 @@
 
 #include "model_transform.hpp"
 #include "../automaton/automaton.hpp"
+#include <unordered_map>
 
 namespace cyy::computation {
 
@@ -43,7 +44,7 @@ namespace cyy::computation {
 
   PDA CFG_to_PDA(CFG cfg) {
     cfg.eliminate_left_recursion();
-    std::map<grammar_symbol_type, PDA::stack_symbol_type>
+    std::unordered_map<grammar_symbol_type, PDA::stack_symbol_type>
         grammar_symbol_to_stack_symbol;
     PDA::stack_symbol_type next_stack_symbol = 0;
     auto get_stack_symbol =

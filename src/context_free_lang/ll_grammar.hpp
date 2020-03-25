@@ -11,6 +11,7 @@
 #include <iostream>
 
 #include "cfg.hpp"
+#include "../hash.hpp"
 
 namespace cyy::computation {
 
@@ -29,7 +30,7 @@ namespace cyy::computation {
     void construct_parsing_table() const;
 
   private:
-    mutable std::map<std::pair<CFG::terminal_type, CFG::nonterminal_type>,
+    mutable std::unordered_map<std::pair<CFG::terminal_type, CFG::nonterminal_type>,
                      const CFG_production::body_type &>
         parsing_table;
   };

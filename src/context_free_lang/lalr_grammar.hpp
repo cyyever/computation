@@ -9,6 +9,7 @@
 
 #include <functional>
 #include <set>
+#include <unordered_map>
 
 #include "canonical_lr_grammar.hpp"
 #include "lr_item.hpp"
@@ -20,14 +21,13 @@ namespace cyy::computation {
   public:
     using canonical_LR_grammar::canonical_LR_grammar;
 
-    std::pair<std::unordered_map<LR_1_item_set, state_type>,
-              std::map<std::pair<state_type, grammar_symbol_type>, state_type>>
+    std::pair<collection_type, goto_transition_set_type>
     canonical_collection() const override;
 
   private:
-    using lookahead_map_type = std::map<
+    using lookahead_map_type = std::unordered_map<
         grammar_symbol_type,
-        std::map<CFG_production, std::pair<bool, std::set<terminal_type>>>>;
+        std::unordered_map<CFG_production, std::pair<bool, std::set<terminal_type>>>>;
     lookahead_map_type check_lookahead(const LR_0_item &item) const;
     void construct_parsing_table() const override;
   };

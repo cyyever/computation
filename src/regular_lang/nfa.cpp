@@ -50,7 +50,7 @@ namespace cyy::computation {
     if (it != epsilon_closures.end()) {
       return it->second;
     }
-    std::map<state_type, std::set<state_type>> dependency;
+    std::unordered_map<state_type, std::set<state_type>> dependency;
     std::set<state_type> unstable_states{s};
     std::vector<state_type> stack{s};
     for (size_t i = 0; i < stack.size(); i++) {

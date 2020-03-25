@@ -10,12 +10,13 @@
 #include <map>
 #include <optional>
 #include <set>
+#include <unordered_map>
 #include <vector>
 
 template <typename T>
-std::pair<std::vector<T>, std::map<T, std::set<T>>>
-topological_sort(std::map<T, std::set<T>> graph) {
-  std::map<T, size_t> degrees;
+std::pair<std::vector<T>, std::unordered_map<T, std::set<T>>>
+topological_sort(std::unordered_map<T, std::set<T>> graph) {
+  std::unordered_map<T, size_t> degrees;
   for (auto const &[from_node, to_nodes] : graph) {
     degrees.try_emplace(from_node, 0);
     for (auto const &to_node : to_nodes) {

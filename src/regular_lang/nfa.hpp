@@ -13,6 +13,7 @@
 #include <string_view>
 #include <unordered_map>
 
+#include "../hash.hpp"
 #include "dfa.hpp"
 
 namespace cyy::computation {
@@ -20,9 +21,10 @@ namespace cyy::computation {
   class NFA final : public finite_automaton {
   public:
     using transition_function_type =
-        std::map<std::pair<symbol_type, state_type>, std::set<state_type>>;
+        std::unordered_map<std::pair<symbol_type, state_type>,
+                           std::set<state_type>>;
     using epsilon_transition_function_type =
-        std::map<state_type, std::set<state_type>>;
+        std::unordered_map<state_type, std::set<state_type>>;
     NFA(const std::set<state_type> &states_, std::string_view alphabet_name,
         state_type start_state_,
         const transition_function_type &transition_function_,
@@ -107,7 +109,7 @@ namespace cyy::computation {
   private:
     transition_function_type transition_function;
     epsilon_transition_function_type epsilon_transition_function;
-    mutable std::map<state_type, std::set<state_type>> epsilon_closures;
+    mutable std::unordered_map<state_type, std::set<state_type>> epsilon_closures;
   };
 
 } // namespace cyy::computation

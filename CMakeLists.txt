@@ -7,10 +7,12 @@ include(cmake/all.cmake)
 file(GLOB_RECURSE SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src/**/*.cpp)
 
 find_package(range-v3 REQUIRED)
+find_package(Boost REQUIRED)
 
 add_library(MyComputationLib ${SOURCE})
 
 target_link_libraries(MyComputationLib PUBLIC range-v3)
+target_link_libraries(MyComputationLib PUBLIC Boost::headers)
 target_compile_definitions(MyComputationLib
                            PUBLIC RANGES_NO_STD_FORWARD_DECLARATIONS)
 

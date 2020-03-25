@@ -6,16 +6,17 @@
  */
 
 #include <iostream>
+#include <unordered_map>
 
 #include "../exception.hpp"
 #include "canonical_lr_grammar.hpp"
 
 namespace cyy::computation {
 
-  std::map<grammar_symbol_type, LR_1_item_set>
+  std::unordered_map<grammar_symbol_type, LR_1_item_set>
   canonical_LR_grammar::GOTO(const LR_1_item_set &set) const {
 
-    std::map<grammar_symbol_type, LR_1_item_set> res;
+    std::unordered_map<grammar_symbol_type, LR_1_item_set> res;
 
     for (auto const &[kernel_item, lookahead_set] : set.get_kernel_items()) {
       if (kernel_item.dot_pos < kernel_item.production.get_body().size()) {
@@ -41,16 +42,12 @@ namespace cyy::computation {
     return res;
   }
 
-  std::pair<
-      std::unordered_map<LR_1_item_set, canonical_LR_grammar::state_type>,
-      std::map<std::pair<canonical_LR_grammar::state_type, grammar_symbol_type>,
-               canonical_LR_grammar::state_type>>
+  std::pair<canonical_LR_grammar::collection_type,
+            canonical_LR_grammar::goto_transition_set_type>
   canonical_LR_grammar::canonical_collection() const {
-    std::unordered_map<LR_1_item_set, state_type> unchecked_sets;
-    std::unordered_map<LR_1_item_set, state_type> collection;
-    std::map<std::pair<state_type, grammar_symbol_type>, state_type>
-        goto_transitions;
-
+    collection_type unchecked_sets;
+    collection_type collection;
+    goto_transition_set_type goto_transitions;
     const auto endmarker = alphabet->get_endmarker();
 
     LR_1_item_set init_set;

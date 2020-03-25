@@ -9,8 +9,10 @@
 
 #include <functional>
 #include <set>
+#include <unordered_map>
 #include <unordered_set>
 
+#include "../hash.hpp"
 #include "../lang/alphabet.hpp"
 #include "lr_grammar.hpp"
 #include "lr_item.hpp"
@@ -21,13 +23,16 @@ namespace cyy::computation {
 
   public:
     using LR_grammar::LR_grammar;
+    using collection_type = std::unordered_map<LR_0_item_set, state_type>;
+    using goto_transition_set_type =
+        std::unordered_map<std::pair<state_type, grammar_symbol_type>,
+                           state_type>;
 
-    std::pair<std::unordered_map<LR_0_item_set, uint64_t>,
-              std::map<std::pair<uint64_t, grammar_symbol_type>, uint64_t>>
+    std::pair<collection_type, goto_transition_set_type>
     canonical_collection() const;
 
   private:
-    std::map<grammar_symbol_type, LR_0_item_set>
+    std::unordered_map<grammar_symbol_type, LR_0_item_set>
     GOTO(const LR_0_item_set &set) const;
 
     void construct_parsing_table() const override;

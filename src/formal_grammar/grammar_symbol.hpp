@@ -17,6 +17,7 @@
 #include <variant>
 #include <vector>
 
+#include "../hash.hpp"
 #include "../lang/alphabet.hpp"
 
 namespace cyy::computation {
@@ -82,3 +83,20 @@ namespace cyy::computation {
   };
   using grammar_symbol_const_span_type = std::span<const grammar_symbol_type>;
 } // namespace cyy::computation
+
+namespace std {
+  template <> struct hash<cyy::computation::grammar_symbol_type> {
+    std::size_t operator()(const cyy::computation::grammar_symbol_type &x) const
+        noexcept {
+      return std::hash<
+          std::variant<cyy::computation::symbol_type, std::string>>()(x);
+    }
+  };
+  template <> struct hash<cyy::computation::grammar_symbol_string_type> {
+    std::size_t
+    operator()(const cyy::computation::grammar_symbol_string_type &x) const
+        noexcept {
+      return boost::hash_range(x.begin(), x.end());
+    }
+  };
+} // namespace std

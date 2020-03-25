@@ -13,13 +13,14 @@
 #include <string>
 
 #include "../automaton/automaton.hpp"
+#include "../hash.hpp"
 
 namespace cyy::computation {
 
   class DFA final : public finite_automaton {
   public:
     using transition_function_type =
-        std::map<std::pair<symbol_type, state_type>, state_type>;
+        std::unordered_map<std::pair<symbol_type, state_type>, state_type>;
     DFA(const std::set<state_type> &states_, const std::string &alphabet_name,
         state_type start_state_,
         const transition_function_type &transition_function_,
