@@ -13,6 +13,7 @@
 #include <string_view>
 #include <tuple>
 #include <unordered_map>
+#include <unordered_set>
 
 #include "../automaton/automaton.hpp"
 #include "../exception.hpp"
@@ -53,7 +54,7 @@ namespace cyy::computation {
 
     void normalize_transitions();
 
-  public:
+  private:
     struct stack_node final {
       stack_node(stack_symbol_type content_, size_t index_,
                  std::vector<stack_node> *stack_, size_t prev_index_ = 0)
@@ -120,15 +121,25 @@ namespace cyy::computation {
       }
     };
 
-  private:
-    std::unordered_set<std::pair<stack_node, state_type>>
-    move(const std::unordered_set<std::pair<stack_node, state_type>>
-             &configuration,
-         input_symbol_type a) const;
+    struct configuration_hash_type {
+      size_t operator()(const std::pair<cyy::computation::PDA::stack_node,
+                                        cyy::computation::PDA::state_type> &x
 
-    std::unordered_set<std::pair<stack_node, state_type>>
-    move(std::unordered_set<std::pair<stack_node, state_type>> configuration)
-        const;
+      ) const noexcept {
+        return ::std::hash<decltype(x.first.content)>()(x.first.content) ^
+               ::std::hash<decltype(x.second)>()(x.second);
+      }
+    };
+
+    using configuration_set_type =
+        std::unordered_set<std::pair<stack_node, state_type>,
+                           configuration_hash_type>;
+
+  private:
+    configuration_set_type move(const configuration_set_type &configurations,
+                                input_symbol_type a) const;
+
+    configuration_set_type move(configuration_set_type configurations) const;
 
     std::set<stack_symbol_type> get_used_stack_symbols() const;
     void add_epsilon_transition(state_type from_state, state_type to_state);
@@ -139,24 +150,3 @@ namespace cyy::computation {
   };
 
 } // namespace cyy::computation
-
-namespace std {
-  template <> struct hash<cyy::computation::PDA::stack_node> {
-    size_t operator()(const cyy::computation::PDA::stack_node &x) const
-        noexcept {
-      return ::std::hash<decltype(x.content)>()(x.content);
-    }
-  };
-  template <>
-  struct hash<std::pair<cyy::computation::PDA::stack_node,
-                        cyy::computation::PDA::state_type>> {
-    size_t operator()(const std::pair<cyy::computation::PDA::stack_node,
-                                      cyy::computation::PDA::state_type> &x
-
-    ) const noexcept {
-      return ::std::hash<decltype(x.first)>()(x.first) ^
-             ::std::hash<decltype(x.second)>()(x.second);
-    }
-  };
-
-} // namespace std

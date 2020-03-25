@@ -16,16 +16,15 @@ namespace cyy::computation {
     std::vector<stack_node> stack;
     stack.emplace_back(0, 0, &stack);
 
-    std::unordered_set<std::pair<PDA::stack_node, PDA::state_type>>
-        configuration{{stack[0], start_state}};
-    configuration = move(std::move(configuration));
+    configuration_set_type configurations{{stack[0], start_state}};
+    configurations = move(std::move(configurations));
     for (auto const &symbol : view) {
-      configuration = move(configuration, symbol);
-      if (configuration.empty()) {
+      configurations = move(configurations, symbol);
+      if (configurations.empty()) {
         return false;
       }
     }
-    for (auto const &[_, s] : configuration) {
+    for (auto const &[_, s] : configurations) {
       if (is_final_state(s)) {
         return true;
       }
@@ -33,13 +32,11 @@ namespace cyy::computation {
     return false;
   }
 
-  std::unordered_set<std::pair<PDA::stack_node, PDA::state_type>>
-  PDA::move(const std::unordered_set<std::pair<stack_node, state_type>>
-                &configuration,
+  PDA::configuration_set_type
+  PDA::move(const configuration_set_type &configurations,
             input_symbol_type a) const {
-    std::unordered_set<std::pair<PDA::stack_node, PDA::state_type>>
-        direct_reachable;
-    for (auto const &[top_node, s] : configuration) {
+    configuration_set_type direct_reachable;
+    for (auto const &[top_node, s] : configurations) {
       if (top_node.index != 0) {
         auto it = transition_function.find({a, s, top_node.content});
         if (it != transition_function.end()) {
@@ -60,11 +57,9 @@ namespace cyy::computation {
     return move(std::move(direct_reachable));
   }
 
-  std::unordered_set<std::pair<PDA::stack_node, PDA::state_type>>
-  PDA::move(std::unordered_set<std::pair<stack_node, state_type>> configuration)
-      const {
-
-    auto result = std::move(configuration);
+  PDA::configuration_set_type
+  PDA::move(configuration_set_type configurations) const {
+    auto result = std::move(configurations);
     while (true) {
       decltype(result) new_result;
 

@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <gsl/span>
 #include <range/v3/view/filter.hpp>
 #include <range/v3/view/transform.hpp>
 #include <span>
@@ -80,9 +79,5 @@ namespace cyy::computation {
                  [](auto g) { return *g.get_nonterminal_ptr(); });
     }
   };
-#if defined(_LIBCPP_VERSION)
-  using grammar_symbol_const_span_type = gsl::span<const grammar_symbol_type>;
-#else
   using grammar_symbol_const_span_type = std::span<const grammar_symbol_type>;
-#endif
 } // namespace cyy::computation

@@ -4,14 +4,15 @@ project(MyComputationLib LANGUAGES CXX)
 
 include(cmake/all.cmake)
 
-file(GLOB SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp  ${CMAKE_CURRENT_SOURCE_DIR}/src/*/*.cpp)
+file(GLOB_RECURSE SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src/**/*.cpp)
 
 find_package(range-v3 REQUIRED)
 
 add_library(MyComputationLib ${SOURCE})
 
 target_link_libraries(MyComputationLib PUBLIC range-v3)
-target_compile_definitions(MyComputationLib PUBLIC RANGES_NO_STD_FORWARD_DECLARATIONS)
+target_compile_definitions(MyComputationLib
+                           PUBLIC RANGES_NO_STD_FORWARD_DECLARATIONS)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
   find_package(libcxx REQUIRED)
@@ -37,18 +38,20 @@ if(BUILD_FUZZING)
 endif()
 
 # install lib
-install(TARGETS MyComputationLib EXPORT ${PROJECT_NAME}Targets
+install(
+  TARGETS MyComputationLib
+  EXPORT ${PROJECT_NAME}Targets
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
-  COMPONENT library
-  INCLUDES DESTINATION include
-  )
+  ARCHIVE DESTINATION lib COMPONENT library
+  INCLUDES
+  DESTINATION include)
 
-install(DIRECTORY src/ DESTINATION include/cyy/computation
-  FILES_MATCHING PATTERN "*.hpp")
+install(
+  DIRECTORY src/
+  DESTINATION include/cyy/computation
+  FILES_MATCHING
+  PATTERN "*.hpp")
 
 # install cmake config file
-install(EXPORT ${PROJECT_NAME}Targets
-  FILE ${PROJECT_NAME}Config.cmake
-  DESTINATION lib/cmake/${PROJECT_NAME})
+install(EXPORT ${PROJECT_NAME}Targets DESTINATION lib/cmake/${PROJECT_NAME})
