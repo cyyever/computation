@@ -26,5 +26,8 @@ TEST_CASE("DFA to regex") {
           {1});
 
   auto regex = GNFA(dfa).to_regex();
-  CHECK_EQ(regex->to_string(), symbol_string(U"a*b(a|b)*"));
+  auto regex_str = regex->to_string();
+  auto res = (regex_str == symbol_string(U"a*b(a|b)*") ||
+              regex_str == symbol_string(U"a*b(b|a)*"));
+  CHECK(res);
 }

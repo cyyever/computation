@@ -36,7 +36,7 @@ namespace cyy::computation {
       if (it->second.second.has_value()) {
         configuration.second.push_back(it->second.second.value());
       }
-      return std::move(configuration);
+      return configuration;
     }
     if (configuration.second.empty()) {
       return {};
@@ -50,7 +50,7 @@ namespace cyy::computation {
       if (it->second.second.has_value()) {
         configuration.second.push_back(it->second.second.value());
       }
-      return std::move(configuration);
+      return configuration;
     }
     return {};
   }
@@ -63,7 +63,7 @@ namespace cyy::computation {
       if (it->second.second.has_value()) {
         configuration.second.push_back(it->second.second.value());
       }
-      return std::move(configuration);
+      return configuration;
     }
     if (configuration.second.empty()) {
       return {};
@@ -77,7 +77,7 @@ namespace cyy::computation {
       if (it->second.second.has_value()) {
         configuration.second.push_back(it->second.second.value());
       }
-      return std::move(configuration);
+      return configuration;
     }
     return {};
   }
