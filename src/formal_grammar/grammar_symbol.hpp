@@ -10,7 +10,7 @@
 #include <compare>
 #include <range/v3/view/filter.hpp>
 #include <range/v3/view/transform.hpp>
-#include <span>
+#include <gsl/span>
 #include <string>
 #include <string_view>
 #include <utility>
@@ -81,7 +81,7 @@ namespace cyy::computation {
                  [](auto g) { return *g.get_nonterminal_ptr(); });
     }
   };
-  using grammar_symbol_const_span_type = std::span<const grammar_symbol_type>;
+  using grammar_symbol_const_span_type = gsl::span<const grammar_symbol_type>;
 } // namespace cyy::computation
 
 namespace std {
