@@ -15,10 +15,13 @@ namespace cyy::computation {
   bool DPDA::simulate(symbol_string_view view) const {
     configuration_type configuration{start_state, {}};
 
-    for (auto const &symbol : view) {
+    size_t i = 0;
+    while (i < view.size()) {
+      auto const &symbol = view[i];
       auto configuration_opt = move(configuration, symbol);
       if (configuration_opt) {
         configuration = std::move(configuration_opt.value());
+        i++;
         continue;
       }
       configuration_opt = move(std::move(configuration));

@@ -241,7 +241,7 @@ namespace cyy::computation {
               body.erase(body.begin());
               body.emplace_back(new_head);
               new_bodies.emplace_back(std::move(body));
-              body.clear();
+              body={};
             }
           }
 
@@ -448,8 +448,7 @@ namespace cyy::computation {
             }
 
             auto const &[first_set, epsilon_in_first] =
-                first(grammar_symbol_const_span_type(body).subspan(
-                    static_cast<std::ptrdiff_t>(i + 1)));
+                first(grammar_symbol_const_span_type(body).subspan(i + 1));
 
             const auto &nonterminal = *(body[i].get_nonterminal_ptr());
             auto &follow_set = follow_sets[nonterminal];
