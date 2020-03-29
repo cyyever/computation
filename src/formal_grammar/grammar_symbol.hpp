@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <compare>
 #include <range/v3/view/filter.hpp>
 #include <range/v3/view/transform.hpp>
 #include <span>
