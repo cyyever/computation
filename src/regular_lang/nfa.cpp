@@ -63,8 +63,8 @@ namespace cyy::computation {
       for (auto next_state : it2->second) {
         auto it3 = epsilon_closures.find(next_state);
         if (it3 != epsilon_closures.end()) {
-          epsilon_closures[unstable_state].insert(it3->second.begin(),
-                                                  it3->second.end());
+          auto const & closure=it3->second;
+          epsilon_closures[unstable_state].merge(std::set<state_type>(closure));
         } else {
           if (unstable_states.insert(next_state).second) {
             stack.push_back(next_state);

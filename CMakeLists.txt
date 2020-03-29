@@ -16,6 +16,8 @@ target_link_libraries(MyComputationLib PUBLIC Boost::headers)
 target_compile_definitions(MyComputationLib
                            PUBLIC RANGES_NO_STD_FORWARD_DECLARATIONS)
 
+find_package(MicrosoftGSL REQUIRED)
+target_link_libraries(MyComputationLib PUBLIC Microsoft::GSL)
 if(CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
   find_package(libcxx REQUIRED)
   target_link_libraries(MyComputationLib PUBLIC libcxx::libcxx)
