@@ -21,14 +21,13 @@ namespace cyy::computation {
   class NFA final : public finite_automaton {
   public:
     using transition_function_type =
-        std::unordered_map<std::pair<symbol_type, state_type>,
-                           std::set<state_type>>;
+        std::unordered_map<std::pair<symbol_type, state_type>, state_set_type>;
     using epsilon_transition_function_type =
-        std::unordered_map<state_type, std::set<state_type>>;
-    NFA(const std::set<state_type> &states_, std::string_view alphabet_name,
+        std::unordered_map<state_type, state_set_type>;
+    NFA(const state_set_type &states_, std::string_view alphabet_name,
         state_type start_state_,
         const transition_function_type &transition_function_,
-        const std::set<state_type> &final_states_,
+        const state_set_type &final_states_,
         const epsilon_transition_function_type &epsilon_transition_function_ =
             {})
         : finite_automaton(states_, alphabet_name, start_state_, final_states_),
@@ -69,13 +68,13 @@ namespace cyy::computation {
       return epsilon_transition_function;
     }
     void replace_epsilon_transition(state_type from_state,
-                                    std::set<state_type> end_states) {
+                                    state_set_type end_states) {
       epsilon_transition_function[from_state].clear();
       add_epsilon_transition(from_state, std::move(end_states));
     }
 
     void add_epsilon_transition(state_type from_state,
-                                std::set<state_type> end_states) {
+                                state_set_type end_states) {
       if (!includes(end_states)) {
         for (auto const &state : end_states) {
           if (!states.contains(state)) {
@@ -95,21 +94,20 @@ namespace cyy::computation {
     bool simulate(symbol_string_view view) const;
 
     // use subset construction
-    std::pair<DFA, std::unordered_map<state_type, std::set<state_type>>>
+    std::pair<DFA, std::unordered_map<state_type, state_set_type>>
     to_DFA_with_mapping() const;
     DFA to_DFA() const;
 
   private:
-    std::set<state_type> epsilon_closure(const std::set<state_type> &T) const;
-    const std::set<state_type> &epsilon_closure(state_type s) const;
+    state_set_type epsilon_closure(const state_set_type &T) const;
+    const state_set_type &epsilon_closure(state_type s) const;
 
-    std::set<state_type> move(const std::set<state_type> &T,
-                              symbol_type a) const;
+    state_set_type move(const state_set_type &T, symbol_type a) const;
 
   private:
     transition_function_type transition_function;
     epsilon_transition_function_type epsilon_transition_function;
-    mutable std::unordered_map<state_type, std::set<state_type>> epsilon_closures;
+    mutable std::unordered_map<state_type, state_set_type> epsilon_closures;
   };
 
 } // namespace cyy::computation

@@ -21,9 +21,10 @@ namespace cyy::computation {
   class finite_automaton {
   public:
     using state_type = uint64_t;
-    finite_automaton(const std::set<state_type> &states_,
+    using state_set_type = std::set<state_type>;
+    finite_automaton(const state_set_type &states_,
                      std::string_view alphabet_name, state_type start_state_,
-                     const std::set<state_type> &final_states_)
+                     const state_set_type &final_states_)
         : alphabet(::cyy::computation::ALPHABET::get(alphabet_name)),
           states(states_), start_state(start_state_),
           final_states(final_states_) {
@@ -51,7 +52,6 @@ namespace cyy::computation {
       return final_states;
     }
     state_type get_start_state() const noexcept { return start_state; }
-
     bool operator==(const finite_automaton &rhs) const {
       return (this == &rhs) ||
              (alphabet == rhs.alphabet && states == rhs.states &&
@@ -59,7 +59,7 @@ namespace cyy::computation {
               final_states == rhs.final_states);
     }
 
-    bool contain_final_state(const std::set<state_type> &T) const {
+    bool contain_final_state(const state_set_type &T) const {
       auto it = T.begin();
       auto it2 = final_states.begin();
       while (it != T.end() && it2 != final_states.end()) {
@@ -78,7 +78,7 @@ namespace cyy::computation {
       return final_states.contains(final_state);
     }
 
-    bool includes(const std::set<state_type> &T) const {
+    bool includes(const state_set_type &T) const {
       return ranges::includes(states, T);
     }
 
@@ -103,7 +103,7 @@ namespace cyy::computation {
             std::string("unexisted state ") + std::to_string(s));
       }
     }
-    void change_final_states(const std::set<state_type> &T) {
+    void change_final_states(const state_set_type &T) {
       final_states.clear();
       for (auto s : T) {
         add_final_states(s);
@@ -124,9 +124,9 @@ namespace cyy::computation {
 
   protected:
     std::shared_ptr<ALPHABET> alphabet;
-    std::set<state_type> states;
+    state_set_type states;
     state_type start_state;
-    std::set<state_type> final_states;
+    state_set_type final_states;
   }; // namespace cyy::computation
 
 } // namespace cyy::computation

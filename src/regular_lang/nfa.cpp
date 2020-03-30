@@ -16,9 +16,9 @@
 
 namespace cyy::computation {
 
-  std::set<NFA::state_type> NFA::move(const std::set<state_type> &T,
+  std::set<NFA::state_type> NFA::move(const state_set_type &T,
                                       symbol_type a) const {
-    std::set<state_type> direct_reachable;
+    state_set_type direct_reachable;
 
     for (const auto &s : T) {
       auto it = transition_function.find({a, s});
@@ -27,7 +27,7 @@ namespace cyy::computation {
       }
     }
 
-    std::set<state_type> res;
+    state_set_type res;
     for (auto const &d : direct_reachable) {
       auto const &closure = epsilon_closure(d);
       res.insert(closure.begin(), closure.end());
@@ -50,8 +50,8 @@ namespace cyy::computation {
     if (it != epsilon_closures.end()) {
       return it->second;
     }
-    std::unordered_map<state_type, std::set<state_type>> dependency;
-    std::set<state_type> unstable_states{s};
+    std::unordered_map<state_type, state_set_type> dependency;
+    state_set_type unstable_states{s};
     std::vector<state_type> stack{s};
     for (size_t i = 0; i < stack.size(); i++) {
       auto unstable_state = stack[i];
@@ -64,7 +64,7 @@ namespace cyy::computation {
         auto it3 = epsilon_closures.find(next_state);
         if (it3 != epsilon_closures.end()) {
           auto const & closure=it3->second;
-          epsilon_closures[unstable_state].merge(std::set<state_type>(closure));
+          epsilon_closures[unstable_state].merge(state_set_type(closure));
         } else {
           if (unstable_states.insert(next_state).second) {
             stack.push_back(next_state);
@@ -82,7 +82,7 @@ namespace cyy::computation {
 
     for (auto sorted_state : sorted_states) {
       for (auto prev_state : dependency[sorted_state]) {
-        std::set<state_type> diff;
+        state_set_type diff;
         auto &prev_epsilon_closure = epsilon_closures[prev_state];
         auto &unstable_epsilon_closure = epsilon_closures[sorted_state];
         ranges::set_difference(unstable_epsilon_closure, prev_epsilon_closure,
@@ -100,7 +100,7 @@ namespace cyy::computation {
       auto unstable_state = *it2;
       unstable_states.erase(it2);
       for (auto prev_state : remain_dependency[unstable_state]) {
-        std::set<state_type> diff;
+        state_set_type diff;
         auto &prev_epsilon_closure = epsilon_closures[prev_state];
         auto &unstable_epsilon_closure = epsilon_closures[unstable_state];
         ranges::set_difference(unstable_epsilon_closure, prev_epsilon_closure,
@@ -119,7 +119,7 @@ namespace cyy::computation {
   NFA::to_DFA_with_mapping() const {
     state_type next_state = 1;
     DFA::transition_function_type DFA_transition_function;
-    std::map<std::set<state_type>, state_type> subsets{
+    std::map<state_set_type, state_type> subsets{
         {epsilon_closure(start_state), 0}};
     std::vector<decltype(subsets.begin())> tmp_states{subsets.begin()};
     for (size_t i = 0; i < tmp_states.size(); i++) {
@@ -135,9 +135,9 @@ namespace cyy::computation {
       }
     }
 
-    std::set<state_type> DFA_states;
-    std::set<state_type> DFA_final_states;
-    std::unordered_map<state_type, std::set<state_type>> state_map;
+    state_set_type DFA_states;
+    state_set_type DFA_final_states;
+    std::unordered_map<state_type, state_set_type> state_map;
     for (auto const &[subset, DFA_state] : subsets) {
       DFA_states.insert(DFA_state);
       if (contain_final_state(subset)) {

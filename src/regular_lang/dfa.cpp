@@ -73,12 +73,12 @@ namespace cyy::computation {
   }
 
   DFA DFA::minimize() const {
-    std::set<state_type> non_final_states;
+    state_set_type non_final_states;
     ranges::set_difference(
         states, final_states,
         ranges::inserter(non_final_states, non_final_states.begin()));
 
-    std::vector<std::set<state_type>> groups{non_final_states, final_states};
+    std::vector<state_set_type> groups{non_final_states, final_states};
     std::unordered_map<state_type, size_t> state_location;
 
     while (true) {
@@ -134,8 +134,8 @@ namespace cyy::computation {
       groups = std::move(new_groups);
     }
     state_type minimize_DFA_start_state{};
-    std::set<state_type> minimize_DFA_states;
-    std::set<state_type> minimize_DFA_final_states;
+    state_set_type minimize_DFA_states;
+    state_set_type minimize_DFA_final_states;
     transition_function_type minimize_DFA_transition_function;
     for (size_t i = 0; i < groups.size(); i++) {
       minimize_DFA_states.insert(i);

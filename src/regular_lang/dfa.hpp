@@ -8,10 +8,10 @@
 #pragma once
 
 #include <map>
-#include <unordered_map>
 #include <optional>
 #include <set>
 #include <string>
+#include <unordered_map>
 
 #include "../automaton/automaton.hpp"
 #include "../hash.hpp"
@@ -22,10 +22,10 @@ namespace cyy::computation {
   public:
     using transition_function_type =
         std::unordered_map<std::pair<symbol_type, state_type>, state_type>;
-    DFA(const std::set<state_type> &states_, const std::string &alphabet_name,
+    DFA(const state_set_type &states_, const std::string &alphabet_name,
         state_type start_state_,
         const transition_function_type &transition_function_,
-        const std::set<state_type> &final_states_)
+        const state_set_type &final_states_)
         : finite_automaton(states_, alphabet_name, start_state_, final_states_),
           transition_function(transition_function_) {
 
