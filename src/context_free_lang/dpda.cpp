@@ -7,6 +7,8 @@
 
 #include <cassert>
 #include <iterator>
+#include <range/v3/algorithm.hpp>
+#include <range/v3/iterator/insert_iterators.hpp>
 #include <vector>
 
 #include "dpda.hpp"
@@ -33,11 +35,19 @@ namespace cyy::computation {
 
   std::optional<DPDA::configuration_type>
   DPDA::move(configuration_type configuration) const {
-    auto it = transition_function.find({{}, configuration.first, {}});
-    if (it != transition_function.end()) {
-      configuration.first = it->second.first;
-      if (it->second.second.has_value()) {
-        configuration.second.push_back(it->second.second.value());
+    auto state = configuration.first;
+
+    auto it = transition_function.find(state);
+    if (it == transition_function.end()) {
+      return {};
+    }
+    auto const &state_transition_function = it->second;
+
+    auto it2 = state_transition_function.find({{}, {}});
+    if (it2 != state_transition_function.end()) {
+      configuration.first = it2->second.first;
+      if (it2->second.second.has_value()) {
+        configuration.second.push_back(it2->second.second.value());
       }
       return configuration;
     }
@@ -46,12 +56,13 @@ namespace cyy::computation {
     }
     auto stack_top = configuration.second.back();
 
-    it = transition_function.find({{}, configuration.first, stack_top});
-    if (it != transition_function.end()) {
-      configuration.first = it->second.first;
+    it2 = state_transition_function.find(
+        {std::optional<input_symbol_type>(), stack_top});
+    if (it2 != state_transition_function.end()) {
+      configuration.first = it2->second.first;
       configuration.second.pop_back();
-      if (it->second.second.has_value()) {
-        configuration.second.push_back(it->second.second.value());
+      if (it2->second.second.has_value()) {
+        configuration.second.push_back(it2->second.second.value());
       }
       return configuration;
     }
@@ -60,11 +71,17 @@ namespace cyy::computation {
 
   std::optional<DPDA::configuration_type>
   DPDA::move(configuration_type configuration, input_symbol_type a) const {
-    auto it = transition_function.find({a, configuration.first, {}});
-    if (it != transition_function.end()) {
-      configuration.first = it->second.first;
-      if (it->second.second.has_value()) {
-        configuration.second.push_back(it->second.second.value());
+    auto state = configuration.first;
+    auto it = transition_function.find(state);
+    if (it == transition_function.end()) {
+      return {};
+    }
+    auto const &state_transition_function = it->second;
+    auto it2 = state_transition_function.find({a, {}});
+    if (it2 != state_transition_function.end()) {
+      configuration.first = it2->second.first;
+      if (it2->second.second.has_value()) {
+        configuration.second.push_back(it2->second.second.value());
       }
       return configuration;
     }
@@ -73,16 +90,54 @@ namespace cyy::computation {
     }
     auto stack_top = configuration.second.back();
 
-    it = transition_function.find({a, configuration.first, stack_top});
-    if (it != transition_function.end()) {
-      configuration.first = it->second.first;
+    it2 = state_transition_function.find({a, stack_top});
+    if (it2 != state_transition_function.end()) {
+      configuration.first = it2->second.first;
       configuration.second.pop_back();
-      if (it->second.second.has_value()) {
-        configuration.second.push_back(it->second.second.value());
+      if (it2->second.second.has_value()) {
+        configuration.second.push_back(it2->second.second.value());
       }
       return configuration;
     }
     return {};
   }
 
+
+  void DPDA::remove_unreachable_states() {
+    state_set_type reachable_states{start_state};
+
+    while (true) {
+      state_set_type new_reachable_states;
+      for (auto state : reachable_states) {
+        auto it = transition_function.find(state);
+        if (it == transition_function.end()) {
+          continue;
+        }
+        auto const &state_transition_function = it->second;
+        for (auto const &[_, v] : state_transition_function) {
+          new_reachable_states.insert(v.first);
+        }
+      }
+      if (new_reachable_states.empty()) {
+        break;
+      }
+
+      state_set_type diff;
+      ranges::set_difference(new_reachable_states, reachable_states,
+                             ranges::inserter(diff, diff.begin()));
+      if (diff.empty()) {
+        break;
+      }
+      reachable_states.merge(std::move(diff));
+    }
+
+    state_set_type diff;
+    ranges::set_difference(states, reachable_states,
+                           ranges::inserter(diff, diff.begin()));
+
+    for (auto s : diff) {
+      states.erase(s);
+      transition_function.erase(s);
+    }
+  }
 } // namespace cyy::computation

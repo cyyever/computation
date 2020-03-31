@@ -14,10 +14,10 @@
 #include <string_view>
 #include <tuple>
 #include <unordered_map>
-#include <unordered_set>
 
 #include "../automaton/automaton.hpp"
 #include "../exception.hpp"
+#include "../hash.hpp"
 
 namespace cyy::computation {
 
@@ -25,10 +25,11 @@ namespace cyy::computation {
   public:
     using input_symbol_type = symbol_type;
     using stack_symbol_type = symbol_type;
-    using transition_function_type =
-        std::map<std::tuple<std::optional<input_symbol_type>, state_type,
+    using transition_function_type = std::unordered_map<
+        state_type,
+        std::unordered_map<std::pair<std::optional<input_symbol_type>,
                             std::optional<stack_symbol_type>>,
-                 std::pair<state_type, std::optional<stack_symbol_type>>>;
+                 std::pair<state_type, std::optional<stack_symbol_type>>>>;
 
     DPDA(state_set_type states_, std::string_view input_alphabet_name,
          std::string_view stack_alphabet_name, state_type start_state_,
@@ -41,15 +42,22 @@ namespace cyy::computation {
           transition_function(std::move(transition_function_)) {
 
       for (auto state : states) {
+        auto it = transition_function.find(state);
+        if (it == transition_function.end()) {
+          throw exception::no_DPDA(std::string("lack transitions for state ") +
+                                   std::to_string(state));
+        }
+        auto const &state_transition_function = it->second;
         for (auto input_symbol : *ALPHABET::get(input_alphabet_name)) {
 
           for (auto stack_symbol : *ALPHABET::get(stack_alphabet_name)) {
             size_t cnt = 0;
-            cnt += transition_function.count({{}, state, {}});
-            cnt += transition_function.count({input_symbol, state, {}});
-            cnt += transition_function.count({{}, state, stack_symbol});
-            cnt +=
-                transition_function.count({input_symbol, state, stack_symbol});
+            cnt += state_transition_function.count({{}, {}});
+            cnt += state_transition_function.count({input_symbol, {}});
+            cnt += state_transition_function.count(
+                {std::optional<input_symbol_type>(), stack_symbol});
+            cnt += state_transition_function.count(
+                {std::optional<input_symbol_type>(input_symbol), stack_symbol});
             if (cnt != 1) {
               throw exception::no_DPDA(
                   "some combinations of states and symbols lack next state");
@@ -77,6 +85,8 @@ namespace cyy::computation {
     move(configuration_type configuration) const;
     std::optional<configuration_type> move(configuration_type configuration,
                                            input_symbol_type a) const;
+
+    void remove_unreachable_states();
 
   private:
     std::shared_ptr<ALPHABET> stack_alphabet;

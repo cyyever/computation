@@ -22,12 +22,11 @@ namespace cyy::computation {
   public:
     using state_type = uint64_t;
     using state_set_type = std::set<state_type>;
-    finite_automaton(const state_set_type &states_,
-                     std::string_view alphabet_name, state_type start_state_,
-                     const state_set_type &final_states_)
+    finite_automaton(state_set_type states_, std::string_view alphabet_name,
+                     state_type start_state_, state_set_type final_states_)
         : alphabet(::cyy::computation::ALPHABET::get(alphabet_name)),
-          states(states_), start_state(start_state_),
-          final_states(final_states_) {
+          states(std::move(states_)), start_state(start_state_),
+          final_states(std::move(final_states_)) {
 
       if (states.empty()) {
         throw cyy::computation::exception::no_finite_automaton("no state");

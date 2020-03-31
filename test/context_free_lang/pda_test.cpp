@@ -22,20 +22,19 @@ TEST_CASE("simulate PDA") {
       std::make_shared<set_alphabet>(std::set<symbol_type>{'0', '1'}, "01_set");
   ALPHABET::set(input_alphabet);
 
-  PDA pda({0, 1, 2, 3}, "01_set", "01_set", 0,
-          {
-              {{std::optional<PDA::input_symbol_type>{}, 0, {}},
-               {{1, input_alphabet->get_endmarker()}}},
-              {{U'0', 1, {}}, {{1, U'0'}}},
-              {{U'1', 1, {}}, {{1, U'1'}}},
-              {{std::optional<PDA::input_symbol_type>{}, 1, {}}, {{2, {}}}},
-              {{U'0', 2, U'0'}, {{2, {}}}},
-              {{U'1', 2, U'1'}, {{2, {}}}},
-              {{std::optional<PDA::input_symbol_type>{}, 2,
-                input_alphabet->get_endmarker()},
-               {{3, {}}}},
-          },
-          {3});
+  auto endmarker = input_alphabet->get_endmarker();
+  PDA pda(
+      {0, 1, 2, 3}, "01_set", "01_set", 0,
+      {
+          {{std::optional<PDA::input_symbol_type>{}, 0, {}}, {{1, endmarker}}},
+          {{U'0', 1, {}}, {{1, U'0'}}},
+          {{U'1', 1, {}}, {{1, U'1'}}},
+          {{std::optional<PDA::input_symbol_type>{}, 1, {}}, {{2, {}}}},
+          {{U'0', 2, U'0'}, {{2, {}}}},
+          {{U'1', 2, U'1'}, {{2, {}}}},
+          {{std::optional<PDA::input_symbol_type>{}, 2, endmarker}, {{3, {}}}},
+      },
+      {3});
 
   SUBCASE("0") {
     symbol_string str = U"0";
