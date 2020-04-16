@@ -48,7 +48,7 @@ endif()
 # install lib
 install(
   TARGETS MyComputationLib
-  EXPORT ${PROJECT_NAME}Targets
+  EXPORT MyComputationLibConfig
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib COMPONENT library
@@ -62,4 +62,4 @@ install(
   PATTERN "*.hpp")
 
 # install cmake config file
-install(EXPORT ${PROJECT_NAME}Targets DESTINATION lib/cmake/${PROJECT_NAME})
+install(EXPORT MyComputationLibConfig DESTINATION lib/cmake/${PROJECT_NAME})
