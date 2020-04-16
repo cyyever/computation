@@ -26,6 +26,10 @@ elseif(MSVC)
   target_link_libraries(MyComputationLib PUBLIC Microsoft::STL)
 endif()
 
+target_include_directories(
+  MyComputationLib PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+                          $<INSTALL_INTERFACE:include>)
+
 # test
 option(BUILD_TEST "Build test" ON)
 if(BUILD_TEST)
