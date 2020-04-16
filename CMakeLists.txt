@@ -62,4 +62,4 @@ install(
   PATTERN "*.hpp")
 
 # install cmake config file
-install(EXPORT MyComputationLibConfig DESTINATION lib/cmake/${PROJECT_NAME})
+install(EXPORT MyComputationLibConfig DESTINATION lib/cmake/MyComputationLib)
