@@ -31,7 +31,7 @@ target_include_directories(
                           $<INSTALL_INTERFACE:include>)
 
 # test
-option(BUILD_TEST "Build test" ON)
+option(BUILD_TEST "Build test" OFF)
 if(BUILD_TEST)
   add_subdirectory(test)
 endif()
