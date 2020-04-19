@@ -69,6 +69,8 @@ namespace cyy::computation {
     }
 
   private:
+    state_set_type get_dead_states() const;
+  private:
     transition_function_type transition_function;
   };
 

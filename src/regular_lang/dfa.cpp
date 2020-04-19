@@ -159,4 +159,5 @@ namespace cyy::computation {
     return {minimize_DFA_states, alphabet->get_name(), minimize_DFA_start_state,
             minimize_DFA_transition_function, minimize_DFA_final_states};
   }
+  DFA::state_set_type DFA::get_dead_states() const {return {};}
 } // namespace cyy::computation
