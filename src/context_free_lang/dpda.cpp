@@ -102,7 +102,6 @@ namespace cyy::computation {
     return {};
   }
 
-
   void DPDA::remove_unreachable_states() {
     state_set_type reachable_states{start_state};
 

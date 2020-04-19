@@ -42,7 +42,8 @@ namespace cyy::computation {
         SLR_grammar(alphabet->get_name(), start_symbol, productions)
             .canonical_collection();
 
-    std::unordered_map<const LR_0_item *, std::set<CFG::terminal_type>> kernel_item_table;
+    std::unordered_map<const LR_0_item *, std::set<CFG::terminal_type>>
+        kernel_item_table;
     std::unordered_map<const LR_0_item *, std::vector<const LR_0_item *>>
         propagation_relation;
     std::unordered_map<state_type, const LR_0_item_set *>

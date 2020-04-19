@@ -27,9 +27,10 @@ namespace cyy::computation {
     using stack_symbol_type = symbol_type;
     using transition_function_type = std::unordered_map<
         state_type,
-        std::unordered_map<std::pair<std::optional<input_symbol_type>,
-                            std::optional<stack_symbol_type>>,
-                 std::pair<state_type, std::optional<stack_symbol_type>>>>;
+        std::unordered_map<
+            std::pair<std::optional<input_symbol_type>,
+                      std::optional<stack_symbol_type>>,
+            std::pair<state_type, std::optional<stack_symbol_type>>>>;
 
     DPDA(state_set_type states_, std::string_view input_alphabet_name,
          std::string_view stack_alphabet_name, state_type start_state_,

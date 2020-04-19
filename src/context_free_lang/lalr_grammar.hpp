@@ -27,7 +27,8 @@ namespace cyy::computation {
   private:
     using lookahead_map_type = std::unordered_map<
         grammar_symbol_type,
-        std::unordered_map<CFG_production, std::pair<bool, std::set<terminal_type>>>>;
+        std::unordered_map<CFG_production,
+                           std::pair<bool, std::set<terminal_type>>>>;
     lookahead_map_type check_lookahead(const LR_0_item &item) const;
     void construct_parsing_table() const override;
   };

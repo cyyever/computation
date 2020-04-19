@@ -7,9 +7,9 @@
 
 #pragma once
 
+#include "../hash.hpp"
 #include "lr_grammar.hpp"
 #include "lr_item.hpp"
-#include "../hash.hpp"
 
 namespace cyy::computation {
 
@@ -19,7 +19,8 @@ namespace cyy::computation {
     using LR_grammar::LR_grammar;
     using collection_type = std::unordered_map<LR_1_item_set, state_type>;
     using goto_transition_set_type =
-        std::unordered_map<std::pair<state_type, grammar_symbol_type>, state_type>;
+        std::unordered_map<std::pair<state_type, grammar_symbol_type>,
+                           state_type>;
 
     virtual std::pair<collection_type, goto_transition_set_type>
     canonical_collection() const;

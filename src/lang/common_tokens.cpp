@@ -45,4 +45,5 @@ namespace cyy::computation {
     }
     os << '\'' << static_cast<char>(symbol) << '\'';
   }
+  bool common_tokens::contains_ASCII() const { return true; }
 } // namespace cyy::computation

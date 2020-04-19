@@ -241,7 +241,7 @@ namespace cyy::computation {
               body.erase(body.begin());
               body.emplace_back(new_head);
               new_bodies.emplace_back(std::move(body));
-              body={};
+              body = {};
             }
           }
 
