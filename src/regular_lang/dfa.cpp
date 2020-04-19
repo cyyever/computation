@@ -159,5 +159,27 @@ namespace cyy::computation {
     return {minimize_DFA_states, alphabet->get_name(), minimize_DFA_start_state,
             minimize_DFA_transition_function, minimize_DFA_final_states};
   }
-  DFA::state_set_type DFA::get_dead_states() const {return {};}
+  void DFA::mark_live_states() const {
+    if (live_states_opt.has_value()) {
+      return;
+    }
+    std::map<state_type, state_set_type> state_dep;
+    for (auto const &[p, next_state] : transition_function) {
+      state_dep[next_state].insert(p.second);
+    }
+    auto live_states = final_states;
+    while (true) {
+      auto live_state_size = live_states.size();
+      state_set_type new_live_states;
+      for (auto s : live_states) {
+        new_live_states.merge(state_set_type(state_dep[s]));
+      }
+      live_states.merge(std::move(new_live_states));
+      if (live_states.size() == live_state_size) {
+        break;
+      }
+    }
+    live_states_opt = live_states;
+    return;
+  }
 } // namespace cyy::computation
