@@ -60,15 +60,19 @@ namespace cyy::computation {
     DFA minimize() const;
 
     std::optional<state_type> move(state_type s, symbol_type a) const {
-      mark_live_states();
 
       auto it = transition_function.find({a, s});
       if (it != transition_function.end()) {
-        if (live_states_opt.value().count(it->second)) {
-          return {it->second};
-        }
+        /* if (live_states_opt.value().count(it->second)) { */
+        return {it->second};
+        /* } */
       }
       return {};
+    }
+
+    bool is_live_state(state_type s) const {
+      mark_live_states();
+      return live_states_opt.value().contains(s);
     }
 
   private:

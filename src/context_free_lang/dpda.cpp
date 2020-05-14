@@ -5,10 +5,9 @@
  * \date 2018-03-03
  */
 
+#include <algorithm>
 #include <cassert>
 #include <iterator>
-#include <range/v3/algorithm.hpp>
-#include <range/v3/iterator/insert_iterators.hpp>
 #include <vector>
 
 #include "dpda.hpp"
@@ -122,8 +121,8 @@ namespace cyy::computation {
       }
 
       state_set_type diff;
-      ranges::set_difference(new_reachable_states, reachable_states,
-                             ranges::inserter(diff, diff.begin()));
+      std::ranges::set_difference(new_reachable_states, reachable_states,
+                                  std::insert_iterator(diff, diff.begin()));
       if (diff.empty()) {
         break;
       }
@@ -131,8 +130,8 @@ namespace cyy::computation {
     }
 
     state_set_type diff;
-    ranges::set_difference(states, reachable_states,
-                           ranges::inserter(diff, diff.begin()));
+    std::ranges::set_difference(states, reachable_states,
+                                std::insert_iterator(diff, diff.begin()));
 
     for (auto s : diff) {
       states.erase(s);

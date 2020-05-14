@@ -5,10 +5,9 @@
  * \date 2018-03-03
  */
 
+#include <algorithm>
 #include <iterator>
 #include <memory>
-#include <range/v3/algorithm.hpp>
-#include <range/v3/iterator/insert_iterators.hpp>
 #include <set>
 #include <vector>
 
@@ -68,15 +67,15 @@ namespace cyy::computation {
       return false;
     }
 
-    return ranges::all_of(
+    return std::ranges::all_of(
         final_states, [&rhs](auto s) { return rhs.final_states.contains(s); });
   }
 
   DFA DFA::minimize() const {
     state_set_type non_final_states;
-    ranges::set_difference(
+    std::ranges::set_difference(
         states, final_states,
-        ranges::inserter(non_final_states, non_final_states.begin()));
+        std::insert_iterator(non_final_states, non_final_states.begin()));
 
     std::vector<state_set_type> groups{non_final_states, final_states};
     std::unordered_map<state_type, size_t> state_location;

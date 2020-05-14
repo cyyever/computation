@@ -7,9 +7,9 @@
 
 #pragma once
 
+#include <algorithm>
 #include <map>
 #include <optional>
-#include <range/v3/algorithm.hpp>
 #include <set>
 #include <string>
 #include <string_view>
@@ -78,7 +78,7 @@ namespace cyy::computation {
     }
 
     bool includes(const state_set_type &T) const {
-      return ranges::includes(states, T);
+      return std::ranges::includes(states, T);
     }
 
   protected:

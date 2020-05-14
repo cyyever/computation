@@ -5,10 +5,9 @@
  * \date 2018-03-03
  */
 
+#include <algorithm>
 #include <cassert>
 #include <iterator>
-#include <range/v3/algorithm.hpp>
-#include <range/v3/iterator/insert_iterators.hpp>
 #include <vector>
 
 #include "../util.hpp"
@@ -85,8 +84,9 @@ namespace cyy::computation {
         state_set_type diff;
         auto &prev_epsilon_closure = epsilon_closures[prev_state];
         auto &unstable_epsilon_closure = epsilon_closures[sorted_state];
-        ranges::set_difference(unstable_epsilon_closure, prev_epsilon_closure,
-                               ranges::inserter(diff, diff.begin()));
+        std::ranges::set_difference(unstable_epsilon_closure,
+                                    prev_epsilon_closure,
+                                    std::inserter(diff, diff.begin()));
 
         if (!diff.empty()) {
           prev_epsilon_closure.merge(std::move(diff));
@@ -103,8 +103,9 @@ namespace cyy::computation {
         state_set_type diff;
         auto &prev_epsilon_closure = epsilon_closures[prev_state];
         auto &unstable_epsilon_closure = epsilon_closures[unstable_state];
-        ranges::set_difference(unstable_epsilon_closure, prev_epsilon_closure,
-                               ranges::inserter(diff, diff.begin()));
+        std::ranges::set_difference(unstable_epsilon_closure,
+                                    prev_epsilon_closure,
+                                    std::inserter(diff, diff.begin()));
 
         if (!diff.empty()) {
           prev_epsilon_closure.merge(std::move(diff));

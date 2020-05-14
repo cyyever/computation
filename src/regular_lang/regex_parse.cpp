@@ -183,24 +183,23 @@ namespace cyy::computation {
     using syntax_node_ptr = std::shared_ptr<regex::syntax_node>;
 
     auto escape_symbol = [this](symbol_type symbol) -> symbol_type {
-      if (!alphabet->contains_ASCII()) {
-        throw cyy::computation::exception::no_regular_expression(
-            std::string("invalid escape sequence"));
+      if (alphabet->contains_ASCII()) {
+        switch (symbol) {
+          case 'f':
+            return '\f';
+          case 'n':
+            return '\n';
+          case 'r':
+            return '\r';
+          case 't':
+            return '\t';
+          case 'v':
+            return '\v';
+          default:
+            return symbol;
+        }
       }
-      switch (symbol) {
-        case 'f':
-          return '\f';
-        case 'n':
-          return '\n';
-        case 'r':
-          return '\r';
-        case 't':
-          return '\t';
-        case 'v':
-          return '\v';
-        default:
-          return symbol;
-      }
+      return symbol;
     };
 
     std::vector<std::shared_ptr<regex::syntax_node>> node_stack;

@@ -6,15 +6,11 @@ include(cmake/all.cmake)
 
 file(GLOB_RECURSE SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src/**/*.cpp)
 
-find_package(range-v3 REQUIRED)
 find_package(Boost REQUIRED)
 
 add_library(MyComputationLib ${SOURCE})
 
-target_link_libraries(MyComputationLib PUBLIC range-v3)
 target_link_libraries(MyComputationLib PUBLIC Boost::headers)
-target_compile_definitions(MyComputationLib
-                           PUBLIC RANGES_NO_STD_FORWARD_DECLARATIONS)
 
 find_package(MicrosoftGSL REQUIRED)
 target_link_libraries(MyComputationLib PUBLIC Microsoft::GSL)
@@ -31,10 +27,7 @@ target_include_directories(
                           $<INSTALL_INTERFACE:include>)
 
 # test
-option(BUILD_TEST "Build test" OFF)
-if(BUILD_TEST)
   add_subdirectory(test)
-endif()
 
 option(BUILD_FUZZING "Build fuzzing" OFF)
 if(BUILD_FUZZING)
