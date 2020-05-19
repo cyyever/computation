@@ -69,7 +69,6 @@ namespace cyy::computation {
     bool operator!=(const ALPHABET &rhs) const { return !operator==(rhs); }
     virtual bool contains_ASCII() const { return false; }
 
-    static void regist(const std::string &name);
     static std::shared_ptr<ALPHABET> get(std::string_view name);
     static void set(const std::shared_ptr<ALPHABET> &alphabet);
 
@@ -89,8 +88,8 @@ namespace cyy::computation {
       }
       return new_symbol;
     }
+    static void register_factory();
 
-  protected:
   private:
     std::string name;
 

@@ -1,7 +1,7 @@
 /*!
- * \file pda_test.cpp
+ * \file dpda_test.cpp
  *
- * \brief 测试dpda
+ * \brief
  */
 #include <doctest/doctest.h>
 
@@ -12,66 +12,58 @@
 using namespace cyy::computation;
 TEST_CASE("simulate DPDA") {
 
-  auto input_alphabet =
-      std::make_shared<set_alphabet>(std::set<symbol_type>{'0', '1'}, "01_set");
-  ALPHABET::set(input_alphabet);
+  auto endmarker = U'1';
+  DPDA dpda({0, 1, 2, 3, 4}, "01_set", "01_set", 0,
+            {{0,
+              {
+                  {{{}, {}}, {1, endmarker}},
+              }},
+             {1,
+              {
+                  {{U'0', {}}, {1, U'0'}},
+                  {{U'1', U'0'}, {2, {}}},
+                  {{U'1', endmarker}, {4, {}}},
+              }},
+             {2,
+              {
+                  {{U'1', U'0'}, {2, {}}},
+                  {{{}, endmarker}, {3, {}}},
+                  {{U'0', U'0'}, {4, {}}},
+              }},
+             {3,
+              {
+                  {{{}, {}}, {4, {}}},
+              }},
+             {4,
+              {
+                  {{U'0', {}}, {4, {}}},
+                  {{U'1', {}}, {4, {}}},
+              }}},
+            {0, 3});
 
-  auto endmarker = input_alphabet->get_endmarker();
+  SUBCASE("") {
+    symbol_string str = U"";
+    CHECK(dpda.simulate(str));
+  }
+  SUBCASE("0") {
+    symbol_string str = U"0";
+    CHECK(!dpda.simulate(str));
+  }
+  SUBCASE("1") {
+    symbol_string str = U"1";
+    CHECK(!dpda.simulate(str));
+  }
 
-  DPDA dpda(
-      {0, 1, 2, 3}, "01_set", "01_set", 0,
-      {
-
-          {0,
-           {
-               {{std::optional<DPDA::input_symbol_type>{}, {}}, {1, endmarker}},
-           }},
-          {1,
-           {
-               {{U'0', {}}, {1, U'0'}},
-               {{U'1', U'0'}, {2, {}}},
-           }},
-          {2,
-           {
-               {{U'1', U'0'}, {2, {}}},
-               {{{}, endmarker}, {3, {}}},
-           }}
-
-      },
-      {3});
-
-  /* {{U'0', 1, {}}, {{1, U'0'}}}, */
-  /* {{U'1', 1, {}}, {{1, U'1'}}}, */
-  /* {{std::optional<DPDA::input_symbol_type>{}, 1, {}}, {{2, {}}}}, */
-  /* {{U'0', 2, U'0'}, {{2, {}}}}, */
-  /* {{U'1', 2, U'1'}, {{2, {}}}}, */
-  /* {{std::optional<DPDA::input_symbol_type>{}, 2, */
-  /*   input_alphabet->get_endmarker()}, */
-  /*  {{3, {}}}}, */
-
-  /* SUBCASE("0") { */
-  /*   symbol_string str = U"0"; */
-  /*   CHECK(!dpda.simulate(str)); */
-  /* } */
-
-  /* SUBCASE("01") { */
-  /*   symbol_string str = U"01"; */
-  /*   CHECK(!dpda.simulate(str)); */
-  /* } */
-  /* SUBCASE("010") { */
-  /*   symbol_string str = U"010"; */
-  /*   CHECK(!dpda.simulate(str)); */
-  /* } */
-  /* SUBCASE("0101") { */
-  /*   symbol_string str = U"0101"; */
-  /*   CHECK(!dpda.simulate(str)); */
-  /* } */
-  /* SUBCASE("0110") { */
-  /*   symbol_string str = U"0110"; */
-  /*   CHECK(dpda.simulate(str)); */
-  /* } */
-  /* SUBCASE("1001") { */
-  /*   symbol_string str = U"1001"; */
-  /*   CHECK(dpda.simulate(str)); */
-  /* } */
+  SUBCASE("01") {
+    symbol_string str = U"01";
+    CHECK(dpda.simulate(str));
+  }
+  SUBCASE("10") {
+    symbol_string str = U"10";
+    CHECK(!dpda.simulate(str));
+  }
+  SUBCASE("0011") {
+    symbol_string str = U"0011";
+    CHECK(dpda.simulate(str));
+  }
 }

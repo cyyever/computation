@@ -50,18 +50,21 @@ namespace cyy::computation {
         }
         auto const &state_transition_function = it->second;
         for (auto input_symbol : *ALPHABET::get(input_alphabet_name)) {
-
           for (auto stack_symbol : *ALPHABET::get(stack_alphabet_name)) {
             size_t cnt = 0;
             cnt += state_transition_function.count({{}, {}});
             cnt += state_transition_function.count({input_symbol, {}});
             cnt += state_transition_function.count(
                 {std::optional<input_symbol_type>(), stack_symbol});
-            cnt += state_transition_function.count(
-                {std::optional<input_symbol_type>(input_symbol), stack_symbol});
+            cnt +=
+                state_transition_function.count({input_symbol, stack_symbol});
             if (cnt != 1) {
               throw exception::no_DPDA(
-                  "some combinations of states and symbols lack next state");
+                  std::string("the combinations of the state ") +
+                  std::to_string(state) + " and symbols " +
+                  std::to_string(input_symbol) + " " +
+                  std::to_string(stack_symbol) +
+                  " lead to no branch or multiple_branches");
             }
           }
         }

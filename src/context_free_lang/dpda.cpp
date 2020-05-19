@@ -29,7 +29,14 @@ namespace cyy::computation {
       assert(configuration_opt.has_value());
       configuration = std::move(configuration_opt.value());
     }
-    return is_final_state(configuration.first);
+    while (!is_final_state(configuration.first)) {
+      auto configuration_opt = move(std::move(configuration));
+      if (!configuration_opt) {
+        return false;
+      }
+      configuration = std::move(configuration_opt.value());
+    }
+    return true;
   }
 
   std::optional<DPDA::configuration_type>
@@ -101,6 +108,7 @@ namespace cyy::computation {
     return {};
   }
 
+  /*
   void DPDA::remove_unreachable_states() {
     state_set_type reachable_states{start_state};
 
@@ -138,4 +146,5 @@ namespace cyy::computation {
       transition_function.erase(s);
     }
   }
+  */
 } // namespace cyy::computation
