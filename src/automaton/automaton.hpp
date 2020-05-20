@@ -51,12 +51,7 @@ namespace cyy::computation {
       return final_states;
     }
     state_type get_start_state() const noexcept { return start_state; }
-    bool operator==(const finite_automaton &rhs) const {
-      return (this == &rhs) ||
-             (alphabet == rhs.alphabet && states == rhs.states &&
-              start_state == rhs.start_state &&
-              final_states == rhs.final_states);
-    }
+    bool operator==(const finite_automaton &rhs) const = default;
 
     bool contain_final_state(const state_set_type &T) const {
       auto it = T.begin();

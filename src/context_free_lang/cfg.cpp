@@ -44,12 +44,6 @@ namespace cyy::computation {
     }
   }
 
-  bool CFG::operator==(const CFG &rhs) const {
-    return (this == &rhs) ||
-           (alphabet->get_name() == rhs.alphabet->get_name() &&
-            start_symbol == rhs.start_symbol && productions == rhs.productions);
-  }
-
   std::ostream &operator<<(std::ostream &os, const CFG &cfg) {
     // by convention,we print start symbol first.
     for (size_t i = 0; i < 2; i++) {

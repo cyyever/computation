@@ -40,7 +40,6 @@ namespace cyy::computation {
               transition_function == rhs.transition_function &&
               epsilon_transition_function == rhs.epsilon_transition_function);
     }
-    bool operator!=(const NFA &rhs) const { return !operator==(rhs); }
 
     void add_sub_NFA(NFA rhs) {
       if (*alphabet != *rhs.alphabet) {

@@ -52,7 +52,7 @@ namespace cyy::computation {
 
     virtual ~CFG() = default;
 
-    bool operator==(const CFG &rhs) const;
+    bool operator==(const CFG &rhs) const = default;
 
     bool has_production(const CFG_production &production) const;
 

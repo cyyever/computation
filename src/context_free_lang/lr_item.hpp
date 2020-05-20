@@ -20,10 +20,7 @@ namespace cyy::computation {
   struct LR_0_item {
     CFG_production production;
     size_t dot_pos{0};
-    bool operator==(const LR_0_item &rhs) const noexcept {
-      return std::tie(production, dot_pos) ==
-             std::tie(rhs.production, rhs.dot_pos);
-    }
+    bool operator==(const LR_0_item &rhs) const = default;
   };
 
 } // namespace cyy::computation
