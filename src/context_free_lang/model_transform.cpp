@@ -131,22 +131,22 @@ namespace cyy::computation {
              std::set<std::tuple<from_state_type,
                                  std::optional<PDA::input_symbol_type>,
                                  to_state_type>>>
-        push_stack_trainsitions;
+        push_stack_transitions;
 
     std::map<PDA::stack_symbol_type,
              std::set<std::tuple<from_state_type,
                                  std::optional<PDA::input_symbol_type>,
                                  to_state_type>>>
-        pop_stack_trainsitions;
+        pop_stack_transitions;
 
     for (auto &[situation, actions] : pda.get_transition_function()) {
       auto const &top_symbol = situation.stack_symbol;
       for (auto const &action : actions) {
         if (top_symbol.has_value()) {
-          pop_stack_trainsitions[*top_symbol].emplace(
+          pop_stack_transitions[*top_symbol].emplace(
               situation.state, situation.input_symbol, action.state);
         } else if (action.stack_symbol.has_value()) {
-          push_stack_trainsitions[*action.stack_symbol].emplace(
+          push_stack_transitions[*action.stack_symbol].emplace(
               situation.state, situation.input_symbol, action.state);
         }
       }
@@ -162,9 +162,9 @@ namespace cyy::computation {
       productions[get_nonterminal(s, s)] = {{}};
     }
 
-    for (auto const &[s, prev_step] : push_stack_trainsitions) {
-      auto it = pop_stack_trainsitions.find(s);
-      if (it == pop_stack_trainsitions.end()) {
+    for (auto const &[s, prev_step] : push_stack_transitions) {
+      auto it = pop_stack_transitions.find(s);
+      if (it == pop_stack_transitions.end()) {
         continue;
       }
 
