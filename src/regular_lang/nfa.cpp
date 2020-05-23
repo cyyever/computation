@@ -20,7 +20,7 @@ namespace cyy::computation {
     state_set_type direct_reachable;
 
     for (const auto &s : T) {
-      auto it = transition_function.find({a, s});
+      auto it = transition_function.find({s, a});
       if (it != transition_function.end()) {
         direct_reachable.insert(it->second.begin(), it->second.end());
       }
@@ -44,7 +44,7 @@ namespace cyy::computation {
     return contain_final_state(s);
   }
 
-  const std::set<NFA::state_type> &NFA::epsilon_closure(state_type s) const {
+  const NFA::state_set_type &NFA::epsilon_closure(state_type s) const {
     auto it = epsilon_closures.find(s);
     if (it != epsilon_closures.end()) {
       return it->second;
@@ -62,8 +62,7 @@ namespace cyy::computation {
       for (auto next_state : it2->second) {
         auto it3 = epsilon_closures.find(next_state);
         if (it3 != epsilon_closures.end()) {
-          auto const &closure = it3->second;
-          epsilon_closures[unstable_state].merge(state_set_type(closure));
+          epsilon_closures[unstable_state].merge(state_set_type(it3->second));
         } else {
           if (unstable_states.insert(next_state).second) {
             stack.push_back(next_state);
@@ -132,7 +131,7 @@ namespace cyy::computation {
           tmp_states.emplace_back(it);
           next_state++;
         }
-        DFA_transition_function[{a, state}] = it->second;
+        DFA_transition_function[{state, a}] = it->second;
       }
     }
 

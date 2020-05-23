@@ -35,14 +35,14 @@ namespace cyy::computation {
 
       bool new_mapping = false;
 
-      for (auto const &[pair, my_next_state] : transition_function) {
-        auto const &[my_next_symbol, my_state] = pair;
-        auto it = state_map.find(my_state);
+      for (auto const &[configuration, my_next_state] : transition_function) {
+        auto it = state_map.find(configuration.state);
         if (it == state_map.end()) {
           continue;
         }
 
-        auto it2 = rhs.transition_function.find({my_next_symbol, it->second});
+        auto it2 = rhs.transition_function.find(
+            {it->second, configuration.input_symbol});
         if (it2 == rhs.transition_function.end()) {
           return false;
         }
@@ -151,8 +151,7 @@ namespace cyy::computation {
 
       for (auto a : *alphabet) {
         auto next_state = move(*(groups[i].begin()), a).value();
-
-        minimize_DFA_transition_function[{a, i}] = state_location[next_state];
+        minimize_DFA_transition_function[{i, a}] = state_location[next_state];
       }
     }
     return {minimize_DFA_states, alphabet->get_name(), minimize_DFA_start_state,
@@ -164,7 +163,7 @@ namespace cyy::computation {
     }
     std::map<state_type, state_set_type> state_dep;
     for (auto const &[p, next_state] : transition_function) {
-      state_dep[next_state].insert(p.second);
+      state_dep[next_state].insert(p.state);
     }
     auto live_states = final_states;
     while (true) {

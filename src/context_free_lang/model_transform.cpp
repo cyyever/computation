@@ -18,11 +18,10 @@ namespace cyy::computation {
       return std::string("S") + std::to_string(state);
     };
 
-    for (auto const &[p, next_states] : nfa.get_transition_function()) {
-      auto const &[symbol, cur_state] = p;
+    for (auto const &[config, next_states] : nfa.get_transition_function()) {
       for (auto const &next_state : next_states) {
-        productions[state_to_nonterminal(cur_state)].push_back(
-            {symbol, state_to_nonterminal(next_state)});
+        productions[state_to_nonterminal(config.state)].push_back(
+            {config.input_symbol, state_to_nonterminal(next_state)});
       }
     }
 

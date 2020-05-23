@@ -233,7 +233,6 @@ namespace cyy::computation {
       }
     }
 
-
     return {};
   }
 } // namespace cyy::computation

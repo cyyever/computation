@@ -14,7 +14,7 @@ namespace cyy::computation {
     return {{start_state, start_state + 1},
             alphabet_name,
             start_state,
-            {{{symbol, start_state}, {start_state + 1}}},
+            {{{start_state, symbol}, {start_state + 1}}},
             {start_state + 1}};
   }
 

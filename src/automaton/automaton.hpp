@@ -14,6 +14,7 @@
 #include <string>
 #include <string_view>
 
+#include "../hash.hpp"
 #include "../lang/alphabet.hpp"
 
 namespace cyy::computation {
@@ -22,6 +23,19 @@ namespace cyy::computation {
   public:
     using state_type = uint64_t;
     using state_set_type = std::set<state_type>;
+    using input_symbol_type = symbol_type;
+    using stack_symbol_type = symbol_type;
+    struct configuration_type {
+      state_type state;
+      input_symbol_type input_symbol;
+      bool operator==(const configuration_type &) const noexcept = default;
+    };
+    struct extended_configuration_type : public configuration_type {
+      stack_symbol_type stack_symbol;
+      bool
+      operator==(const extended_configuration_type &) const noexcept = default;
+    };
+
     finite_automaton(state_set_type states_, std::string_view alphabet_name,
                      state_type start_state_, state_set_type final_states_)
         : alphabet(::cyy::computation::ALPHABET::get(alphabet_name)),
@@ -45,11 +59,9 @@ namespace cyy::computation {
     finite_automaton &operator=(finite_automaton &&) = default;
     ~finite_automaton() = default;
 
-    auto get_states() const noexcept -> auto const & { return states; }
-    auto get_alphabet() const noexcept -> auto const & { return *alphabet; }
-    auto get_final_states() const noexcept -> auto const & {
-      return final_states;
-    }
+    auto const &get_states() const noexcept { return states; }
+    auto const &get_alphabet() const noexcept { return *alphabet; }
+    auto const &get_final_states() const noexcept { return final_states; }
     state_type get_start_state() const noexcept { return start_state; }
     bool operator==(const finite_automaton &rhs) const = default;
 
@@ -59,7 +71,8 @@ namespace cyy::computation {
       while (it != T.end() && it2 != final_states.end()) {
         if (*it == *it2) {
           return true;
-        } else if (*it < *it2) {
+        }
+        if (*it < *it2) {
           it++;
         } else {
           it2++;
@@ -116,11 +129,35 @@ namespace cyy::computation {
       final_states.insert(s);
     }
 
+    /* state_set_type get_closure(state_type s,std::map<state_type,>
+     * epsilon_transition)const ; */
+
   protected:
     std::shared_ptr<ALPHABET> alphabet;
     state_set_type states;
     state_type start_state;
     state_set_type final_states;
+    mutable std::map<state_type, state_set_type> epsilon_closures;
   }; // namespace cyy::computation
 
 } // namespace cyy::computation
+
+namespace std {
+  template <>
+  struct hash<cyy::computation::finite_automaton::configuration_type> {
+    std::size_t
+    operator()(const cyy::computation::finite_automaton::configuration_type &x)
+        const noexcept {
+      size_t seed = 0;
+
+      boost::hash_combine(
+          seed,
+          std::hash<cyy::computation::finite_automaton::state_type>()(x.state));
+      boost::hash_combine(
+          seed,
+          std::hash<cyy::computation::finite_automaton::input_symbol_type>()(
+              x.input_symbol));
+      return seed;
+    }
+  };
+} // namespace std

@@ -7,9 +7,6 @@
 
 #pragma once
 
-#include <map>
-#include <set>
-#include <string>
 #include <string_view>
 #include <unordered_map>
 
@@ -21,7 +18,7 @@ namespace cyy::computation {
   class NFA final : public finite_automaton {
   public:
     using transition_function_type =
-        std::unordered_map<std::pair<symbol_type, state_type>, state_set_type>;
+        std::unordered_map<configuration_type, state_set_type>;
     using epsilon_transition_function_type =
         std::unordered_map<state_type, state_set_type>;
     NFA(const state_set_type &states_, std::string_view alphabet_name,

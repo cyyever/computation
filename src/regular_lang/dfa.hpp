@@ -21,11 +21,12 @@ namespace cyy::computation {
   class DFA final : public finite_automaton {
   public:
     using transition_function_type =
-        std::unordered_map<std::pair<symbol_type, state_type>, state_type>;
-    DFA(const state_set_type &states_, const std::string &alphabet_name,
+        std::unordered_map<configuration_type, state_type>;
+    DFA(state_set_type states_, const std::string &alphabet_name,
         state_type start_state_, transition_function_type transition_function_,
         state_set_type final_states_)
-        : finite_automaton(states_, alphabet_name, start_state_, final_states_),
+        : finite_automaton(std::move(states_), alphabet_name, start_state_,
+                           std::move(final_states_)),
           transition_function(std::move(transition_function_)) {
 
       if (transition_function.size() != alphabet->size() * states.size()) {
@@ -39,9 +40,7 @@ namespace cyy::computation {
     DFA &operator=(DFA &&) = default;
     ~DFA() = default;
 
-    auto get_transition_function() const -> const auto & {
-      return transition_function;
-    }
+    const auto &get_transition_function() const { return transition_function; }
     bool equivalent_with(const DFA &rhs) const;
 
     bool simulate(symbol_string_view view) const {
@@ -60,12 +59,9 @@ namespace cyy::computation {
     DFA minimize() const;
 
     std::optional<state_type> move(state_type s, symbol_type a) const {
-
-      auto it = transition_function.find({a, s});
+      auto it = transition_function.find({s, a});
       if (it != transition_function.end()) {
-        /* if (live_states_opt.value().count(it->second)) { */
         return {it->second};
-        /* } */
       }
       return {};
     }

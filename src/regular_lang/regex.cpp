@@ -59,7 +59,7 @@ namespace cyy::computation {
           DFA_states.insert(j);
         }
 
-        DFA_transition_function[{a, i}] = j;
+        DFA_transition_function[{i, a}] = j;
       }
     }
 
