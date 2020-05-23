@@ -22,7 +22,7 @@ namespace cyy::computation {
     using epsilon_transition_function_type =
         std::unordered_map<state_type, state_set_type>;
     NFA(state_set_type states_, std::string_view alphabet_name,
-        state_type start_state_, transition_function_type &transition_function_,
+        state_type start_state_, transition_function_type transition_function_,
         state_set_type final_states_,
         epsilon_transition_function_type epsilon_transition_function_ = {})
         : finite_automaton(std::move(states_), alphabet_name, start_state_,

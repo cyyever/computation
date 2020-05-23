@@ -50,11 +50,11 @@ namespace cyy::computation {
     }
     auto const &state_transition_function = it->second;
 
-    auto it2 = state_transition_function.find({{}, {}});
+    auto it2 = state_transition_function.find({});
     if (it2 != state_transition_function.end()) {
-      configuration.first = it2->second.first;
-      if (it2->second.second.has_value()) {
-        configuration.second.push_back(it2->second.second.value());
+      configuration.first = it2->second.state;
+      if (it2->second.stack_symbol.has_value()) {
+        configuration.second.push_back(it2->second.stack_symbol.value());
       }
       return configuration;
     }
@@ -63,13 +63,12 @@ namespace cyy::computation {
     }
     auto stack_top = configuration.second.back();
 
-    it2 = state_transition_function.find(
-        {std::optional<input_symbol_type>(), stack_top});
+    it2 = state_transition_function.find({{}, stack_top});
     if (it2 != state_transition_function.end()) {
-      configuration.first = it2->second.first;
+      configuration.first = it2->second.state;
       configuration.second.pop_back();
-      if (it2->second.second.has_value()) {
-        configuration.second.push_back(it2->second.second.value());
+      if (it2->second.stack_symbol.has_value()) {
+        configuration.second.push_back(it2->second.stack_symbol.value());
       }
       return configuration;
     }
@@ -84,11 +83,11 @@ namespace cyy::computation {
       return {};
     }
     auto const &state_transition_function = it->second;
-    auto it2 = state_transition_function.find({a, {}});
+    auto it2 = state_transition_function.find({a});
     if (it2 != state_transition_function.end()) {
-      configuration.first = it2->second.first;
-      if (it2->second.second.has_value()) {
-        configuration.second.push_back(it2->second.second.value());
+      configuration.first = it2->second.state;
+      if (it2->second.stack_symbol.has_value()) {
+        configuration.second.push_back(it2->second.stack_symbol.value());
       }
       return configuration;
     }
@@ -99,10 +98,10 @@ namespace cyy::computation {
 
     it2 = state_transition_function.find({a, stack_top});
     if (it2 != state_transition_function.end()) {
-      configuration.first = it2->second.first;
+      configuration.first = it2->second.state;
       configuration.second.pop_back();
-      if (it2->second.second.has_value()) {
-        configuration.second.push_back(it2->second.second.value());
+      if (it2->second.stack_symbol.has_value()) {
+        configuration.second.push_back(it2->second.stack_symbol.value());
       }
       return configuration;
     }
@@ -125,22 +124,22 @@ namespace cyy::computation {
     transition_function_type new_transitions;
     for (auto &[from_state, transfers] : transition_function) {
       for (auto &[configuration, action] : transfers) {
-        if (configuration.first.has_value()) {
+        if (configuration.input_symbol.has_value()) {
           continue;
         }
         auto new_action = action;
-        new_action.first = get_parallel_state(action.first);
+        new_action.state = get_parallel_state(action.state);
         new_transitions[get_parallel_state(from_state)].emplace(
             configuration, std::move(new_action));
         if (is_final_state(from_state)) {
-          action.first = get_parallel_state(action.first);
+          action.state = get_parallel_state(action.state);
         }
       }
     }
 
     for (auto const &[parallel_state, s] : reversed_parallel_states) {
       for (auto const &[configuration, action] : transition_function[s]) {
-        if (configuration.first.has_value()) {
+        if (configuration.input_symbol.has_value()) {
           new_transitions[parallel_state].emplace(configuration, action);
         }
       }
@@ -158,25 +157,25 @@ namespace cyy::computation {
 
     new_transitions.clear();
     for (auto &[from_state, transfers] : transition_function) {
-      for (auto &[configuration, action] : transfers) {
-        if (!configuration.second.has_value()) {
+      for (auto &[situation, action] : transfers) {
+        if (!situation.stack_symbol.has_value()) {
           continue;
         }
-        auto new_configuration = configuration;
-        new_configuration.second = endmarker;
-        if (is_final_state(from_state) && !configuration.first.has_value()) {
-          new_transitions[from_state][std::move(new_configuration)] = {
-              new_accept_state, {}};
+        auto new_situation = situation;
+        new_situation.stack_symbol = endmarker;
+        if (is_final_state(from_state) && !situation.input_symbol.has_value()) {
+          new_transitions[from_state][std::move(new_situation)] = {
+              new_accept_state};
         } else {
-          new_transitions[from_state][std::move(new_configuration)] = {
-              new_reject_state, {}};
+          new_transitions[from_state][std::move(new_situation)] = {
+              new_reject_state};
         }
       }
     }
     transition_function.merge(std::move(new_transitions));
     for (auto a : *alphabet) {
-      transition_function[new_reject_state][{a, {}}] = {new_reject_state, {}};
-      transition_function[new_accept_state][{a, {}}] = {new_reject_state, {}};
+      transition_function[new_reject_state][{a}] = {new_reject_state};
+      transition_function[new_accept_state][{a}] = {new_reject_state};
     }
   }
 
@@ -192,8 +191,8 @@ namespace cyy::computation {
     }
 
     for (const auto &[from_state, transfers] : transition_function) {
-      for (const auto &[configuration, action] : transfers) {
-        if (configuration.first.has_value()) {
+      for (const auto &[situation, action] : transfers) {
+        if (situation.input_symbol.has_value()) {
           looping_situations.erase(from_state);
           break;
         }
@@ -203,22 +202,22 @@ namespace cyy::computation {
     while (true) {
       bool flag = false;
       for (const auto &[from_state, transfers] : transition_function) {
-        for (const auto &[configuration, action] : transfers) {
-          if (configuration.first.has_value()) {
+        for (const auto &[situation, action] : transfers) {
+          if (situation.input_symbol.has_value()) {
             break;
           }
-          if (!configuration.second.has_value()) {
+          if (!situation.stack_symbol.has_value()) {
             continue;
           }
-          auto cur_stack_symbol = configuration.second.value();
-          if (!action.second.has_value()) {
+          auto cur_stack_symbol = situation.stack_symbol.value();
+          if (!action.stack_symbol.has_value()) {
             if (looping_situations[from_state].erase(cur_stack_symbol)) {
               flag = true;
             }
           }
-          if (action.second.has_value()) {
-            auto next_state = action.first;
-            auto next_stack_symbol = action.second.value();
+          if (action.stack_symbol.has_value()) {
+            auto next_state = action.state;
+            auto next_stack_symbol = action.stack_symbol.value();
             if (!looping_situations.contains(next_state) ||
                 !looping_situations[next_state].contains(next_stack_symbol)) {
               if (looping_situations[from_state].erase(cur_stack_symbol)) {
