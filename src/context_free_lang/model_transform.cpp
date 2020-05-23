@@ -82,8 +82,8 @@ namespace cyy::computation {
           new_top = get_stack_symbol(*it);
           it++;
         }
-        transition_function[{{}, from_state, get_stack_symbol(*head)}].insert(
-            {new_state, new_top});
+        transition_function[{from_state, {}, get_stack_symbol(*head)}].emplace(
+            new_state, new_top);
         old_state = new_state;
       } else {
         old_state = from_state;
@@ -97,8 +97,8 @@ namespace cyy::computation {
           states.insert(new_state);
         }
 
-        transition_function[{{}, old_state, {}}].insert(
-            {new_state, get_stack_symbol(*it)});
+        transition_function[{old_state}].emplace(new_state,
+                                                 get_stack_symbol(*it));
         old_state = new_state;
       }
     };
@@ -112,13 +112,13 @@ namespace cyy::computation {
     }
 
     for (auto const &terminal : cfg.get_terminals()) {
-      transition_function[{terminal, loop_state, get_stack_symbol(terminal)}]
-          .insert({loop_state, {}});
+      transition_function[{loop_state, terminal, get_stack_symbol(terminal)}]
+          .emplace(loop_state, std::optional<PDA::stack_symbol_type>{});
     }
-    transition_function[{{},
-                         loop_state,
+    transition_function[{loop_state,
+                         {},
                          get_stack_symbol(cfg.get_alphabet().get_endmarker())}]
-        .insert({final_state, {}});
+        .emplace(final_state, std::optional<PDA::stack_symbol_type>{});
     return PDA(std::move(states), cfg.get_alphabet().get_name(), "all",
                start_state, std::move(transition_function), {final_state});
   }
@@ -139,16 +139,15 @@ namespace cyy::computation {
                                  to_state_type>>>
         pop_stack_trainsitions;
 
-    for (auto const &[k, v] : pda.get_transition_function()) {
-      auto const &[input, from_state, top_symbol] = k;
-      for (auto const &next_step : v) {
-        auto const &[to_state, new_top_symbol] = next_step;
+    for (auto &[situation, actions] : pda.get_transition_function()) {
+      auto const &top_symbol = situation.stack_symbol;
+      for (auto const &action : actions) {
         if (top_symbol.has_value()) {
-          pop_stack_trainsitions[*top_symbol].emplace(from_state, input,
-                                                      to_state);
-        } else if (new_top_symbol.has_value()) {
-          push_stack_trainsitions[*new_top_symbol].emplace(from_state, input,
-                                                           to_state);
+          pop_stack_trainsitions[*top_symbol].emplace(
+              situation.state, situation.input_symbol, action.state);
+        } else if (action.stack_symbol.has_value()) {
+          push_stack_trainsitions[*action.stack_symbol].emplace(
+              situation.state, situation.input_symbol, action.state);
         }
       }
     }
@@ -171,8 +170,8 @@ namespace cyy::computation {
 
       for (auto const &[prev_from_state, prev_input, prev_to_state] :
            prev_step) {
-        for (auto const &next_step : it->second) {
-          const auto &[next_from_state, next_input, next_to_state] = next_step;
+        for (auto const &[next_from_state, next_input, next_to_state] :
+             it->second) {
 
           CFG_production::body_type body;
 

@@ -38,7 +38,7 @@ namespace cyy::computation {
     configuration_set_type direct_reachable;
     for (auto const &[s, top_node] : configurations) {
       if (top_node.index != 0) {
-        auto it = transition_function.find({a, s, top_node.content});
+        auto it = transition_function.find({s, a, top_node.content});
         if (it != transition_function.end()) {
           for (auto const &[next_state, next_stack_symbol] : it->second) {
             auto new_top_node = top_node.pop_and_push(next_stack_symbol);
@@ -46,7 +46,7 @@ namespace cyy::computation {
           }
         }
       }
-      auto it = transition_function.find({a, s, {}});
+      auto it = transition_function.find({s, a});
       if (it != transition_function.end()) {
         for (auto const &[next_state, next_stack_symbol] : it->second) {
           auto new_top_node = top_node.push(next_stack_symbol);
@@ -65,7 +65,7 @@ namespace cyy::computation {
 
       for (auto const &[s, top_node] : result) {
         if (top_node.index != 0) {
-          auto it = transition_function.find({{}, s, top_node.content});
+          auto it = transition_function.find({s, {}, top_node.content});
           if (it != transition_function.end()) {
             for (auto const &[next_state, next_stack_symbol] : it->second) {
               auto new_top_node = top_node.pop_and_push(next_stack_symbol);
@@ -73,7 +73,7 @@ namespace cyy::computation {
             }
           }
         }
-        auto it = transition_function.find({{}, s, {}});
+        auto it = transition_function.find({s});
         if (it != transition_function.end()) {
           for (auto const &[next_state, next_stack_symbol] : it->second) {
             auto new_top_node = top_node.push(next_stack_symbol);
@@ -91,7 +91,7 @@ namespace cyy::computation {
     return result;
   }
   void PDA::add_epsilon_transition(state_type from_state, state_type to_state) {
-    transition_function[{{}, from_state, {}}] = {{to_state, {}}};
+    transition_function[{from_state}] = {{to_state}};
   }
 
   void PDA::normalize_transitions() {
@@ -100,45 +100,43 @@ namespace cyy::computation {
       add_epsilon_transition(final_state, new_state);
     }
     for (auto const used_stack_symbol : get_used_stack_symbols()) {
-      transition_function[{{}, new_state, used_stack_symbol}] = {
-          {new_state, {}}};
+      transition_function[{new_state, {}, used_stack_symbol}] = {{new_state}};
     }
     auto new_final_state = add_new_state();
     add_epsilon_transition(new_state, new_final_state);
     change_final_states({new_final_state});
 
     transition_function_type new_transition;
-    auto new_stack_symbol = *stack_alphabet->begin();
+    auto new_stack_symbol = stack_alphabet->front();
     for (const auto &[k, v] : transition_function) {
-      auto const &top_symbol = std::get<2>(k);
+      auto const &top_symbol = k.stack_symbol;
       for (const auto &next_step : v) {
-        auto const &new_top_symbol = next_step.second;
+        auto const &new_top_symbol = next_step.stack_symbol;
         if (top_symbol.has_value() != new_top_symbol.has_value()) {
           continue;
         }
         if (top_symbol.has_value()) {
           auto next_state = states.size();
           states.insert(next_state);
-          new_transition[k] = {{next_state, {}}};
-          new_transition[{{}, next_state, {}}] = {
-              {next_step.first, new_top_symbol}};
+          new_transition[k] = {{next_state}};
+          new_transition[{next_state}] = {{next_step.state, new_top_symbol}};
           continue;
         }
         if (!top_symbol.has_value()) {
           auto next_state = states.size();
           states.insert(next_state);
           new_transition[k] = {{next_state, new_stack_symbol}};
-          new_transition[{{}, next_state, new_stack_symbol}] = {
-              {next_step.first, {}}};
+          new_transition[{next_state, {}, new_stack_symbol}] = {
+              {next_step.state}};
           continue;
         }
       }
     }
 
     for (auto &[k, v] : transition_function) {
-      auto const &top_symbol = std::get<2>(k);
+      auto const &top_symbol = k.stack_symbol;
       std::erase_if(v, [&top_symbol](const auto e) {
-        return e.second.has_value() == top_symbol.has_value();
+        return e.stack_symbol.has_value() == top_symbol.has_value();
       });
     }
     std::erase_if(transition_function,
@@ -148,9 +146,9 @@ namespace cyy::computation {
 
 #ifndef NDEBUG
     for (const auto &[k, v] : transition_function) {
-      auto const &top_symbol = std::get<2>(k);
+      auto const &top_symbol = k.stack_symbol;
       for (const auto &next_step : v) {
-        auto const &new_top_symbol = next_step.second;
+        auto const &new_top_symbol = next_step.stack_symbol;
         assert(top_symbol.has_value() != new_top_symbol.has_value());
       }
     }
@@ -159,12 +157,12 @@ namespace cyy::computation {
   std::set<PDA::stack_symbol_type> PDA::get_used_stack_symbols() const {
     std::set<PDA::stack_symbol_type> res;
     for (auto const &[k, v] : transition_function) {
-      auto const &top_symbol = std::get<2>(k);
+      auto const &top_symbol = k.stack_symbol;
       if (top_symbol.has_value()) {
         res.insert(*top_symbol);
       }
       for (const auto &next_step : v) {
-        auto const &new_top_symbol = next_step.second;
+        auto const &new_top_symbol = next_step.stack_symbol;
         if (new_top_symbol.has_value()) {
           res.insert(*new_top_symbol);
         }

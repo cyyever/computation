@@ -7,7 +7,9 @@
 
 #pragma once
 
+#include <bits/getopt_core.h>
 #include <map>
+#include <optional>
 #include <set>
 #include <string>
 #include <string_view>
@@ -23,10 +25,51 @@ namespace cyy::computation {
 
   class PDA final : public finite_automaton {
   public:
-    using transition_function_type = std::map<
-        std::tuple<std::optional<input_symbol_type>, state_type,
-                   std::optional<stack_symbol_type>>,
-        std::set<std::pair<state_type, std::optional<stack_symbol_type>>>>;
+    struct situation_type {
+      situation_type(state_type state_) : state(state_) {}
+      situation_type(state_type state_, input_symbol_type input_symbol_)
+          : state(state_), input_symbol{input_symbol_} {}
+      situation_type(state_type state_,
+                     std::optional<input_symbol_type> input_symbol_,
+                     stack_symbol_type stack_symbol_)
+          : state(state_), input_symbol{std::move(input_symbol_)},
+            stack_symbol{stack_symbol_} {}
+      state_type state;
+      std::optional<input_symbol_type> input_symbol;
+      std::optional<stack_symbol_type> stack_symbol;
+      bool operator==(const situation_type &) const noexcept = default;
+    };
+
+    struct situation_hash_type {
+      std::size_t operator()(const situation_type &x) const noexcept {
+        size_t seed = 0;
+        boost::hash_combine(seed, std::hash<state_type>()(x.state));
+        if (x.input_symbol) {
+          boost::hash_combine(
+              seed, std::hash<input_symbol_type>()(x.input_symbol.value()));
+        }
+        if (x.stack_symbol) {
+          boost::hash_combine(
+              seed, std::hash<stack_symbol_type>()(x.stack_symbol.value()));
+        }
+        return seed;
+      }
+    };
+
+    struct action_type {
+      action_type(state_type state_) : state(state_) {}
+      action_type(state_type state_,
+                  std::optional<stack_symbol_type> stack_symbol_)
+          : state(state_), stack_symbol(std::move(stack_symbol_)) {}
+      state_type state{};
+      std::optional<stack_symbol_type> stack_symbol;
+      bool operator==(const action_type &) const = default;
+      auto operator<=>(const action_type &) const = default;
+    };
+
+    using transition_function_type =
+        std::unordered_map<situation_type, std::set<action_type>,
+                           situation_hash_type>;
 
     PDA(state_set_type states_, std::string_view input_alphabet_name,
         std::string_view stack_alphabet_name, state_type start_state_,
@@ -43,7 +86,6 @@ namespace cyy::computation {
                                 stack_alphabet == rhs.stack_alphabet &&
                                 transition_function == rhs.transition_function);
     }
-    bool operator!=(const PDA &rhs) const { return !operator==(rhs); }
 
     auto const &get_transition_function() const noexcept {
       return transition_function;

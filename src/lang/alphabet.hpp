@@ -31,9 +31,7 @@ namespace cyy::computation {
         ++index;
         return *this;
       }
-      bool operator!=(const iterator &other) const {
-        return ptr != other.ptr || index != other.index;
-      }
+      bool operator==(const iterator &other) const = default;
       symbol_type operator*() const { return ptr->get_symbol(index); }
 
     private:
@@ -55,6 +53,8 @@ namespace cyy::computation {
 
     iterator begin() const { return iterator(this, 0); }
     iterator end() const { return iterator(this, size()); }
+
+    symbol_type front() const { return get_symbol(0); }
 
     virtual bool contain(symbol_type s) const = 0;
     virtual size_t size() const = 0;
