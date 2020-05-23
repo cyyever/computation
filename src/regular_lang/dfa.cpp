@@ -35,14 +35,14 @@ namespace cyy::computation {
 
       bool new_mapping = false;
 
-      for (auto const &[configuration, my_next_state] : transition_function) {
-        auto it = state_map.find(configuration.state);
+      for (auto const &[situation, my_next_state] : transition_function) {
+        auto it = state_map.find(situation.state);
         if (it == state_map.end()) {
           continue;
         }
 
         auto it2 = rhs.transition_function.find(
-            {it->second, configuration.input_symbol});
+            {it->second, situation.input_symbol});
         if (it2 == rhs.transition_function.end()) {
           return false;
         }

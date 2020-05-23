@@ -21,7 +21,7 @@ namespace cyy::computation {
   class DFA final : public finite_automaton {
   public:
     using transition_function_type =
-        std::unordered_map<configuration_type, state_type>;
+        std::unordered_map<situation_type, state_type>;
     DFA(state_set_type states_, const std::string &alphabet_name,
         state_type start_state_, transition_function_type transition_function_,
         state_set_type final_states_)
