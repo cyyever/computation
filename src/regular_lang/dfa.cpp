@@ -41,8 +41,8 @@ namespace cyy::computation {
           continue;
         }
 
-        auto it2 = rhs.transition_function.find(
-            {it->second, situation.input_symbol});
+        auto it2 =
+            rhs.transition_function.find({it->second, situation.input_symbol});
         if (it2 == rhs.transition_function.end()) {
           return false;
         }

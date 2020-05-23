@@ -17,6 +17,7 @@
 
 #include "../automaton/automaton.hpp"
 #include "../exception.hpp"
+#include "../hash.hpp"
 
 namespace cyy::computation {
 
@@ -44,7 +45,7 @@ namespace cyy::computation {
     }
     bool operator!=(const PDA &rhs) const { return !operator==(rhs); }
 
-    auto get_transition_function() const noexcept -> auto const & {
+    auto const &get_transition_function() const noexcept {
       return transition_function;
     }
 
@@ -119,19 +120,20 @@ namespace cyy::computation {
       }
     };
 
+    struct configuration_type {
+      state_type state;
+      stack_node top_node;
+      bool operator==(const configuration_type &) const noexcept = default;
+    };
     struct configuration_hash_type {
-      size_t operator()(const std::pair<cyy::computation::PDA::stack_node,
-                                        cyy::computation::PDA::state_type> &x
-
-      ) const noexcept {
-        return ::std::hash<decltype(x.first.content)>()(x.first.content) ^
-               ::std::hash<decltype(x.second)>()(x.second);
+      size_t operator()(const configuration_type &x) const noexcept {
+        return ::std::hash<stack_symbol_type>()(x.top_node.content) ^
+               ::std::hash<state_type>()(x.state);
       }
     };
 
     using configuration_set_type =
-        std::unordered_set<std::pair<stack_node, state_type>,
-                           configuration_hash_type>;
+        std::unordered_set<configuration_type, configuration_hash_type>;
 
   private:
     configuration_set_type move(const configuration_set_type &configurations,

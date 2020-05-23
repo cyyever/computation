@@ -16,7 +16,7 @@ namespace cyy::computation {
     std::vector<stack_node> stack;
     stack.emplace_back(0, 0, &stack);
 
-    configuration_set_type configurations{{stack[0], start_state}};
+    configuration_set_type configurations{{start_state, stack[0]}};
     configurations = move(std::move(configurations));
     for (auto const &symbol : view) {
       configurations = move(configurations, symbol);
@@ -24,7 +24,7 @@ namespace cyy::computation {
         return false;
       }
     }
-    for (auto const &[_, s] : configurations) {
+    for (auto const &[s, _] : configurations) {
       if (is_final_state(s)) {
         return true;
       }
@@ -36,13 +36,13 @@ namespace cyy::computation {
   PDA::move(const configuration_set_type &configurations,
             input_symbol_type a) const {
     configuration_set_type direct_reachable;
-    for (auto const &[top_node, s] : configurations) {
+    for (auto const &[s, top_node] : configurations) {
       if (top_node.index != 0) {
         auto it = transition_function.find({a, s, top_node.content});
         if (it != transition_function.end()) {
           for (auto const &[next_state, next_stack_symbol] : it->second) {
             auto new_top_node = top_node.pop_and_push(next_stack_symbol);
-            direct_reachable.emplace(new_top_node, next_state);
+            direct_reachable.emplace(next_state, new_top_node);
           }
         }
       }
@@ -50,7 +50,7 @@ namespace cyy::computation {
       if (it != transition_function.end()) {
         for (auto const &[next_state, next_stack_symbol] : it->second) {
           auto new_top_node = top_node.push(next_stack_symbol);
-          direct_reachable.emplace(new_top_node, next_state);
+          direct_reachable.emplace(next_state, new_top_node);
         }
       }
     }
@@ -63,13 +63,13 @@ namespace cyy::computation {
     while (true) {
       decltype(result) new_result;
 
-      for (auto const &[top_node, s] : result) {
+      for (auto const &[s, top_node] : result) {
         if (top_node.index != 0) {
           auto it = transition_function.find({{}, s, top_node.content});
           if (it != transition_function.end()) {
             for (auto const &[next_state, next_stack_symbol] : it->second) {
               auto new_top_node = top_node.pop_and_push(next_stack_symbol);
-              new_result.emplace(new_top_node, next_state);
+              new_result.emplace(next_state, new_top_node);
             }
           }
         }
@@ -77,7 +77,7 @@ namespace cyy::computation {
         if (it != transition_function.end()) {
           for (auto const &[next_state, next_stack_symbol] : it->second) {
             auto new_top_node = top_node.push(next_stack_symbol);
-            new_result.emplace(new_top_node, next_state);
+            new_result.emplace(next_state, new_top_node);
           }
         }
       }

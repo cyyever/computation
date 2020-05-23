@@ -30,13 +30,6 @@ namespace cyy::computation {
       input_symbol_type input_symbol;
       bool operator==(const situation_type &) const noexcept = default;
     };
-    /*
-    struct extended_configuration_type : public situation_type {
-      stack_symbol_type stack_symbol;
-      bool
-      operator==(const extended_configuration_type &) const noexcept = default;
-    };
-    */
 
     finite_automaton(state_set_type states_, std::string_view alphabet_name,
                      state_type start_state_, state_set_type final_states_)
@@ -145,8 +138,7 @@ namespace cyy::computation {
 } // namespace cyy::computation
 
 namespace std {
-  template <>
-  struct hash<cyy::computation::finite_automaton::situation_type> {
+  template <> struct hash<cyy::computation::finite_automaton::situation_type> {
     std::size_t
     operator()(const cyy::computation::finite_automaton::situation_type &x)
         const noexcept {
