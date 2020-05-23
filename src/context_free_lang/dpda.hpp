@@ -52,10 +52,9 @@ namespace cyy::computation {
         for (auto input_symbol : *ALPHABET::get(input_alphabet_name)) {
           for (auto stack_symbol : *ALPHABET::get(stack_alphabet_name)) {
             size_t cnt = 0;
-            cnt += state_transition_function.count({{}, {}});
+            cnt += state_transition_function.count({});
             cnt += state_transition_function.count({input_symbol, {}});
-            cnt += state_transition_function.count(
-                {std::optional<input_symbol_type>(), stack_symbol});
+            cnt += state_transition_function.count({{}, stack_symbol});
             cnt +=
                 state_transition_function.count({input_symbol, stack_symbol});
             if (cnt != 1) {
@@ -71,14 +70,11 @@ namespace cyy::computation {
       }
     }
 
-    bool operator==(const DPDA &rhs) const {
-      return (this == &rhs) || (finite_automaton::operator==(rhs) &&
-                                stack_alphabet == rhs.stack_alphabet &&
-                                transition_function == rhs.transition_function);
-    }
-    bool operator!=(const DPDA &rhs) const { return !operator==(rhs); }
+    bool operator==(const DPDA &rhs) const = default;
 
     bool simulate(symbol_string_view view) const;
+
+    void normalize();
 
   private:
     using configuration_type =
@@ -90,7 +86,8 @@ namespace cyy::computation {
     std::optional<configuration_type> move(configuration_type configuration,
                                            input_symbol_type a) const;
 
-    void remove_unreachable_states();
+    std::vector<std::pair<state_type, stack_symbol_type>>
+    get_looping_situations() const;
 
   private:
     std::shared_ptr<ALPHABET> stack_alphabet;
