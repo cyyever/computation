@@ -113,7 +113,7 @@ namespace cyy::computation {
 
     for (auto const &terminal : cfg.get_terminals()) {
       transition_function[{loop_state, terminal, get_stack_symbol(terminal)}]
-          .emplace(loop_state, std::optional<PDA::stack_symbol_type>{});
+          .emplace(loop_state);
     }
     transition_function[{loop_state,
                          {},
