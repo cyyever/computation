@@ -1,12 +1,6 @@
 /*!
- * \file cfg_test.cpp
- *
- * \brief 测试cfg
+ * \file gnfa_test.cpp
  */
-#if __has_include(<CppCoreCheck\Warnings.h>)
-#include <CppCoreCheck\Warnings.h>
-#pragma warning(disable : ALL_CPPCORECHECK_WARNINGS)
-#endif
 #include <doctest/doctest.h>
 
 #include "../../src/regular_lang/gnfa.hpp"
@@ -16,12 +10,11 @@ TEST_CASE("DFA to regex") {
 
   DFA dfa({0, 1}, "ab_set", 0,
           {
+              {{0, 'a'}, 0},
+              {{0, 'b'}, 1},
 
-              {{'a', 0}, 0},
-              {{'b', 0}, 1},
-
-              {{'a', 1}, 1},
-              {{'b', 1}, 1},
+              {{1, 'a'}, 1},
+              {{1, 'b'}, 1},
           },
           {1});
 

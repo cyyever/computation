@@ -22,8 +22,6 @@ namespace cyy::computation {
 
   class PDA final : public finite_automaton {
   public:
-    using input_symbol_type = symbol_type;
-    using stack_symbol_type = symbol_type;
     using transition_function_type = std::map<
         std::tuple<std::optional<input_symbol_type>, state_type,
                    std::optional<stack_symbol_type>>,

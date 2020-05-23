@@ -9,10 +9,9 @@
 
 namespace cyy::computation {
   GNFA::GNFA(const DFA &dfa) : finite_automaton(dfa) {
-    for (auto const &[p, next_state] : dfa.get_transition_function()) {
-      auto const &[symbol, state] = p;
-      auto node = std::make_shared<regex::basic_node>(symbol);
-      auto &regex_syntax_node = transition_function[{state, next_state}];
+    for (auto const &[config, next_state] : dfa.get_transition_function()) {
+      auto node = std::make_shared<regex::basic_node>(config.input_symbol);
+      auto &regex_syntax_node = transition_function[{config.state, next_state}];
       if (!regex_syntax_node) {
         regex_syntax_node = std::move(node);
       } else {
