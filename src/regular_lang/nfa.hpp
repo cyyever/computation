@@ -21,22 +21,17 @@ namespace cyy::computation {
         std::unordered_map<situation_type, state_set_type>;
     using epsilon_transition_function_type =
         std::unordered_map<state_type, state_set_type>;
-    NFA(const state_set_type &states_, std::string_view alphabet_name,
-        state_type start_state_,
-        const transition_function_type &transition_function_,
-        const state_set_type &final_states_,
-        const epsilon_transition_function_type &epsilon_transition_function_ =
-            {})
-        : finite_automaton(states_, alphabet_name, start_state_, final_states_),
-          transition_function(transition_function_),
-          epsilon_transition_function(epsilon_transition_function_) {}
-
-    bool operator==(const NFA &rhs) const {
-      return (this == &rhs) ||
-             (finite_automaton::operator==(rhs) &&
-              transition_function == rhs.transition_function &&
-              epsilon_transition_function == rhs.epsilon_transition_function);
+    NFA(state_set_type states_, std::string_view alphabet_name,
+        state_type start_state_, transition_function_type &transition_function_,
+        state_set_type final_states_,
+        epsilon_transition_function_type epsilon_transition_function_ = {})
+        : finite_automaton(std::move(states_), alphabet_name, start_state_,
+                           std::move(final_states_)),
+          transition_function(std::move(transition_function_)),
+          epsilon_transition_function(std::move(epsilon_transition_function_)) {
     }
+
+    bool operator==(const NFA &rhs) const = default;
 
     void add_sub_NFA(NFA rhs) {
       if (*alphabet != *rhs.alphabet) {
@@ -56,11 +51,11 @@ namespace cyy::computation {
     using finite_automaton::change_final_states;
     using finite_automaton::change_start_state;
 
-    auto get_transition_function() const noexcept -> auto const & {
+    auto const &get_transition_function() const noexcept {
       return transition_function;
     }
 
-    auto get_epsilon_transition_function() const noexcept -> auto const & {
+    auto const &get_epsilon_transition_function() const noexcept {
       return epsilon_transition_function;
     }
     void replace_epsilon_transition(state_type from_state,

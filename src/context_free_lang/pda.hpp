@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include <bits/getopt_core.h>
-#include <map>
 #include <optional>
 #include <set>
 #include <string>
@@ -31,8 +29,8 @@ namespace cyy::computation {
       situation_type(state_type state_,
                      std::optional<input_symbol_type> input_symbol_,
                      stack_symbol_type stack_symbol_)
-          : state(state_), input_symbol{std::move(input_symbol_)},
-            stack_symbol{stack_symbol_} {}
+          : state(state_), input_symbol{input_symbol_}, stack_symbol{
+                                                            stack_symbol_} {}
       state_type state;
       std::optional<input_symbol_type> input_symbol;
       std::optional<stack_symbol_type> stack_symbol;
@@ -59,11 +57,11 @@ namespace cyy::computation {
       action_type(state_type state_) : state(state_) {}
       action_type(state_type state_,
                   std::optional<stack_symbol_type> stack_symbol_)
-          : state(state_), stack_symbol(std::move(stack_symbol_)) {}
+          : state(state_), stack_symbol(stack_symbol_) {}
       state_type state{};
       std::optional<stack_symbol_type> stack_symbol;
-      bool operator==(const action_type &) const = default;
-      auto operator<=>(const action_type &) const = default;
+      bool operator==(const action_type &) const noexcept = default;
+      auto operator<=>(const action_type &) const noexcept = default;
     };
 
     using transition_function_type =
@@ -80,11 +78,7 @@ namespace cyy::computation {
               ::cyy::computation::ALPHABET::get(stack_alphabet_name)),
           transition_function(std::move(transition_function_)) {}
 
-    bool operator==(const PDA &rhs) const {
-      return (this == &rhs) || (finite_automaton::operator==(rhs) &&
-                                stack_alphabet == rhs.stack_alphabet &&
-                                transition_function == rhs.transition_function);
-    }
+    bool operator==(const PDA &rhs) const noexcept = default;
 
     auto const &get_transition_function() const noexcept {
       return transition_function;
@@ -162,7 +156,7 @@ namespace cyy::computation {
     };
 
     struct configuration_type {
-      state_type state;
+      state_type state{};
       stack_node top_node;
       bool operator==(const configuration_type &) const noexcept = default;
     };
