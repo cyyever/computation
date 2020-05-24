@@ -119,10 +119,8 @@ namespace cyy::computation {
     std::optional<configuration_type> move(configuration_type configuration,
                                            input_symbol_type a) const;
 
-    std::pair<
-      std::map<state_type, std::set<stack_symbol_type>>,
-      std::map<state_type, std::set<stack_symbol_type>>
-      >
+    std::pair<std::map<state_type, std::set<stack_symbol_type>>,
+              std::map<state_type, std::set<stack_symbol_type>>>
     get_looping_situations() const;
 
   private:
