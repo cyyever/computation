@@ -66,4 +66,9 @@ TEST_CASE("simulate DPDA") {
     symbol_string str = U"0011";
     CHECK(dpda.simulate(str));
   }
+  SUBCASE("normalize") {
+    symbol_string str = U"0011";
+    dpda.normalize();
+    CHECK(dpda.simulate(str));
+  }
 }

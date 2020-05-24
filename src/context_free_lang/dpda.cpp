@@ -109,6 +109,8 @@ namespace cyy::computation {
   }
   void DPDA::normalize() {
 
+    auto [acceptance_looping_situations, rejection_looping_situations] =
+        get_looping_situations();
     std::unordered_map<state_type, state_type> parallel_states;
     std::unordered_map<state_type, state_type> reversed_parallel_states;
     auto get_parallel_state = [&, this](state_type s) {
@@ -129,8 +131,8 @@ namespace cyy::computation {
         }
         auto new_action = action;
         new_action.state = get_parallel_state(action.state);
-        new_transitions[get_parallel_state(from_state)].emplace(
-            configuration, std::move(new_action));
+        new_transitions[get_parallel_state(from_state)].emplace(configuration,
+                                                                new_action);
         if (is_final_state(from_state)) {
           action.state = get_parallel_state(action.state);
         }
@@ -164,11 +166,9 @@ namespace cyy::computation {
         auto new_situation = situation;
         new_situation.stack_symbol = endmarker;
         if (is_final_state(from_state) && !situation.input_symbol.has_value()) {
-          new_transitions[from_state][std::move(new_situation)] = {
-              new_accept_state};
+          new_transitions[from_state][new_situation] = {new_accept_state};
         } else {
-          new_transitions[from_state][std::move(new_situation)] = {
-              new_reject_state};
+          new_transitions[from_state][new_situation] = {new_reject_state};
         }
       }
     }
@@ -177,9 +177,21 @@ namespace cyy::computation {
       transition_function[new_reject_state][{a}] = {new_reject_state};
       transition_function[new_accept_state][{a}] = {new_reject_state};
     }
+
+    for (auto const &[state, stack_symbols] : acceptance_looping_situations) {
+      for (auto const stack_symbol : stack_symbols) {
+        transition_function[state][{{}, stack_symbol}] = {new_accept_state};
+      }
+    }
+    for (auto const &[state, stack_symbols] : rejection_looping_situations) {
+      for (auto const stack_symbol : stack_symbols) {
+        transition_function[state][{{}, stack_symbol}] = {new_reject_state};
+      }
+    }
   }
 
-  std::vector<std::pair<DPDA::state_type, DPDA::stack_symbol_type>>
+  std::pair<std::map<DPDA::state_type, std::set<DPDA::stack_symbol_type>>,
+            std::map<DPDA::state_type, std::set<DPDA::stack_symbol_type>>>
   DPDA::get_looping_situations() const {
     std::map<state_type, std::set<stack_symbol_type>> looping_situations;
 
@@ -190,12 +202,15 @@ namespace cyy::computation {
       }
     }
 
+    state_set_map_type epsilon_transitions;
+
     for (const auto &[from_state, transfers] : transition_function) {
       for (const auto &[situation, action] : transfers) {
         if (situation.input_symbol.has_value()) {
           looping_situations.erase(from_state);
           break;
         }
+        epsilon_transitions[from_state].insert(action.state);
       }
     }
 
@@ -232,6 +247,17 @@ namespace cyy::computation {
       }
     }
 
-    return {};
+    decltype(looping_situations) acceptance_looping_situations;
+    decltype(looping_situations) rejection_looping_situations;
+    for (auto &[s, stack_symbol_set] : looping_situations) {
+      if (contain_final_state(get_epsilon_closure(s, epsilon_transitions))) {
+        acceptance_looping_situations[s] = std::move(stack_symbol_set);
+        /* transition_function[s][{}] = {new_accept_state}; */
+      } else {
+        rejection_looping_situations[s] = std::move(stack_symbol_set);
+        /* transition_function[s][{}] = {new_reject_state}; */
+      }
+    }
+    return {acceptance_looping_situations, rejection_looping_situations};
   }
 } // namespace cyy::computation
