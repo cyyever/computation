@@ -19,8 +19,7 @@ namespace cyy::computation {
   public:
     using transition_function_type =
         std::unordered_map<situation_type, state_set_type>;
-    using epsilon_transition_function_type =
-        std::unordered_map<state_type, state_set_type>;
+    using epsilon_transition_function_type = state_set_map_type;
     NFA(state_set_type states_, std::string_view alphabet_name,
         state_type start_state_, transition_function_type transition_function_,
         state_set_type final_states_,
@@ -90,15 +89,11 @@ namespace cyy::computation {
     DFA to_DFA() const;
 
   private:
-    state_set_type epsilon_closure(const state_set_type &T) const;
-    const state_set_type &epsilon_closure(state_type s) const;
-
     state_set_type move(const state_set_type &T, symbol_type a) const;
 
   private:
     transition_function_type transition_function;
     epsilon_transition_function_type epsilon_transition_function;
-    mutable std::unordered_map<state_type, state_set_type> epsilon_closures;
   };
 
 } // namespace cyy::computation

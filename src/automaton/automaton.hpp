@@ -13,6 +13,7 @@
 #include <set>
 #include <string>
 #include <string_view>
+#include <unordered_map>
 
 #include "../hash.hpp"
 #include "../lang/alphabet.hpp"
@@ -23,6 +24,7 @@ namespace cyy::computation {
   public:
     using state_type = uint64_t;
     using state_set_type = std::set<state_type>;
+    using state_set_map_type = std::unordered_map<state_type, state_set_type>;
     using input_symbol_type = symbol_type;
     using stack_symbol_type = symbol_type;
     struct situation_type {
@@ -124,16 +126,17 @@ namespace cyy::computation {
       final_states.insert(s);
     }
 
-    /* state_set_type get_closure(state_type s,std::map<state_type,>
-     * epsilon_transition)const ; */
+    const state_set_type &get_epsilon_closure(
+        state_type s,
+        const state_set_map_type &epsilon_transition_function) const;
 
   protected:
     std::shared_ptr<ALPHABET> alphabet;
     state_set_type states;
     state_type start_state;
     state_set_type final_states;
-    mutable std::map<state_type, state_set_type> epsilon_closures;
-  }; // namespace cyy::computation
+    mutable state_set_map_type epsilon_closures;
+  };
 
 } // namespace cyy::computation
 
