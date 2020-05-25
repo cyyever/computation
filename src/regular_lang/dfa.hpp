@@ -28,7 +28,6 @@ namespace cyy::computation {
         : finite_automaton(std::move(states_), alphabet_name, start_state_,
                            std::move(final_states_)),
           transition_function(std::move(transition_function_)) {
-
       if (transition_function.size() != alphabet->size() * states.size()) {
         throw exception::no_DFA(
             "some combinations of states and symbols lack next state");
@@ -73,6 +72,7 @@ namespace cyy::computation {
 
     // get the intersection of two DFAs
     DFA intersect(const DFA &rhs) const;
+    DFA complement(const DFA &rhs) const;
 
   private:
     void mark_live_states() const;

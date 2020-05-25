@@ -221,4 +221,12 @@ namespace cyy::computation {
             result_transition_function, result_final_states};
   }
 
+  DFA DFA::complement(const DFA &rhs) const {
+    state_set_type new_final_states;
+    std::ranges::set_difference(
+        states, final_states,
+        std::inserter(new_final_states, new_final_states.begin()));
+    return {states, alphabet->get_name(), start_state, transition_function,
+            new_final_states};
+  }
 } // namespace cyy::computation
