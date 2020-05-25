@@ -56,6 +56,12 @@ namespace cyy::computation {
     finite_automaton &operator=(finite_automaton &&) = default;
     ~finite_automaton() = default;
 
+    const finite_automaton &get_finite_automaton() const & { return *this; }
+
+    finite_automaton get_finite_automaton() && {
+      return finite_automaton(std::move(*this));
+    }
+
     auto const &get_states() const noexcept { return states; }
     auto const &get_alphabet() const noexcept { return *alphabet; }
     auto const &get_final_states() const noexcept { return final_states; }

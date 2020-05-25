@@ -11,6 +11,7 @@
 #include <set>
 #include <vector>
 
+#include "../exception.hpp"
 #include "dfa.hpp"
 
 namespace cyy::computation {
@@ -178,6 +179,46 @@ namespace cyy::computation {
       }
     }
     live_states_opt = live_states;
-    return;
   }
+
+  DFA DFA::intersect(const DFA &rhs) const {
+    if (alphabet != rhs.alphabet) {
+      throw exception::unmatched_alphabets(alphabet->get_name() + " and " +
+                                           rhs.alphabet->get_name());
+    }
+    std::unordered_map<std::pair<state_type, state_type>, state_type>
+        state_products;
+    state_set_type result_states;
+    state_set_type result_final_states;
+    state_type result_start_state{};
+    transition_function_type result_transition_function;
+    state_type next_state = 0;
+    for (auto s1 : states) {
+      for (auto s2 : rhs.states) {
+        state_products.try_emplace({s1, s2}, next_state);
+        result_states.insert(next_state);
+        if (s1 == start_state && s2 == rhs.start_state) {
+          result_start_state = next_state;
+        }
+        if (is_final_state(s1) && rhs.is_final_state(s2)) {
+          result_final_states.insert(next_state);
+        }
+
+        next_state++;
+      }
+    }
+
+    for (auto const &[product, result_state] : state_products) {
+      for (auto a : *alphabet) {
+        auto it = state_products.find({move(product.first, a).value(),
+                                       rhs.move(product.second, a).value()}
+
+        );
+        result_transition_function[{result_state, a}] = it->second;
+      }
+    }
+    return {result_states, alphabet->get_name(), result_start_state,
+            result_transition_function, result_final_states};
+  }
+
 } // namespace cyy::computation

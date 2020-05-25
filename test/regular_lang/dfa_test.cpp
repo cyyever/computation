@@ -12,10 +12,8 @@ TEST_CASE("simulate DFA") {
 
   DFA dfa({0, 1, 2, 3}, "ab_set", 0,
           {
-
               {{0, 'a'}, 1},
               {{0, 'b'}, 0},
-
               {{1, 'a'}, 1},
               {{1, 'b'}, 2},
               {{2, 'a'}, 1},
@@ -26,25 +24,53 @@ TEST_CASE("simulate DFA") {
           {3});
 
   SUBCASE("abb") {
-    symbol_string str = {'a', 'b', 'b'};
-    CHECK(dfa.simulate(str));
+    CHECK(dfa.simulate(U"abb"));
   }
 
   SUBCASE("aabb") {
-    symbol_string str = {'a', 'a', 'b', 'b'};
-    CHECK(dfa.simulate(str));
+    CHECK(dfa.simulate(U"aabb"));
   }
   SUBCASE("babb") {
-    symbol_string str = {'b', 'a', 'b', 'b'};
-    CHECK(dfa.simulate(str));
+    CHECK(dfa.simulate(U"babb"));
   }
 
-  SUBCASE("bab") {
-    symbol_string str = {'b', 'a', 'b'};
-    CHECK(!dfa.simulate(str));
-  }
+  SUBCASE("bab") { CHECK(!dfa.simulate(U"bab")); }
 }
+TEST_CASE("DFA intesection") {
 
+  DFA dfa(
+      {
+          0,
+          1,
+      },
+      "ab_set", 0,
+      {
+          {{0, 'a'}, 1},
+          {{0, 'b'}, 0},
+          {{1, 'a'}, 1},
+          {{1, 'b'}, 1},
+      },
+      {1});
+  DFA dfa2(
+      {
+          0,
+          1,
+      },
+      "ab_set", 0,
+      {
+          {{0, 'a'}, 1},
+          {{0, 'b'}, 0},
+          {{1, 'a'}, 0},
+          {{1, 'b'}, 0},
+      },
+      {1});
+  CHECK(dfa.simulate(U"a"));
+  CHECK(dfa.simulate(U"baa"));
+  CHECK(dfa2.simulate(U"a"));
+  auto dfa3 = dfa.intersect(dfa2);
+  CHECK(dfa3.simulate(U"a"));
+  CHECK(!dfa3.simulate(U"baa"));
+}
 TEST_CASE("minimize DFA") {
   DFA dfa({0, 1, 2, 3, 4}, "ab_set", 0,
           {

@@ -1,8 +1,7 @@
 /*!
- * \file alphabet.hpp
+ * \file exception.hpp
  *
- * \author cyy
- * \date 2018-03-03
+ * \brief
  */
 
 #pragma once
@@ -21,7 +20,17 @@ namespace cyy::computation::exception {
     using invalid_argument::invalid_argument;
   };
 
+  class empty_syntax_tree : public std::invalid_argument {
+  public:
+    using invalid_argument::invalid_argument;
+  };
+
   class unexisted_alphabet : public std::invalid_argument {
+  public:
+    using invalid_argument::invalid_argument;
+  };
+
+  class unmatched_alphabets : public std::invalid_argument {
   public:
     using invalid_argument::invalid_argument;
   };

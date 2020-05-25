@@ -23,7 +23,7 @@ namespace cyy::computation {
     using transition_function_type =
         std::map<std::pair<state_type, state_type>,
                  std::shared_ptr<regex::syntax_node>>;
-    explicit GNFA(const DFA &dfa);
+    explicit GNFA(DFA dfa);
 
     GNFA(const GNFA &) = default;
     GNFA &operator=(const GNFA &) = default;

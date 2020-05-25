@@ -56,8 +56,6 @@ namespace cyy::computation {
       return contain_final_state({s});
     }
 
-    DFA minimize() const;
-
     std::optional<state_type> move(state_type s, symbol_type a) const {
       auto it = transition_function.find({s, a});
       if (it != transition_function.end()) {
@@ -70,6 +68,11 @@ namespace cyy::computation {
       mark_live_states();
       return live_states_opt.value().contains(s);
     }
+
+    DFA minimize() const;
+
+    // get the intersection of two DFAs
+    DFA intersect(const DFA &rhs) const;
 
   private:
     void mark_live_states() const;

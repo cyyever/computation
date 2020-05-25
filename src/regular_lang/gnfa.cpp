@@ -6,9 +6,11 @@
  */
 
 #include "gnfa.hpp"
+#include <memory>
 
 namespace cyy::computation {
-  GNFA::GNFA(const DFA &dfa) : finite_automaton(dfa) {
+  GNFA::GNFA(DFA dfa)
+      : finite_automaton(std::move(dfa).get_finite_automaton()) {
     for (auto const &[config, next_state] : dfa.get_transition_function()) {
       auto node = std::make_shared<regex::basic_node>(config.input_symbol);
       auto &regex_syntax_node = transition_function[{config.state, next_state}];
@@ -67,7 +69,7 @@ namespace cyy::computation {
         auto it3 = transition_function.find({removed_state, removed_state});
         auto it4 = transition_function.find({removed_state, to_state});
 
-        auto from_to_regex_expr =
+        std::shared_ptr<regex::syntax_node> from_to_regex_expr =
             std::make_shared<regex::union_node>(
                 (it1 != transition_function.end()
                      ? it1->second
@@ -88,8 +90,11 @@ namespace cyy::computation {
                              ? it4->second
                              : std::make_shared<regex::empty_set_node>())))
 
-                    )
-                ->simplify();
+            );
+        auto new_from_to_regex_expr = from_to_regex_expr->simplify();
+        if (new_from_to_regex_expr) {
+          from_to_regex_expr = new_from_to_regex_expr;
+        }
         new_gnfg.transition_function[{from_state, to_state}] =
             from_to_regex_expr;
       }

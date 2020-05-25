@@ -34,7 +34,7 @@ namespace cyy::computation {
       virtual std::set<uint64_t> first_pos() const = 0;
       virtual std::set<uint64_t> last_pos() const = 0;
       virtual std::map<uint64_t, std::set<uint64_t>> follow_pos() const = 0;
-      virtual std::shared_ptr<syntax_node> simplify() const { return {}; }
+      virtual std::shared_ptr<syntax_node> simplify() const = 0;
       virtual symbol_string to_string() const = 0;
     };
 
@@ -53,6 +53,7 @@ namespace cyy::computation {
       std::map<uint64_t, std::set<uint64_t>> follow_pos() const override {
         return {};
       }
+      std::shared_ptr<syntax_node> simplify() const override { return {}; }
       symbol_string to_string() const override { return {}; }
     };
 
@@ -71,6 +72,7 @@ namespace cyy::computation {
       std::map<uint64_t, std::set<uint64_t>> follow_pos() const override {
         return {};
       }
+      std::shared_ptr<syntax_node> simplify() const override { return {}; }
       symbol_string to_string() const override { return {}; }
     };
 
@@ -89,6 +91,7 @@ namespace cyy::computation {
       std::map<uint64_t, std::set<uint64_t>> follow_pos() const override {
         return {};
       }
+      std::shared_ptr<syntax_node> simplify() const override { return {}; }
       symbol_string to_string() const override { return {symbol}; }
 
     private:
@@ -97,10 +100,16 @@ namespace cyy::computation {
     };
     class union_node final : public syntax_node {
     public:
-      explicit union_node(
-          const std::shared_ptr<syntax_node> &left_node_,
-          const std::shared_ptr<syntax_node> &right_node_) noexcept
-          : left_node(left_node_), right_node(right_node_) {}
+      union_node(const std::shared_ptr<syntax_node> &left_node_,
+                 const std::shared_ptr<syntax_node> &right_node_)
+          : left_node(left_node_), right_node(right_node_) {
+        if (!left_node) {
+          throw exception::empty_syntax_tree("left tree is empty");
+        }
+        if (!right_node) {
+          throw exception::empty_syntax_tree("right tree is empty");
+        }
+      }
       NFA to_NFA(std::string_view alphabet_name,
                  NFA::state_type start_state) const override;
       bool nullable() const override {
@@ -141,10 +150,17 @@ namespace cyy::computation {
     };
     class concat_node final : public syntax_node {
     public:
-      explicit concat_node(
-          const std::shared_ptr<syntax_node> &left_node_,
-          const std::shared_ptr<syntax_node> &right_node_) noexcept
-          : left_node(left_node_), right_node(right_node_) {}
+      concat_node(const std::shared_ptr<syntax_node> &left_node_,
+                  const std::shared_ptr<syntax_node> &right_node_)
+          : left_node(left_node_), right_node(right_node_) {
+
+        if (!left_node) {
+          throw exception::empty_syntax_tree("left tree is empty");
+        }
+        if (!right_node) {
+          throw exception::empty_syntax_tree("right tree is empty");
+        }
+      }
       NFA to_NFA(std::string_view alphabet_name,
                  NFA::state_type start_state) const override;
       bool nullable() const override {
@@ -169,7 +185,12 @@ namespace cyy::computation {
     public:
       explicit kleene_closure_node(
           const std::shared_ptr<syntax_node> &inner_node_)
-          : inner_node(inner_node_) {}
+          : inner_node(inner_node_) {
+
+        if (!inner_node) {
+          throw exception::empty_syntax_tree("inner tree is empty");
+        }
+      }
       NFA to_NFA(std::string_view alphabet_name,
                  NFA::state_type start_state) const override;
       bool nullable() const noexcept override { return true; }

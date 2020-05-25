@@ -29,6 +29,20 @@ namespace cyy::computation {
           transition_function(std::move(transition_function_)),
           epsilon_transition_function(std::move(epsilon_transition_function_)) {
     }
+    NFA(finite_automaton automata,
+        transition_function_type transition_function_,
+        epsilon_transition_function_type epsilon_transition_function_ = {})
+        : finite_automaton(std::move(automata)),
+          transition_function(std::move(transition_function_)),
+          epsilon_transition_function(std::move(epsilon_transition_function_)) {
+    }
+
+    explicit NFA(DFA dfa) : NFA(std::move(dfa).get_finite_automaton(), {}) {
+      for (auto &[situation, next_state] :
+           std::move(dfa.get_transition_function())) {
+        transition_function[std::move(situation)] = {next_state};
+      }
+    }
 
     bool operator==(const NFA &rhs) const = default;
 
