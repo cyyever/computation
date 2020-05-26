@@ -46,7 +46,7 @@ namespace cyy::computation {
       auto s = start_state;
 
       for (auto const &symbol : view) {
-        auto opt_res = move(s, symbol);
+        auto opt_res = go(s, symbol);
         if (!opt_res) {
           return false;
         }
@@ -55,7 +55,7 @@ namespace cyy::computation {
       return contain_final_state({s});
     }
 
-    std::optional<state_type> move(state_type s, symbol_type a) const {
+    std::optional<state_type> go(state_type s, symbol_type a) const {
       auto it = transition_function.find({s, a});
       if (it != transition_function.end()) {
         return {it->second};
@@ -72,7 +72,7 @@ namespace cyy::computation {
 
     // get the intersection of two DFAs
     DFA intersect(const DFA &rhs) const;
-    DFA complement(const DFA &rhs) const;
+    DFA complement() const;
 
   private:
     void mark_live_states() const;

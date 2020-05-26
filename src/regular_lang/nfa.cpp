@@ -15,8 +15,8 @@
 
 namespace cyy::computation {
 
-  std::set<NFA::state_type> NFA::move(const state_set_type &T,
-                                      symbol_type a) const {
+  std::set<NFA::state_type> NFA::go(const state_set_type &T,
+                                    symbol_type a) const {
     state_set_type direct_reachable;
 
     for (const auto &s : T) {
@@ -36,7 +36,7 @@ namespace cyy::computation {
   bool NFA::simulate(symbol_string_view view) const {
     auto s = get_epsilon_closure(start_state, epsilon_transition_function);
     for (auto const &symbol : view) {
-      s = move(s, symbol);
+      s = go(s, symbol);
       if (s.empty()) {
         return false;
       }
@@ -54,7 +54,7 @@ namespace cyy::computation {
     for (size_t i = 0; i < tmp_states.size(); i++) {
       for (auto a : *alphabet) {
         auto const &[subset, state] = *tmp_states[i];
-        auto res = move(subset, a);
+        auto res = go(subset, a);
         auto [it, has_emplaced] = subsets.emplace(std::move(res), next_state);
         if (has_emplaced) {
           tmp_states.emplace_back(it);

@@ -75,32 +75,7 @@ namespace cyy::computation {
               ::cyy::computation::ALPHABET::get(stack_alphabet_name)),
           transition_function(std::move(transition_function_)) {
 
-      for (auto state : states) {
-        auto it = transition_function.find(state);
-        if (it == transition_function.end()) {
-          throw exception::no_DPDA(std::string("lack transitions for state ") +
-                                   std::to_string(state));
-        }
-        auto const &state_transition_function = it->second;
-        for (auto input_symbol : *ALPHABET::get(input_alphabet_name)) {
-          for (auto stack_symbol : *ALPHABET::get(stack_alphabet_name)) {
-            size_t cnt = 0;
-            cnt += state_transition_function.count({});
-            cnt += state_transition_function.count({input_symbol});
-            cnt += state_transition_function.count({{}, stack_symbol});
-            cnt +=
-                state_transition_function.count({input_symbol, stack_symbol});
-            if (cnt != 1) {
-              throw exception::no_DPDA(
-                  std::string("the combinations of the state ") +
-                  std::to_string(state) + " and symbols " +
-                  std::to_string(input_symbol) + " " +
-                  std::to_string(stack_symbol) +
-                  " lead to no branch or multiple_branches");
-            }
-          }
-        }
-      }
+      check_transition_fuction();
     }
 
     bool operator==(const DPDA &rhs) const = default;
@@ -108,6 +83,7 @@ namespace cyy::computation {
     bool simulate(symbol_string_view view) const;
 
     void normalize();
+    DPDA complement() const;
 
   private:
     using configuration_type =
@@ -115,13 +91,15 @@ namespace cyy::computation {
 
   private:
     std::optional<configuration_type>
-    move(configuration_type configuration) const;
-    std::optional<configuration_type> move(configuration_type configuration,
-                                           input_symbol_type a) const;
+    go(configuration_type configuration) const;
+    std::optional<configuration_type> go(configuration_type configuration,
+                                         input_symbol_type a) const;
 
     std::pair<std::map<state_type, std::set<stack_symbol_type>>,
               std::map<state_type, std::set<stack_symbol_type>>>
     get_looping_situations() const;
+
+    void check_transition_fuction();
 
   private:
     std::shared_ptr<ALPHABET> stack_alphabet;

@@ -103,7 +103,7 @@ namespace cyy::computation {
     DFA to_DFA() const;
 
   private:
-    state_set_type move(const state_set_type &T, symbol_type a) const;
+    state_set_type go(const state_set_type &T, symbol_type a) const;
 
   private:
     transition_function_type transition_function;

@@ -41,34 +41,23 @@ TEST_CASE("simulate DPDA") {
               }}},
             {0, 3});
 
-  SUBCASE("") {
-    symbol_string str = U"";
-    CHECK(dpda.simulate(str));
-  }
-  SUBCASE("0") {
-    symbol_string str = U"0";
-    CHECK(!dpda.simulate(str));
-  }
-  SUBCASE("1") {
-    symbol_string str = U"1";
-    CHECK(!dpda.simulate(str));
-  }
+  SUBCASE("") { CHECK(dpda.simulate(U"")); }
+  SUBCASE("0") { CHECK(!dpda.simulate(U"0")); }
+  SUBCASE("1") { CHECK(!dpda.simulate(U"1")); }
 
-  SUBCASE("01") {
-    symbol_string str = U"01";
-    CHECK(dpda.simulate(str));
-  }
-  SUBCASE("10") {
-    symbol_string str = U"10";
-    CHECK(!dpda.simulate(str));
-  }
-  SUBCASE("0011") {
-    symbol_string str = U"0011";
-    CHECK(dpda.simulate(str));
-  }
+  SUBCASE("01") { CHECK(dpda.simulate(U"01")); }
+  SUBCASE("10") { CHECK(!dpda.simulate(U"10")); }
+  SUBCASE("0011") { CHECK(dpda.simulate(U"0011")); }
   SUBCASE("normalize") {
-    symbol_string str = U"0011";
-    dpda.normalize();
-    CHECK(dpda.simulate(str));
+    auto new_dpda = dpda;
+    new_dpda.normalize();
+    CHECK(new_dpda.simulate(U""));
+    CHECK(new_dpda.simulate(U"01"));
+    CHECK(new_dpda.simulate(U"0011"));
+  }
+  SUBCASE("complement") {
+    auto dpda_complement = dpda.complement();
+    CHECK(!dpda_complement.simulate(U"0011"));
+    CHECK(dpda_complement.simulate(U"10"));
   }
 }

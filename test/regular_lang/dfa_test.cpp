@@ -23,21 +23,15 @@ TEST_CASE("simulate DFA") {
           },
           {3});
 
-  SUBCASE("abb") {
-    CHECK(dfa.simulate(U"abb"));
-  }
+  SUBCASE("abb") { CHECK(dfa.simulate(U"abb")); }
 
-  SUBCASE("aabb") {
-    CHECK(dfa.simulate(U"aabb"));
-  }
-  SUBCASE("babb") {
-    CHECK(dfa.simulate(U"babb"));
-  }
+  SUBCASE("aabb") { CHECK(dfa.simulate(U"aabb")); }
+  SUBCASE("babb") { CHECK(dfa.simulate(U"babb")); }
 
   SUBCASE("bab") { CHECK(!dfa.simulate(U"bab")); }
 }
-TEST_CASE("DFA intesection") {
 
+TEST_CASE("intesection") {
   DFA dfa(
       {
           0,
@@ -105,4 +99,24 @@ TEST_CASE("minimize DFA") {
                     {3});
 
   CHECK(dfa.minimize() == minimized_dfa);
+}
+
+TEST_CASE("complement") {
+  DFA dfa(
+      {
+          0,
+          1,
+      },
+      "ab_set", 0,
+      {
+          {{0, 'a'}, 1},
+          {{0, 'b'}, 0},
+          {{1, 'a'}, 0},
+          {{1, 'b'}, 0},
+      },
+      {1});
+  dfa = dfa.complement();
+  CHECK(!dfa.simulate(U"a"));
+  CHECK(dfa.simulate(U"b"));
+  CHECK(dfa.simulate(U"ab"));
 }

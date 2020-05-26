@@ -108,8 +108,8 @@ namespace cyy::computation {
             bool in_group = true;
             for (auto a : *alphabet) {
               if (in_group &&
-                  state_location[move(*(sub_group.begin()), a).value()] !=
-                      state_location[move(state, a).value()]) {
+                  state_location[go(*(sub_group.begin()), a).value()] !=
+                      state_location[go(state, a).value()]) {
                 in_group = false;
               }
             }
@@ -151,7 +151,7 @@ namespace cyy::computation {
       }
 
       for (auto a : *alphabet) {
-        auto next_state = move(*(groups[i].begin()), a).value();
+        auto next_state = go(*(groups[i].begin()), a).value();
         minimize_DFA_transition_function[{i, a}] = state_location[next_state];
       }
     }
@@ -210,8 +210,8 @@ namespace cyy::computation {
 
     for (auto const &[product, result_state] : state_products) {
       for (auto a : *alphabet) {
-        auto it = state_products.find({move(product.first, a).value(),
-                                       rhs.move(product.second, a).value()}
+        auto it = state_products.find(
+            {go(product.first, a).value(), rhs.go(product.second, a).value()}
 
         );
         result_transition_function[{result_state, a}] = it->second;
@@ -221,7 +221,7 @@ namespace cyy::computation {
             result_transition_function, result_final_states};
   }
 
-  DFA DFA::complement(const DFA &rhs) const {
+  DFA DFA::complement() const {
     state_set_type new_final_states;
     std::ranges::set_difference(
         states, final_states,
