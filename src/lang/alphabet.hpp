@@ -11,6 +11,7 @@
 #include <iostream>
 #include <map>
 #include <memory>
+#include <ranges>
 #include <set>
 #include <string>
 #include <string_view>
@@ -27,11 +28,20 @@ namespace cyy::computation {
     public:
       iterator(const ALPHABET *ptr_, size_t index_)
           : ptr(ptr_), index(index_) {}
-      iterator operator++() {
+      iterator(const iterator &) = default;
+      iterator &operator=(const iterator &) = default;
+
+      iterator(iterator &&) noexcept = default;
+      iterator &operator=(iterator &&) noexcept = default;
+      bool operator==(const iterator &other) const = default;
+      iterator &operator++() {
         ++index;
         return *this;
       }
-      bool operator==(const iterator &other) const = default;
+      iterator operator++(int) {
+        index++;
+        return *this;
+      }
       symbol_type operator*() const { return ptr->get_symbol(index); }
 
     private:
@@ -51,10 +61,11 @@ namespace cyy::computation {
     symbol_type get_endmarker() const { return add_max_symbol(2); }
     symbol_type get_unincluded_symbol() const { return add_max_symbol(3); }
 
-    iterator begin() const { return iterator(this, 0); }
-    iterator end() const { return iterator(this, size()); }
+    iterator begin() const noexcept { return iterator(this, 0); }
+    iterator end() const noexcept { return iterator(this, size()); }
 
-    symbol_type front() const { return get_symbol(0); }
+    symbol_type front() const { return get_min_symbol(); }
+    symbol_type back() const { return get_max_symbol(); }
 
     virtual bool contain(symbol_type s) const = 0;
     virtual size_t size() const = 0;
@@ -62,11 +73,7 @@ namespace cyy::computation {
 
     std::string get_name() const { return name; }
 
-    bool operator==(const ALPHABET &rhs) const {
-      return (this == &rhs) || this->name == rhs.name;
-    }
-
-    bool operator!=(const ALPHABET &rhs) const { return !operator==(rhs); }
+    bool operator==(const ALPHABET &rhs) const = default;
     virtual bool contains_ASCII() const { return false; }
 
     static std::shared_ptr<ALPHABET> get(std::string_view name);

@@ -199,7 +199,7 @@ namespace cyy::computation {
       }
     }
 #ifndef NDEBUG
-    check_transition_fuction();
+    check_transition_fuction(true);
 #endif
   }
 
@@ -380,13 +380,13 @@ namespace cyy::computation {
     complement_dpda.final_states = std::move(new_final_states);
 
 #ifndef NDEBUG
-    complement_dpda.check_transition_fuction();
+    complement_dpda.check_transition_fuction(true);
 #endif
 
     return complement_dpda;
   }
 
-  void DPDA::check_transition_fuction() {
+  void DPDA::check_transition_fuction(bool check_endmark) {
     for (auto state : states) {
       auto it = transition_function.find(state);
       if (it == transition_function.end()) {
@@ -413,7 +413,29 @@ namespace cyy::computation {
                 std::string("the combinations of the state ") +
                 std::to_string(state) + " and symbols " +
                 std::to_string(input_symbol) + " " +
-                std::to_string(stack_symbol) + " lead to multiple_branches");
+                std::to_string(stack_symbol) + " lead to multiple branches");
+          }
+        }
+        if (check_endmark) {
+          auto endmarker = stack_alphabet->get_endmarker();
+          size_t cnt = 0;
+          cnt += state_transition_function.count({});
+          cnt += state_transition_function.count({input_symbol});
+          cnt += state_transition_function.count({{}, endmarker});
+          cnt += state_transition_function.count({input_symbol, endmarker});
+          if (cnt == 0) {
+            throw exception::no_DPDA(
+                std::string("the combinations of the state ") +
+                std::to_string(state) + " and symbols " +
+                std::to_string(input_symbol) +
+                " and endmarker lead to no branch");
+          }
+          if (cnt > 1) {
+            throw exception::no_DPDA(
+                std::string("the combinations of the state ") +
+                std::to_string(state) + " and symbols " +
+                std::to_string(input_symbol) +
+                " and endmarker lead to multiple branches");
           }
         }
       }

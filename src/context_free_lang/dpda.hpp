@@ -99,7 +99,7 @@ namespace cyy::computation {
               std::map<state_type, std::set<stack_symbol_type>>>
     get_looping_situations() const;
 
-    void check_transition_fuction();
+    void check_transition_fuction(bool check_endmark = false);
 
   private:
     std::shared_ptr<ALPHABET> stack_alphabet;
