@@ -140,17 +140,7 @@ namespace cyy::computation {
       assert(new_transitions.contains(parallel_from_state));
     }
 
-    /*
-    for (auto const &[parallel_state, s] : reversed_parallel_states) {
-      for (auto const &[configuration, action] : transition_function[s]) {
-        if (configuration.input_symbol.has_value()) {
-          new_transitions[parallel_state].emplace(configuration, action);
-        }
-      }
-    }
-    */
     transition_function.merge(std::move(new_transitions));
-    assert(transition_function.contains(5));
 
     auto old_start_state = start_state;
     auto endmarker = stack_alphabet->get_endmarker();
@@ -161,22 +151,39 @@ namespace cyy::computation {
     auto new_accept_state = add_new_state();
     add_final_states(new_accept_state);
 
-    new_transitions.clear();
     for (auto &[from_state, transfers] : transition_function) {
-      for (auto &[situation, action] : transfers) {
+      decltype(transfers) new_transfers;
+      bool flag = false;
+      for (const auto &[situation, action] : transfers) {
         if (!situation.stack_symbol.has_value()) {
+          continue;
+        }
+        if (situation.input_symbol.has_value()) {
           continue;
         }
         auto new_situation = situation;
         new_situation.stack_symbol = endmarker;
-        if (is_final_state(from_state) && !situation.input_symbol.has_value()) {
-          new_transitions[from_state][new_situation] = {new_accept_state};
+        if (is_final_state(from_state)) {
+          new_transfers[new_situation] = {new_accept_state};
         } else {
-          new_transitions[from_state][new_situation] = {new_reject_state};
+          new_transfers[new_situation] = {new_reject_state};
+        }
+        flag = true;
+        break;
+      }
+      if (!flag) {
+        for (auto const &[situation, action] : transfers) {
+          if (!situation.stack_symbol.has_value()) {
+            continue;
+          }
+          auto new_situation = situation;
+          new_situation.stack_symbol = endmarker;
+          new_transfers[new_situation] = {new_reject_state};
         }
       }
+      transfers.merge(std::move(new_transfers));
     }
-    transition_function.merge(std::move(new_transitions));
+
     for (auto a : *alphabet) {
       transition_function[new_reject_state][{a}] = {new_reject_state};
       transition_function[new_accept_state][{a}] = {new_reject_state};
