@@ -12,8 +12,6 @@ add_library(MyComputationLib ${SOURCE})
 
 target_link_libraries(MyComputationLib PUBLIC Boost::headers)
 
-find_package(MicrosoftGSL REQUIRED)
-target_link_libraries(MyComputationLib PUBLIC Microsoft::GSL)
 if(CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
   find_package(libcxx REQUIRED)
   target_link_libraries(MyComputationLib PUBLIC libcxx::libcxx)

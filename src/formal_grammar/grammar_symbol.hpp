@@ -8,7 +8,7 @@
 #pragma once
 
 #include <ranges>
-#include <gsl/span>
+#include <span>
 #include <string>
 #include <string_view>
 #include <utility>
@@ -49,12 +49,9 @@ namespace cyy::computation {
     bool operator==(const terminal_type &t) const {
       return is_terminal() && get_terminal() == t;
     }
-    /* bool operator!=(const terminal_type &t) const { return !operator==(t); } */
     bool operator==(const nonterminal_type &t) const {
       return is_nonterminal() && *get_nonterminal_ptr() == t;
     }
-    /* bool operator!=(const nonterminal_type &t) const { return !operator==(t); } */
-
     void print(std::ostream &os, const ALPHABET &alphabet) const {
       if (is_terminal()) {
         alphabet.print(os, get_terminal());
@@ -79,21 +76,20 @@ namespace cyy::computation {
                  [](auto g) { return *g.get_nonterminal_ptr(); });
     }
   };
-  using grammar_symbol_const_span_type = gsl::span<const grammar_symbol_type>;
+  using grammar_symbol_const_span_type = std::span<const grammar_symbol_type>;
 } // namespace cyy::computation
 
 namespace std {
   template <> struct hash<cyy::computation::grammar_symbol_type> {
-    std::size_t operator()(const cyy::computation::grammar_symbol_type &x) const
-        noexcept {
+    std::size_t
+    operator()(const cyy::computation::grammar_symbol_type &x) const noexcept {
       return std::hash<
           std::variant<cyy::computation::symbol_type, std::string>>()(x);
     }
   };
   template <> struct hash<cyy::computation::grammar_symbol_string_type> {
-    std::size_t
-    operator()(const cyy::computation::grammar_symbol_string_type &x) const
-        noexcept {
+    std::size_t operator()(
+        const cyy::computation::grammar_symbol_string_type &x) const noexcept {
       return boost::hash_range(x.begin(), x.end());
     }
   };
