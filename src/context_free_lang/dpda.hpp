@@ -86,8 +86,10 @@ namespace cyy::computation {
     DPDA complement() const;
 
   private:
-    using configuration_type =
-        std::pair<state_type, std::vector<stack_symbol_type>>;
+    struct configuration_type {
+      state_type state;
+      std::vector<stack_symbol_type> stack;
+    };
 
   private:
     std::optional<configuration_type>

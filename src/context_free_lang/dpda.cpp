@@ -30,7 +30,7 @@ namespace cyy::computation {
       assert(configuration_opt.has_value());
       configuration = std::move(configuration_opt.value());
     }
-    while (!is_final_state(configuration.first)) {
+    while (!is_final_state(configuration.state)) {
       auto configuration_opt = go(std::move(configuration));
       if (!configuration_opt) {
         return false;
@@ -42,7 +42,7 @@ namespace cyy::computation {
 
   std::optional<DPDA::configuration_type>
   DPDA::go(configuration_type configuration) const {
-    auto state = configuration.first;
+    auto state = configuration.state;
 
     auto it = transition_function.find(state);
     if (it == transition_function.end()) {
@@ -52,23 +52,23 @@ namespace cyy::computation {
 
     auto it2 = state_transition_function.find({});
     if (it2 != state_transition_function.end()) {
-      configuration.first = it2->second.state;
+      configuration.state = it2->second.state;
       if (it2->second.stack_symbol.has_value()) {
-        configuration.second.push_back(it2->second.stack_symbol.value());
+        configuration.stack.push_back(it2->second.stack_symbol.value());
       }
       return configuration;
     }
-    if (configuration.second.empty()) {
+    if (configuration.stack.empty()) {
       return {};
     }
-    auto stack_top = configuration.second.back();
+    auto stack_top = configuration.stack.back();
 
     it2 = state_transition_function.find({{}, stack_top});
     if (it2 != state_transition_function.end()) {
-      configuration.first = it2->second.state;
-      configuration.second.pop_back();
+      configuration.state = it2->second.state;
+      configuration.stack.pop_back();
       if (it2->second.stack_symbol.has_value()) {
-        configuration.second.push_back(it2->second.stack_symbol.value());
+        configuration.stack.push_back(it2->second.stack_symbol.value());
       }
       return configuration;
     }
@@ -77,7 +77,7 @@ namespace cyy::computation {
 
   std::optional<DPDA::configuration_type>
   DPDA::go(configuration_type configuration, input_symbol_type a) const {
-    auto state = configuration.first;
+    auto state = configuration.state;
     auto it = transition_function.find(state);
     if (it == transition_function.end()) {
       return {};
@@ -85,23 +85,23 @@ namespace cyy::computation {
     auto const &state_transition_function = it->second;
     auto it2 = state_transition_function.find({a});
     if (it2 != state_transition_function.end()) {
-      configuration.first = it2->second.state;
+      configuration.state = it2->second.state;
       if (it2->second.stack_symbol.has_value()) {
-        configuration.second.push_back(it2->second.stack_symbol.value());
+        configuration.stack.push_back(it2->second.stack_symbol.value());
       }
       return configuration;
     }
-    if (configuration.second.empty()) {
+    if (configuration.stack.empty()) {
       return {};
     }
-    auto stack_top = configuration.second.back();
+    auto stack_top = configuration.stack.back();
 
     it2 = state_transition_function.find({a, stack_top});
     if (it2 != state_transition_function.end()) {
-      configuration.first = it2->second.state;
-      configuration.second.pop_back();
+      configuration.state = it2->second.state;
+      configuration.stack.pop_back();
       if (it2->second.stack_symbol.has_value()) {
-        configuration.second.push_back(it2->second.stack_symbol.value());
+        configuration.stack.push_back(it2->second.stack_symbol.value());
       }
       return configuration;
     }
