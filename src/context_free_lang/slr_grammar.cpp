@@ -112,7 +112,7 @@ namespace cyy::computation {
           // conflict
           if (action_table.contains({state, follow_terminal})) {
             std::cerr << "conflict with follow_terminal ";
-            alphabet->print(std::cerr, follow_terminal);
+            alphabet->to_string(follow_terminal);
             std::cerr << std::endl;
             throw cyy::computation::exception::no_SLR_grammar("");
           }

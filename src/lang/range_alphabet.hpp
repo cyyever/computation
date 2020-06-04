@@ -7,6 +7,8 @@
  */
 #pragma once
 
+#include <iostream>
+
 #include "alphabet.hpp"
 
 namespace cyy::computation {
@@ -30,12 +32,7 @@ namespace cyy::computation {
     }
 
   private:
-    void print_symbol(std::ostream &os, symbol_type symbol) const override {
-      os << '\'' << static_cast<char>(symbol) << '\'';
-    }
 
-    symbol_type get_max_symbol() const override { return max_symbol; }
-    symbol_type get_min_symbol() const override { return min_symbol; }
     symbol_type get_symbol(size_t index) const noexcept override {
       return static_cast<symbol_type>(min_symbol + index);
     }

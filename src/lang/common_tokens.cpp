@@ -8,42 +8,32 @@
 #include "common_tokens.hpp"
 
 namespace cyy::computation {
-  void common_tokens::print_symbol(std::ostream &os, symbol_type symbol) const {
+  std::string common_tokens::to_string(symbol_type symbol) const {
     switch (static_cast<common_token>(symbol)) {
       case common_token::ascii_char:
-        os << "\"ascii char\"";
-        return;
+        return "\"ascii char\"";
       case common_token::escape_sequence:
-        os << "\"escape sequence\"";
-        return;
+        return "\"escape sequence\"";
       case common_token::id:
-        os << "\"id\"";
-        return;
+        return "\"id\"";
       case common_token::whitespace:
-        os << "\"whitespace\"";
-        return;
+        return "\"whitespace\"";
       case common_token::digit:
-        os << "\"digit\"";
-        return;
+        return "\"digit\"";
       case common_token::number:
-        os << "\"number\"";
-        return;
+        return "\"number\"";
       case common_token::INT:
-        os << "\"int\"";
-        return;
+        return "\"int\"";
       case common_token::FLOAT:
-        os << "\"float\"";
-        return;
+        return "\"float\"";
       case common_token::record:
-        os << "\"record\"";
-        return;
+        return "\"record\"";
       case common_token::CLASS:
-        os << "\"class\"";
-        return;
+        return "\"class\"";
       case common_token::__end:
-        return;
+        return "";
     }
-    os << '\'' << static_cast<char>(symbol) << '\'';
+    return ALPHABET::to_string(symbol);
   }
   bool common_tokens::contains_ASCII() const { return true; }
 } // namespace cyy::computation

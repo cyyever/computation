@@ -54,7 +54,7 @@ namespace cyy::computation {
     }
     void print(std::ostream &os, const ALPHABET &alphabet) const {
       if (is_terminal()) {
-        alphabet.print(os, get_terminal());
+        os<<alphabet.to_string(get_terminal());
       } else {
         os << *get_nonterminal_ptr();
       }

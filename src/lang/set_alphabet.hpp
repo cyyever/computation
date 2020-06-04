@@ -32,17 +32,6 @@ namespace cyy::computation {
     size_t size() const noexcept override { return symbols.size(); }
 
   private:
-    void print_symbol(std::ostream &os, symbol_type symbol) const override {
-      os << '\'' << static_cast<char>(symbol) << '\'';
-    }
-
-    symbol_type get_max_symbol() const noexcept override {
-      return *symbols.crbegin();
-    }
-    symbol_type get_min_symbol() const noexcept override {
-      return *symbols.rbegin();
-    }
-
     symbol_type get_symbol(size_t index) const noexcept override {
       return symbols[index];
     }

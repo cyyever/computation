@@ -28,8 +28,8 @@ namespace cyy::computation {
                   std::pair{follow_terminal, head}, body);
               // not LL1
               if (!has_inserted) {
-                std::cerr << "follow terminal ";
-                alphabet->print(std::cerr, follow_terminal);
+                std::cerr << "follow terminal "
+                          << alphabet->to_string(follow_terminal);
                 std::cerr << " confliction for production:\n";
                 CFG_production(it2->first.second, it2->second)
                     .print(std::cerr, *alphabet);
@@ -44,8 +44,7 @@ namespace cyy::computation {
           // not LL1
           if (!has_inserted) {
 
-            std::cerr << "first terminal ";
-            alphabet->print(std::cerr, terminal);
+            std::cerr << "first terminal " << alphabet->to_string(terminal);
             std::cerr << " confliction for production:\n";
             CFG_production(it->first.second, it->second)
                 .print(std::cerr, *alphabet);
@@ -79,10 +78,9 @@ namespace cyy::computation {
       if (top_symbol.is_terminal()) {
         auto s = top_symbol.get_terminal();
         if (terminal != s) {
-          std::cerr << "symbol does not match terminal:";
-          alphabet->print(std::cerr, terminal);
-          alphabet->print(std::cerr, s);
-          std::cerr << std::endl;
+          std::cerr << "symbol does not match terminal:"
+                    << alphabet->to_string(terminal) << ' '
+                    << alphabet->to_string(s) << std::endl;
           return false;
         }
         if (!view.empty()) {
@@ -92,10 +90,8 @@ namespace cyy::computation {
         auto ptr = top_symbol.get_nonterminal_ptr();
         auto it = parsing_table.find({terminal, *ptr});
         if (it == parsing_table.end()) {
-          std::cerr << "no rule for parsing ";
-          alphabet->print(std::cerr, terminal);
-          std::cerr << " for " << *ptr;
-          std::cerr << std::endl;
+          std::cerr << "no rule for parsing " << alphabet->to_string(terminal);
+          std::cerr << " for " << *ptr << std::endl;
           return false;
         }
 

@@ -402,7 +402,7 @@ namespace cyy::computation {
       }
       auto const &state_transition_function = it->second;
       for (auto input_symbol : *alphabet) {
-        for (auto stack_symbol : *stack_alphabet) {
+        for (auto stack_symbol : stack_alphabet->get_view(check_endmark)) {
           size_t cnt = 0;
           cnt += state_transition_function.count({});
           cnt += state_transition_function.count({input_symbol});
@@ -412,37 +412,16 @@ namespace cyy::computation {
             throw exception::no_DPDA(
                 std::string("the combinations of the state ") +
                 std::to_string(state) + " and symbols " +
-                std::to_string(input_symbol) + " " +
-                std::to_string(stack_symbol) + " lead to no branch");
+                alphabet->to_string(input_symbol) + " " +
+                stack_alphabet->to_string(stack_symbol) + " lead to no branch");
           }
           if (cnt > 1) {
             throw exception::no_DPDA(
                 std::string("the combinations of the state ") +
                 std::to_string(state) + " and symbols " +
-                std::to_string(input_symbol) + " " +
-                std::to_string(stack_symbol) + " lead to multiple branches");
-          }
-        }
-        if (check_endmark) {
-          auto endmarker = stack_alphabet->get_endmarker();
-          size_t cnt = 0;
-          cnt += state_transition_function.count({});
-          cnt += state_transition_function.count({input_symbol});
-          cnt += state_transition_function.count({{}, endmarker});
-          cnt += state_transition_function.count({input_symbol, endmarker});
-          if (cnt == 0) {
-            throw exception::no_DPDA(
-                std::string("the combinations of the state ") +
-                std::to_string(state) + " and symbols " +
-                std::to_string(input_symbol) +
-                " and endmarker lead to no branch");
-          }
-          if (cnt > 1) {
-            throw exception::no_DPDA(
-                std::string("the combinations of the state ") +
-                std::to_string(state) + " and symbols " +
-                std::to_string(input_symbol) +
-                " and endmarker lead to multiple branches");
+                alphabet->to_string(input_symbol) + " " +
+                stack_alphabet->to_string(stack_symbol) +
+                " lead to multiple branches");
           }
         }
       }

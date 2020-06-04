@@ -31,20 +31,10 @@ namespace cyy::computation {
     factory[alphabet->get_name()] = alphabet;
   }
 
-  void ALPHABET::print(std::ostream &os, symbol_type symbol) const {
-    if (symbol == get_endmarker()) {
-      os << "$";
-    } else if (contain(symbol)) {
-      print_symbol(os, symbol);
-    } else {
-      os << "(unkown symbol)";
-    }
-  }
-
   void print_symbol_string(std::ostream &os, const symbol_string &str,
                            const ALPHABET &alphabet) {
     for (auto const &c : str) {
-      alphabet.print(os, c);
+      os << alphabet.to_string(c);
     }
   }
 
