@@ -192,8 +192,8 @@ namespace cyy::computation {
     for (auto &[state, stack_symbols] : acceptance_looping_situations) {
       if (transition_function[state].contains({})) {
         assert(stack_symbols.size() == stack_alphabet->size());
-        transition_function[state].clear();
-        stack_symbols.insert(endmarker);
+        transition_function[state][{}] = {new_accept_state};
+        continue;
       }
 
       for (auto const stack_symbol : stack_symbols) {
