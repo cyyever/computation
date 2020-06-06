@@ -14,7 +14,7 @@
 #include "dpda.hpp"
 
 namespace cyy::computation {
-  bool DPDA::simulate(symbol_string_view view) const {
+  bool DPDA::recognize(symbol_string_view view) const {
     configuration_type configuration{start_state, {}};
 
     size_t i = 0;
@@ -108,6 +108,9 @@ namespace cyy::computation {
     return {};
   }
   void DPDA::normalize() {
+    if (has_normalized) {
+      return;
+    }
     auto [acceptance_looping_situations, rejection_looping_situations] =
         get_looping_situations();
     std::unordered_map<state_type, state_type> parallel_states;
@@ -206,8 +209,10 @@ namespace cyy::computation {
       }
     }
 #ifndef NDEBUG
-    check_transition_fuction(true);
+    check_transition_fuction(false, true);
 #endif
+    has_normalized = true;
+    reject_state_opt = new_reject_state;
   }
 
   std::pair<std::map<DPDA::state_type, std::set<DPDA::stack_symbol_type>>,
@@ -296,7 +301,7 @@ namespace cyy::computation {
       }
     }
 
-    for (auto &[s, stack_symbol_set] : looping_situations) {
+    for (auto &[_, stack_symbol_set] : looping_situations) {
       assert(!stack_symbol_set.empty());
     }
 
@@ -387,13 +392,63 @@ namespace cyy::computation {
     complement_dpda.final_states = std::move(new_final_states);
 
 #ifndef NDEBUG
-    complement_dpda.check_transition_fuction(true);
+    complement_dpda.check_transition_fuction(false, true);
 #endif
 
     return complement_dpda;
   }
 
-  void DPDA::check_transition_fuction(bool check_endmark) {
+  DPDA DPDA::endmarkered_DPDA() const {
+    auto endmarkered_dpda = *this;
+    endmarkered_dpda.normalize();
+    auto new_accept_state = endmarkered_dpda.add_new_state();
+
+    for (auto &[from_state, transfers] : endmarkered_dpda.transition_function) {
+
+      if (transfers.contains({})) {
+        continue;
+      }
+
+      state_type next_state{};
+      if (endmarkered_dpda.is_final_state(from_state)) {
+        next_state = new_accept_state;
+      } else {
+        next_state = endmarkered_dpda.reject_state_opt.value();
+      }
+
+      bool has_input_epsilon = std::ranges::any_of(
+          transfers, [](auto const &p) { return !p.first.input_symbol; });
+      if (!has_input_epsilon) {
+        transfers[{alphabet->get_endmarker()}] = {next_state};
+        continue;
+      }
+
+      transition_function_type::mapped_type new_transfers;
+      for (const auto &[situation, action] : transfers) {
+        if (!situation.input_symbol) {
+          continue;
+        }
+        assert(situation.stack_symbol.has_value());
+        new_transfers[{alphabet->get_endmarker(),
+                       situation.stack_symbol.value()}] = {next_state};
+      }
+      transfers.merge(std::move(new_transfers));
+    }
+
+    for (auto s : endmarkered_dpda.alphabet->get_view(true)) {
+      endmarkered_dpda.transition_function[new_accept_state][{s}] = {
+          endmarkered_dpda.reject_state_opt.value()};
+    }
+
+    endmarkered_dpda.final_states = {new_accept_state};
+
+    endmarkered_dpda.check_transition_fuction(true, true);
+
+    return endmarkered_dpda;
+  }
+
+  void DPDA::check_transition_fuction(bool check_input_endmark,
+                                      bool check_stack_endmark) {
     for (auto state : states) {
       auto it = transition_function.find(state);
       if (it == transition_function.end()) {
@@ -401,8 +456,9 @@ namespace cyy::computation {
                                  std::to_string(state));
       }
       auto const &state_transition_function = it->second;
-      for (auto input_symbol : *alphabet) {
-        for (auto stack_symbol : stack_alphabet->get_view(check_endmark)) {
+      for (auto input_symbol : alphabet->get_view(check_input_endmark)) {
+        for (auto stack_symbol :
+             stack_alphabet->get_view(check_stack_endmark)) {
           size_t cnt = 0;
           cnt += state_transition_function.count({});
           cnt += state_transition_function.count({input_symbol});

@@ -8,7 +8,7 @@
 #include "../../src/regular_lang/dfa.hpp"
 
 using namespace cyy::computation;
-TEST_CASE("simulate DFA") {
+TEST_CASE("recognize DFA") {
 
   DFA dfa({0, 1, 2, 3}, "ab_set", 0,
           {
@@ -23,12 +23,12 @@ TEST_CASE("simulate DFA") {
           },
           {3});
 
-  SUBCASE("abb") { CHECK(dfa.simulate(U"abb")); }
+  SUBCASE("abb") { CHECK(dfa.recognize(U"abb")); }
 
-  SUBCASE("aabb") { CHECK(dfa.simulate(U"aabb")); }
-  SUBCASE("babb") { CHECK(dfa.simulate(U"babb")); }
+  SUBCASE("aabb") { CHECK(dfa.recognize(U"aabb")); }
+  SUBCASE("babb") { CHECK(dfa.recognize(U"babb")); }
 
-  SUBCASE("bab") { CHECK(!dfa.simulate(U"bab")); }
+  SUBCASE("bab") { CHECK(!dfa.recognize(U"bab")); }
 }
 
 TEST_CASE("intesection") {
@@ -58,12 +58,12 @@ TEST_CASE("intesection") {
           {{1, 'b'}, 0},
       },
       {1});
-  CHECK(dfa.simulate(U"a"));
-  CHECK(dfa.simulate(U"baa"));
-  CHECK(dfa2.simulate(U"a"));
+  CHECK(dfa.recognize(U"a"));
+  CHECK(dfa.recognize(U"baa"));
+  CHECK(dfa2.recognize(U"a"));
   auto dfa3 = dfa.intersect(dfa2);
-  CHECK(dfa3.simulate(U"a"));
-  CHECK(!dfa3.simulate(U"baa"));
+  CHECK(dfa3.recognize(U"a"));
+  CHECK(!dfa3.recognize(U"baa"));
 }
 TEST_CASE("minimize DFA") {
   DFA dfa({0, 1, 2, 3, 4}, "ab_set", 0,
@@ -116,7 +116,7 @@ TEST_CASE("complement") {
       },
       {1});
   dfa = dfa.complement();
-  CHECK(!dfa.simulate(U"a"));
-  CHECK(dfa.simulate(U"b"));
-  CHECK(dfa.simulate(U"ab"));
+  CHECK(!dfa.recognize(U"a"));
+  CHECK(dfa.recognize(U"b"));
+  CHECK(dfa.recognize(U"ab"));
 }

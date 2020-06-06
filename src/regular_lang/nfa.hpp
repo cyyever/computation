@@ -95,7 +95,7 @@ namespace cyy::computation {
       epsilon_closures.clear();
     }
 
-    bool simulate(symbol_string_view view) const;
+    bool recognize(symbol_string_view view) const;
 
     // use subset construction
     std::pair<DFA, std::unordered_map<state_type, state_set_type>>

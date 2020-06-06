@@ -203,23 +203,23 @@ TEST_CASE("to_PDA") {
   auto pda = CFG_to_PDA(cfg);
   SUBCASE("aab") {
     symbol_string str = U"aab";
-    CHECK(pda.simulate(str));
+    CHECK(pda.recognize(str));
   }
   SUBCASE("cd") {
     symbol_string str = U"cd";
-    CHECK(pda.simulate(str));
+    CHECK(pda.recognize(str));
   }
   SUBCASE("ab") {
     symbol_string str = U"ab";
-    CHECK(pda.simulate(str));
+    CHECK(pda.recognize(str));
   }
 
   SUBCASE("b") {
     symbol_string str = U"b";
-    CHECK(pda.simulate(str));
+    CHECK(pda.recognize(str));
   }
   SUBCASE("a") {
     symbol_string str = U"a";
-    CHECK(!pda.simulate(str));
+    CHECK(!pda.recognize(str));
   }
 }

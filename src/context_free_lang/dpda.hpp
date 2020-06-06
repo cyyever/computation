@@ -23,7 +23,7 @@ namespace cyy::computation {
   class DPDA final : public finite_automaton {
   public:
     struct situation_type {
-      situation_type(){};
+      situation_type() = default;
       situation_type(input_symbol_type input_symbol_)
           : input_symbol{input_symbol_} {}
       situation_type(std::optional<input_symbol_type> input_symbol_,
@@ -80,7 +80,9 @@ namespace cyy::computation {
 
     bool operator==(const DPDA &rhs) const = default;
 
-    bool simulate(symbol_string_view view) const;
+    bool recognize(symbol_string_view view) const;
+
+    DPDA endmarkered_DPDA() const;
 
     void normalize();
     DPDA complement() const;
@@ -101,11 +103,14 @@ namespace cyy::computation {
               std::map<state_type, std::set<stack_symbol_type>>>
     get_looping_situations() const;
 
-    void check_transition_fuction(bool check_endmark = false);
+    void check_transition_fuction(bool check_input_endmark = false,
+                                  bool check_stack_endmark = false);
 
   private:
     std::shared_ptr<ALPHABET> stack_alphabet;
     transition_function_type transition_function;
+    bool has_normalized{false};
+    std::optional<state_type> reject_state_opt;
   };
 
 } // namespace cyy::computation

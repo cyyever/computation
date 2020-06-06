@@ -84,7 +84,7 @@ namespace cyy::computation {
       return transition_function;
     }
 
-    bool simulate(symbol_string_view view) const;
+    bool recognize(symbol_string_view view) const;
 
     void normalize_transitions();
 

@@ -14,7 +14,7 @@
 #include "../../src/regular_lang/nfa.hpp"
 
 using namespace cyy::computation;
-TEST_CASE("simulate NFA") {
+TEST_CASE("recognize NFA") {
 
   NFA nfa({0, 1, 2, 3, 4}, "ab_set", 0,
           {
@@ -25,14 +25,14 @@ TEST_CASE("simulate NFA") {
           },
           {2, 4}, {{0, {1, 3}}});
 
-  SUBCASE("a") { CHECK(nfa.simulate(U"a")); }
+  SUBCASE("a") { CHECK(nfa.recognize(U"a")); }
 
-  SUBCASE("aa") { CHECK(nfa.simulate(U"aa")); }
+  SUBCASE("aa") { CHECK(nfa.recognize(U"aa")); }
 
-  SUBCASE("b") { CHECK(nfa.simulate(U"b")); }
+  SUBCASE("b") { CHECK(nfa.recognize(U"b")); }
 
-  SUBCASE("bb") { CHECK(nfa.simulate(U"bb")); }
-  SUBCASE("ab") { CHECK(!nfa.simulate(U"ab")); }
+  SUBCASE("bb") { CHECK(nfa.recognize(U"bb")); }
+  SUBCASE("ab") { CHECK(!nfa.recognize(U"ab")); }
 }
 
 TEST_CASE("NFA to DFA") {

@@ -114,11 +114,11 @@ TEST_CASE("parse regex and to DFA") {
           {3});
   CHECK(dfa == reg.to_DFA());
 
-  CHECK(dfa.simulate(U"abb"));
-  CHECK(dfa.simulate(U"aabb"));
-  CHECK(dfa.simulate(U"babb"));
-  CHECK(!dfa.simulate(U"bb"));
-  CHECK(!dfa.simulate(U"ab"));
+  CHECK(dfa.recognize(U"abb"));
+  CHECK(dfa.recognize(U"aabb"));
+  CHECK(dfa.recognize(U"babb"));
+  CHECK(!dfa.recognize(U"bb"));
+  CHECK(!dfa.recognize(U"ab"));
 }
 
 TEST_CASE("parse extended regex and to NFA") {
@@ -131,8 +131,8 @@ TEST_CASE("parse extended regex and to NFA") {
     auto dfa = reg.to_DFA().minimize();
 
     for (auto const &test_string : {U"", U"a", U"aa"}) {
-      CHECK(nfa.simulate(test_string));
-      CHECK(dfa.simulate(test_string));
+      CHECK(nfa.recognize(test_string));
+      CHECK(dfa.recognize(test_string));
     }
   }
 
@@ -143,11 +143,11 @@ TEST_CASE("parse extended regex and to NFA") {
     auto nfa = reg.to_NFA();
     auto dfa = reg.to_DFA().minimize();
 
-    CHECK(!nfa.simulate(U""));
-    CHECK(!dfa.simulate(U""));
+    CHECK(!nfa.recognize(U""));
+    CHECK(!dfa.recognize(U""));
     for (auto const &test_string : {U"a", U"aa"}) {
-      CHECK(nfa.simulate(test_string));
-      CHECK(dfa.simulate(test_string));
+      CHECK(nfa.recognize(test_string));
+      CHECK(dfa.recognize(test_string));
     }
   }
 
@@ -159,11 +159,11 @@ TEST_CASE("parse extended regex and to NFA") {
     auto dfa = reg.to_DFA().minimize();
 
     for (auto const &test_string : {U"", U"a"}) {
-      CHECK(nfa.simulate(test_string));
-      CHECK(dfa.simulate(test_string));
+      CHECK(nfa.recognize(test_string));
+      CHECK(dfa.recognize(test_string));
     }
-    CHECK(!nfa.simulate(U"aa"));
-    CHECK(!dfa.simulate(U"aa"));
+    CHECK(!nfa.recognize(U"aa"));
+    CHECK(!dfa.recognize(U"aa"));
   }
 
   SUBCASE(".") {
@@ -173,14 +173,14 @@ TEST_CASE("parse extended regex and to NFA") {
     auto nfa = reg.to_NFA();
     auto dfa = reg.to_DFA().minimize();
 
-    CHECK(nfa.simulate(U"a"));
-    CHECK(dfa.simulate(U"a"));
-    CHECK(nfa.simulate(U"b"));
-    CHECK(dfa.simulate(U"b"));
-    CHECK(!nfa.simulate(U"\n"));
-    CHECK(!dfa.simulate(U"\n"));
-    CHECK(!nfa.simulate(U"\r"));
-    CHECK(!dfa.simulate(U"\r"));
+    CHECK(nfa.recognize(U"a"));
+    CHECK(dfa.recognize(U"a"));
+    CHECK(nfa.recognize(U"b"));
+    CHECK(dfa.recognize(U"b"));
+    CHECK(!nfa.recognize(U"\n"));
+    CHECK(!dfa.recognize(U"\n"));
+    CHECK(!nfa.recognize(U"\r"));
+    CHECK(!dfa.recognize(U"\r"));
   }
 
   SUBCASE("[^a]") {
@@ -190,8 +190,8 @@ TEST_CASE("parse extended regex and to NFA") {
     auto nfa = reg.to_NFA();
     auto dfa = reg.to_DFA().minimize();
 
-    CHECK(nfa.simulate(U"b"));
-    CHECK(dfa.simulate(U"b"));
+    CHECK(nfa.recognize(U"b"));
+    CHECK(dfa.recognize(U"b"));
   }
 
   SUBCASE("[^]") {
@@ -207,8 +207,8 @@ TEST_CASE("parse extended regex and to NFA") {
     auto nfa = reg.to_NFA();
     auto dfa = reg.to_DFA().minimize();
 
-    CHECK(nfa.simulate(U"-"));
-    CHECK(dfa.simulate(U"-"));
+    CHECK(nfa.recognize(U"-"));
+    CHECK(dfa.recognize(U"-"));
 
     CHECK_THROWS_AS(regex("ab_set", expr),
                     const cyy::computation::exception::no_regular_expression &);
@@ -221,10 +221,10 @@ TEST_CASE("parse extended regex and to NFA") {
     auto nfa = reg.to_NFA();
     auto dfa = reg.to_DFA().minimize();
 
-    CHECK(!nfa.simulate(U"-"));
-    CHECK(!dfa.simulate(U"-"));
-    CHECK(nfa.simulate(U"a"));
-    CHECK(dfa.simulate(U"a"));
+    CHECK(!nfa.recognize(U"-"));
+    CHECK(!dfa.recognize(U"-"));
+    CHECK(nfa.recognize(U"a"));
+    CHECK(dfa.recognize(U"a"));
     CHECK_THROWS_AS(regex("ab_set", expr),
                     const cyy::computation::exception::no_regular_expression &);
   }
@@ -236,16 +236,16 @@ TEST_CASE("parse extended regex and to NFA") {
     auto nfa = reg.to_NFA();
     auto dfa = reg.to_DFA().minimize();
 
-    CHECK(nfa.simulate(U"a"));
-    CHECK(dfa.simulate(U"a"));
-    CHECK(nfa.simulate(U"b"));
-    CHECK(dfa.simulate(U"b"));
-    CHECK(nfa.simulate(U"c"));
-    CHECK(dfa.simulate(U"c"));
-    CHECK(!nfa.simulate(U"d"));
-    CHECK(!dfa.simulate(U"d"));
-    CHECK(!nfa.simulate(U"-"));
-    CHECK(!dfa.simulate(U"-"));
+    CHECK(nfa.recognize(U"a"));
+    CHECK(dfa.recognize(U"a"));
+    CHECK(nfa.recognize(U"b"));
+    CHECK(dfa.recognize(U"b"));
+    CHECK(nfa.recognize(U"c"));
+    CHECK(dfa.recognize(U"c"));
+    CHECK(!nfa.recognize(U"d"));
+    CHECK(!dfa.recognize(U"d"));
+    CHECK(!nfa.recognize(U"-"));
+    CHECK(!dfa.recognize(U"-"));
   }
   SUBCASE("[a-b]") {
     symbol_string expr = U"[a-b]";
@@ -254,12 +254,12 @@ TEST_CASE("parse extended regex and to NFA") {
     auto nfa = reg.to_NFA();
     auto dfa = reg.to_DFA().minimize();
 
-    CHECK(nfa.simulate(U"a"));
-    CHECK(dfa.simulate(U"a"));
-    CHECK(nfa.simulate(U"b"));
-    CHECK(dfa.simulate(U"b"));
-    CHECK(!nfa.simulate(U"c"));
-    CHECK(!dfa.simulate(U"c"));
+    CHECK(nfa.recognize(U"a"));
+    CHECK(dfa.recognize(U"a"));
+    CHECK(nfa.recognize(U"b"));
+    CHECK(dfa.recognize(U"b"));
+    CHECK(!nfa.recognize(U"c"));
+    CHECK(!dfa.recognize(U"c"));
   }
 
   SUBCASE("[a-c\\-z]") {
@@ -269,19 +269,19 @@ TEST_CASE("parse extended regex and to NFA") {
     auto nfa = reg.to_NFA();
     auto dfa = reg.to_DFA().minimize();
 
-    CHECK(nfa.simulate(U"a"));
-    CHECK(dfa.simulate(U"a"));
-    CHECK(nfa.simulate(U"b"));
-    CHECK(dfa.simulate(U"b"));
-    CHECK(nfa.simulate(U"c"));
-    CHECK(dfa.simulate(U"c"));
-    CHECK(!nfa.simulate(U"d"));
-    CHECK(!dfa.simulate(U"d"));
-    CHECK(nfa.simulate(U"-"));
-    CHECK(dfa.simulate(U"-"));
-    CHECK(nfa.simulate(U"z"));
-    CHECK(dfa.simulate(U"z"));
-    CHECK(!nfa.simulate(U"y"));
-    CHECK(!dfa.simulate(U"y"));
+    CHECK(nfa.recognize(U"a"));
+    CHECK(dfa.recognize(U"a"));
+    CHECK(nfa.recognize(U"b"));
+    CHECK(dfa.recognize(U"b"));
+    CHECK(nfa.recognize(U"c"));
+    CHECK(dfa.recognize(U"c"));
+    CHECK(!nfa.recognize(U"d"));
+    CHECK(!dfa.recognize(U"d"));
+    CHECK(nfa.recognize(U"-"));
+    CHECK(dfa.recognize(U"-"));
+    CHECK(nfa.recognize(U"z"));
+    CHECK(dfa.recognize(U"z"));
+    CHECK(!nfa.recognize(U"y"));
+    CHECK(!dfa.recognize(U"y"));
   }
 }

@@ -12,7 +12,7 @@
 #include "pda.hpp"
 
 namespace cyy::computation {
-  bool PDA::simulate(symbol_string_view view) const {
+  bool PDA::recognize(symbol_string_view view) const {
     std::vector<stack_node> stack;
     stack.emplace_back(0, 0, &stack);
 

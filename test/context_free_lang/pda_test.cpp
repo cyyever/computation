@@ -12,7 +12,7 @@
 #include "../../src/lang/set_alphabet.hpp"
 
 using namespace cyy::computation;
-TEST_CASE("simulate PDA") {
+TEST_CASE("recognize PDA") {
 
   auto input_alphabet =
       std::make_shared<set_alphabet>(std::set<symbol_type>{'0', '1'}, "01_set");
@@ -41,35 +41,35 @@ TEST_CASE("simulate PDA") {
 
   SUBCASE("0") {
     symbol_string str = U"0";
-    CHECK(!pda.simulate(str));
+    CHECK(!pda.recognize(str));
   }
 
   SUBCASE("01") {
     symbol_string str = U"01";
-    CHECK(!pda.simulate(str));
+    CHECK(!pda.recognize(str));
   }
   SUBCASE("010") {
     symbol_string str = U"010";
-    CHECK(!pda.simulate(str));
+    CHECK(!pda.recognize(str));
   }
   SUBCASE("0101") {
     symbol_string str = U"0101";
-    CHECK(!pda.simulate(str));
+    CHECK(!pda.recognize(str));
   }
   SUBCASE("0110") {
     symbol_string str = U"0110";
-    CHECK(pda.simulate(str));
+    CHECK(pda.recognize(str));
   }
   SUBCASE("1001") {
     symbol_string str = U"1001";
-    CHECK(pda.simulate(str));
+    CHECK(pda.recognize(str));
   }
   SUBCASE("normalize") {
     pda.normalize_transitions();
     symbol_string str = U"1001";
-    CHECK(pda.simulate(str));
+    CHECK(pda.recognize(str));
     str = U"0101";
-    CHECK(!pda.simulate(str));
+    CHECK(!pda.recognize(str));
   }
   SUBCASE("to_CFG") {
     auto cfg = PDA_to_CFG(PDA(pda));

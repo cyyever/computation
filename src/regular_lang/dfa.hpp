@@ -42,7 +42,7 @@ namespace cyy::computation {
     const auto &get_transition_function() const { return transition_function; }
     bool equivalent_with(const DFA &rhs) const;
 
-    bool simulate(symbol_string_view view) const {
+    bool recognize(symbol_string_view view) const {
       auto s = start_state;
 
       for (auto const &symbol : view) {

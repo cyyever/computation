@@ -10,7 +10,7 @@
 #include "../../src/lang/set_alphabet.hpp"
 
 using namespace cyy::computation;
-TEST_CASE("simulate DPDA") {
+TEST_CASE("recognize DPDA") {
 
   auto endmarker = U'1';
   DPDA dpda({0, 1, 2, 3, 4}, "01_set", "01_set", 0,
@@ -41,23 +41,53 @@ TEST_CASE("simulate DPDA") {
               }}},
             {0, 3});
 
-  SUBCASE("") { CHECK(dpda.simulate(U"")); }
-  SUBCASE("0") { CHECK(!dpda.simulate(U"0")); }
-  SUBCASE("1") { CHECK(!dpda.simulate(U"1")); }
+  SUBCASE("") { CHECK(dpda.recognize(U"")); }
+  SUBCASE("0") { CHECK(!dpda.recognize(U"0")); }
+  SUBCASE("1") { CHECK(!dpda.recognize(U"1")); }
 
-  SUBCASE("01") { CHECK(dpda.simulate(U"01")); }
-  SUBCASE("10") { CHECK(!dpda.simulate(U"10")); }
-  SUBCASE("0011") { CHECK(dpda.simulate(U"0011")); }
+  SUBCASE("01") { CHECK(dpda.recognize(U"01")); }
+  SUBCASE("10") { CHECK(!dpda.recognize(U"10")); }
+  SUBCASE("0011") { CHECK(dpda.recognize(U"0011")); }
   SUBCASE("normalize") {
     auto new_dpda = dpda;
     new_dpda.normalize();
-    CHECK(new_dpda.simulate(U""));
-    CHECK(new_dpda.simulate(U"01"));
-    CHECK(new_dpda.simulate(U"0011"));
+    CHECK(new_dpda.recognize(U""));
+    CHECK(new_dpda.recognize(U"01"));
+    CHECK(new_dpda.recognize(U"0011"));
   }
+
   SUBCASE("complement") {
     auto dpda_complement = dpda.complement();
-    CHECK(!dpda_complement.simulate(U"0011"));
-    CHECK(dpda_complement.simulate(U"10"));
+    CHECK(!dpda_complement.recognize(U"0011"));
+    CHECK(dpda_complement.recognize(U"10"));
+  }
+  SUBCASE("endmarkered_dpda") {
+    auto endmarkered_dpda = dpda.endmarkered_DPDA();
+
+    auto endmarker = dpda.get_alphabet().get_endmarker();
+    std::u32string str;
+
+    SUBCASE("recognize") {
+      CHECK(!endmarkered_dpda.recognize(U""));
+      CHECK(!endmarkered_dpda.recognize(U"01"));
+      CHECK(!endmarkered_dpda.recognize(U"0011"));
+
+      str = U"";
+      str.push_back(endmarker);
+      CHECK(endmarkered_dpda.recognize(str));
+      str = U"01";
+      str.push_back(endmarker);
+      CHECK(endmarkered_dpda.recognize(str));
+      str = U"0011";
+      str.push_back(endmarker);
+      CHECK(endmarkered_dpda.recognize(str));
+    }
+
+    SUBCASE("can't recognize") {
+      CHECK(!endmarkered_dpda.recognize(U"10"));
+      str = U"10";
+      str.push_back(endmarker);
+      CHECK(!endmarkered_dpda.recognize(str));
+    }
   }
 }

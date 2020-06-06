@@ -33,7 +33,7 @@ namespace cyy::computation {
     }
     return res;
   }
-  bool NFA::simulate(symbol_string_view view) const {
+  bool NFA::recognize(symbol_string_view view) const {
     auto s = get_epsilon_closure(start_state, epsilon_transition_function);
     for (auto const &symbol : view) {
       s = go(s, symbol);
