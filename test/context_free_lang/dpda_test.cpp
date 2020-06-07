@@ -6,8 +6,8 @@
 #include <doctest/doctest.h>
 
 #include "../../src/context_free_lang/dpda.hpp"
+#include "../../src/context_free_lang/endmarkered_dpda.hpp"
 #include "../../src/lang/alphabet.hpp"
-#include "../../src/lang/set_alphabet.hpp"
 
 using namespace cyy::computation;
 TEST_CASE("recognize DPDA") {
@@ -62,7 +62,7 @@ TEST_CASE("recognize DPDA") {
     CHECK(dpda_complement.recognize(U"10"));
   }
   SUBCASE("endmarkered_dpda") {
-    auto endmarkered_dpda = dpda.endmarkered_DPDA();
+    endmarkered_DPDA endmarkered_dpda(dpda);
 
     auto endmarker = ALPHABET::endmarker;
     std::u32string str;

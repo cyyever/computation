@@ -82,18 +82,16 @@ namespace cyy::computation {
 
     bool recognize(symbol_string_view view) const;
 
-    DPDA endmarkered_DPDA() const;
-
     void normalize();
     DPDA complement() const;
 
-  private:
+  protected:
     struct configuration_type {
       state_type state;
       std::vector<stack_symbol_type> stack;
     };
 
-  private:
+  protected:
     std::optional<configuration_type>
     go(configuration_type configuration) const;
     std::optional<configuration_type> go(configuration_type configuration,
@@ -106,7 +104,7 @@ namespace cyy::computation {
     void check_transition_fuction(bool check_input_endmark = false,
                                   bool check_stack_endmark = false);
 
-  private:
+  protected:
     std::shared_ptr<ALPHABET> stack_alphabet;
     transition_function_type transition_function;
     bool has_normalized{false};

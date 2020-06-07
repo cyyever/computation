@@ -39,8 +39,8 @@ namespace cyy::computation {
 
     void print(std::ostream &os, const ALPHABET &alphabet) const;
 
-    auto const & get_head() const { return head; }
-    auto const & get_body() const { return body; }
+    auto const &get_head() const { return head; }
+    auto const &get_body() const { return body; }
 
   private:
     void print_body(std::ostream &os, const ALPHABET &alphabet) const;
