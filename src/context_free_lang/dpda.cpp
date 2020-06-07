@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "dpda.hpp"
+#include "lang/union_alphabet.hpp"
 
 namespace cyy::computation {
   bool DPDA::recognize(symbol_string_view view) const {

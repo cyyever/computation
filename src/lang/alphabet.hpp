@@ -49,6 +49,15 @@ namespace cyy::computation {
         index++;
         return *this;
       }
+      iterator &operator+=(difference_type rhs) {
+        index = static_cast<size_t>(static_cast<difference_type>(index) + rhs);
+        return *this;
+      }
+      iterator operator+(difference_type rhs) {
+        iterator new_it(*this);
+        new_it += rhs;
+        return new_it;
+      }
       value_type operator*() const { return ptr->get_symbol(index); }
 
     private:
@@ -57,7 +66,7 @@ namespace cyy::computation {
     };
 
   public:
-    explicit ALPHABET(std::string_view name_) : name(name_) {}
+    explicit ALPHABET(std::string_view name_) { set_name(name_); }
     ALPHABET(const ALPHABET &) = default;
     ALPHABET &operator=(const ALPHABET &) = default;
 
@@ -110,10 +119,18 @@ namespace cyy::computation {
     static std::shared_ptr<ALPHABET> get(std::string_view name);
     static void set(const std::shared_ptr<ALPHABET> &alphabet);
 
+  protected:
+    void set_name(std::string_view name_) {
+      if (name_.empty()) {
+        throw cyy::computation::exception::empty_alphabet_name("");
+      }
+      name = std::move(name_);
+    }
+
   private:
+    virtual symbol_type get_symbol(size_t index) const = 0;
     symbol_type get_min_symbol() const { return get_symbol(0); }
     symbol_type get_max_symbol() const { return get_symbol(size() - 1); }
-    virtual symbol_type get_symbol(size_t index) const = 0;
 
     symbol_type add_max_symbol(size_t inc) const {
       const symbol_type max_symbol = get_max_symbol();

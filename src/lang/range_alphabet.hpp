@@ -1,9 +1,6 @@
 /*!
- * \file ascii.hpp
+ * \file range_alphabet.hpp
  *
- * \brief
- * \author cyy
- * \date 2018-03-31
  */
 #pragma once
 
