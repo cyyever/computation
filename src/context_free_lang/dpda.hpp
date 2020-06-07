@@ -20,7 +20,7 @@
 
 namespace cyy::computation {
 
-  class DPDA final : public finite_automaton {
+  class DPDA : public finite_automaton {
   public:
     struct situation_type {
       situation_type() = default;
