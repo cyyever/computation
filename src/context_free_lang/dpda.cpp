@@ -402,6 +402,7 @@ namespace cyy::computation {
   DPDA DPDA::endmarkered_DPDA() const {
     auto endmarkered_dpda = *this;
     endmarkered_dpda.normalize();
+
     auto new_accept_state = endmarkered_dpda.add_new_state();
 
     for (auto &[from_state, transfers] : endmarkered_dpda.transition_function) {
@@ -442,9 +443,7 @@ namespace cyy::computation {
     }
 
     endmarkered_dpda.final_states = {new_accept_state};
-
     endmarkered_dpda.check_transition_fuction(true, true);
-
     return endmarkered_dpda;
   }
 
