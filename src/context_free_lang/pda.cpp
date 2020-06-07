@@ -130,14 +130,6 @@ namespace cyy::computation {
       actions = std::move(new_actions);
     }
 
-    for (auto &[k, v] : transition_function) {
-      auto const &top_symbol = k.stack_symbol;
-      std::erase_if(v, [&top_symbol](const auto e) {
-        return e.stack_symbol.has_value() == top_symbol.has_value();
-      });
-    }
-    std::erase_if(transition_function,
-                  [](const auto p) { return p.second.empty(); });
     transition_function.merge(std::move(new_transition));
     assert(final_states.size() == 1);
 

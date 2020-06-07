@@ -50,4 +50,32 @@ namespace cyy::computation {
     final_states = {new_accept_state};
     check_transition_fuction(true, true);
   }
+  /* DPDA to_DPDA() const {} */
+  void endmarkered_DPDA::normalize_transitions() {
+    auto placeholder_stack_symbol = stack_alphabet->get_min_symbol();
+    transition_function_type new_transitions;
+    for (auto &[from_state, transfers] : transition_function) {
+      transition_function_type::mapped_type new_transfers;
+      for (auto &[configuration, action] : transfers) {
+        if (configuration.stack_symbol.has_value() !=
+            action.stack_symbol.has_value()) {
+          new_transfers[std::move(configuration)] = std::move(action);
+          continue;
+        }
+        auto next_state = add_new_state();
+        if (configuration.stack_symbol.has_value()) {
+          new_transfers[std::move(configuration)] = {next_state};
+          new_transitions[next_state][{}] = {std::move(action)};
+          continue;
+        }
+        new_transfers[std::move(configuration)] = {next_state,
+                                                   placeholder_stack_symbol};
+        new_transitions[next_state][{{}, placeholder_stack_symbol}] = {
+            std::move(action)};
+      }
+      transfers = std::move(new_transfers);
+    }
+    transition_function.merge(std::move(new_transitions));
+    // TODO add input change
+  }
 } // namespace cyy::computation

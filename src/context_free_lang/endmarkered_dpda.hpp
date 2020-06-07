@@ -13,8 +13,10 @@ namespace cyy::computation {
   public:
     explicit endmarkered_DPDA(DPDA dpda) : DPDA(std::move(dpda)) { convert(); }
 
+    /* DPDA to_DPDA() const ; */
   private:
     void convert();
+    void normalize_transitions();
   };
 
 } // namespace cyy::computation
