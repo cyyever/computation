@@ -147,9 +147,9 @@ namespace cyy::computation {
     transition_function.merge(std::move(new_transitions));
 
     auto old_start_state = start_state;
-    auto endmarker = stack_alphabet->get_endmarker();
     start_state = add_new_state();
-    transition_function[start_state][{}] = {old_start_state, endmarker};
+    transition_function[start_state][{}] = {old_start_state,
+                                            ALPHABET::endmarker};
 
     auto new_reject_state = add_new_state();
     auto new_accept_state = add_new_state();
@@ -166,7 +166,7 @@ namespace cyy::computation {
           continue;
         }
         auto new_situation = situation;
-        new_situation.stack_symbol = endmarker;
+        new_situation.stack_symbol = ALPHABET::endmarker;
         if (is_final_state(from_state)) {
           new_transfers[new_situation] = {new_accept_state};
         } else {
@@ -181,7 +181,7 @@ namespace cyy::computation {
             continue;
           }
           auto new_situation = situation;
-          new_situation.stack_symbol = endmarker;
+          new_situation.stack_symbol = ALPHABET::endmarker;
           new_transfers[new_situation] = {new_reject_state};
         }
       }
@@ -421,7 +421,7 @@ namespace cyy::computation {
       bool has_input_epsilon = std::ranges::any_of(
           transfers, [](auto const &p) { return !p.first.input_symbol; });
       if (!has_input_epsilon) {
-        transfers[{alphabet->get_endmarker()}] = {next_state};
+        transfers[{ALPHABET::endmarker}] = {next_state};
         continue;
       }
 
@@ -431,8 +431,8 @@ namespace cyy::computation {
           continue;
         }
         assert(situation.stack_symbol.has_value());
-        new_transfers[{alphabet->get_endmarker(),
-                       situation.stack_symbol.value()}] = {next_state};
+        new_transfers[{ALPHABET::endmarker, situation.stack_symbol.value()}] = {
+            next_state};
       }
       transfers.merge(std::move(new_transfers));
     }

@@ -9,6 +9,7 @@
 
 #include <functional>
 #include <iterator>
+#include <limits>
 #include <memory>
 #include <ranges>
 #include <set>
@@ -74,7 +75,6 @@ namespace cyy::computation {
     ALPHABET &operator=(ALPHABET &&) noexcept = default;
     virtual ~ALPHABET() = default;
 
-    symbol_type get_endmarker() const { return add_max_symbol(1); }
     symbol_type get_unincluded_symbol() const { return add_max_symbol(2); }
 
     auto get_view(bool include_endmark) const {
@@ -86,7 +86,7 @@ namespace cyy::computation {
       return std::views::iota(static_cast<size_t>(0), bound) |
              std::views::transform([alphabet_size, this](auto idx) {
                if (idx == alphabet_size) {
-                 return get_endmarker();
+                 return endmarker;
                }
                return get_symbol(idx);
              });
@@ -105,7 +105,7 @@ namespace cyy::computation {
         return {'\'', static_cast<char>(symbol), '\''};
       }
 
-      if (symbol == get_endmarker()) {
+      if (symbol == endmarker) {
         return "$";
       }
       return "(unkown symbol)";
@@ -118,6 +118,8 @@ namespace cyy::computation {
 
     static std::shared_ptr<ALPHABET> get(std::string_view name);
     static void set(const std::shared_ptr<ALPHABET> &alphabet);
+    static constexpr symbol_type endmarker =
+        std::numeric_limits<symbol_type>::max() - 1;
 
   protected:
     void set_name(std::string_view name_) {
@@ -148,6 +150,17 @@ namespace cyy::computation {
     static inline std::unordered_map<std::string, std::shared_ptr<ALPHABET>>
         factory;
   };
+
+  inline auto endmarkered_symbol_string(symbol_string_view str) {
+    auto size = str.size() + 1;
+    return std::views::iota(static_cast<size_t>(0), size) |
+           std::views::transform([str, size](auto idx) {
+             if (idx + 1 == size) {
+               return ALPHABET::endmarker;
+             }
+             return str[idx];
+           });
+  }
 
   void print_symbol_string(std::ostream &os, const symbol_string &str,
                            const ALPHABET &alphabet);

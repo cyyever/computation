@@ -151,7 +151,7 @@ TEST_CASE("recursive_descent_parse") {
 
 TEST_CASE("first_and_follow") {
   CFG::production_set_type productions;
-  auto endmarker = ALPHABET::get("common_tokens")->get_endmarker();
+  auto endmarker = ALPHABET::endmarker;
   auto id = static_cast<CFG::terminal_type>(common_token::id);
   productions["E"] = {
       {"T", "E'"},

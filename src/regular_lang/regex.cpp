@@ -15,8 +15,7 @@ namespace cyy::computation {
     std::map<uint64_t, symbol_type> position_to_symbol;
 
     auto syntax_tree_with_endmarker = std::make_shared<regex::concat_node>(
-        syntax_tree,
-        std::make_shared<regex::basic_node>(alphabet->get_endmarker()));
+        syntax_tree, std::make_shared<regex::basic_node>(ALPHABET::endmarker));
 
     syntax_tree_with_endmarker->assign_position(position_to_symbol);
 

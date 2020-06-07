@@ -84,7 +84,6 @@ namespace cyy::computation {
   void SLR_grammar::construct_parsing_table() const {
     auto [collection, goto_transitions] = canonical_collection();
     auto follow_sets = follow();
-    auto endmarker = alphabet->get_endmarker();
 
     for (auto const &[p, next_state] : goto_transitions) {
       auto ptr = p.second.get_nonterminal_ptr();
@@ -102,7 +101,7 @@ namespace cyy::computation {
         }
 
         if (kernel_item.production.get_head() == new_start_symbol) {
-          action_table[{state, endmarker}] = true;
+          action_table[{state, ALPHABET::endmarker}] = true;
           continue;
         }
 

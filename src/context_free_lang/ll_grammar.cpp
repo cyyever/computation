@@ -65,16 +65,18 @@ namespace cyy::computation {
     if (parsing_table.empty()) {
       construct_parsing_table();
     }
-    const auto endmarker = alphabet->get_endmarker();
-    std::vector<grammar_symbol_type> stack{endmarker, start_symbol};
+    std::vector<grammar_symbol_type> stack{ALPHABET::endmarker, start_symbol};
     std::vector<
         std::pair<decltype(this->parsing_table)::const_iterator, size_t>>
         callback_arguments_stack;
+
+    auto endmarkered_view = endmarkered_symbol_string(view);
+    auto terminal_it = endmarkered_view.begin();
     while (!stack.empty()) {
-      const auto terminal = view.empty() ? endmarker : view.front();
       auto top_symbol = std::move(stack.back());
       stack.pop_back();
 
+      auto terminal = *terminal_it;
       if (top_symbol.is_terminal()) {
         auto s = top_symbol.get_terminal();
         if (terminal != s) {
@@ -83,9 +85,7 @@ namespace cyy::computation {
                     << alphabet->to_string(s) << std::endl;
           return false;
         }
-        if (!view.empty()) {
-          view.remove_prefix(1);
-        }
+        terminal_it++;
       } else {
         auto ptr = top_symbol.get_nonterminal_ptr();
         auto it = parsing_table.find({terminal, *ptr});
@@ -117,7 +117,7 @@ namespace cyy::computation {
       }
     }
     assert(callback_arguments_stack.empty());
-    assert(view.empty());
+    assert(terminal_it == endmarkered_view.end());
     return true;
   }
 

@@ -19,7 +19,7 @@ using namespace cyy::computation;
 TEST_CASE("canonical_collection") {
   std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
       productions;
-  auto endmarker = ALPHABET::get("common_tokens")->get_endmarker();
+  auto endmarker = ALPHABET::endmarker;
   productions["S"] = {
       {"C", "C"},
   };

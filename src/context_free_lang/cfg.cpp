@@ -432,7 +432,7 @@ namespace cyy::computation {
 
     std::map<nonterminal_type, std::set<terminal_type>> follow_sets;
 
-    follow_sets[start_symbol].insert(alphabet->get_endmarker());
+    follow_sets[start_symbol].insert(ALPHABET::endmarker);
 
     bool has_add = false;
     do {

@@ -48,12 +48,11 @@ namespace cyy::computation {
     collection_type unchecked_sets;
     collection_type collection;
     goto_transition_set_type goto_transitions;
-    const auto endmarker = alphabet->get_endmarker();
 
     LR_1_item_set init_set;
     init_set.add_kernel_item(
         *this, LR_0_item{CFG_production{new_start_symbol, {start_symbol}}, 0},
-        {endmarker});
+        {ALPHABET::endmarker});
     unchecked_sets.emplace(std::move(init_set), 0);
 
     state_type next_state = 1;
@@ -86,7 +85,6 @@ namespace cyy::computation {
 
   void canonical_LR_grammar::construct_parsing_table() const {
     auto [collection, goto_transitions] = canonical_collection();
-    auto endmarker = alphabet->get_endmarker();
 
     for (auto const &[p, next_state] : goto_transitions) {
       auto ptr = p.second.get_nonterminal_ptr();
@@ -105,7 +103,7 @@ namespace cyy::computation {
         }
 
         if (kernel_item.production.get_head() == new_start_symbol) {
-          action_table[{state, endmarker}] = true;
+          action_table[{state, ALPHABET::endmarker}] = true;
           continue;
         }
 

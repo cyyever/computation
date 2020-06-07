@@ -50,9 +50,10 @@ namespace cyy::computation {
 
     std::vector<state_type> stack{0};
 
-    const auto endmarker = alphabet->get_endmarker();
+    auto endmarkered_view = endmarkered_symbol_string(view);
+    auto terminal_it = endmarkered_view.begin();
     while (true) {
-      auto terminal = view.empty() ? endmarker : view.front();
+      auto terminal = *terminal_it;
 
       auto it = action_table.find({stack.back(), terminal});
       if (it == action_table.end()) {
@@ -63,6 +64,7 @@ namespace cyy::computation {
       }
 
       if (std::holds_alternative<bool>(it->second)) {
+        terminal_it++;
         break;
       }
 
@@ -70,7 +72,7 @@ namespace cyy::computation {
         // shift
         stack.push_back(std::get<state_type>(it->second));
         shift_callback(terminal);
-        view.remove_prefix(1);
+        terminal_it++;
         continue;
       }
 
@@ -88,6 +90,7 @@ namespace cyy::computation {
       }
       stack.push_back(it2->second);
     }
+    assert(terminal_it == endmarkered_view.end());
     return true;
   }
 } // namespace cyy::computation

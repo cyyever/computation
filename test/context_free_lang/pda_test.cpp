@@ -18,7 +18,7 @@ TEST_CASE("recognize PDA") {
       std::make_shared<set_alphabet>(std::set<symbol_type>{'0', '1'}, "01_set");
   ALPHABET::set(input_alphabet);
 
-  auto endmarker = input_alphabet->get_endmarker();
+  auto endmarker = ALPHABET::endmarker;
   PDA pda({0, 1, 2, 3}, "01_set", "01_set", 0,
           {
               {{0}, {{1, endmarker}}},

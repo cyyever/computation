@@ -103,7 +103,7 @@ namespace cyy::computation {
       }
     };
     push_body(start_state, loop_state, {},
-              {cfg.get_start_symbol(), cfg.get_alphabet().get_endmarker()});
+              {cfg.get_start_symbol(), ALPHABET::endmarker});
 
     for (const auto &[head, bodies] : cfg.get_productions()) {
       for (auto const &body : bodies) {
@@ -115,9 +115,7 @@ namespace cyy::computation {
       transition_function[{loop_state, terminal, get_stack_symbol(terminal)}]
           .emplace(loop_state);
     }
-    transition_function[{loop_state,
-                         {},
-                         get_stack_symbol(cfg.get_alphabet().get_endmarker())}]
+    transition_function[{loop_state, {}, get_stack_symbol(ALPHABET::endmarker)}]
         .emplace(final_state, std::optional<PDA::stack_symbol_type>{});
     return PDA(std::move(states), cfg.get_alphabet().get_name(), "all",
                start_state, std::move(transition_function), {final_state});

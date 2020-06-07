@@ -64,7 +64,7 @@ TEST_CASE("recognize DPDA") {
   SUBCASE("endmarkered_dpda") {
     auto endmarkered_dpda = dpda.endmarkered_DPDA();
 
-    auto endmarker = dpda.get_alphabet().get_endmarker();
+    auto endmarker = ALPHABET::endmarker;
     std::u32string str;
 
     SUBCASE("recognize") {
