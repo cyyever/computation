@@ -95,42 +95,39 @@ namespace cyy::computation {
   }
 
   void PDA::normalize_transitions() {
-    auto new_state = add_new_state();
+    auto state_of_clearing_stack = add_new_state();
     for (auto final_state : final_states) {
-      add_epsilon_transition(final_state, new_state);
+      add_epsilon_transition(final_state, state_of_clearing_stack);
     }
-    for (auto const used_stack_symbol : get_used_stack_symbols()) {
-      transition_function[{new_state, {}, used_stack_symbol}] = {{new_state}};
+    for (auto const used_stack_symbol : get_in_use_stack_symbols()) {
+      transition_function[{state_of_clearing_stack, {}, used_stack_symbol}] = {
+          {state_of_clearing_stack}};
     }
     auto new_final_state = add_new_state();
-    add_epsilon_transition(new_state, new_final_state);
+    add_epsilon_transition(state_of_clearing_stack, new_final_state);
     change_final_states({new_final_state});
 
     transition_function_type new_transition;
-    auto new_stack_symbol = stack_alphabet->front();
-    for (const auto &[k, v] : transition_function) {
-      auto const &top_symbol = k.stack_symbol;
-      for (const auto &next_step : v) {
-        auto const &new_top_symbol = next_step.stack_symbol;
-        if (top_symbol.has_value() != new_top_symbol.has_value()) {
+    auto placeholder_stack_symbol = stack_alphabet->get_min_symbol();
+    for (auto &[situation, actions] : transition_function) {
+      transition_function_type::mapped_type new_actions;
+      for (auto &action : actions) {
+        if (situation.stack_symbol.has_value() !=
+            action.stack_symbol.has_value()) {
+          new_actions.emplace(std::move(action));
           continue;
         }
-        if (top_symbol.has_value()) {
-          auto next_state = states.size();
-          states.insert(next_state);
-          new_transition[k] = {{next_state}};
-          new_transition[{next_state}] = {{next_step.state, new_top_symbol}};
+        auto next_state = add_new_state();
+        if (situation.stack_symbol.has_value()) {
+          new_actions.emplace(next_state);
+          new_transition[{next_state}] = {std::move(action)};
           continue;
         }
-        if (!top_symbol.has_value()) {
-          auto next_state = states.size();
-          states.insert(next_state);
-          new_transition[k] = {{next_state, new_stack_symbol}};
-          new_transition[{next_state, {}, new_stack_symbol}] = {
-              {next_step.state}};
-          continue;
-        }
+        new_actions.emplace(next_state, placeholder_stack_symbol);
+        new_transition[{next_state, {}, placeholder_stack_symbol}] = {
+            std::move(action)};
       }
+      actions = std::move(new_actions);
     }
 
     for (auto &[k, v] : transition_function) {
@@ -154,7 +151,7 @@ namespace cyy::computation {
     }
 #endif
   }
-  std::set<PDA::stack_symbol_type> PDA::get_used_stack_symbols() const {
+  std::set<PDA::stack_symbol_type> PDA::get_in_use_stack_symbols() const {
     std::set<PDA::stack_symbol_type> res;
     for (auto const &[k, v] : transition_function) {
       auto const &top_symbol = k.stack_symbol;

@@ -176,7 +176,7 @@ namespace cyy::computation {
 
     configuration_set_type move(configuration_set_type configurations) const;
 
-    std::set<stack_symbol_type> get_used_stack_symbols() const;
+    std::set<stack_symbol_type> get_in_use_stack_symbols() const;
     void add_epsilon_transition(state_type from_state, state_type to_state);
 
   private:

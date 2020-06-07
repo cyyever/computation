@@ -23,6 +23,10 @@ namespace cyy::computation::exception {
   public:
     using invalid_argument::invalid_argument;
   };
+  class invalid_alphabet : public std::invalid_argument {
+  public:
+    using invalid_argument::invalid_argument;
+  };
 
   class empty_syntax_tree : public std::invalid_argument {
   public:

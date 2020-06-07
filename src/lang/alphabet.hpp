@@ -95,8 +95,8 @@ namespace cyy::computation {
     iterator begin() const noexcept { return iterator(this, 0); }
     iterator end() const noexcept { return iterator(this, size()); }
 
-    symbol_type front() const { return get_min_symbol(); }
-    symbol_type back() const { return get_max_symbol(); }
+    symbol_type get_min_symbol() const { return get_symbol(0); }
+    symbol_type get_max_symbol() const { return get_symbol(size() - 1); }
 
     virtual bool contain(symbol_type s) const = 0;
     virtual size_t size() const = 0;
@@ -129,8 +129,6 @@ namespace cyy::computation {
 
   private:
     virtual symbol_type get_symbol(size_t index) const = 0;
-    symbol_type get_min_symbol() const { return get_symbol(0); }
-    symbol_type get_max_symbol() const { return get_symbol(size() - 1); }
 
     symbol_type add_max_symbol(size_t inc) const {
       const symbol_type max_symbol = get_max_symbol();
