@@ -6,7 +6,7 @@
 
 namespace cyy::computation {
 
-  void endmarkered_DPDA::convert() {
+  void endmarkered_DPDA::to_endmarkered_DPDA() {
     normalize();
 
     auto new_accept_state = add_new_state();
@@ -54,8 +54,31 @@ namespace cyy::computation {
     normalize_transitions();
     std::map<stack_symbol_type,state_set_type> stack_to_state_set;
 
-
   }
+
+  endmarkered_DPDA::state_set_type endmarkered_DPDA::get_accept_states() const {
+    epsilon_closures.clear();
+
+    state_set_map_type epsilon_transitions;
+    state_set_type accept_states;
+
+    for (const auto &[from_state, transfers] : transition_function) {
+      for (const auto &[situation, action] : transfers) {
+        if (situation.input_symbol.has_value() || situation.stack_symbol.has_value()) {
+          continue;
+        } 
+        epsilon_transitions[from_state].insert(action.state);
+      }
+    }
+    for (auto const &[from_state,_]) {
+      if( contain_final_state(get_epsilon_closure(from_state, epsilon_transitions))) {
+        accept_states.insert(from_state);
+      }
+    }
+    epsilon_closures.clear();
+    return accept_states;
+  }
+
   void endmarkered_DPDA::normalize_transitions() {
     auto placeholder_stack_symbol = stack_alphabet->get_min_symbol();
     transition_function_type new_transitions;
