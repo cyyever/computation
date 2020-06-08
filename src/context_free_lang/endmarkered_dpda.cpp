@@ -50,7 +50,12 @@ namespace cyy::computation {
     final_states = {new_accept_state};
     check_transition_fuction(true, true);
   }
-  /* DPDA to_DPDA() const {} */
+  DPDA to_DPDA()  {
+    normalize_transitions();
+    std::map<stack_symbol_type,state_set_type> stack_to_state_set;
+
+
+  }
   void endmarkered_DPDA::normalize_transitions() {
     auto placeholder_stack_symbol = stack_alphabet->get_min_symbol();
     transition_function_type new_transitions;
