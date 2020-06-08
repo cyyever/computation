@@ -76,6 +76,28 @@ namespace cyy::computation {
       transfers = std::move(new_transfers);
     }
     transition_function.merge(std::move(new_transitions));
-    // TODO add input change
+
+    new_transitions = {};
+    for (auto &[from_state, transfers] : transition_function) {
+      transition_function_type::mapped_type new_transfers;
+      for (auto &[configuration, action] : transfers) {
+        if (!configuration.input_symbol.has_value()) {
+          new_transfers[std::move(configuration)] = std::move(action);
+          continue;
+        }
+        auto input_symbol = configuration.input_symbol.value();
+        auto next_state = add_new_state();
+        if (configuration.stack_symbol.has_value()) {
+          new_transfers[{{}, configuration.stack_symbol.value()}] = {
+              next_state};
+          new_transitions[next_state][{input_symbol}] = {std::move(action)};
+          continue;
+        }
+        new_transfers[std::move(configuration)] = {next_state};
+        new_transitions[next_state][{}] = {std::move(action)};
+      }
+      transfers = std::move(new_transfers);
+    }
+    transition_function.merge(std::move(new_transitions));
   }
 } // namespace cyy::computation
