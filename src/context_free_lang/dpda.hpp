@@ -32,6 +32,8 @@ namespace cyy::computation {
       std::optional<input_symbol_type> input_symbol;
       std::optional<stack_symbol_type> stack_symbol;
       bool operator==(const situation_type &) const noexcept = default;
+      bool has_pop() const { return stack_symbol.has_value(); }
+      bool use_input() const { return input_symbol.has_value(); }
     };
 
     struct situation_hash_type {
@@ -59,6 +61,7 @@ namespace cyy::computation {
       std::optional<stack_symbol_type> stack_symbol;
       bool operator==(const action_type &) const noexcept = default;
       auto operator<=>(const action_type &) const noexcept = default;
+      bool has_push() const { return stack_symbol.has_value(); }
     };
 
     using transition_function_type = std::unordered_map<

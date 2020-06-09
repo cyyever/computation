@@ -34,6 +34,7 @@ namespace cyy::computation {
       state_type state;
       std::optional<input_symbol_type> input_symbol;
       std::optional<stack_symbol_type> stack_symbol;
+      bool has_pop() const { return stack_symbol.has_value(); }
       bool operator==(const situation_type &) const noexcept = default;
     };
 

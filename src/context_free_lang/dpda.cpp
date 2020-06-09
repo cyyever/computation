@@ -54,7 +54,7 @@ namespace cyy::computation {
     auto it2 = state_transition_function.find({});
     if (it2 != state_transition_function.end()) {
       configuration.state = it2->second.state;
-      if (it2->second.stack_symbol.has_value()) {
+      if (it2->second.has_push()) {
         configuration.stack.push_back(it2->second.stack_symbol.value());
       }
       return configuration;
@@ -68,7 +68,7 @@ namespace cyy::computation {
     if (it2 != state_transition_function.end()) {
       configuration.state = it2->second.state;
       configuration.stack.pop_back();
-      if (it2->second.stack_symbol.has_value()) {
+      if (it2->second.has_push()) {
         configuration.stack.push_back(it2->second.stack_symbol.value());
       }
       return configuration;
@@ -87,7 +87,7 @@ namespace cyy::computation {
     auto it2 = state_transition_function.find({a});
     if (it2 != state_transition_function.end()) {
       configuration.state = it2->second.state;
-      if (it2->second.stack_symbol.has_value()) {
+      if (it2->second.has_push()) {
         configuration.stack.push_back(it2->second.stack_symbol.value());
       }
       return configuration;
@@ -101,7 +101,7 @@ namespace cyy::computation {
     if (it2 != state_transition_function.end()) {
       configuration.state = it2->second.state;
       configuration.stack.pop_back();
-      if (it2->second.stack_symbol.has_value()) {
+      if (it2->second.has_push()) {
         configuration.stack.push_back(it2->second.stack_symbol.value());
       }
       return configuration;
@@ -128,14 +128,13 @@ namespace cyy::computation {
     transition_function_type new_transitions;
     for (auto &[from_state, transfers] : transition_function) {
       auto parallel_from_state = get_parallel_state(from_state);
-      for (auto &[configuration, action] : transfers) {
-        if (configuration.input_symbol.has_value()) {
-          new_transitions[parallel_from_state].emplace(configuration, action);
+      for (auto &[situation, action] : transfers) {
+        if (situation.use_input()) {
+          new_transitions[parallel_from_state].emplace(situation, action);
         } else {
           auto new_action = action;
           new_action.state = get_parallel_state(action.state);
-          new_transitions[parallel_from_state].emplace(configuration,
-                                                       new_action);
+          new_transitions[parallel_from_state].emplace(situation, new_action);
           if (is_final_state(from_state)) {
             action.state = get_parallel_state(action.state);
           }
@@ -159,10 +158,10 @@ namespace cyy::computation {
       decltype(transfers) new_transfers;
       bool flag = false;
       for (const auto &[situation, action] : transfers) {
-        if (!situation.stack_symbol.has_value()) {
+        if (!situation.has_pop()) {
           continue;
         }
-        if (situation.input_symbol.has_value()) {
+        if (situation.use_input()) {
           continue;
         }
         auto new_situation = situation;
@@ -177,7 +176,7 @@ namespace cyy::computation {
       }
       if (!flag) {
         for (auto const &[situation, action] : transfers) {
-          if (!situation.stack_symbol.has_value()) {
+          if (!situation.has_pop()) {
             continue;
           }
           auto new_situation = situation;
@@ -232,8 +231,8 @@ namespace cyy::computation {
 
     for (const auto &[from_state, transfers] : transition_function) {
       for (const auto &[situation, action] : transfers) {
-        if (situation.input_symbol.has_value()) {
-          if (!situation.stack_symbol.has_value()) {
+        if (situation.use_input()) {
+          if (!situation.has_pop()) {
             looping_situations.erase(from_state);
             break;
           }
@@ -259,7 +258,7 @@ namespace cyy::computation {
           auto it2 = state_transition_function.find({{}, stack_symbol});
           if (it2 != state_transition_function.end()) {
             action = it2->second;
-            if (!action.stack_symbol.has_value()) {
+            if (!action.has_push()) {
               if (new_looping_situations[from_state].erase(stack_symbol)) {
                 flag = true;
               }
@@ -270,7 +269,7 @@ namespace cyy::computation {
             assert(it2 != state_transition_function.end());
             action = it2->second;
 
-            if (!action.stack_symbol.has_value()) {
+            if (!action.has_push()) {
               auto prev_size = new_looping_situations[from_state].size();
               new_looping_situations[from_state] =
                   new_looping_situations[action.state];
@@ -280,7 +279,7 @@ namespace cyy::computation {
               }
             }
           }
-          if (action.stack_symbol.has_value()) {
+          if (action.has_push()) {
             if (!new_looping_situations.contains(action.state) ||
                 !new_looping_situations[action.state].contains(
                     action.stack_symbol.value())) {
@@ -329,8 +328,8 @@ namespace cyy::computation {
     // mark reading states
     transition_function_type new_transitions;
     for (auto &[from_state, transfers] : complement_dpda.transition_function) {
-      if (!transfers.begin()->first.stack_symbol.has_value()) {
-        if (transfers.begin()->first.input_symbol.has_value()) {
+      if (!transfers.begin()->first.has_pop()) {
+        if (transfers.begin()->first.use_input()) {
           reading_states.insert(from_state);
         }
         continue;
@@ -338,7 +337,7 @@ namespace cyy::computation {
       bool has_input_epsilon = false;
       bool has_input = false;
       for (const auto &[situation, action] : transfers) {
-        if (situation.input_symbol.has_value()) {
+        if (situation.use_input()) {
           has_input = true;
         } else {
           has_input_epsilon = true;
@@ -356,7 +355,7 @@ namespace cyy::computation {
           new_transitions_of_state;
       std::unordered_map<stack_symbol_type, state_type> stack_to_state;
       for (auto [situation, action] : transfers) {
-        if (situation.input_symbol.has_value()) {
+        if (situation.use_input()) {
           auto stack_symbol = situation.stack_symbol.value();
           auto it = stack_to_state.find(stack_symbol);
           if (it == stack_to_state.end()) {
@@ -375,9 +374,8 @@ namespace cyy::computation {
         }
       }
 
-      auto count = std::erase_if(transfers, [](const auto &item) {
-        auto const &[key, value] = item;
-        return key.input_symbol.has_value();
+      auto count = std::erase_if(transfers, [](const auto &transfer) {
+        return transfer.first.use_input();
       });
       assert(count > 0);
       transfers.merge(std::move(new_transitions_of_state));

@@ -2,7 +2,10 @@
  * \file endmarkered_dpda.cpp
  */
 
+#include <unordered_map>
+
 #include "endmarkered_dpda.hpp"
+#include "lang/range_alphabet.hpp"
 
 namespace cyy::computation {
 
@@ -50,10 +53,60 @@ namespace cyy::computation {
     final_states = {new_accept_state};
     check_transition_fuction(true, true);
   }
-  DPDA to_DPDA()  {
+  void endmarkered_DPDA::to_DPDA() {
     normalize_transitions();
-    std::map<stack_symbol_type,state_set_type> stack_to_state_set;
 
+    auto stack_alphabet_of_state_set = std::make_shared<range_alphabet>(
+        stack_alphabet->get_max_symbol() + 1,
+        stack_alphabet->get_max_symbol() +
+            (static_cast<size_t>(1) << (states.size())),
+        "stack_alphabet_of_state_set");
+
+    auto accept_states = get_accept_states();
+    final_states.clear();
+    auto accept_state_set_bitset = state_set_to_bitset(accept_states);
+    auto new_start_state = add_new_state();
+    transition_function[new_start_state][{}] = {
+        start_state, stack_alphabet_of_state_set->get_min_symbol() +
+                         accept_state_set_bitset.to_ulong()};
+    start_state = new_start_state;
+
+    transition_function_type new_transitions;
+    for (auto &[from_state, transfers] : transition_function) {
+      transition_function_type::mapped_type new_transfers;
+      for (auto &[situation, action] : transfers) {
+        if (situation.has_pop()) {
+          auto new_state = add_new_state();
+          for (auto new_stack_symbol : *stack_alphabet_of_state_set) {
+            new_transfers[{{}, new_stack_symbol}] = {new_state};
+          }
+          new_transitions[new_state][std::move(situation)] = std::move(action);
+          continue;
+        }
+        if (situation.use_input()) {
+          if (situation.input_symbol.value() != ALPHABET::endmarker) {
+            continue;
+          }
+          for (auto new_stack_symbol : *stack_alphabet_of_state_set) {
+            if ((boost::dynamic_bitset<>(states.size(), {action.state}) |
+                 boost::dynamic_bitset<>(states.size(), new_stack_symbol))
+                    .any()) {
+              auto new_state = add_new_state();
+              add_final_states(new_state);
+              new_transfers[{{}, new_stack_symbol}] = {new_state};
+              assert(!action.has_push());
+              new_transitions[new_state][{}] = {action.state, new_stack_symbol};
+            } else {
+              new_transfers[{{}, new_stack_symbol}] = action;
+            }
+          }
+          continue;
+        }
+      }
+      transfers = std::move(new_transfers);
+    }
+    transition_function.merge(std::move(new_transitions));
+    return;
   }
 
   endmarkered_DPDA::state_set_type endmarkered_DPDA::get_accept_states() const {
@@ -64,22 +117,29 @@ namespace cyy::computation {
 
     for (const auto &[from_state, transfers] : transition_function) {
       for (const auto &[situation, action] : transfers) {
-        if (situation.input_symbol.has_value() || situation.stack_symbol.has_value()) {
+        if (situation.input_symbol.has_value() ||
+            situation.stack_symbol.has_value()) {
           continue;
-        } 
+        }
         epsilon_transitions[from_state].insert(action.state);
       }
     }
-    for (auto const &[from_state,_]) {
-      if( contain_final_state(get_epsilon_closure(from_state, epsilon_transitions))) {
+    for (auto const &[from_state, _] : epsilon_transitions) {
+      if (contain_final_state(
+              get_epsilon_closure(from_state, epsilon_transitions))) {
         accept_states.insert(from_state);
       }
     }
+    accept_states.merge(state_set_type(final_states));
     epsilon_closures.clear();
     return accept_states;
   }
 
   void endmarkered_DPDA::normalize_transitions() {
+    if (transition_normalized) {
+      return;
+    }
+
     auto placeholder_stack_symbol = stack_alphabet->get_min_symbol();
     transition_function_type new_transitions;
     for (auto &[from_state, transfers] : transition_function) {
@@ -127,5 +187,27 @@ namespace cyy::computation {
       transfers = std::move(new_transfers);
     }
     transition_function.merge(std::move(new_transitions));
+    transition_normalized = true;
+    check_transition_fuction(true, true);
+  }
+  boost::dynamic_bitset<>
+  endmarkered_DPDA::state_set_to_bitset(const state_set_type &state_set) {
+    boost::dynamic_bitset<> bitset(states.size());
+    auto it = states.begin();
+    auto it2 = state_set.begin();
+    while (it != states.end() && it2 != state_set.end()) {
+      if (*it == *it2) {
+        bitset.set(std::distance(states.begin(), it));
+        it++;
+        it2++;
+        continue;
+      }
+      if (*it < *it2) {
+        it++;
+        continue;
+      }
+      it2++;
+    }
+    return bitset;
   }
 } // namespace cyy::computation

@@ -118,7 +118,7 @@ namespace cyy::computation {
           continue;
         }
         auto next_state = add_new_state();
-        if (situation.stack_symbol.has_value()) {
+        if (situation.has_pop()) {
           new_actions.emplace(next_state);
           new_transition[{next_state}] = {std::move(action)};
           continue;
