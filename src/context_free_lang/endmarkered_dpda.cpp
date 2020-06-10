@@ -191,42 +191,52 @@ namespace cyy::computation {
           new_transfers[std::move(configuration)] = std::move(action);
           continue;
         }
-        if (has_input_epsilon) {
-        assert(!has_stack_epsilon);
-          assert(configuration.has_pop());
-          auto stack_symbol = configuration.stack_symbol.value();
-          if (!parallel_stack_states.contains(stack_symbol)) {
-            parallel_stack_states[stack_symbol] = add_new_state();
-          }
-          // read and pop
-          auto next_state = parallel_stack_states[stack_symbol];
-          new_transfers[{configuration.input_symbol.value()}] = {next_state};
-          new_transitions[next_state][{{}, stack_symbol}] = std::move(action);
-          continue;
-        }
-        assert(has_stack_epsilon);
-        /* if (!configuration.has_pop()) { */
-        /*   auto next_state = add_new_state(); */
-        /*   new_transfers[{configuration.input_symbol.value()}] = {next_state}; */
-        /*   new_transitions[next_state][{}] = std::move(action); */
-        /*   continue; */
-        /* } */
+	auto input_symbol=configuration.input_symbol.value();
+	if (has_input_epsilon) {
+		assert(!has_stack_epsilon);
+		assert(configuration.has_pop());
+		auto stack_symbol = configuration.stack_symbol.value();
+		if (!parallel_stack_states.contains(stack_symbol)) {
+			parallel_stack_states[stack_symbol] = add_new_state();
+		}
+		// a z
+		// b z
+		// ... z z
+		// pop and read 
+		auto next_state = parallel_stack_states[stack_symbol];
+		new_transfers[{{},stack_symbol}] = {next_state};
+		new_transitions[next_state][{input_symbol}] = std::move(action);
+		continue;
+	}
+	assert(has_stack_epsilon);
+	if(configuration.has_pop()) {
+		// a a
+		// a b
+		// ... a z
+		// read and pop
+		if (!parallel_input_states.contains(input_symbol)) {
+			parallel_input_states[input_symbol] = add_new_state();
+		}
 
-        /* if (configuration.has_pop()) { */
-        /*   if (!parallel_states.contains(from_state)) { */
-        /*     parallel_states[from_state] = add_new_state(); */
-        /*   } */
-        /*   auto new_state = parallel_states[from_state]; */
-        /* } */
+		auto next_state = parallel_input_states[input_symbol];
+		new_transfers[input_symbol] = {next_state};
+		new_transitions[next_state][{{}, stack_symbol}] = std::move(action);
+		continue;
+	}
 
-        /* auto input_symbol = configuration.input_symbol.value(); */
-        /* auto next_state = add_new_state(); */
-        /* if (configuration.has_pop()) { */
+	// a epsilon
+	if(!action.has_push()) {
+		continue;
+	}
+		if (!parallel_input_states.contains(input_symbol)) {
+			parallel_input_states[input_symbol] = add_new_state();
+		}
 
-        /*   continue; */
-        /* } */
-        /* new_transfers[std::move(configuration)] = {next_state}; */
-        /* new_transitions[next_state][{}] = {std::move(action)}; */
+		auto next_state = parallel_input_states[input_symbol];
+		new_transfers[input_symbol] = {next_state};
+		new_transitions[next_state][{}] = std::move(action);
+
+
       }
       transfers = std::move(new_transfers);
     }
