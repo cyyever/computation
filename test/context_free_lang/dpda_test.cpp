@@ -89,5 +89,8 @@ TEST_CASE("recognize DPDA") {
       str.push_back(endmarker);
       CHECK(!endmarkered_dpda.recognize(str));
     }
+    SUBCASE("can't recognize") {
+     auto reverted_dpda=endmarkered_dpda.to_DPDA();
+    }
   }
 }
