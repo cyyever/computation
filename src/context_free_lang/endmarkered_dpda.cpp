@@ -55,6 +55,7 @@ namespace cyy::computation {
   }
   DPDA endmarkered_DPDA::to_DPDA() {
     normalize_transitions();
+    return *this;
 
     auto stack_alphabet_of_state_set = std::make_shared<range_alphabet>(
         stack_alphabet->get_max_symbol() + 1,
@@ -191,56 +192,64 @@ namespace cyy::computation {
           new_transfers[std::move(configuration)] = std::move(action);
           continue;
         }
-	auto input_symbol=configuration.input_symbol.value();
-	if (has_input_epsilon) {
-		assert(!has_stack_epsilon);
-		assert(configuration.has_pop());
-		auto stack_symbol = configuration.stack_symbol.value();
-		if (!parallel_stack_states.contains(stack_symbol)) {
-			parallel_stack_states[stack_symbol] = add_new_state();
-		}
-		// a z
-		// b z
-		// ... z z
-		// pop and read 
-		auto next_state = parallel_stack_states[stack_symbol];
-		new_transfers[{{},stack_symbol}] = {next_state};
-		new_transitions[next_state][{input_symbol}] = std::move(action);
-		continue;
-	}
-	assert(has_stack_epsilon);
-	if(configuration.has_pop()) {
-		// a a
-		// a b
-		// ... a z
-		// read and pop
-		if (!parallel_input_states.contains(input_symbol)) {
-			parallel_input_states[input_symbol] = add_new_state();
-		}
+        auto input_symbol = configuration.input_symbol.value();
+        if (has_input_epsilon) {
+          assert(!has_stack_epsilon);
+          assert(configuration.has_pop());
+          auto stack_symbol = configuration.stack_symbol.value();
+          if (!parallel_stack_states.contains(stack_symbol)) {
+            parallel_stack_states[stack_symbol] = add_new_state();
+          }
+          // a z
+          // b z
+          // ... z z
+          // pop and read
+          auto next_state = parallel_stack_states[stack_symbol];
+          new_transfers[{{}, stack_symbol}] = {next_state};
+          if (action.has_push()) {
+            auto next_state2 = add_new_state();
+            new_transitions[next_state][{input_symbol}] = {next_state2};
+            new_transitions[next_state2][{}] = std::move(action);
+          } else {
+            new_transitions[next_state][{input_symbol}] = std::move(action);
+          }
+          continue;
+        }
+        assert(has_stack_epsilon);
+        if (configuration.has_pop()) {
+          // a a
+          // a b
+          // ... a z
+          // read and pop
+          if (!parallel_input_states.contains(input_symbol)) {
+            parallel_input_states[input_symbol] = add_new_state();
+          }
 
-		auto next_state = parallel_input_states[input_symbol];
-		new_transfers[input_symbol] = {next_state};
-		new_transitions[next_state][{{}, stack_symbol}] = std::move(action);
-		continue;
-	}
+          auto next_state = parallel_input_states[input_symbol];
+          new_transfers[input_symbol] = {next_state};
+          new_transitions[next_state]
+                         [{{}, configuration.stack_symbol.value()}] =
+                             std::move(action);
+          continue;
+        }
 
-	// a epsilon
-	if(!action.has_push()) {
-		continue;
-	}
-		if (!parallel_input_states.contains(input_symbol)) {
-			parallel_input_states[input_symbol] = add_new_state();
-		}
+        // a epsilon
+        if (!action.has_push()) {
+          new_transfers[std::move(configuration)] = std::move(action);
+          continue;
+        }
+        if (!parallel_input_states.contains(input_symbol)) {
+          parallel_input_states[input_symbol] = add_new_state();
+        }
 
-		auto next_state = parallel_input_states[input_symbol];
-		new_transfers[input_symbol] = {next_state};
-		new_transitions[next_state][{}] = std::move(action);
-
-
+        auto next_state = parallel_input_states[input_symbol];
+        new_transfers[input_symbol] = {next_state};
+        new_transitions[next_state][{}] = std::move(action);
       }
       transfers = std::move(new_transfers);
     }
     transition_function.merge(std::move(new_transitions));
+    check_transition_fuction(true, true);
 
     new_transitions = {};
     // process stack
@@ -252,14 +261,14 @@ namespace cyy::computation {
           new_transfers[std::move(configuration)] = std::move(action);
           continue;
         }
+        if (configuration.use_input() && !configuration.has_pop()) {
+          new_transfers[std::move(configuration)] = std::move(action);
+          continue;
+        }
         auto next_state = add_new_state();
         if (configuration.has_pop()) {
           new_transfers[std::move(configuration)] = {next_state};
           new_transitions[next_state][{}] = std::move(action);
-          continue;
-        }
-        if (configuration.use_input()) {
-          new_transfers[std::move(configuration)] = std::move(action);
           continue;
         }
         for (auto stack_symbol : stack_alphabet->get_view(true)) {
@@ -272,9 +281,24 @@ namespace cyy::computation {
     transition_function.merge(std::move(new_transitions));
     check_transition_fuction(true, true);
 
+#ifndef NDEBUG
+    for (auto &[from_state, transfers] : transition_function) {
+      for (auto &[configuration, action] : transfers) {
+        size_t cnt=0;
+        if(configuration.use_input()) {
+          cnt++;
+        }
+        if(configuration.has_pop()) {
+          cnt++;
+        }
+        if(action.has_push()) {
+          cnt++;
+        }
+        assert(cnt==1);
+      }
+    }
+#endif
     transition_normalized = true;
-
-    check_transition_fuction(true, true);
   }
 
   boost::dynamic_bitset<>
