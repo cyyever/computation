@@ -25,9 +25,9 @@ namespace cyy::computation {
     std::vector<bool> flags{false};
     std::vector<std::set<uint64_t>> position_sets{
         syntax_tree_with_endmarker->first_pos()};
-    std::set<DFA::state_type> DFA_states{0};
+    DFA::state_set_type DFA_states{0};
     DFA::transition_function_type DFA_transition_function;
-    std::set<DFA::state_type> DFA_final_states;
+    DFA::state_set_type DFA_final_states;
     for (size_t i = 0; i < flags.size(); i++) {
       if (flags[i]) {
         continue;

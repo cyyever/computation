@@ -7,15 +7,10 @@
  */
 #pragma once
 
-#include <map>
-#include <optional>
-#include <set>
-#include <unordered_map>
-#include <vector>
+template <typename T, std::ranges::input_range U>
+requires std::same_as<T, std::ranges::range_value_t<U>>
 
-template <typename T>
-std::pair<std::vector<T>, std::unordered_map<T, std::set<T>>>
-topological_sort(std::unordered_map<T, std::set<T>> graph) {
+    auto topological_sort(std::unordered_map<T, U> graph) {
   std::unordered_map<T, size_t> degrees;
   for (auto const &[from_node, to_nodes] : graph) {
     degrees.try_emplace(from_node, 0);
@@ -42,5 +37,5 @@ topological_sort(std::unordered_map<T, std::set<T>> graph) {
       graph.erase(it);
     }
   }
-  return {result, graph};
+  return std::pair{result, graph};
 }

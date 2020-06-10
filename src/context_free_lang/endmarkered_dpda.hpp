@@ -16,7 +16,7 @@ namespace cyy::computation {
       to_endmarkered_DPDA();
     }
 
-    void to_DPDA();
+    DPDA to_DPDA();
 
   private:
     state_set_type get_accept_states() const;
@@ -24,8 +24,12 @@ namespace cyy::computation {
     bool transition_normalized{};
     void normalize_transitions();
 
-    boost::dynamic_bitset<>
-    state_set_to_bitset(const state_set_type &state_set);
+    static boost::dynamic_bitset<>
+    state_set_to_bitset(const state_set_type &full_state_set,
+                        const state_set_type &state_set);
+    bool state_biset_contains(const state_set_type &full_state_set,
+                              const boost::dynamic_bitset<> &state_bitset,
+                              state_type state);
   };
 
 } // namespace cyy::computation

@@ -17,9 +17,9 @@ namespace cyy::computation {
     stack.emplace_back(0, 0, &stack);
 
     configuration_set_type configurations{{start_state, stack[0]}};
-    configurations = move(std::move(configurations));
+    configurations = go(std::move(configurations));
     for (auto const &symbol : view) {
-      configurations = move(configurations, symbol);
+      configurations = go(configurations, symbol);
       if (configurations.empty()) {
         return false;
       }
@@ -33,8 +33,8 @@ namespace cyy::computation {
   }
 
   PDA::configuration_set_type
-  PDA::move(const configuration_set_type &configurations,
-            input_symbol_type a) const {
+  PDA::go(const configuration_set_type &configurations,
+          input_symbol_type a) const {
     configuration_set_type direct_reachable;
     for (auto const &[s, top_node] : configurations) {
       if (top_node.index != 0) {
@@ -54,11 +54,11 @@ namespace cyy::computation {
         }
       }
     }
-    return move(std::move(direct_reachable));
+    return go(std::move(direct_reachable));
   }
 
   PDA::configuration_set_type
-  PDA::move(configuration_set_type configurations) const {
+  PDA::go(configuration_set_type configurations) const {
     auto result = std::move(configurations);
     while (true) {
       decltype(result) new_result;

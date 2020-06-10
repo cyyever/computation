@@ -172,10 +172,10 @@ namespace cyy::computation {
         std::unordered_set<configuration_type, configuration_hash_type>;
 
   private:
-    configuration_set_type move(const configuration_set_type &configurations,
-                                input_symbol_type a) const;
+    configuration_set_type go(const configuration_set_type &configurations,
+                              input_symbol_type a) const;
 
-    configuration_set_type move(configuration_set_type configurations) const;
+    configuration_set_type go(configuration_set_type configurations) const;
 
     std::set<stack_symbol_type> get_in_use_stack_symbols() const;
     void add_epsilon_transition(state_type from_state, state_type to_state);

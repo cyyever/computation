@@ -15,8 +15,7 @@
 
 namespace cyy::computation {
 
-  std::set<NFA::state_type> NFA::go(const state_set_type &T,
-                                    symbol_type a) const {
+  NFA::state_set_type NFA::go(const state_set_type &T, symbol_type a) const {
     state_set_type direct_reachable;
 
     for (const auto &s : T) {
@@ -44,7 +43,7 @@ namespace cyy::computation {
     return contain_final_state(s);
   }
 
-  std::pair<DFA, std::unordered_map<DFA::state_type, std::set<NFA::state_type>>>
+  std::pair<DFA, std::unordered_map<DFA::state_type, NFA::state_set_type>>
   NFA::to_DFA_with_mapping() const {
     state_type next_state = 1;
     DFA::transition_function_type DFA_transition_function;
