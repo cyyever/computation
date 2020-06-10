@@ -205,28 +205,28 @@ namespace cyy::computation {
           continue;
         }
         assert(has_stack_epsilon);
-        if (!configuration.has_pop()) {
-          auto next_state = add_new_state();
-          new_transfers[{configuration.input_symbol.value()}] = {next_state};
-          new_transitions[next_state][{}] = std::move(action);
-          continue;
-        }
+        /* if (!configuration.has_pop()) { */
+        /*   auto next_state = add_new_state(); */
+        /*   new_transfers[{configuration.input_symbol.value()}] = {next_state}; */
+        /*   new_transitions[next_state][{}] = std::move(action); */
+        /*   continue; */
+        /* } */
 
-        if (configuration.has_pop()) {
-          if (!parallel_states.contains(from_state)) {
-            parallel_states[from_state] = add_new_state();
-          }
-          auto new_state = parallel_states[from_state];
-        }
+        /* if (configuration.has_pop()) { */
+        /*   if (!parallel_states.contains(from_state)) { */
+        /*     parallel_states[from_state] = add_new_state(); */
+        /*   } */
+        /*   auto new_state = parallel_states[from_state]; */
+        /* } */
 
-        auto input_symbol = configuration.input_symbol.value();
-        auto next_state = add_new_state();
-        if (configuration.has_pop()) {
+        /* auto input_symbol = configuration.input_symbol.value(); */
+        /* auto next_state = add_new_state(); */
+        /* if (configuration.has_pop()) { */
 
-          continue;
-        }
-        new_transfers[std::move(configuration)] = {next_state};
-        new_transitions[next_state][{}] = {std::move(action)};
+        /*   continue; */
+        /* } */
+        /* new_transfers[std::move(configuration)] = {next_state}; */
+        /* new_transitions[next_state][{}] = {std::move(action)}; */
       }
       transfers = std::move(new_transfers);
     }
