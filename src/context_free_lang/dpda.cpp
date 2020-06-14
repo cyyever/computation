@@ -115,35 +115,39 @@ namespace cyy::computation {
     auto [acceptance_looping_situations, rejection_looping_situations] =
         get_looping_situations();
     std::unordered_map<state_type, state_type> parallel_states;
-    auto get_parallel_state = [&, this](state_type s) {
-      auto it = parallel_states.find(s);
-      if (it == parallel_states.end()) {
-        auto parallel_state = add_new_state();
-        add_final_states(parallel_state);
-        it = parallel_states.emplace(s, parallel_state).first;
-        assert(it->second == parallel_state);
-      }
-      return it->second;
-    };
+
     transition_function_type new_transitions;
-    for (auto &[from_state, transfers] : transition_function) {
-      auto parallel_from_state = get_parallel_state(from_state);
-      for (auto &[situation, action] : transfers) {
-        if (situation.use_input()) {
-          new_transitions[parallel_from_state].emplace(situation, action);
-        } else {
-          auto new_action = action;
-          new_action.state = get_parallel_state(action.state);
-          new_transitions[parallel_from_state].emplace(situation, new_action);
-          if (is_final_state(from_state)) {
-            action.state = get_parallel_state(action.state);
-          }
+    auto create_parallel_state = [&, this](auto &&self, state_type s) {
+      if (parallel_states.contains(s)) {
+        return parallel_states[s];
+      }
+      auto parallel_state = add_new_state();
+      parallel_states[s] = parallel_state;
+
+      for (auto [situation, action] : transition_function[s]) {
+        if (!situation.use_input()) {
+          action.state = self(self, action.state);
+        }
+        new_transitions[parallel_state].emplace(situation, action);
+      }
+      return parallel_state;
+    };
+
+    for (auto final_state : final_states) {
+      for (auto &[situation, action] : transition_function[final_state]) {
+        if (!situation.use_input()) {
+          action.state =
+              create_parallel_state(create_parallel_state, action.state);
         }
       }
-      assert(new_transitions.contains(parallel_from_state));
+    }
+
+    for (auto const &[_, parallel_state] : parallel_states) {
+      add_final_states(parallel_state);
     }
 
     transition_function.merge(std::move(new_transitions));
+    check_transition_fuction(false, false);
 
     auto old_start_state = start_state;
     start_state = add_new_state();
@@ -328,21 +332,10 @@ namespace cyy::computation {
     // mark reading states
     transition_function_type new_transitions;
     for (auto &[from_state, transfers] : complement_dpda.transition_function) {
-      if (!transfers.begin()->first.has_pop()) {
-        if (transfers.begin()->first.use_input()) {
-          reading_states.insert(from_state);
-        }
-        continue;
-      }
-      bool has_input_epsilon = false;
-      bool has_input = false;
-      for (const auto &[situation, action] : transfers) {
-        if (situation.use_input()) {
-          has_input = true;
-        } else {
-          has_input_epsilon = true;
-        }
-      }
+      bool has_input_epsilon = std::ranges::any_of(
+          transfers, [](auto const p) { return !p.first.use_input(); });
+      bool has_input = std::ranges::any_of(
+          transfers, [](auto const p) { return p.first.use_input(); });
       if (!has_input_epsilon) {
         reading_states.insert(from_state);
         continue;
@@ -382,12 +375,17 @@ namespace cyy::computation {
     }
     complement_dpda.transition_function.merge(std::move(new_transitions));
 
-    assert(!reading_states.empty());
+#ifndef NDEBUG
+    for (auto const s : reading_states) {
+      assert(std::ranges::all_of(
+          complement_dpda.transition_function[s],
+          [](auto const p) { return p.first.use_input(); }));
+    }
+#endif
     state_set_type new_final_states;
     std::ranges::set_difference(
         reading_states, complement_dpda.final_states,
         std::inserter(new_final_states, new_final_states.begin()));
-    assert(!new_final_states.empty());
     complement_dpda.final_states = std::move(new_final_states);
 
 #ifndef NDEBUG

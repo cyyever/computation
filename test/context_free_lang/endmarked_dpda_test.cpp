@@ -66,8 +66,6 @@ TEST_CASE("endmarkered DPDA") {
       }
     }
 
-    SUBCASE("to DPDA") {
-      auto reverted_dpda = endmarkered_dpda.to_DPDA();
-    }
+    SUBCASE("to DPDA") { auto reverted_dpda = endmarkered_dpda.to_DPDA(); }
   }
 }
