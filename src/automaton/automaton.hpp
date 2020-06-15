@@ -8,6 +8,7 @@
 #pragma once
 
 #include <algorithm>
+#include <boost/dynamic_bitset.hpp>
 #include <map>
 #include <optional>
 #include <set>
@@ -24,6 +25,7 @@ namespace cyy::computation {
   public:
     using state_type = uint64_t;
     using state_set_type = std::set<state_type>;
+    using state_bitset_type = boost::dynamic_bitset<>;
     using state_set_map_type = std::unordered_map<state_type, state_set_type>;
     using input_symbol_type = symbol_type;
     using stack_symbol_type = symbol_type;
@@ -135,6 +137,15 @@ namespace cyy::computation {
     const state_set_type &get_epsilon_closure(
         state_type s,
         const state_set_map_type &epsilon_transition_function) const;
+
+  protected:
+    static state_bitset_type
+    state_set_to_bitset(const state_set_type &all_state_set,
+                        const state_set_type &state_set);
+    state_bitset_type
+    state_set_to_bitset(const state_set_type &state_set) const;
+    bool state_biset_contains(const state_bitset_type &state_bitset,
+                              state_type state) const;
 
   protected:
     std::shared_ptr<ALPHABET> alphabet;

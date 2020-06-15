@@ -2,8 +2,8 @@
  * \file endmarkered_dpda.cpp
  */
 
-#include <memory>
-#include <unordered_map>
+/* #include <memory> */
+/* #include <unordered_map> */
 
 #include "endmarkered_dpda.hpp"
 #include "lang/range_alphabet.hpp"
@@ -69,8 +69,7 @@ namespace cyy::computation {
     auto accept_states = dpda.get_accept_states();
     dpda.final_states.clear();
     auto old_states = dpda.states;
-    auto accept_state_set_bitset =
-        state_set_to_bitset(old_states, accept_states);
+    auto accept_state_set_bitset = dpda.state_set_to_bitset(accept_states);
     auto new_start_state = dpda.add_new_state();
     const auto old_transition_function = dpda.transition_function;
     dpda.transition_function[new_start_state][{}] = {
@@ -102,8 +101,8 @@ namespace cyy::computation {
           for (auto new_stack_symbol : *stack_alphabet_of_state_set) {
             auto new_state = dpda.add_new_state();
             new_transfers[{{}, new_stack_symbol}] = {new_state};
-            if ((boost::dynamic_bitset<>(old_states.size(), {action.state}) |
-                 boost::dynamic_bitset<>(old_states.size(), new_stack_symbol))
+            if ((state_bitset_type(old_states.size(), {action.state}) |
+                 state_bitset_type(old_states.size(), new_stack_symbol))
                     .any()) {
               dpda.add_final_states(new_state);
             }
@@ -130,25 +129,25 @@ namespace cyy::computation {
           dpda.transition_function[new_state][{}] = {new_state2,
                                                      new_stack_symbol};
           state_set_type new_accept_states;
-          for (auto &[old_from_state, old_transfers] :
+          for (auto const &[old_from_state, old_transfers] :
                old_transition_function) {
             if (old_transfers.begin()->first.stack_symbol != new_stack_symbol) {
               continue;
             }
 
-            if (state_biset_contains(old_states,
-                                     boost::dynamic_bitset<>(old_states.size(),
-                                                             old_stack_symbol),
-                                     old_transfers.begin()->second.state)) {
+            if (dpda.state_biset_contains(
+                    state_bitset_type(old_states.size(), old_stack_symbol),
+                    old_transfers.begin()->second.state)) {
               new_accept_states.emplace(old_from_state);
               break;
             }
           }
           new_accept_states.merge(state_set_type(accept_states));
           dpda.transition_function[new_state2][{}] = {
-              next_state, stack_alphabet_of_state_set->get_min_symbol() +
-                              state_set_to_bitset(old_states, new_accept_states)
-                                  .to_ulong()};
+              next_state,
+              stack_alphabet_of_state_set->get_min_symbol() +
+                  dpda.state_set_to_bitset(old_states, new_accept_states)
+                      .to_ulong()};
         }
         for (auto stack_symbol : stack_alphabet->get_view(true)) {
           new_transfers[{{}, stack_symbol}] = {reject_state_opt.value()};
@@ -320,32 +319,4 @@ namespace cyy::computation {
     transition_normalized = true;
   }
 
-  boost::dynamic_bitset<>
-  endmarkered_DPDA::state_set_to_bitset(const state_set_type &full_state_set,
-                                        const state_set_type &state_set) {
-    boost::dynamic_bitset<> bitset(full_state_set.size());
-    auto it = full_state_set.begin();
-    auto it2 = state_set.begin();
-    while (it != full_state_set.end() && it2 != state_set.end()) {
-      if (*it == *it2) {
-        bitset.set(std::distance(full_state_set.begin(), it));
-        it++;
-        it2++;
-        continue;
-      }
-      if (*it < *it2) {
-        it++;
-        continue;
-      }
-      it2++;
-    }
-    return bitset;
-  }
-
-  bool endmarkered_DPDA::state_biset_contains(
-      const state_set_type &full_state_set,
-      const boost::dynamic_bitset<> &state_bitset, state_type state) {
-    return state_bitset.test(
-        std::distance(full_state_set.begin(), full_state_set.find(state)));
-  }
 } // namespace cyy::computation

@@ -77,4 +77,35 @@ namespace cyy::computation {
     }
     return epsilon_closures[s];
   }
+  finite_automaton::state_bitset_type
+  finite_automaton::state_set_to_bitset(const state_set_type &all_state_set,
+                                        const state_set_type &state_set) {
+    state_bitset_type bitset(all_state_set.size());
+    auto it = all_state_set.begin();
+    auto it2 = state_set.begin();
+    while (it != all_state_set.end() && it2 != state_set.end()) {
+      if (*it == *it2) {
+        bitset.set(std::distance(all_state_set.begin(), it));
+        it++;
+        it2++;
+        continue;
+      }
+      if (*it < *it2) {
+        it++;
+        continue;
+      }
+      it2++;
+    }
+    return bitset;
+  }
+
+  finite_automaton::state_bitset_type
+  finite_automaton::state_set_to_bitset(const state_set_type &state_set) const {
+    return state_set_to_bitset(states, state_set);
+  }
+  bool
+  finite_automaton::state_biset_contains(const state_bitset_type &state_bitset,
+                                         state_type state) const {
+    return state_bitset.test(std::distance(states.begin(), states.find(state)));
+  }
 } // namespace cyy::computation
