@@ -27,13 +27,15 @@ namespace cyy::computation {
 
     state_set_type res;
     for (auto const &d : direct_reachable) {
-      auto const &closure = get_epsilon_closure(d, epsilon_transition_function);
+      auto const &closure =
+          get_epsilon_closure(epsilon_closures, d, epsilon_transition_function);
       res.insert(closure.begin(), closure.end());
     }
     return res;
   }
   bool NFA::recognize(symbol_string_view view) const {
-    auto s = get_epsilon_closure(start_state, epsilon_transition_function);
+    auto s = get_epsilon_closure(epsilon_closures, start_state,
+                                 epsilon_transition_function);
     for (auto const &symbol : view) {
       s = go(s, symbol);
       if (s.empty()) {
@@ -48,7 +50,9 @@ namespace cyy::computation {
     state_type next_state = 1;
     DFA::transition_function_type DFA_transition_function;
     std::map<state_set_type, state_type> subsets{
-        {get_epsilon_closure(start_state, epsilon_transition_function), 0}};
+        {get_epsilon_closure(epsilon_closures, start_state,
+                             epsilon_transition_function),
+         0}};
     std::vector<decltype(subsets.begin())> tmp_states{subsets.begin()};
     for (size_t i = 0; i < tmp_states.size(); i++) {
       for (auto a : *alphabet) {

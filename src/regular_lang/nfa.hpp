@@ -55,8 +55,6 @@ namespace cyy::computation {
       transition_function.merge(rhs.transition_function);
       epsilon_transition_function.merge(rhs.epsilon_transition_function);
       final_states.merge(rhs.final_states);
-
-      epsilon_closures.clear();
     }
 
     using finite_automaton::add_final_states;
@@ -92,7 +90,6 @@ namespace cyy::computation {
             std::to_string(from_state));
       }
       epsilon_transition_function[from_state].merge(end_states);
-      epsilon_closures.clear();
     }
 
     bool recognize(symbol_string_view view) const;
@@ -108,6 +105,7 @@ namespace cyy::computation {
   private:
     transition_function_type transition_function;
     epsilon_transition_function_type epsilon_transition_function;
+    mutable state_set_map_type epsilon_closures;
   };
 
 } // namespace cyy::computation

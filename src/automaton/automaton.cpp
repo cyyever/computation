@@ -3,9 +3,9 @@
 #include "../util.hpp"
 namespace cyy::computation {
 
-  const finite_automaton::state_set_type &finite_automaton::get_epsilon_closure(
-      state_type s,
-      const state_set_map_type &epsilon_transition_function) const {
+  finite_automaton::state_set_type &finite_automaton::get_epsilon_closure(
+      state_set_map_type &epsilon_closures, state_type s,
+      const state_set_map_type &epsilon_transition_function) {
 
     auto it = epsilon_closures.find(s);
     if (it != epsilon_closures.end()) {

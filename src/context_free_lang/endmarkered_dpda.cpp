@@ -163,11 +163,11 @@ namespace cyy::computation {
   }
 
   endmarkered_DPDA::state_set_type endmarkered_DPDA::get_accept_states() const {
-    epsilon_closures.clear();
 
     state_set_map_type epsilon_transitions;
     state_set_type accept_states;
 
+    state_set_map_type epsilon_closures;
     for (const auto &[from_state, transfers] : transition_function) {
       for (const auto &[situation, action] : transfers) {
         if (situation.input_symbol.has_value() ||
@@ -178,13 +178,12 @@ namespace cyy::computation {
       }
     }
     for (auto const &[from_state, _] : epsilon_transitions) {
-      if (contain_final_state(
-              get_epsilon_closure(from_state, epsilon_transitions))) {
+      if (contain_final_state(get_epsilon_closure(epsilon_closures, from_state,
+                                                  epsilon_transitions))) {
         accept_states.insert(from_state);
       }
     }
     accept_states.merge(state_set_type(final_states));
-    epsilon_closures.clear();
     return accept_states;
   }
 

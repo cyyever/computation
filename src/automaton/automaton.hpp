@@ -134,10 +134,6 @@ namespace cyy::computation {
       final_states.insert(s);
     }
 
-    const state_set_type &get_epsilon_closure(
-        state_type s,
-        const state_set_map_type &epsilon_transition_function) const;
-
   protected:
     static state_bitset_type
     state_set_to_bitset(const state_set_type &all_state_set,
@@ -147,12 +143,15 @@ namespace cyy::computation {
     bool state_biset_contains(const state_bitset_type &state_bitset,
                               state_type state) const;
 
+    static state_set_type &
+    get_epsilon_closure(state_set_map_type &epsilon_closures, state_type s,
+                        const state_set_map_type &epsilon_transition_function);
+
   protected:
     std::shared_ptr<ALPHABET> alphabet;
     state_set_type states;
     state_type start_state;
     state_set_type final_states;
-    mutable state_set_map_type epsilon_closures;
   };
 
 } // namespace cyy::computation

@@ -311,8 +311,10 @@ namespace cyy::computation {
 
     decltype(looping_situations) acceptance_looping_situations;
     decltype(looping_situations) rejection_looping_situations;
+    state_set_map_type epsilon_closures;
     for (auto &[s, stack_symbol_set] : looping_situations) {
-      if (contain_final_state(get_epsilon_closure(s, epsilon_transitions))) {
+      if (contain_final_state(
+              get_epsilon_closure(epsilon_closures, s, epsilon_transitions))) {
         acceptance_looping_situations[s] = std::move(stack_symbol_set);
       } else {
         rejection_looping_situations[s] = std::move(stack_symbol_set);
