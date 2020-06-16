@@ -22,13 +22,13 @@ namespace cyy::computation {
   class LR_0_item {
   public:
     LR_0_item(CFG_production production, size_t dot_pos_ = 0)
-        : production_ptr{std::make_shared<CFG_production>(std::move(production))},
-          dot_pos{dot_pos_} {
+        : production_ptr{std::make_shared<CFG_production>(
+              std::move(production))},
+          dot_pos{dot_pos_} {}
+    bool operator==(const LR_0_item &rhs) const {
+      return *production_ptr == *rhs.production_ptr && dot_pos == rhs.dot_pos;
     }
-    bool operator==(const LR_0_item &rhs) const = default;
-    auto const &get_head() const noexcept {
-      return production_ptr->get_head();
-    }
+    auto const &get_head() const noexcept { return production_ptr->get_head(); }
     auto const &get_body() const noexcept { return production_ptr->get_body(); }
     size_t get_dot_pos() const { return dot_pos; }
     bool completed() const noexcept { return dot_pos >= get_body().size(); }
