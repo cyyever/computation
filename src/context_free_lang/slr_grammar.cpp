@@ -17,12 +17,11 @@ namespace cyy::computation {
     std::unordered_map<grammar_symbol_type, LR_0_item_set> res;
 
     for (auto const &kernel_item : set.get_kernel_items()) {
-      if (kernel_item.dot_pos < kernel_item.production.get_body().size()) {
-        auto const &symbol =
-            kernel_item.production.get_body()[kernel_item.dot_pos];
+      if (!kernel_item.completed()) {
         auto new_kernel_item = kernel_item;
-        new_kernel_item.dot_pos++;
-        res[symbol].add_kernel_item(*this, std::move(new_kernel_item));
+        new_kernel_item.go();
+        res[kernel_item.get_grammar_symbal()].add_kernel_item(
+            *this, std::move(new_kernel_item));
       }
     }
 
@@ -56,7 +55,6 @@ namespace cyy::computation {
     state_type next_state = 1;
 
     while (!unchecked_sets.empty()) {
-
       auto node = unchecked_sets.extract(unchecked_sets.begin());
 
       auto cur_state = node.mapped();
@@ -96,17 +94,17 @@ namespace cyy::computation {
 
     for (auto const &[set, state] : collection) {
       for (const auto &kernel_item : set.get_kernel_items()) {
-        if (kernel_item.dot_pos != kernel_item.production.get_body().size()) {
+        if (!kernel_item.completed()) {
           continue;
         }
 
-        if (kernel_item.production.get_head() == new_start_symbol) {
+        if (kernel_item.get_head() == new_start_symbol) {
           action_table[{state, ALPHABET::endmarker}] = true;
           continue;
         }
 
         for (auto const &follow_terminal :
-             follow_sets[kernel_item.production.get_head()]) {
+             follow_sets[kernel_item.get_head()]) {
 
           // conflict
           if (action_table.contains({state, follow_terminal})) {
@@ -115,7 +113,7 @@ namespace cyy::computation {
             std::cerr << std::endl;
             throw cyy::computation::exception::no_SLR_grammar("");
           }
-          action_table[{state, follow_terminal}] = kernel_item.production;
+          action_table[{state, follow_terminal}] = kernel_item.get_production();
         }
       }
     }

@@ -19,11 +19,10 @@ namespace cyy::computation {
     std::unordered_map<grammar_symbol_type, LR_1_item_set> res;
 
     for (auto const &[kernel_item, lookahead_set] : set.get_kernel_items()) {
-      if (kernel_item.dot_pos < kernel_item.production.get_body().size()) {
-        auto const &symbol =
-            kernel_item.production.get_body()[kernel_item.dot_pos];
+      if (!kernel_item.completed()) {
+        auto const &symbol = kernel_item.get_grammar_symbal();
         auto new_kernel_item = kernel_item;
-        new_kernel_item.dot_pos++;
+        new_kernel_item.go();
         res[symbol].add_kernel_item(*this, new_kernel_item, lookahead_set);
       }
     }
@@ -98,11 +97,11 @@ namespace cyy::computation {
     for (auto const &[set, state] : collection) {
 
       for (const auto &[kernel_item, lookahead_set] : set.get_kernel_items()) {
-        if (kernel_item.dot_pos != kernel_item.production.get_body().size()) {
+        if (!kernel_item.completed()) {
           continue;
         }
 
-        if (kernel_item.production.get_head() == new_start_symbol) {
+        if (kernel_item.get_head() == new_start_symbol) {
           action_table[{state, ALPHABET::endmarker}] = true;
           continue;
         }
@@ -114,7 +113,7 @@ namespace cyy::computation {
                       << static_cast<int>(lookahead) << std::endl;
             throw cyy::computation::exception::no_canonical_LR_grammar("");
           }
-          action_table[{state, lookahead}] = kernel_item.production;
+          action_table[{state, lookahead}] = kernel_item.get_production();
         }
       }
     }

@@ -28,7 +28,7 @@ namespace cyy::computation {
         spontaneous_lookahead_set.insert(lookahead_set.begin(),
                                          lookahead_set.end());
         spontaneous_lookahead_set.erase(unincluded_symbol);
-        res[grammar_symbol][next_kernel_item.production] = {
+        res[grammar_symbol][next_kernel_item.get_production()] = {
             propagation, std::move(spontaneous_lookahead_set)};
       }
     }
@@ -53,7 +53,7 @@ namespace cyy::computation {
       reversed_canonical_LR_0_collection[state] = &lr_0_item_set;
       for (const auto &kernel_item : lr_0_item_set.get_kernel_items()) {
 
-        if (kernel_item.production.get_head() == new_start_symbol) {
+        if (kernel_item.get_production().get_head() == new_start_symbol) {
           kernel_item_table[&kernel_item] = {ALPHABET::endmarker};
         } else {
           kernel_item_table[&kernel_item] = {};
@@ -69,7 +69,7 @@ namespace cyy::computation {
               *reversed_canonical_LR_0_collection[SLR_goto_transitions[{
                   state, symbol}]];
           for (auto const &next_kernel_item : next_set.get_kernel_items()) {
-            auto &p = lookahead_map[next_kernel_item.production];
+            auto &p = lookahead_map[next_kernel_item.get_production()];
             kernel_item_table[&next_kernel_item].merge(p.second);
             if (p.first) {
               propagation_relation[&kernel_item].push_back(&next_kernel_item);

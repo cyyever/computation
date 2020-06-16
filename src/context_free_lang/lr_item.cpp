@@ -13,8 +13,7 @@ namespace cyy::computation {
 
     std::vector<CFG::nonterminal_type> tmp_nonkernel_items;
     if (!kernel_item.completed()) {
-      auto const &symbol =
-          kernel_item.production.get_body()[kernel_item.dot_pos];
+      auto const &symbol = kernel_item.get_grammar_symbal();
       if (auto ptr = symbol.get_nonterminal_ptr(); ptr) {
         if (!nonkernel_items.contains(*ptr)) {
           tmp_nonkernel_items.push_back(*ptr);

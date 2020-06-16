@@ -2,9 +2,6 @@
  * \file endmarkered_dpda.cpp
  */
 
-/* #include <memory> */
-/* #include <unordered_map> */
-
 #include "endmarkered_dpda.hpp"
 #include "lang/range_alphabet.hpp"
 #include "lang/union_alphabet.hpp"
