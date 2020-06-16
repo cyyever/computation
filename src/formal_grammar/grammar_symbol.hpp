@@ -46,15 +46,15 @@ namespace cyy::computation {
     const nonterminal_type &get_nonterminal() const noexcept {
       return std::get<nonterminal_type>(*this);
     }
-    bool operator==(const terminal_type &t) const {
+    bool operator==(const terminal_type &t) const noexcept {
       return is_terminal() && get_terminal() == t;
     }
-    bool operator==(const nonterminal_type &t) const {
+    bool operator==(const nonterminal_type &t) const noexcept {
       return is_nonterminal() && *get_nonterminal_ptr() == t;
     }
     void print(std::ostream &os, const ALPHABET &alphabet) const {
       if (is_terminal()) {
-        os<<alphabet.to_string(get_terminal());
+        os << alphabet.to_string(get_terminal());
       } else {
         os << *get_nonterminal_ptr();
       }
@@ -80,17 +80,8 @@ namespace cyy::computation {
 } // namespace cyy::computation
 
 namespace std {
-  template <> struct hash<cyy::computation::grammar_symbol_type> {
-    std::size_t
-    operator()(const cyy::computation::grammar_symbol_type &x) const noexcept {
-      return std::hash<
-          std::variant<cyy::computation::symbol_type, std::string>>()(x);
-    }
-  };
-  template <> struct hash<cyy::computation::grammar_symbol_string_type> {
-    std::size_t operator()(
-        const cyy::computation::grammar_symbol_string_type &x) const noexcept {
-      return boost::hash_range(x.begin(), x.end());
-    }
-  };
+  template <>
+  struct hash<cyy::computation::grammar_symbol_type>
+      : public std::hash<
+            std::variant<cyy::computation::symbol_type, std::string>> {};
 } // namespace std
