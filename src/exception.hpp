@@ -98,9 +98,15 @@ namespace cyy::computation::exception {
   public:
     using invalid_argument::invalid_argument;
   };
-  class pop_empty_stack : public std::logic_error {
+
+  class invalid_operation : public std::logic_error {
   public:
     using logic_error::logic_error;
+  };
+
+  class pop_empty_stack : public invalid_operation {
+  public:
+    using invalid_operation::invalid_operation;
   };
   class no_DPDA : public std::invalid_argument {
   public:

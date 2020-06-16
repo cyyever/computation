@@ -16,11 +16,23 @@
 #include "cfg.hpp"
 
 namespace cyy::computation {
-
   struct LR_0_item {
     CFG_production production;
     size_t dot_pos{0};
     bool operator==(const LR_0_item &rhs) const = default;
+    bool completed() const noexcept {
+      return dot_pos >= production.get_body().size();
+    }
+    void go() {
+      if (completed()) {
+        throw exception::invalid_operation("move completed item");
+      }
+      dot_pos++;
+    }
+    auto prefix() const {
+      return grammar_symbol_const_span_type(production.get_body())
+          .subspan(dot_pos);
+    }
   };
 
 } // namespace cyy::computation
@@ -28,10 +40,7 @@ namespace cyy::computation {
 namespace std {
   template <> struct hash<cyy::computation::LR_0_item> {
     size_t operator()(const cyy::computation::LR_0_item &x) const noexcept {
-      return ::std::hash<cyy::computation::CFG_production::head_type>()(
-                 x.production.get_head()) ^
-             ::std::hash<decltype(x.production.get_body().size())>()(
-                 x.production.get_body().size()) ^
+      return ::std::hash<cyy::computation::CFG_production>()(x.production) ^
              ::std::hash<decltype(x.dot_pos)>()(x.dot_pos);
     }
   };
@@ -106,7 +115,6 @@ namespace std {
   template <> struct hash<cyy::computation::LR_1_item_set> {
     size_t operator()(const cyy::computation::LR_1_item_set &x) const {
       const auto size = x.get_kernel_items().size();
-
       if (size >= 1) {
         return ::std::hash<cyy::computation::LR_0_item>()(
             x.get_kernel_items().begin()->first);

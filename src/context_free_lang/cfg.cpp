@@ -83,6 +83,18 @@ namespace cyy::computation {
     return terminals;
   }
 
+  std::set<CFG::nonterminal_type> CFG::get_nonterminals() const {
+    std::set<nonterminal_type> nonterminals;
+    for (auto const &[_, bodies] : productions) {
+      for (auto const &body : bodies) {
+        for (auto const s : body.get_nonterminal_view()) {
+          nonterminals.insert(s);
+        }
+      }
+    }
+    return nonterminals;
+  }
+
   bool CFG::has_production(const CFG_production &production) const {
     auto it = productions.find(production.get_head());
     return it != productions.end() &&

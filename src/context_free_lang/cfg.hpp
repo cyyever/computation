@@ -15,7 +15,6 @@
 #include "../formal_grammar/grammar_symbol.hpp"
 #include "../lang/alphabet.hpp"
 #include "cfg_production.hpp"
-#include "pda.hpp"
 
 namespace cyy::computation {
 
@@ -58,13 +57,12 @@ namespace cyy::computation {
 
     std::set<nonterminal_type> get_heads() const;
 
-    auto get_alphabet() const noexcept -> const auto & { return *alphabet; }
+    auto const &get_alphabet() const noexcept { return *alphabet; }
 
-    auto get_productions() const noexcept -> const auto & {
-      return productions;
-    }
+    auto const &get_productions() const noexcept { return productions; }
 
     std::set<terminal_type> get_terminals() const;
+    std::set<nonterminal_type> get_nonterminals() const;
 
     void eliminate_useless_symbols();
 
@@ -92,7 +90,11 @@ namespace cyy::computation {
     std::pair<std::set<terminal_type>, bool>
     first(const grammar_symbol_const_span_type &alpha) const;
 
-    const nonterminal_type &get_start_symbol() const { return start_symbol; }
+    const nonterminal_type &get_start_symbol() const noexcept {
+      return start_symbol;
+    }
+
+    void dk_test() const;
 
   protected:
     nonterminal_type get_new_head(nonterminal_type advise_head) const {

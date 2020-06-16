@@ -12,7 +12,7 @@ namespace cyy::computation {
   void LR_0_item_set ::add_kernel_item(const CFG &cfg, LR_0_item kernel_item) {
 
     std::vector<CFG::nonterminal_type> tmp_nonkernel_items;
-    if (kernel_item.dot_pos < kernel_item.production.get_body().size()) {
+    if (!kernel_item.completed()) {
       auto const &symbol =
           kernel_item.production.get_body()[kernel_item.dot_pos];
       if (auto ptr = symbol.get_nonterminal_ptr(); ptr) {
@@ -47,12 +47,8 @@ namespace cyy::computation {
   void
   LR_1_item_set::add_kernel_item(const CFG &cfg, const LR_0_item &kernel_item,
                                  std::set<CFG::terminal_type> lookahead_set) {
-    auto const &body = kernel_item.production.get_body();
-    if (kernel_item.dot_pos < body.size()) {
-      add_nonkernel_item(
-          cfg,
-          grammar_symbol_const_span_type(body).subspan(kernel_item.dot_pos),
-          lookahead_set);
+    if (!kernel_item.completed()) {
+      add_nonkernel_item(cfg, kernel_item.prefix(), lookahead_set);
     }
     kernel_items[kernel_item].merge(lookahead_set);
   }
