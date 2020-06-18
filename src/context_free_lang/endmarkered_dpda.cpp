@@ -70,9 +70,9 @@ namespace cyy::computation {
     auto new_start_state = dpda.add_new_state();
     const auto old_transition_function = dpda.transition_function;
     dpda.transition_function[new_start_state][{}] = {
-        start_state, stack_alphabet_of_state_set->get_min_symbol() +
-                         accept_state_set_bitset.to_ulong()};
-    dpda.start_state = new_start_state;
+        get_start_state(), stack_alphabet_of_state_set->get_min_symbol() +
+                               accept_state_set_bitset.to_ulong()};
+    dpda.set_start_state(new_start_state);
 
     for (auto &[from_state, old_transfers] : old_transition_function) {
       transition_function_type::mapped_type new_transfers;

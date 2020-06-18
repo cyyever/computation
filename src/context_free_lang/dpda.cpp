@@ -16,7 +16,7 @@
 
 namespace cyy::computation {
   bool DPDA::recognize(symbol_string_view view) const {
-    configuration_type configuration{start_state, {}};
+    configuration_type configuration{get_start_state(), {}};
 
     size_t i = 0;
     while (i < view.size()) {
@@ -149,10 +149,10 @@ namespace cyy::computation {
     transition_function.merge(std::move(new_transitions));
     check_transition_fuction(false, false);
 
-    auto old_start_state = start_state;
-    start_state = add_new_state();
-    transition_function[start_state][{}] = {old_start_state,
-                                            ALPHABET::endmarker};
+    auto old_start_state = get_start_state();
+    set_start_state(add_new_state());
+    transition_function[get_start_state()][{}] = {old_start_state,
+                                                  ALPHABET::endmarker};
 
     auto new_reject_state = add_new_state();
     auto new_accept_state = add_new_state();

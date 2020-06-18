@@ -16,7 +16,7 @@ namespace cyy::computation {
     std::vector<stack_node> stack;
     stack.emplace_back(0, 0, &stack);
 
-    configuration_set_type configurations{{start_state, stack[0]}};
+    configuration_set_type configurations{{get_start_state(), stack[0]}};
     configurations = go(std::move(configurations));
     for (auto const &symbol : view) {
       configurations = go(configurations, symbol);

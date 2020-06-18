@@ -44,7 +44,7 @@ namespace cyy::computation {
     bool equivalent_with(const DFA &rhs) const;
 
     bool recognize(symbol_string_view view) const {
-      auto s = start_state;
+      auto s = get_start_state();
 
       for (auto const &symbol : view) {
         auto opt_res = go(s, symbol);

@@ -31,7 +31,8 @@ namespace cyy::computation {
       return false;
     }
 
-    std::map<state_type, state_type> state_map{{start_state, rhs.start_state}};
+    std::map<state_type, state_type> state_map{
+        {get_start_state(), rhs.get_start_state()}};
     while (true) {
 
       bool new_mapping = false;
@@ -139,7 +140,7 @@ namespace cyy::computation {
     transition_function_type minimize_DFA_transition_function;
     for (size_t i = 0; i < groups.size(); i++) {
       minimize_DFA_states.insert(i);
-      if (groups[i].contains(this->start_state)) {
+      if (groups[i].contains(this->get_start_state())) {
         minimize_DFA_start_state = i;
       }
 
@@ -197,7 +198,7 @@ namespace cyy::computation {
       for (auto s2 : rhs.get_state_set()) {
         state_products.try_emplace({s1, s2}, next_state);
         result_states.insert(next_state);
-        if (s1 == start_state && s2 == rhs.start_state) {
+        if (s1 == get_start_state() && s2 == rhs.get_start_state()) {
           result_start_state = next_state;
         }
         if (is_final_state(s1) && rhs.is_final_state(s2)) {
@@ -226,7 +227,7 @@ namespace cyy::computation {
     std::ranges::set_difference(
         get_state_set(), final_states,
         std::inserter(new_final_states, new_final_states.begin()));
-    return {get_state_set(), alphabet->get_name(), start_state,
+    return {get_state_set(), alphabet->get_name(), get_start_state(),
             transition_function, new_final_states};
   }
 } // namespace cyy::computation

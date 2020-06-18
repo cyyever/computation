@@ -103,6 +103,10 @@ namespace cyy::computation {
     }
 
   protected:
+    void set_start_state(state_type s) noexcept {
+      check_state(s);
+      start_state = s;
+    }
     state_type add_new_state() {
       state_type new_state = 0;
       if (!states.empty()) {
@@ -172,9 +176,9 @@ namespace cyy::computation {
 
   private:
     state_set_type states;
+    state_type start_state;
 
   protected:
-    state_type start_state;
     state_set_type final_states;
   };
 

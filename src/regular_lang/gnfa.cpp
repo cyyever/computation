@@ -22,7 +22,7 @@ namespace cyy::computation {
       }
     }
     auto new_start_state = add_new_state();
-    transition_function[{new_start_state, start_state}] =
+    transition_function[{new_start_state, get_start_state()}] =
         std::make_shared<regex::epsilon_node>();
     change_start_state(new_start_state);
     auto new_final_state = add_new_state();
@@ -41,7 +41,8 @@ namespace cyy::computation {
     while (flag) {
       flag = false;
       for (auto s : new_gnfg.get_states()) {
-        if (s != new_gnfg.start_state && !new_gnfg.final_states.contains(s)) {
+        if (s != new_gnfg.get_start_state() &&
+            !new_gnfg.final_states.contains(s)) {
           new_gnfg = new_gnfg.remove_state(s);
           flag = true;
           break;
@@ -61,7 +62,7 @@ namespace cyy::computation {
         continue;
       }
       for (auto to_state : get_states()) {
-        if (to_state == removed_state || to_state == start_state) {
+        if (to_state == removed_state || to_state == get_start_state()) {
           continue;
         }
         auto it1 = transition_function.find({from_state, to_state});

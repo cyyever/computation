@@ -34,7 +34,7 @@ namespace cyy::computation {
     return res;
   }
   bool NFA::recognize(symbol_string_view view) const {
-    auto s = get_epsilon_closure(epsilon_closures, start_state,
+    auto s = get_epsilon_closure(epsilon_closures, get_start_state(),
                                  epsilon_transition_function);
     for (auto const &symbol : view) {
       s = go(s, symbol);
@@ -49,7 +49,7 @@ namespace cyy::computation {
   NFA::to_DFA_with_mapping() const {
     DFA::transition_function_type DFA_transition_function;
     std::map<state_set_type, state_type> subsets{
-        {get_epsilon_closure(epsilon_closures, start_state,
+        {get_epsilon_closure(epsilon_closures, get_start_state(),
                              epsilon_transition_function),
          0}};
     state_type next_state = 1;
