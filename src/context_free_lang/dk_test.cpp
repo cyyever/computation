@@ -39,16 +39,20 @@ namespace cyy::computation {
 
     state_type start_state = 0;
     NFA::transition_function_type transition_function;
-    for (auto const s : *nfa_alphabet) {
-      transition_function[{start_state, s}].emplace(start_state);
-    }
+    /* for (auto const s : *nfa_alphabet) { */
+    /*   transition_function[{start_state, s}].emplace(start_state); */
+    /* } */
     auto cur_state = start_state;
     NFA::state_set_type final_states;
+
     for (auto const &[head, bodies] : productions) {
       for (auto const &body : bodies) {
-        cyy::computation::LR_0_item production_item({head, body});
+        /* cyy::computation::LR_0_item production_item({head, body}); */
+        /*
         cur_state++;
-        transition_function[{start_state}].emplace(cur_state);
+        if(head==start_state) {
+          transition_function[{start_state}].emplace(cur_state);
+        }
         for (auto const &grammar_symbol : body) {
           cur_state++;
           if (grammar_symbol.is_terminal()) {
@@ -62,6 +66,7 @@ namespace cyy::computation {
           }
         }
         final_states.insert(cur_state);
+        */
       }
     }
   }

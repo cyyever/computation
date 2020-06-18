@@ -105,7 +105,7 @@ namespace cyy::computation {
     }
     auto new_final_state = add_new_state();
     add_epsilon_transition(state_of_clearing_stack, new_final_state);
-    change_final_states({new_final_state});
+    replace_final_states(new_final_state);
 
     transition_function_type new_transition;
     auto placeholder_stack_symbol = stack_alphabet->get_min_symbol();

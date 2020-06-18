@@ -60,12 +60,12 @@ namespace cyy::computation {
     auto stack_alphabet_of_state_set = std::make_shared<range_alphabet>(
         dpda.stack_alphabet->get_max_symbol() + 1,
         dpda.stack_alphabet->get_max_symbol() +
-            (static_cast<size_t>(1) << (dpda.states.size())),
+            (static_cast<size_t>(1) << (dpda.get_states().size())),
         "stack_alphabet_of_state_set");
 
     auto accept_states = dpda.get_accept_states();
     dpda.final_states.clear();
-    auto old_states = dpda.states;
+    state_set_type old_states = dpda.get_state_set();
     auto accept_state_set_bitset = dpda.state_set_to_bitset(accept_states);
     auto new_start_state = dpda.add_new_state();
     const auto old_transition_function = dpda.transition_function;

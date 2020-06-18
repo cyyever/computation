@@ -98,7 +98,7 @@ namespace cyy::computation {
     for (auto const &s : left_NFA.get_final_states()) {
       left_NFA.replace_epsilon_transition(s, {final_state});
     }
-    left_NFA.change_final_states({final_state});
+    left_NFA.replace_final_states(final_state);
     return left_NFA;
   }
 
@@ -236,7 +236,8 @@ namespace cyy::computation {
     auto inner_final_states = inner_NFA.get_final_states();
     auto final_state = (*inner_final_states.begin()) + 1;
 
-    NFA nfa({start_state, final_state}, alphabet_name, start_state, {}, {});
+    NFA nfa({start_state, final_state}, alphabet_name, start_state, {},
+            {final_state});
     nfa.add_sub_NFA(std::move(inner_NFA));
     nfa.add_epsilon_transition(start_state, {inner_start_state});
     nfa.add_epsilon_transition(start_state, {final_state});
@@ -246,7 +247,7 @@ namespace cyy::computation {
                                      {inner_start_state, final_state});
     }
 
-    nfa.change_final_states({final_state});
+    /* nfa.replace_final_states(final_state); */
     return nfa;
   }
 

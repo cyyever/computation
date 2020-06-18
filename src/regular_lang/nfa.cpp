@@ -47,20 +47,20 @@ namespace cyy::computation {
 
   std::pair<DFA, std::unordered_map<DFA::state_type, NFA::state_set_type>>
   NFA::to_DFA_with_mapping() const {
-    state_type next_state = 1;
     DFA::transition_function_type DFA_transition_function;
     std::map<state_set_type, state_type> subsets{
         {get_epsilon_closure(epsilon_closures, start_state,
                              epsilon_transition_function),
          0}};
-    std::vector<decltype(subsets.begin())> tmp_states{subsets.begin()};
-    for (size_t i = 0; i < tmp_states.size(); i++) {
+    state_type next_state = 1;
+    std::vector iteraters{subsets.begin()};
+    for (size_t i = 0; i < iteraters.size(); i++) {
       for (auto a : *alphabet) {
-        auto const &[subset, state] = *tmp_states[i];
+        auto const &[subset, state] = *iteraters[i];
         auto res = go(subset, a);
         auto [it, has_emplaced] = subsets.emplace(std::move(res), next_state);
         if (has_emplaced) {
-          tmp_states.emplace_back(it);
+          iteraters.emplace_back(it);
           next_state++;
         }
         DFA_transition_function[{state, a}] = it->second;

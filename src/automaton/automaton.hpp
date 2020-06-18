@@ -11,6 +11,7 @@
 #include <boost/dynamic_bitset.hpp>
 #include <map>
 #include <optional>
+#include <ranges>
 #include <set>
 #include <string>
 #include <string_view>
@@ -44,7 +45,7 @@ namespace cyy::computation {
       if (states.empty()) {
         throw cyy::computation::exception::no_finite_automaton("no state");
       }
-      if (!states.contains(start_state)) {
+      if (!has_state(start_state)) {
         throw cyy::computation::exception::no_finite_automaton(
             "unexisted start state");
       }
@@ -64,9 +65,12 @@ namespace cyy::computation {
       return finite_automaton(std::move(*this));
     }
 
-    auto const &get_states() const noexcept { return states; }
+    auto const get_states() const noexcept { return std::views::all(states); }
+    auto const &get_state_set() const noexcept { return states; }
     auto const &get_alphabet() const noexcept { return *alphabet; }
-    auto const &get_final_states() const noexcept { return final_states; }
+    auto const get_final_states() const noexcept {
+      return std::views::all(final_states);
+    }
     state_type get_start_state() const noexcept { return start_state; }
     bool operator==(const finite_automaton &rhs) const = default;
 
@@ -94,6 +98,10 @@ namespace cyy::computation {
       return std::ranges::includes(states, T);
     }
 
+    void replace_final_states(state_type s) {
+      change_final_states(std::initializer_list{s});
+    }
+
   protected:
     state_type add_new_state() {
       state_type new_state = 0;
@@ -105,26 +113,29 @@ namespace cyy::computation {
     }
     bool add_new_state(state_type s) { return states.emplace(s).second; }
 
+    void merge(finite_automaton &&rhs) {
+      assert(start_state == rhs.start_state);
+      states.merge(std::move(rhs.states));
+      final_states.merge(std::move(rhs.final_states));
+    }
+
     void change_start_state(state_type s) {
       check_state(s);
       start_state = s;
     }
+
+    bool has_state(state_type s) const { return states.contains(s); }
     void check_state(state_type s) const {
-      if (!states.contains(s)) {
+      if (!has_state(s)) {
         throw cyy::computation::exception::no_finite_automaton(
             std::string("unexisted state ") + std::to_string(s));
       }
     }
-    void change_final_states(const state_set_type &T) {
-      final_states.clear();
-      for (auto s : T) {
-        add_final_states(s);
-      }
-    }
 
-    void change_final_states(const std::initializer_list<state_type> &T) {
+    template <std::ranges::range U>
+    void change_final_states(U new_final_states) {
       final_states.clear();
-      for (auto s : T) {
+      for (auto s : new_final_states) {
         add_final_states(s);
       }
     }
@@ -132,6 +143,15 @@ namespace cyy::computation {
     void add_final_states(state_type s) {
       check_state(s);
       final_states.insert(s);
+    }
+
+  protected:
+    void mark_all_states_final() { final_states = states; }
+
+    void remove_state(state_type s) {
+      check_state(s);
+      states.erase(s);
+      final_states.erase(s);
     }
 
   protected:
@@ -149,7 +169,11 @@ namespace cyy::computation {
 
   protected:
     std::shared_ptr<ALPHABET> alphabet;
+
+  private:
     state_set_type states;
+
+  protected:
     state_type start_state;
     state_set_type final_states;
   };

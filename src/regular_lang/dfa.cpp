@@ -20,7 +20,7 @@ namespace cyy::computation {
     if (alphabet != rhs.alphabet) {
       return false;
     }
-    if (states.size() != rhs.states.size()) {
+    if (get_state_set().size() != rhs.get_state_set().size()) {
       return false;
     }
     if (final_states.size() != rhs.final_states.size()) {
@@ -64,7 +64,7 @@ namespace cyy::computation {
         break;
       }
     }
-    if (state_map.size() != states.size()) {
+    if (state_map.size() != get_state_set().size()) {
       return false;
     }
 
@@ -75,7 +75,7 @@ namespace cyy::computation {
   DFA DFA::minimize() const {
     state_set_type non_final_states;
     std::ranges::set_difference(
-        states, final_states,
+        get_state_set(), final_states,
         std::insert_iterator(non_final_states, non_final_states.begin()));
 
     std::vector<state_set_type> groups{non_final_states, final_states};
@@ -193,8 +193,8 @@ namespace cyy::computation {
     state_type result_start_state{};
     transition_function_type result_transition_function;
     state_type next_state = 0;
-    for (auto s1 : states) {
-      for (auto s2 : rhs.states) {
+    for (auto s1 : get_state_set()) {
+      for (auto s2 : rhs.get_state_set()) {
         state_products.try_emplace({s1, s2}, next_state);
         result_states.insert(next_state);
         if (s1 == start_state && s2 == rhs.start_state) {
@@ -224,9 +224,9 @@ namespace cyy::computation {
   DFA DFA::complement() const {
     state_set_type new_final_states;
     std::ranges::set_difference(
-        states, final_states,
+        get_state_set(), final_states,
         std::inserter(new_final_states, new_final_states.begin()));
-    return {states, alphabet->get_name(), start_state, transition_function,
-            new_final_states};
+    return {get_state_set(), alphabet->get_name(), start_state,
+            transition_function, new_final_states};
   }
 } // namespace cyy::computation

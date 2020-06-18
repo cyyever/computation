@@ -50,11 +50,11 @@ namespace cyy::computation {
       if (*alphabet != *rhs.alphabet) {
         throw std::invalid_argument("sub NFA has different alphabet name");
       }
-
-      states.merge(rhs.states);
+      merge(std::move(rhs));
+      /* add_new_states(rhs.get_states()); */
       transition_function.merge(rhs.transition_function);
       epsilon_transition_function.merge(rhs.epsilon_transition_function);
-      final_states.merge(rhs.final_states);
+      /* final_states.merge(rhs.final_states); */
     }
 
     using finite_automaton::add_final_states;
@@ -77,17 +77,17 @@ namespace cyy::computation {
 
     void add_epsilon_transition(state_type from_state,
                                 state_set_type end_states) {
+      if (!has_state(from_state)) {
+        throw exception::unexisted_finite_automaton_state(
+            std::to_string(from_state));
+      }
       if (!includes(end_states)) {
         for (auto const &state : end_states) {
-          if (!states.contains(state)) {
+          if (!has_state(state)) {
             throw exception::unexisted_finite_automaton_state(
                 std::to_string(state));
           }
         }
-      }
-      if (!states.contains(from_state)) {
-        throw exception::unexisted_finite_automaton_state(
-            std::to_string(from_state));
       }
       epsilon_transition_function[from_state].merge(end_states);
     }

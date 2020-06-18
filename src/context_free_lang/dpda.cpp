@@ -224,7 +224,7 @@ namespace cyy::computation {
   DPDA::get_looping_situations() const {
     std::map<state_type, std::set<stack_symbol_type>> looping_situations;
 
-    for (auto state : states) {
+    for (auto state : get_states()) {
       auto &looping_situations_of_state = looping_situations[state];
       for (auto stack_symbol : *stack_alphabet) {
         looping_situations_of_state.insert(stack_symbol);
@@ -327,7 +327,7 @@ namespace cyy::computation {
     complement_dpda.normalize();
 
     if (complement_dpda.final_states.empty()) {
-      complement_dpda.final_states = complement_dpda.states;
+      complement_dpda.mark_all_states_final();
       return complement_dpda;
     }
     state_set_type reading_states;
@@ -399,7 +399,7 @@ namespace cyy::computation {
 
   void DPDA::check_transition_fuction(bool check_input_endmark,
                                       bool check_stack_endmark) {
-    for (auto state : states) {
+    for (auto state : get_states()) {
       auto it = transition_function.find(state);
       if (it == transition_function.end()) {
         throw exception::no_DPDA(std::string("lack transitions for state ") +

@@ -30,7 +30,7 @@ namespace cyy::computation {
       transition_function[{final_state, new_final_state}] =
           std::make_shared<regex::epsilon_node>();
     }
-    change_final_states({new_final_state});
+    replace_final_states(new_final_state);
   }
 
   std::shared_ptr<regex::syntax_node> GNFA::to_regex() const {
@@ -40,7 +40,7 @@ namespace cyy::computation {
     bool flag = true;
     while (flag) {
       flag = false;
-      for (auto s : new_gnfg.states) {
+      for (auto s : new_gnfg.get_states()) {
         if (s != new_gnfg.start_state && !new_gnfg.final_states.contains(s)) {
           new_gnfg = new_gnfg.remove_state(s);
           flag = true;
@@ -53,14 +53,14 @@ namespace cyy::computation {
 
   GNFA GNFA::remove_state(state_type removed_state) const {
     GNFA new_gnfg(*this);
-    new_gnfg.states.erase(removed_state);
+    new_gnfg.remove_state(removed_state);
     new_gnfg.transition_function.clear();
 
-    for (auto from_state : states) {
+    for (auto from_state : get_states()) {
       if (from_state == removed_state || is_final_state(from_state)) {
         continue;
       }
-      for (auto to_state : states) {
+      for (auto to_state : get_states()) {
         if (to_state == removed_state || to_state == start_state) {
           continue;
         }
