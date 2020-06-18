@@ -68,6 +68,11 @@ namespace cyy::computation::exception {
     using invalid_argument::invalid_argument;
   };
 
+  class no_DCFG : public std::invalid_argument {
+  public:
+    using invalid_argument::invalid_argument;
+  };
+
   class invalid_CFG_production : public std::invalid_argument {
   public:
     using invalid_argument::invalid_argument;

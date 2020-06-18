@@ -97,8 +97,7 @@ namespace cyy::computation {
       return start_symbol;
     }
 
-    std::pair<
-        DFA, std::unordered_map<DFA::state_type, std::unordered_set<LR_0_item>>>
+    std::pair<DFA, std::unordered_map<DFA::state_type, new_LR_0_item_set>>
     get_DK() const;
 
   protected:

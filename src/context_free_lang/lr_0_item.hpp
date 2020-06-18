@@ -75,7 +75,9 @@ namespace cyy::computation {
     void add_item(LR_0_item item) {
       if (item.get_dot_pos() == 0) {
         nonkernel_items.insert(item.get_head());
+        return;
       }
+      kernel_items.emplace(std::move(item));
     }
 
     auto const &get_kernel_items() const { return kernel_items; }
