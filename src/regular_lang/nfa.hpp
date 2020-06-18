@@ -83,6 +83,22 @@ namespace cyy::computation {
       add_epsilon_transition(from_state, std::move(end_states));
     }
 
+    void add_transition(situation_type situation, state_set_type end_states) {
+      if (!has_state(situation.state)) {
+        throw exception::unexisted_finite_automaton_state(
+            std::to_string(situation.state));
+      }
+      if (!includes(end_states)) {
+        for (auto const &state : end_states) {
+          if (!has_state(state)) {
+            throw exception::unexisted_finite_automaton_state(
+                std::to_string(state));
+          }
+        }
+      }
+      transition_function[situation].merge(end_states);
+    }
+
     void add_epsilon_transition(state_type from_state,
                                 state_set_type end_states) {
       if (!has_state(from_state)) {

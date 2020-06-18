@@ -10,11 +10,14 @@
 #include <map>
 #include <set>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
-#include "../formal_grammar/grammar_symbol.hpp"
-#include "../lang/alphabet.hpp"
 #include "cfg_production.hpp"
+#include "formal_grammar/grammar_symbol.hpp"
+#include "lang/alphabet.hpp"
+#include "lr_0_item.hpp"
+#include "regular_lang/dfa.hpp"
 
 namespace cyy::computation {
 
@@ -94,7 +97,9 @@ namespace cyy::computation {
       return start_symbol;
     }
 
-    void dk_test() const;
+    std::pair<
+        DFA, std::unordered_map<DFA::state_type, std::unordered_set<LR_0_item>>>
+    get_DK() const;
 
   protected:
     nonterminal_type get_new_head(nonterminal_type advise_head) const {
