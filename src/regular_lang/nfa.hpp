@@ -44,17 +44,25 @@ namespace cyy::computation {
       }
     }
 
-    bool operator==(const NFA &rhs) const = default;
+    bool operator==(const NFA &rhs) const {
+      return finite_automaton::operator==(rhs) &&
+             transition_function == rhs.transition_function &&
+             epsilon_transition_function == rhs.epsilon_transition_function;
+    }
 
     void add_sub_NFA(NFA rhs) {
       if (*alphabet != *rhs.alphabet) {
         throw std::invalid_argument("sub NFA has different alphabet name");
       }
-      merge(std::move(rhs));
-      /* add_new_states(rhs.get_states()); */
-      transition_function.merge(rhs.transition_function);
-      epsilon_transition_function.merge(rhs.epsilon_transition_function);
-      /* final_states.merge(rhs.final_states); */
+      add_new_states(rhs.get_states());
+      add_final_states(rhs.final_states);
+
+      for (auto &[k, v] : rhs.transition_function) {
+        transition_function[k].merge(std::move(v));
+      }
+      for (auto &[from_state, to_state_set] : rhs.epsilon_transition_function) {
+        epsilon_transition_function[from_state].merge(std::move(to_state_set));
+      }
     }
 
     using finite_automaton::add_final_states;

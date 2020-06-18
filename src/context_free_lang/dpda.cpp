@@ -143,20 +143,20 @@ namespace cyy::computation {
     }
 
     for (auto const &[_, parallel_state] : parallel_states) {
-      add_final_states(parallel_state);
+      add_final_state(parallel_state);
     }
 
     transition_function.merge(std::move(new_transitions));
     check_transition_fuction(false, false);
 
     auto old_start_state = get_start_state();
-    set_start_state(add_new_state());
+    change_start_state(add_new_state());
     transition_function[get_start_state()][{}] = {old_start_state,
                                                   ALPHABET::endmarker};
 
     auto new_reject_state = add_new_state();
     auto new_accept_state = add_new_state();
-    add_final_states(new_accept_state);
+    add_final_state(new_accept_state);
 
     for (auto &[from_state, transfers] : transition_function) {
       decltype(transfers) new_transfers;

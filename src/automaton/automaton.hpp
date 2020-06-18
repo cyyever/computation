@@ -68,9 +68,7 @@ namespace cyy::computation {
     auto const get_states() const noexcept { return std::views::all(states); }
     auto const &get_state_set() const noexcept { return states; }
     auto const &get_alphabet() const noexcept { return *alphabet; }
-    auto const get_final_states() const noexcept {
-      return std::views::all(final_states);
-    }
+    auto const &get_final_states() const noexcept { return final_states; }
     state_type get_start_state() const noexcept { return start_state; }
     bool operator==(const finite_automaton &rhs) const = default;
 
@@ -103,10 +101,6 @@ namespace cyy::computation {
     }
 
   protected:
-    void set_start_state(state_type s) noexcept {
-      check_state(s);
-      start_state = s;
-    }
     state_type add_new_state() {
       state_type new_state = 0;
       if (!states.empty()) {
@@ -117,10 +111,13 @@ namespace cyy::computation {
     }
     bool add_new_state(state_type s) { return states.emplace(s).second; }
 
-    void merge(finite_automaton &&rhs) {
-      assert(start_state == rhs.start_state);
-      states.merge(std::move(rhs.states));
-      final_states.merge(std::move(rhs.final_states));
+    void add_new_states(state_set_type state_set) {
+      states.merge(std::move(state_set));
+    }
+    template <std::ranges::range U> void add_new_states(U state_set) {
+      for (auto s : state_set) {
+        add_new_state(s);
+      }
     }
 
     void change_start_state(state_type s) {
@@ -139,14 +136,17 @@ namespace cyy::computation {
     template <std::ranges::range U>
     void change_final_states(U new_final_states) {
       final_states.clear();
-      for (auto s : new_final_states) {
-        add_final_states(s);
-      }
+      add_final_states(new_final_states);
     }
 
-    void add_final_states(state_type s) {
+    void add_final_state(state_type s) {
       check_state(s);
       final_states.insert(s);
+    }
+    template <std::ranges::range U> void add_final_states(U new_final_states) {
+      for (auto s : new_final_states) {
+        add_final_state(s);
+      }
     }
 
   protected:
@@ -176,6 +176,7 @@ namespace cyy::computation {
 
   private:
     state_set_type states;
+
     state_type start_state;
 
   protected:

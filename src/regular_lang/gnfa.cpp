@@ -54,7 +54,7 @@ namespace cyy::computation {
 
   GNFA GNFA::remove_state(state_type removed_state) const {
     GNFA new_gnfg(*this);
-    new_gnfg.remove_state(removed_state);
+    new_gnfg.finite_automaton::remove_state(removed_state);
     new_gnfg.transition_function.clear();
 
     for (auto from_state : get_states()) {

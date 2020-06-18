@@ -72,7 +72,7 @@ namespace cyy::computation {
     dpda.transition_function[new_start_state][{}] = {
         get_start_state(), stack_alphabet_of_state_set->get_min_symbol() +
                                accept_state_set_bitset.to_ulong()};
-    dpda.set_start_state(new_start_state);
+    dpda.change_start_state(new_start_state);
 
     for (auto &[from_state, old_transfers] : old_transition_function) {
       transition_function_type::mapped_type new_transfers;
@@ -101,7 +101,7 @@ namespace cyy::computation {
             if ((state_bitset_type(old_states.size(), {action.state}) |
                  state_bitset_type(old_states.size(), new_stack_symbol))
                     .any()) {
-              dpda.add_final_states(new_state);
+              dpda.add_final_state(new_state);
             }
             dpda.transition_function[new_state][{}] = {action.state,
                                                        new_stack_symbol};
