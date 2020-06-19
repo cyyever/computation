@@ -15,10 +15,9 @@
 
 namespace cyy::computation {
 
-  CFG::CFG(const std::string &alphabet_name, nonterminal_type start_symbol_,
+  CFG::CFG(std::shared_ptr<ALPHABET> alphabet_, nonterminal_type start_symbol_,
            production_set_type productions_)
-      : alphabet(ALPHABET::get(alphabet_name)),
-        start_symbol(std::move(start_symbol_)),
+      : alphabet(alphabet_), start_symbol(std::move(start_symbol_)),
         productions(std::move(productions_)) {
 
     eliminate_useless_symbols();
@@ -38,7 +37,7 @@ namespace cyy::computation {
           if (!alphabet->contain(t)) {
             throw exception::invalid_CFG_production(
                 std::string("alphabet [") + alphabet->get_name() +
-                "] does not contain terminal " + std::to_string(t));
+                "] does not contain terminal " + alphabet->to_string(t));
           }
         }
       }

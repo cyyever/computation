@@ -101,13 +101,13 @@ namespace cyy::computation {
     virtual bool contain(symbol_type s) const = 0;
     virtual size_t size() const = 0;
     virtual std::string to_string(symbol_type symbol) const {
+      if (symbol == endmarker) {
+        return "$";
+      }
       if (contain(symbol)) {
         return {'\'', static_cast<char>(symbol), '\''};
       }
 
-      if (symbol == endmarker) {
-        return "$";
-      }
       return "(unkown symbol)";
     }
 
@@ -116,7 +116,8 @@ namespace cyy::computation {
     bool operator==(const ALPHABET &rhs) const = default;
     virtual bool contains_ASCII() const { return false; }
 
-    static std::shared_ptr<ALPHABET> get(std::string_view name);
+    static std::shared_ptr<ALPHABET> get(std::string_view name,
+                                         bool endmarkered = false);
     static void set(const std::shared_ptr<ALPHABET> &alphabet);
     static constexpr symbol_type endmarker =
         std::numeric_limits<symbol_type>::max() - 1;

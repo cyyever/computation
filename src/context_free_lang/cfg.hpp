@@ -8,6 +8,7 @@
 #pragma once
 
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
 #include <unordered_set>
@@ -43,8 +44,12 @@ namespace cyy::computation {
                       CFG_production::body_span_type body);
     };
 
-    CFG(const std::string &alphabet_name, nonterminal_type start_symbol_,
+    CFG(std::shared_ptr<ALPHABET> alphabet_, nonterminal_type start_symbol_,
         production_set_type productions_);
+    CFG(const std::string &alphabet_name, nonterminal_type start_symbol_,
+        production_set_type productions_)
+        : CFG(ALPHABET::get(alphabet_name), start_symbol_,
+              std::move(productions_)) {}
 
     CFG(const CFG &) = default;
     CFG &operator=(const CFG &) = default;
