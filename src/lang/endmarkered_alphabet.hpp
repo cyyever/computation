@@ -17,6 +17,7 @@ namespace cyy::computation {
         : ALPHABET("placeholder"), alphabet{alphabet_} {
       if (alphabet->contain(ALPHABET::endmarker)) {
         has_endmarker = true;
+        set_name(alphabet->get_name());
       } else {
         set_name(std::string("endmarkered_") + alphabet->get_name());
       }
@@ -35,6 +36,7 @@ namespace cyy::computation {
       real_size += alphabet->size();
       return real_size;
     }
+    auto original_alphabet() const { return alphabet; }
 
   private:
     symbol_type get_symbol(size_t index) const noexcept override {

@@ -73,6 +73,9 @@ namespace cyy::computation {
   class new_LR_0_item_set {
   public:
     void add_item(LR_0_item item) {
+      if(item.completed()) {
+        completed_items.insert(item);
+      }
       if (item.get_dot_pos() == 0) {
         nonkernel_items.insert(item.get_head());
         return;
@@ -82,11 +85,13 @@ namespace cyy::computation {
 
     auto const &get_kernel_items() const { return kernel_items; }
     auto const &get_nonkernel_items() const { return nonkernel_items; }
+    auto const &get_completed_items() const { return completed_items; }
 
     bool operator==(const new_LR_0_item_set &rhs) const = default;
 
   private:
     std::unordered_set<LR_0_item> kernel_items;
+    std::unordered_set<LR_0_item> completed_items;
     std::unordered_set<CFG_production::head_type> nonkernel_items;
   };
 } // namespace cyy::computation

@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <cassert>
 #include <iterator>
+#include <stdexcept>
 #include <unordered_map>
 #include <vector>
 
@@ -47,7 +48,7 @@ namespace cyy::computation {
 
     auto it = transition_function.find(state);
     if (it == transition_function.end()) {
-      return {};
+      throw exception::unexisted_transition(std::to_string(state));
     }
     auto const &state_transition_function = it->second;
 
@@ -73,6 +74,7 @@ namespace cyy::computation {
       }
       return configuration;
     }
+    assert(true);
     return {};
   }
 
@@ -111,6 +113,10 @@ namespace cyy::computation {
   void DPDA::normalize() {
     if (has_normalized) {
       return;
+    }
+    if (stack_alphabet->contain(ALPHABET::endmarker)) {
+      throw std::logic_error(
+          "can't normalize DPDA since it has endmarker in stack");
     }
     auto [acceptance_looping_situations, rejection_looping_situations] =
         get_looping_situations();
@@ -432,23 +438,5 @@ namespace cyy::computation {
         }
       }
     }
-  }
-  DPDA::state_type
-  DPDA::add_pop_transition_sequence(state_type from_state, size_t pop_num,
-                                    std::optional<state_type> end_state) {
-    assert(pop_num > 0);
-    state_type to_state = from_state;
-    for (size_t i = 0; i < pop_num; i++) {
-      if (i + 1 == pop_num && end_state.has_value()) {
-        to_state = end_state.value();
-      } else {
-        to_state = add_new_state();
-      }
-      for (auto stack_symbol : stack_alphabet->get_view(has_normalized)) {
-        transition_function[from_state][{{}, stack_symbol}] = {to_state};
-      }
-      from_state = to_state;
-    }
-    return to_state;
   }
 } // namespace cyy::computation

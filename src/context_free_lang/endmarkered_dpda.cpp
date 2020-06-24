@@ -8,13 +8,12 @@
 
 namespace cyy::computation {
 
-  void endmarkered_DPDA::to_endmarkered_DPDA() {
+  endmarkered_DPDA::endmarkered_DPDA(DPDA dpda) : DPDA(std::move(dpda)) {
     normalize();
 
     auto new_accept_state = add_new_state();
 
     for (auto &[from_state, transfers] : transition_function) {
-
       if (transfers.contains({})) {
         continue;
       }

@@ -31,7 +31,7 @@ namespace cyy::computation {
                          "common_tokens") {}
 
   private:
-    std::string to_string(symbol_type symbol) const override;
+    std::string __to_string(symbol_type symbol) const override;
     bool contains_ASCII() const override;
   };
 

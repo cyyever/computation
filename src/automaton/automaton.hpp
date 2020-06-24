@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <boost/dynamic_bitset.hpp>
 #include <map>
+#include <memory>
 #include <optional>
 #include <ranges>
 #include <set>
@@ -36,12 +37,11 @@ namespace cyy::computation {
       bool operator==(const situation_type &) const noexcept = default;
     };
 
-    finite_automaton(state_set_type states_, std::string_view alphabet_name,
+    finite_automaton(state_set_type states_,
+                     std::shared_ptr<ALPHABET> alphabet_,
                      state_type start_state_, state_set_type final_states_)
-        : alphabet(::cyy::computation::ALPHABET::get(alphabet_name)),
-          states(std::move(states_)), start_state(start_state_),
-          final_states(std::move(final_states_)) {
-
+        : alphabet(alphabet_), states(std::move(states_)),
+          start_state(start_state_), final_states(std::move(final_states_)) {
       if (states.empty()) {
         throw cyy::computation::exception::no_finite_automaton("no state");
       }
@@ -53,6 +53,12 @@ namespace cyy::computation {
         check_state(final_state);
       }
     }
+
+    finite_automaton(state_set_type states_, std::string_view alphabet_name,
+                     state_type start_state_, state_set_type final_states_)
+        : finite_automaton(std::move(states_),
+                           ::cyy::computation::ALPHABET::get(alphabet_name),
+                           start_state_, std::move(final_states_)) {}
     finite_automaton(const finite_automaton &) = default;
     finite_automaton &operator=(const finite_automaton &) = default;
     finite_automaton(finite_automaton &&) = default;
@@ -110,7 +116,6 @@ namespace cyy::computation {
     }
     bool add_new_state(state_type s) { return states.emplace(s).second; }
 
-  protected:
     void add_new_states(state_set_type state_set) {
       states.merge(std::move(state_set));
     }

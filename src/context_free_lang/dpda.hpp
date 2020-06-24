@@ -68,18 +68,22 @@ namespace cyy::computation {
         state_type,
         std::unordered_map<situation_type, action_type, situation_hash_type>>;
 
+    DPDA(finite_automaton finite_automaton_,
+         std::string_view stack_alphabet_name,
+         transition_function_type transition_function_)
+        : finite_automaton(std::move(finite_automaton_)),
+          stack_alphabet(
+              ::cyy::computation::ALPHABET::get(stack_alphabet_name)),
+          transition_function(std::move(transition_function_)) {
+      check_transition_fuction();
+    }
     DPDA(state_set_type states_, std::string_view input_alphabet_name,
          std::string_view stack_alphabet_name, state_type start_state_,
          transition_function_type transition_function_,
          state_set_type final_states_)
-        : finite_automaton(std::move(states_), input_alphabet_name,
-                           start_state_, std::move(final_states_)),
-          stack_alphabet(
-              ::cyy::computation::ALPHABET::get(stack_alphabet_name)),
-          transition_function(std::move(transition_function_)) {
-
-      check_transition_fuction();
-    }
+        : DPDA(finite_automaton(std::move(states_), input_alphabet_name,
+                                start_state_, std::move(final_states_)),
+               stack_alphabet_name, std::move(transition_function_)) {}
 
     bool operator==(const DPDA &rhs) const = default;
 
@@ -106,10 +110,6 @@ namespace cyy::computation {
 
     void check_transition_fuction(bool check_input_endmark = false,
                                   bool check_stack_endmark = false);
-
-    state_type add_pop_transition_sequence(state_type from_state,
-                                           size_t pop_num,
-                                           std::optional<state_type> end_state);
 
   protected:
     std::shared_ptr<ALPHABET> stack_alphabet;

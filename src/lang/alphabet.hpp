@@ -96,19 +96,24 @@ namespace cyy::computation {
     iterator end() const noexcept { return iterator(this, size()); }
 
     symbol_type get_min_symbol() const { return get_symbol(0); }
-    symbol_type get_max_symbol() const { return get_symbol(size() - 1); }
+    symbol_type get_max_symbol() const {
+      if (contain(endmarker)) {
+        return get_symbol(size() - 2);
+      }
+      return get_symbol(size() - 1);
+    }
 
     virtual bool contain(symbol_type s) const = 0;
     virtual size_t size() const = 0;
-    virtual std::string to_string(symbol_type symbol) const {
+    std::string to_string(symbol_type symbol) const {
       if (symbol == endmarker) {
         return "$";
       }
       if (contain(symbol)) {
-        return {'\'', static_cast<char>(symbol), '\''};
+        return __to_string(symbol);
       }
 
-      return "(unkown symbol)";
+      return "(unknown symbol)";
     }
 
     std::string get_name() const { return name; }
@@ -128,6 +133,9 @@ namespace cyy::computation {
         throw cyy::computation::exception::empty_alphabet_name("");
       }
       name = std::move(name_);
+    }
+    virtual std::string __to_string(symbol_type symbol) const {
+      return {'\'', static_cast<char>(symbol), '\''};
     }
 
   private:

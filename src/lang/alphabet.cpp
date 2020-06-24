@@ -56,6 +56,9 @@ namespace cyy::computation {
     alphabet = std::make_shared<set_alphabet>(std::set<symbol_type>{'a', 'b'},
                                               "ab_set");
     factory.emplace(alphabet->get_name(), alphabet);
+    alphabet = std::make_shared<set_alphabet>(std::set<symbol_type>{'(', ')'},
+                                              "parentheses");
+    factory.emplace(alphabet->get_name(), alphabet);
     alphabet = std::make_shared<set_alphabet>(std::set<symbol_type>{'0', '1'},
                                               "01_set");
     factory.emplace(alphabet->get_name(), alphabet);

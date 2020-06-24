@@ -7,9 +7,7 @@
 
 #include <algorithm>
 #include <cassert>
-#include <iostream>
 #include <unordered_map>
-#include <unordered_set>
 #include <utility>
 
 #include "cfg.hpp"
@@ -77,7 +75,7 @@ namespace cyy::computation {
           auto next_item = cur_item;
           next_item.go();
           symbol_type symbol;
-          auto cur_state = item_to_nfa_state_map[cur_item];
+          auto cur_state = item_to_nfa_state(cur_item);
           if (grammar_symbol.is_terminal()) {
             symbol = grammar_symbol.get_terminal();
           } else {
@@ -87,9 +85,11 @@ namespace cyy::computation {
             symbol = nonterminal_to_symbol[grammar_symbol.get_nonterminal()];
           }
           nfa.add_transition({cur_state, symbol},
-                             {item_to_nfa_state_map[next_item]});
+                             {item_to_nfa_state(next_item)});
           cur_item = next_item;
         }
+        assert(cur_item.completed());
+        nfa.add_final_state(item_to_nfa_state(cur_item));
       }
     }
     auto [dfa, dfa_to_nfa_state_map] = nfa.to_DFA_with_mapping();
@@ -98,9 +98,15 @@ namespace cyy::computation {
       if (!dfa.is_final_state(dfa_state)) {
         continue;
       }
+      assert(std::ranges::any_of(
+          nfa_state_set, [&nfa](auto s) { return nfa.is_final_state(s); }));
       for (auto const &nfa_state : nfa_state_set) {
+        if (nfa_state == nfa.get_start_state()) {
+          continue;
+        }
         auto it = NFA_state_to_item_map.find(nfa_state);
-        accociatzed_items[dfa_state].add_item(std::move(it->second));
+        assert(it != NFA_state_to_item_map.end());
+        accociatzed_items[dfa_state].add_item(it->second);
       }
     }
     return {dfa, nonterminal_to_symbol, accociatzed_items};

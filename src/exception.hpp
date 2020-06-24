@@ -58,6 +58,10 @@ namespace cyy::computation::exception {
     using invalid_argument::invalid_argument;
   };
 
+  class unexisted_transition : public std::invalid_argument {
+  public:
+    using invalid_argument::invalid_argument;
+  };
   class no_regular_expression : public std::invalid_argument {
   public:
     using invalid_argument::invalid_argument;

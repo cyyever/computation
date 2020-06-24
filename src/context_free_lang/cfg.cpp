@@ -84,7 +84,8 @@ namespace cyy::computation {
 
   std::set<CFG::nonterminal_type> CFG::get_nonterminals() const {
     std::set<nonterminal_type> nonterminals;
-    for (auto const &[_, bodies] : productions) {
+    for (auto const &[head, bodies] : productions) {
+      nonterminals.insert(head);
       for (auto const &body : bodies) {
         for (auto const s : body.get_nonterminal_view()) {
           nonterminals.insert(s);

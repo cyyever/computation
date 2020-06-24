@@ -8,7 +8,7 @@
 #include "common_tokens.hpp"
 
 namespace cyy::computation {
-  std::string common_tokens::to_string(symbol_type symbol) const {
+  std::string common_tokens::__to_string(symbol_type symbol) const {
     switch (static_cast<common_token>(symbol)) {
       case common_token::ascii_char:
         return "\"ascii char\"";
@@ -33,7 +33,7 @@ namespace cyy::computation {
       case common_token::__end:
         return "";
     }
-    return ALPHABET::to_string(symbol);
+    return ALPHABET::__to_string(symbol);
   }
   bool common_tokens::contains_ASCII() const { return true; }
 } // namespace cyy::computation
