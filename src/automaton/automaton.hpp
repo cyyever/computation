@@ -100,7 +100,6 @@ namespace cyy::computation {
       change_final_states(std::initializer_list{s});
     }
 
-  protected:
     state_type add_new_state() {
       state_type new_state = 0;
       if (!states.empty()) {
@@ -111,6 +110,7 @@ namespace cyy::computation {
     }
     bool add_new_state(state_type s) { return states.emplace(s).second; }
 
+  protected:
     void add_new_states(state_set_type state_set) {
       states.merge(std::move(state_set));
     }

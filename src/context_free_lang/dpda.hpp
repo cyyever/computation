@@ -107,6 +107,10 @@ namespace cyy::computation {
     void check_transition_fuction(bool check_input_endmark = false,
                                   bool check_stack_endmark = false);
 
+    state_type add_pop_transition_sequence(state_type from_state,
+                                           size_t pop_num,
+                                           std::optional<state_type> end_state);
+
   protected:
     std::shared_ptr<ALPHABET> stack_alphabet;
     transition_function_type transition_function;

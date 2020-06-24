@@ -20,7 +20,8 @@
 
 namespace cyy::computation {
 
-  std::pair<DFA, std::unordered_map<DFA::state_type, new_LR_0_item_set>>
+  std::tuple<DFA, std::unordered_map<CFG::nonterminal_type, symbol_type>,
+             std::unordered_map<DFA::state_type, new_LR_0_item_set>>
   CFG::get_DK() const {
     auto max_symbol = alphabet->get_max_symbol();
     auto nonterminals = get_nonterminals();
@@ -29,9 +30,11 @@ namespace cyy::computation {
         max_symbol + 1, max_symbol + nonterminals.size(),
         "alphabet_of_nonterminals");
     std::unordered_map<nonterminal_type, symbol_type> nonterminal_to_symbol;
+    std::unordered_map<symbol_type, nonterminal_type> symbol_to_nonterminal;
     for (auto const &nonterminal : nonterminals) {
       max_symbol++;
       nonterminal_to_symbol.emplace(nonterminal, max_symbol);
+      symbol_to_nonterminal.emplace(max_symbol, nonterminal);
     }
     auto nfa_alphabet =
         std::make_shared<union_alphabet>(alphabet, alphabet_of_nonterminals);
@@ -100,7 +103,7 @@ namespace cyy::computation {
         accociatzed_items[dfa_state].add_item(std::move(it->second));
       }
     }
-    return {dfa, accociatzed_items};
+    return {dfa, nonterminal_to_symbol, accociatzed_items};
   }
 
 } // namespace cyy::computation
