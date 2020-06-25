@@ -54,7 +54,11 @@ namespace cyy::computation {
         continue;
       }
       for (auto const input_symbol : *alphabet) {
+        auto new_state = dpda_finite_automaton.add_new_state();
         transition_function[looping_state][{input_symbol, dk_state}] = {
+            new_state, dk_state};
+
+        transition_function[new_state][{}] = {
             looping_state, dk_opt->get_transition_function()
                                .find({dk_state, input_symbol})
                                ->second};
@@ -86,7 +90,6 @@ namespace cyy::computation {
       } else {
         auto from_state = looping_state;
         state_type to_state;
-        state_type pop_state;
         for (size_t i = 0; i < body.size(); i++) {
           to_state = dpda_finite_automaton.add_new_state();
           if (i == 0) {
@@ -98,10 +101,9 @@ namespace cyy::computation {
           }
           from_state = to_state;
         }
-        pop_state = to_state;
 
         for (auto const dk_state : state_symbol_set) {
-          transition_function[pop_state][{{}, dk_state}] = {
+          transition_function[to_state][{{}, dk_state}] = {
               looping_state, dk_opt->get_transition_function()
                                  .find({dk_state, nonterminal_to_symbol[head]})
                                  ->second};

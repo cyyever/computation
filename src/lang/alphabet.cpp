@@ -18,7 +18,7 @@
 namespace cyy::computation {
 
   std::shared_ptr<ALPHABET> ALPHABET::get(std::string_view name,
-                                          bool endmarked) {
+                                          bool endmarkered) {
     register_factory();
     auto it = factory.find(std::string(name));
     if (it == factory.end()) {
@@ -26,7 +26,7 @@ namespace cyy::computation {
     }
     it->second->name = name;
     auto alphabet = it->second;
-    if (endmarked) {
+    if (endmarkered) {
       alphabet = std::make_shared<endmarkered_alphabet>(alphabet);
     }
     return alphabet;

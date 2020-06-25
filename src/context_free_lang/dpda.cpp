@@ -74,7 +74,6 @@ namespace cyy::computation {
       }
       return configuration;
     }
-    assert(true);
     return {};
   }
 
@@ -153,7 +152,7 @@ namespace cyy::computation {
     }
 
     transition_function.merge(std::move(new_transitions));
-    check_transition_fuction(false, false);
+    check_transition_fuction();
 
     auto old_start_state = get_start_state();
     change_start_state(add_new_state());
@@ -218,11 +217,11 @@ namespace cyy::computation {
         transition_function[state][{{}, stack_symbol}] = {new_reject_state};
       }
     }
-#ifndef NDEBUG
-    check_transition_fuction(false, true);
-#endif
     has_normalized = true;
     reject_state_opt = new_reject_state;
+#ifndef NDEBUG
+    check_transition_fuction();
+#endif
   }
 
   std::pair<std::map<DPDA::state_type, std::set<DPDA::stack_symbol_type>>,
@@ -397,14 +396,13 @@ namespace cyy::computation {
     complement_dpda.final_states = std::move(new_final_states);
 
 #ifndef NDEBUG
-    complement_dpda.check_transition_fuction(false, true);
+    complement_dpda.check_transition_fuction();
 #endif
 
     return complement_dpda;
   }
 
-  void DPDA::check_transition_fuction(bool check_input_endmark,
-                                      bool check_stack_endmark) {
+  void DPDA::check_transition_fuction() const {
     for (auto state : get_states()) {
       auto it = transition_function.find(state);
       if (it == transition_function.end()) {
@@ -412,9 +410,8 @@ namespace cyy::computation {
                                  std::to_string(state));
       }
       auto const &state_transition_function = it->second;
-      for (auto input_symbol : alphabet->get_view(check_input_endmark)) {
-        for (auto stack_symbol :
-             stack_alphabet->get_view(check_stack_endmark)) {
+      for (auto input_symbol : alphabet->get_view()) {
+        for (auto stack_symbol : stack_alphabet->get_view(has_normalized)) {
           size_t cnt = 0;
           cnt += state_transition_function.count({});
           cnt += state_transition_function.count({input_symbol});

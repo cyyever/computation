@@ -3,12 +3,17 @@
  */
 
 #include "endmarkered_dpda.hpp"
+#include "lang/endmarkered_alphabet.hpp"
 #include "lang/range_alphabet.hpp"
 #include "lang/union_alphabet.hpp"
+#include <memory>
 
 namespace cyy::computation {
 
   endmarkered_DPDA::endmarkered_DPDA(DPDA dpda) : DPDA(std::move(dpda)) {
+    if (alphabet->contain(ALPHABET::endmarker)) {
+      return;
+    }
     normalize();
 
     auto new_accept_state = add_new_state();
@@ -49,7 +54,8 @@ namespace cyy::computation {
     }
 
     final_states = {new_accept_state};
-    check_transition_fuction(true, true);
+    alphabet = std::make_shared<endmarkered_alphabet>(alphabet);
+    check_transition_fuction();
   }
   DPDA endmarkered_DPDA::to_DPDA() const {
     auto dpda = *this;
@@ -154,7 +160,9 @@ namespace cyy::computation {
     auto new_stack_alphabet = std::make_shared<union_alphabet>(
         stack_alphabet, stack_alphabet_of_state_set);
     dpda.stack_alphabet = new_stack_alphabet;
-    dpda.check_transition_fuction(false, true);
+    dpda.alphabet = std::dynamic_pointer_cast<endmarkered_alphabet>(alphabet)
+                        ->original_alphabet();
+    dpda.check_transition_fuction();
     return dpda;
   }
 
@@ -187,7 +195,7 @@ namespace cyy::computation {
     if (transition_normalized) {
       return;
     }
-    check_transition_fuction(true, true);
+    check_transition_fuction();
 
     // process input
     transition_function_type new_transitions;
@@ -262,7 +270,7 @@ namespace cyy::computation {
       transfers = std::move(new_transfers);
     }
     transition_function.merge(std::move(new_transitions));
-    check_transition_fuction(true, true);
+    check_transition_fuction();
 
     new_transitions = {};
     // process stack
@@ -292,7 +300,7 @@ namespace cyy::computation {
       transfers = std::move(new_transfers);
     }
     transition_function.merge(std::move(new_transitions));
-    check_transition_fuction(true, true);
+    check_transition_fuction();
 
 #ifndef NDEBUG
     for (auto &[from_state, transfers] : transition_function) {
