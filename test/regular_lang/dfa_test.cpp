@@ -120,3 +120,23 @@ TEST_CASE("complement") {
   CHECK(dfa.recognize(U"b"));
   CHECK(dfa.recognize(U"ab"));
 }
+
+TEST_CASE("draw") {
+  DFA dfa({0, 1, 2, 3, 4}, "ab_set", 0,
+          {
+
+              {{0, 'a'}, 1},
+              {{0, 'b'}, 2},
+
+              {{1, 'a'}, 1},
+              {{1, 'b'}, 3},
+              {{2, 'a'}, 1},
+              {{2, 'b'}, 2},
+              {{3, 'a'}, 1},
+              {{3, 'b'}, 4},
+              {{4, 'a'}, 1},
+              {{4, 'b'}, 2},
+          },
+          {4});
+  std::cout<< dfa.MMA_draw()<<std::endl;
+}

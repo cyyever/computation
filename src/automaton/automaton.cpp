@@ -1,6 +1,7 @@
 
 #include "automaton.hpp"
 #include "../util.hpp"
+#include <sstream>
 namespace cyy::computation {
 
   finite_automaton::state_set_type &finite_automaton::get_epsilon_closure(
@@ -107,5 +108,16 @@ namespace cyy::computation {
   finite_automaton::state_biset_contains(const state_bitset_type &state_bitset,
                                          state_type state) const {
     return state_bitset.test(std::distance(states.begin(), states.find(state)));
+  }
+  std::string finite_automaton::MMA_draw() const {
+    std::stringstream is;
+    is << "VertexLabels -> Placed[\"Name\",Center],VertexSize -> "
+          "0.2,VertexStyle -> {Gray,"
+       << get_start_state() << "-> Orange ";
+    for (auto const s : get_final_states()) {
+      is << "," << s << "-> Green";
+    }
+    is << '}';
+    return is.str();
   }
 } // namespace cyy::computation

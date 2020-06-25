@@ -163,6 +163,8 @@ namespace cyy::computation {
       final_states.erase(s);
     }
 
+    std::string MMA_draw() const;
+
   protected:
     static state_bitset_type
     state_set_to_bitset(const state_set_type &all_state_set,

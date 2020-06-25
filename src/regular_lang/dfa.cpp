@@ -6,6 +6,7 @@
  */
 
 #include <algorithm>
+#include <iostream>
 #include <iterator>
 #include <memory>
 #include <set>
@@ -229,5 +230,21 @@ namespace cyy::computation {
         std::inserter(new_final_states, new_final_states.begin()));
     return {get_state_set(), alphabet->get_name(), get_start_state(),
             transition_function, new_final_states};
+  }
+  std::string DFA::MMA_draw() const {
+    std::stringstream is;
+    is << "Graph[{";
+    bool flag = false;
+    for (auto const &[situation, my_next_state] : transition_function) {
+      if (flag) {
+        is << ',';
+      }
+      flag = true;
+      is << "Labeled[ " << situation.state << "->" << my_next_state
+                << ",\"" << alphabet->to_string(situation.input_symbol)
+                << "\"]";
+    }
+    is << "},"<<finite_automaton::MMA_draw() << ']';
+    return is.str();
   }
 } // namespace cyy::computation
