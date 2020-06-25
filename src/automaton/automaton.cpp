@@ -109,9 +109,11 @@ namespace cyy::computation {
                                          state_type state) const {
     return state_bitset.test(std::distance(states.begin(), states.find(state)));
   }
+
   std::string finite_automaton::MMA_draw() const {
     std::stringstream is;
-    is << "ImageSize -> Large,VertexLabels -> "
+    is << "GraphLayout -> \"CircularEmbedding\", ImageSize -> "
+          "Large,VertexLabels -> "
           "Placed[\"Name\",Center],VertexSize -> "
           "0.1,VertexStyle -> {Gray,"
        << get_start_state() << "-> Orange ";

@@ -159,4 +159,44 @@ namespace cyy::computation {
     }
     return res;
   }
+  std::string PDA::MMA_draw() const {
+    std::stringstream is;
+    is << "Graph[{";
+    for (auto const &[situation, action_set] : transition_function) {
+      for (auto const &action : action_set) {
+        if (!situation.use_input()) {
+          is << "Style[";
+        }
+        is << "Labeled[ " << situation.state << "->" << action.state << ',';
+        is << '"';
+        if (!situation.use_input()) {
+          is << "\\[Epsilon]";
+        } else {
+          is << alphabet->to_string(situation.input_symbol.value());
+        }
+        is << ',';
+        if (situation.has_pop()) {
+          is << stack_alphabet->to_string(situation.stack_symbol.value());
+        } else {
+          is << "\\[Epsilon]";
+        }
+        is << '/';
+        if (action.has_push()) {
+          is << stack_alphabet->to_string(action.stack_symbol.value());
+        } else {
+          is << "\\[Epsilon]";
+        }
+        is << '"';
+        is << ']';
+        if (!situation.use_input()) {
+          is << ",Dashed]";
+        }
+        is << ',';
+      }
+    }
+    // drop last ,
+    is.seekp(-1, std::ios_base::end);
+    is << "}," << finite_automaton::MMA_draw() << ']';
+    return is.str();
+  }
 } // namespace cyy::computation

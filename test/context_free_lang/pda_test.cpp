@@ -80,4 +80,5 @@ TEST_CASE("recognize PDA") {
     str = U"0101";
     CHECK(!cnf.parse(str));
   }
+  SUBCASE("draw") { std::cout << pda.MMA_draw() << std::endl; }
 }

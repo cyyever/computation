@@ -60,4 +60,5 @@ TEST_CASE("recognize DPDA") {
     CHECK(!dpda_complement.recognize(U"0011"));
     CHECK(dpda_complement.recognize(U"10"));
   }
+  SUBCASE("draw") { std::cout << dpda.MMA_draw() << std::endl; }
 }

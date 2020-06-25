@@ -92,6 +92,8 @@ namespace cyy::computation {
     void normalize();
     DPDA complement() const;
 
+    std::string MMA_draw() const;
+
   protected:
     struct configuration_type {
       state_type state;
