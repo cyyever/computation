@@ -111,8 +111,9 @@ namespace cyy::computation {
   }
   std::string finite_automaton::MMA_draw() const {
     std::stringstream is;
-    is << "VertexLabels -> Placed[\"Name\",Center],VertexSize -> "
-          "0.2,VertexStyle -> {Gray,"
+    is << "ImageSize -> Large,VertexLabels -> "
+          "Placed[\"Name\",Center],VertexSize -> "
+          "0.1,VertexStyle -> {Gray,"
        << get_start_state() << "-> Orange ";
     for (auto const s : get_final_states()) {
       is << "," << s << "-> Green";

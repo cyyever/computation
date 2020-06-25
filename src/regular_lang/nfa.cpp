@@ -84,4 +84,26 @@ namespace cyy::computation {
   }
 
   DFA NFA::to_DFA() const { return to_DFA_with_mapping().first; }
+
+  std::string NFA::MMA_draw() const {
+    std::stringstream is;
+    is << "Graph[{";
+    for (auto const &[situation, next_state_set] : transition_function) {
+      for (auto my_next_state : next_state_set) {
+        is << "Labeled[ " << situation.state << "->" << my_next_state << ",\""
+           << alphabet->to_string(situation.input_symbol) << "\"],";
+      }
+    }
+    for (auto const &[from_state, next_state_set] :
+         epsilon_transition_function) {
+      for (auto my_next_state : next_state_set) {
+        is << "Style[Labeled[ " << from_state << "->" << my_next_state
+           << ",\\[Epsilon]],Dashed],";
+      }
+    }
+    // drop last ,
+    is.seekp(-1, std::ios_base::end);
+    is << "}," << finite_automaton::MMA_draw() << ']';
+    return is.str();
+  }
 } // namespace cyy::computation

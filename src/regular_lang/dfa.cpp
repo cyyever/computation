@@ -107,14 +107,11 @@ namespace cyy::computation {
           auto state = *it;
           bool in_new_group = true;
           for (auto &sub_group : sub_groups) {
-            bool in_group = true;
-            for (auto a : *alphabet) {
-              if (in_group &&
-                  state_location[go(*(sub_group.begin()), a).value()] !=
-                      state_location[go(state, a).value()]) {
-                in_group = false;
-              }
-            }
+            bool in_group = std::ranges::all_of(
+                alphabet->get_view(false), [&](auto const a) {
+                  return state_location[go(*(sub_group.begin()), a).value()] ==
+                         state_location[go(state, a).value()];
+                });
             if (in_group) {
               sub_group.insert(state);
               in_new_group = false;
@@ -234,17 +231,13 @@ namespace cyy::computation {
   std::string DFA::MMA_draw() const {
     std::stringstream is;
     is << "Graph[{";
-    bool flag = false;
     for (auto const &[situation, my_next_state] : transition_function) {
-      if (flag) {
-        is << ',';
-      }
-      flag = true;
-      is << "Labeled[ " << situation.state << "->" << my_next_state
-                << ",\"" << alphabet->to_string(situation.input_symbol)
-                << "\"]";
+      is << "Labeled[ " << situation.state << "->" << my_next_state << ",\""
+         << alphabet->to_string(situation.input_symbol) << "\"],";
     }
-    is << "},"<<finite_automaton::MMA_draw() << ']';
+    // drop last ,
+    is.seekp(-1, std::ios_base::end);
+    is << "}," << finite_automaton::MMA_draw() << ']';
     return is.str();
   }
 } // namespace cyy::computation

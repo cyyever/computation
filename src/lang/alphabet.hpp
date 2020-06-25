@@ -77,7 +77,7 @@ namespace cyy::computation {
 
     symbol_type get_unincluded_symbol() const { return add_max_symbol(2); }
 
-    auto get_view(bool include_endmark) const {
+    auto get_view(bool include_endmark = false) const {
       auto alphabet_size = size();
       auto bound = alphabet_size;
       if (include_endmark) {

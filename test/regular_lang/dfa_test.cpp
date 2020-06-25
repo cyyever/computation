@@ -138,5 +138,5 @@ TEST_CASE("draw") {
               {{4, 'b'}, 2},
           },
           {4});
-  std::cout<< dfa.MMA_draw()<<std::endl;
+  std::cout << dfa.MMA_draw() << std::endl;
 }

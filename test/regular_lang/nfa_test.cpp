@@ -88,3 +88,14 @@ TEST_CASE("NFA to CFG") {
   auto cfg = NFA_to_CFG(nfa);
   CHECK(cfg.recursive_descent_parse(U"a"));
 }
+TEST_CASE("draw") {
+  NFA nfa({0, 1, 2, 3, 4}, "ab_set", 0,
+          {
+              {{1, 'a'}, {2}},
+              {{2, 'a'}, {2}},
+              {{3, 'b'}, {4}},
+              {{4, 'b'}, {4}},
+          },
+          {2, 4}, {{0, {1, 3}}});
+  std::cout << nfa.MMA_draw() << std::endl;
+}
