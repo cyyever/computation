@@ -116,7 +116,7 @@ namespace cyy::computation {
       return "(unknown symbol)";
     }
 
-    std::string get_name() const { return name; }
+    const std::string &get_name() const { return name; }
 
     bool operator==(const ALPHABET &rhs) const = default;
     virtual bool contains_ASCII() const { return false; }
@@ -158,6 +158,16 @@ namespace cyy::computation {
   private:
     static inline std::unordered_map<std::string, std::shared_ptr<ALPHABET>>
         factory;
+  };
+
+  class ALPHABET_ptr : public std::shared_ptr<ALPHABET> {
+  public:
+    using std::shared_ptr<ALPHABET>::shared_ptr;
+    // TODO remove it
+    ALPHABET_ptr(const std::shared_ptr<ALPHABET> &ptr) : shared_ptr(ptr) {}
+    ALPHABET_ptr(std::string_view strv) : shared_ptr(ALPHABET::get(strv)) {}
+    ALPHABET_ptr(const char *str) : shared_ptr(ALPHABET::get(str)) {}
+    ALPHABET_ptr(const std::string &str) : shared_ptr(ALPHABET::get(str)) {}
   };
 
   inline auto endmarkered_symbol_string(symbol_string_view str) {

@@ -71,21 +71,19 @@ namespace cyy::computation {
         std::unordered_map<situation_type, std::set<action_type>,
                            situation_hash_type>;
 
-    PDA(finite_automaton finite_automaton_,
-        std::string_view stack_alphabet_name,
+    PDA(finite_automaton finite_automaton_, ALPHABET_ptr stack_alphabet_,
         transition_function_type transition_function_)
         : finite_automaton(std::move(finite_automaton_)),
-          stack_alphabet(
-              ::cyy::computation::ALPHABET::get(stack_alphabet_name)),
+          stack_alphabet(stack_alphabet_),
           transition_function(std::move(transition_function_)) {}
 
-    PDA(state_set_type states_, std::string_view input_alphabet_name,
-        std::string_view stack_alphabet_name, state_type start_state_,
+    PDA(state_set_type states_, ALPHABET_ptr input_alphabet_,
+        ALPHABET_ptr stack_alphabet_, state_type start_state_,
         transition_function_type transition_function_,
         state_set_type final_states_)
-        : PDA(finite_automaton(std::move(states_), input_alphabet_name,
+        : PDA(finite_automaton(std::move(states_), input_alphabet_,
                                start_state_, std::move(final_states_)),
-              stack_alphabet_name, std::move(transition_function_)) {}
+              stack_alphabet_, std::move(transition_function_)) {}
 
     bool operator==(const PDA &rhs) const noexcept = default;
 
@@ -191,7 +189,7 @@ namespace cyy::computation {
     void add_epsilon_transition(state_type from_state, state_type to_state);
 
   private:
-    std::shared_ptr<ALPHABET> stack_alphabet;
+    ALPHABET_ptr stack_alphabet;
     transition_function_type transition_function;
   };
 

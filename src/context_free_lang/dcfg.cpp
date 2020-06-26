@@ -54,14 +54,12 @@ namespace cyy::computation {
         continue;
       }
       for (auto const input_symbol : *alphabet) {
-        auto new_state = dpda_finite_automaton.add_new_state();
-        transition_function[looping_state][{input_symbol, dk_state}] = {
-            new_state, dk_state};
-
-        transition_function[new_state][{}] = {
-            looping_state, dk_opt->get_transition_function()
-                               .find({dk_state, input_symbol})
-                               ->second};
+        transition_function.check_stack_and_action(
+            looping_state, {input_symbol, dk_state},
+            {looping_state, dk_opt->get_transition_function()
+                                .find({dk_state, input_symbol})
+                                ->second},
+            dpda_finite_automaton);
       }
     }
     auto accept_state = dpda_finite_automaton.add_new_state();
@@ -90,6 +88,7 @@ namespace cyy::computation {
       } else {
         auto from_state = looping_state;
         state_type to_state;
+        // pop body states from stack
         for (size_t i = 0; i < body.size(); i++) {
           to_state = dpda_finite_automaton.add_new_state();
           if (i == 0) {
@@ -113,8 +112,8 @@ namespace cyy::computation {
     auto reject_state = dpda_finite_automaton.add_new_state();
     for (auto const input_symbol : *alphabet) {
       transition_function[accept_state][{input_symbol}] = {reject_state};
-      transition_function[reject_state][{input_symbol}] = {reject_state};
     }
+    transition_function.make_reject_state(reject_state,alphabet);
     dpda_finite_automaton.replace_final_states(accept_state);
     return DPDA(dpda_finite_automaton, dk_state_set_alphabet->get_name(),
                 transition_function);

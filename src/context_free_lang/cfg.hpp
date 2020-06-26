@@ -44,12 +44,8 @@ namespace cyy::computation {
                       CFG_production::body_span_type body);
     };
 
-    CFG(std::shared_ptr<ALPHABET> alphabet_, nonterminal_type start_symbol_,
+    CFG(ALPHABET_ptr alphabet_, nonterminal_type start_symbol_,
         production_set_type productions_);
-    CFG(const std::string &alphabet_name, nonterminal_type start_symbol_,
-        production_set_type productions_)
-        : CFG(ALPHABET::get(alphabet_name), start_symbol_,
-              std::move(productions_)) {}
 
     CFG(const CFG &) = default;
     CFG &operator=(const CFG &) = default;
@@ -131,7 +127,7 @@ namespace cyy::computation {
     get_head_dependency() const;
 
   protected:
-    std::shared_ptr<ALPHABET> alphabet;
+    ALPHABET_ptr alphabet;
     nonterminal_type start_symbol;
     production_set_type productions;
 

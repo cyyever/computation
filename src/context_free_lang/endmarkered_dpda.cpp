@@ -292,7 +292,7 @@ namespace cyy::computation {
           new_transitions[next_state][{}] = std::move(action);
           continue;
         }
-        for (auto stack_symbol : stack_alphabet->get_view(true)) {
+        for (auto stack_symbol : stack_alphabet->get_view()) {
           new_transfers[std::move(configuration)] = {next_state, stack_symbol};
           new_transitions[next_state][{{}, stack_symbol}] = std::move(action);
         }

@@ -15,7 +15,7 @@
 
 namespace cyy::computation {
 
-  CFG::CFG(std::shared_ptr<ALPHABET> alphabet_, nonterminal_type start_symbol_,
+  CFG::CFG(ALPHABET_ptr alphabet_, nonterminal_type start_symbol_,
            production_set_type productions_)
       : alphabet(alphabet_), start_symbol(std::move(start_symbol_)),
         productions(std::move(productions_)) {

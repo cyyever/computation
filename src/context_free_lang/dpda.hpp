@@ -64,27 +64,47 @@ namespace cyy::computation {
       bool has_push() const { return stack_symbol.has_value(); }
     };
 
-    using transition_function_type = std::unordered_map<
+    using __transition_function_type = std::unordered_map<
         state_type,
         std::unordered_map<situation_type, action_type, situation_hash_type>>;
+    class transition_function_type : public __transition_function_type {
+    public:
+      using __transition_function_type::__transition_function_type;
 
-    DPDA(finite_automaton finite_automaton_,
-         std::string_view stack_alphabet_name,
+      void check_stack_and_action(state_type from_state,
+                                  situation_type situation, action_type action,
+                                  finite_automaton &automata) {
+        assert(situation.has_pop());
+        auto &transfers = operator[](from_state);
+        auto new_state = automata.add_new_state();
+        transfers[situation] = {new_state, situation.stack_symbol};
+
+        auto &new_transfers = operator[](new_state);
+        new_transfers[{}] = std::move(action);
+      }
+      void make_reject_state(state_type s,ALPHABET_ptr input_alphabet) {
+        auto &transfers = operator[](s);
+        for(auto a:*input_alphabet) {
+          transfers[{a}]={s};
+        }
+      }
+    };
+
+    DPDA(finite_automaton finite_automaton_, ALPHABET_ptr stack_alphabet_,
          transition_function_type transition_function_)
         : finite_automaton(std::move(finite_automaton_)),
-          stack_alphabet(
-              ::cyy::computation::ALPHABET::get(stack_alphabet_name)),
+          stack_alphabet(stack_alphabet_),
           transition_function(std::move(transition_function_)) {
       check_transition_fuction();
     }
-    DPDA(state_set_type states_, std::string_view input_alphabet_name,
-         std::string_view stack_alphabet_name, state_type start_state_,
+
+    DPDA(state_set_type states_, ALPHABET_ptr input_alphabet_,
+         ALPHABET_ptr stack_alphabet_, state_type start_state_,
          transition_function_type transition_function_,
          state_set_type final_states_)
-        : DPDA(finite_automaton(std::move(states_), input_alphabet_name,
+        : DPDA(finite_automaton(std::move(states_), input_alphabet_,
                                 start_state_, std::move(final_states_)),
-               stack_alphabet_name, std::move(transition_function_)) {}
-
+               stack_alphabet_, std::move(transition_function_)) {}
     bool operator==(const DPDA &rhs) const = default;
 
     bool recognize(symbol_string_view view) const;
@@ -113,7 +133,7 @@ namespace cyy::computation {
     void check_transition_fuction() const;
 
   protected:
-    std::shared_ptr<ALPHABET> stack_alphabet;
+    ALPHABET_ptr stack_alphabet;
     transition_function_type transition_function;
     bool has_normalized{false};
     std::optional<state_type> reject_state_opt;

@@ -37,8 +37,7 @@ namespace cyy::computation {
       bool operator==(const situation_type &) const noexcept = default;
     };
 
-    finite_automaton(state_set_type states_,
-                     std::shared_ptr<ALPHABET> alphabet_,
+    finite_automaton(state_set_type states_, ALPHABET_ptr alphabet_,
                      state_type start_state_, state_set_type final_states_)
         : alphabet(alphabet_), states(std::move(states_)),
           start_state(start_state_), final_states(std::move(final_states_)) {
@@ -179,7 +178,7 @@ namespace cyy::computation {
                         const state_set_map_type &epsilon_transition_function);
 
   protected:
-    std::shared_ptr<ALPHABET> alphabet;
+    ALPHABET_ptr alphabet;
 
   private:
     state_set_type states;

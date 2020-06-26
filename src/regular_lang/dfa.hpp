@@ -22,10 +22,10 @@ namespace cyy::computation {
   public:
     using transition_function_type =
         std::unordered_map<situation_type, state_type>;
-    DFA(state_set_type states_, const std::string &alphabet_name,
-        state_type start_state_, transition_function_type transition_function_,
+    DFA(state_set_type states_, ALPHABET_ptr alphabet_, state_type start_state_,
+        transition_function_type transition_function_,
         state_set_type final_states_)
-        : finite_automaton(std::move(states_), alphabet_name, start_state_,
+        : finite_automaton(std::move(states_), alphabet_, start_state_,
                            std::move(final_states_)),
           transition_function(std::move(transition_function_)) {
       if (transition_function.size() !=

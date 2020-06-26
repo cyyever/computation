@@ -20,11 +20,11 @@ namespace cyy::computation {
     using transition_function_type =
         std::unordered_map<situation_type, state_set_type>;
     using epsilon_transition_function_type = state_set_map_type;
-    NFA(state_set_type states_, std::string_view alphabet_name,
-        state_type start_state_, transition_function_type transition_function_,
+    NFA(state_set_type states_, ALPHABET_ptr alphabet_, state_type start_state_,
+        transition_function_type transition_function_,
         state_set_type final_states_,
         epsilon_transition_function_type epsilon_transition_function_ = {})
-        : finite_automaton(std::move(states_), alphabet_name, start_state_,
+        : finite_automaton(std::move(states_), alphabet_, start_state_,
                            std::move(final_states_)),
           transition_function(std::move(transition_function_)),
           epsilon_transition_function(std::move(epsilon_transition_function_)) {
