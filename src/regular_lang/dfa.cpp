@@ -107,8 +107,8 @@ namespace cyy::computation {
           auto state = *it;
           bool in_new_group = true;
           for (auto &sub_group : sub_groups) {
-            bool in_group = std::ranges::all_of(
-                alphabet->get_view(false), [&](auto const a) {
+            bool in_group =
+                std::ranges::all_of(alphabet->get_view(), [&](auto const a) {
                   return state_location[go(*(sub_group.begin()), a).value()] ==
                          state_location[go(state, a).value()];
                 });

@@ -8,11 +8,13 @@
 #include <algorithm>
 #include <cassert>
 #include <iterator>
+#include <memory>
 #include <stdexcept>
 #include <unordered_map>
 #include <vector>
 
 #include "dpda.hpp"
+#include "lang/endmarkered_alphabet.hpp"
 #include "lang/union_alphabet.hpp"
 
 namespace cyy::computation {
@@ -196,8 +198,8 @@ namespace cyy::computation {
       transfers.merge(std::move(new_transfers));
     }
 
+    transition_function.make_reject_state(new_reject_state, alphabet);
     for (auto a : *alphabet) {
-      transition_function[new_reject_state][{a}] = {new_reject_state};
       transition_function[new_accept_state][{a}] = {new_reject_state};
     }
 
@@ -219,6 +221,8 @@ namespace cyy::computation {
     }
     has_normalized = true;
     reject_state_opt = new_reject_state;
+
+    stack_alphabet = std::make_shared<endmarkered_alphabet>(stack_alphabet);
 #ifndef NDEBUG
     check_transition_fuction();
 #endif
@@ -410,8 +414,8 @@ namespace cyy::computation {
                                  std::to_string(state));
       }
       auto const &state_transition_function = it->second;
-      for (auto input_symbol : alphabet->get_view()) {
-        for (auto stack_symbol : stack_alphabet->get_view(has_normalized)) {
+      for (auto input_symbol : *alphabet) {
+        for (auto stack_symbol : *stack_alphabet) {
           size_t cnt = 0;
           cnt += state_transition_function.count({});
           cnt += state_transition_function.count({input_symbol});

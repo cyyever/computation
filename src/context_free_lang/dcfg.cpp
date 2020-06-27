@@ -113,7 +113,7 @@ namespace cyy::computation {
     for (auto const input_symbol : *alphabet) {
       transition_function[accept_state][{input_symbol}] = {reject_state};
     }
-    transition_function.make_reject_state(reject_state,alphabet);
+    transition_function.make_reject_state(reject_state, alphabet);
     dpda_finite_automaton.replace_final_states(accept_state);
     return DPDA(dpda_finite_automaton, dk_state_set_alphabet->get_name(),
                 transition_function);

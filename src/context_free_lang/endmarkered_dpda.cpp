@@ -49,12 +49,11 @@ namespace cyy::computation {
       transfers.merge(std::move(new_transfers));
     }
 
-    for (auto s : alphabet->get_view(true)) {
+    alphabet = std::make_shared<endmarkered_alphabet>(alphabet);
+    for (auto s : *alphabet) {
       transition_function[new_accept_state][{s}] = {reject_state_opt.value()};
     }
-
     final_states = {new_accept_state};
-    alphabet = std::make_shared<endmarkered_alphabet>(alphabet);
     check_transition_fuction();
   }
   DPDA endmarkered_DPDA::to_DPDA() const {
@@ -111,7 +110,7 @@ namespace cyy::computation {
             dpda.transition_function[new_state][{}] = {action.state,
                                                        new_stack_symbol};
           }
-          for (auto stack_symbol : stack_alphabet->get_view(true)) {
+          for (auto stack_symbol : *stack_alphabet) {
             auto new_state = dpda.add_new_state();
             new_transfers[{{}, stack_symbol}] = {new_state};
             dpda.transition_function[new_state][{}] = {action.state,
@@ -151,7 +150,7 @@ namespace cyy::computation {
                   dpda.state_set_to_bitset(old_states, new_accept_states)
                       .to_ulong()};
         }
-        for (auto stack_symbol : stack_alphabet->get_view(true)) {
+        for (auto stack_symbol : *stack_alphabet) {
           new_transfers[{{}, stack_symbol}] = {reject_state_opt.value()};
         }
       }
@@ -292,7 +291,7 @@ namespace cyy::computation {
           new_transitions[next_state][{}] = std::move(action);
           continue;
         }
-        for (auto stack_symbol : stack_alphabet->get_view()) {
+        for (auto stack_symbol : *stack_alphabet) {
           new_transfers[std::move(configuration)] = {next_state, stack_symbol};
           new_transitions[next_state][{{}, stack_symbol}] = std::move(action);
         }

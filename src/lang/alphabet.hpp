@@ -77,19 +77,10 @@ namespace cyy::computation {
 
     symbol_type get_unincluded_symbol() const { return add_max_symbol(2); }
 
-    auto get_view(bool include_endmark = false) const {
-      auto alphabet_size = size();
-      auto bound = alphabet_size;
-      if (include_endmark) {
-        bound++;
-      }
-      return std::views::iota(static_cast<size_t>(0), bound) |
-             std::views::transform([alphabet_size, this](auto idx) {
-               if (idx == alphabet_size) {
-                 return endmarker;
-               }
-               return get_symbol(idx);
-             });
+    auto get_view() const {
+      return std::views::iota(static_cast<size_t>(0), size()) |
+             std::views::transform(
+                 [this](auto idx) { return get_symbol(idx); });
     }
 
     iterator begin() const noexcept { return iterator(this, 0); }

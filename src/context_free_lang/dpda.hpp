@@ -82,10 +82,10 @@ namespace cyy::computation {
         auto &new_transfers = operator[](new_state);
         new_transfers[{}] = std::move(action);
       }
-      void make_reject_state(state_type s,ALPHABET_ptr input_alphabet) {
+      void make_reject_state(state_type s, ALPHABET_ptr input_alphabet) {
         auto &transfers = operator[](s);
-        for(auto a:*input_alphabet) {
-          transfers[{a}]={s};
+        for (auto a : *input_alphabet) {
+          transfers[{a}] = {s};
         }
       }
     };
