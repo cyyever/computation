@@ -5,7 +5,9 @@
 namespace cyy::computation {
   bool DCFG::DK_test() const {
 
-    std::tie(dk_opt, nonterminal_to_symbol, state_to_LR_0_item_set) = get_DK();
+    std::unordered_map<symbol_type, nonterminal_type> symbol_to_nonterminal;
+    std::tie(dk_opt, nonterminal_to_symbol, symbol_to_nonterminal,
+             state_to_LR_0_item_set) = get_DK();
     for (auto final_state : dk_opt->get_final_states()) {
       size_t completed_cnt = 0;
       assert(state_to_LR_0_item_set.contains(final_state));
@@ -18,12 +20,6 @@ namespace cyy::computation {
         if (kernel_item.get_grammar_symbal().is_terminal()) {
           return false;
         }
-      }
-      for (auto const &nonkernel_item : item_set.get_nonkernel_items()) {
-        auto it = productions.find(nonkernel_item);
-        assert(it != productions.end());
-        completed_cnt += std::ranges::count_if(
-            it->second, [](auto const &body) { return body.empty(); });
       }
       if (completed_cnt != 1) {
         printf("cnt %zu\n", completed_cnt);

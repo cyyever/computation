@@ -23,7 +23,7 @@ TEST_CASE("DCFG") {
   };
   SUBCASE("DK") {
     CFG cfg(ALPHABET::get("parentheses", true), "S", productions);
-    auto [dfa, _, dfa_state_to_item_set] = cfg.get_DK();
+    cfg.get_DK();
   }
   SUBCASE("DCFG") {
     DCFG dcfg(ALPHABET::get("parentheses", true), "S", productions);

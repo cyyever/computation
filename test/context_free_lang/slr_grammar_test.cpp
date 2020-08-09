@@ -15,135 +15,6 @@
 
 using namespace cyy::computation;
 
-TEST_CASE("canonical_collection") {
-  std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
-      productions;
-  auto id = static_cast<CFG::terminal_type>(common_token::id);
-  productions["E"] = {
-      {"E", U'+', "T"},
-      {"T"},
-  };
-  productions["T"] = {
-      {"T", U'*', "F"},
-      {"F"},
-  };
-  productions["F"] = {
-      {U'(', "E", U')'}, {id} // i for id
-  };
-
-  SLR_grammar grammar("common_tokens", "E", productions);
-
-  std::unordered_set<LR_0_item_set> sets;
-
-  {
-    LR_0_item_set set;
-
-    set.add_kernel_item(grammar, LR_0_item{CFG_production{"E'", {"E"}}, 0});
-
-    sets.emplace(std::move(set));
-  }
-
-  {
-    LR_0_item_set set;
-
-    set.add_kernel_item(grammar, LR_0_item{CFG_production{"E'", {"E"}}, 1});
-
-    set.add_kernel_item(grammar,
-                        LR_0_item{CFG_production{"E", {"E", U'+', "T"}}, 1});
-    sets.emplace(std::move(set));
-  }
-
-  {
-    LR_0_item_set set;
-
-    set.add_kernel_item(grammar, LR_0_item{CFG_production{"E", {"T"}}, 1});
-    set.add_kernel_item(grammar,
-                        LR_0_item{CFG_production{"T", {"T", U'*', "F"}}, 1});
-    sets.emplace(std::move(set));
-  }
-
-  {
-    LR_0_item_set set;
-
-    set.add_kernel_item(grammar, LR_0_item{CFG_production{"T", {"F"}}, 1});
-    sets.emplace(std::move(set));
-  }
-
-  {
-    LR_0_item_set set;
-
-    set.add_kernel_item(grammar,
-                        LR_0_item{CFG_production{"F", {U'(', "E", U')'}}, 1});
-    sets.emplace(std::move(set));
-  }
-
-  {
-    LR_0_item_set set;
-
-    set.add_kernel_item(grammar, LR_0_item{CFG_production{"F", {id}}, 1});
-    sets.emplace(std::move(set));
-  }
-
-  {
-    LR_0_item_set set;
-
-    set.add_kernel_item(grammar,
-                        LR_0_item{CFG_production{"E", {"E", U'+', "T"}}, 2});
-    sets.emplace(std::move(set));
-  }
-
-  {
-    LR_0_item_set set;
-
-    set.add_kernel_item(grammar,
-                        LR_0_item{CFG_production{"T", {"T", U'*', "F"}}, 2});
-    sets.emplace(std::move(set));
-  }
-
-  {
-    LR_0_item_set set;
-
-    set.add_kernel_item(grammar,
-                        LR_0_item{CFG_production{"E", {"E", U'+', "T"}}, 1});
-    set.add_kernel_item(grammar,
-                        LR_0_item{CFG_production{"F", {U'(', "E", U')'}}, 2});
-    sets.emplace(std::move(set));
-  }
-
-  {
-    LR_0_item_set set;
-
-    set.add_kernel_item(grammar,
-                        LR_0_item{CFG_production{"E", {"E", U'+', "T"}}, 3});
-    set.add_kernel_item(grammar,
-                        LR_0_item{CFG_production{"T", {"T", U'*', "F"}}, 1});
-    sets.emplace(std::move(set));
-  }
-
-  {
-    LR_0_item_set set;
-
-    set.add_kernel_item(grammar,
-                        LR_0_item{CFG_production{"T", {"T", U'*', "F"}}, 3});
-    sets.emplace(std::move(set));
-  }
-
-  {
-    LR_0_item_set set;
-
-    set.add_kernel_item(grammar,
-                        LR_0_item{CFG_production{"F", {U'(', "E", U')'}}, 3});
-    sets.emplace(std::move(set));
-  }
-
-  std::unordered_set<LR_0_item_set> collection;
-  for (auto &[set, _] : grammar.canonical_collection().first) {
-    collection.emplace(set);
-  }
-
-  CHECK(sets == collection);
-}
-
 TEST_CASE("SLR(1) parse") {
   SUBCASE("parse expression grammar") {
 
@@ -151,18 +22,12 @@ TEST_CASE("SLR(1) parse") {
         productions;
     auto id = static_cast<CFG::terminal_type>(common_token::id);
     productions["E"] = {
-        {"T", "E'"},
-    };
-    productions["E'"] = {
-        {U'+', "T", "E'"},
-        {},
+        {"E", U'+', "T"},
+        {"T"},
     };
     productions["T"] = {
-        {"F", "T'"},
-    };
-    productions["T'"] = {
-        {U'*', "F", "T'"},
-        {},
+        {"T", U'*', "F"},
+        {"F"},
     };
     productions["F"] = {
         {U'(', "E", U')'}, {id} // i for id
@@ -173,11 +38,12 @@ TEST_CASE("SLR(1) parse") {
     auto parse_tree =
         grammar.get_parse_tree(symbol_string{id, U'+', id, U'*', id});
     REQUIRE(parse_tree);
-    CHECK(parse_tree->children.size() == 2);
+    CHECK_EQ(parse_tree->grammar_symbol.get_nonterminal(), "E");
+    CHECK(parse_tree->children.size() == 3);
+    CHECK(parse_tree->children[0]->children.size() == 1);
   }
 
   SUBCASE("parse grammar with epsilon production") {
-
     std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
         productions;
     productions["E"] = {
@@ -185,7 +51,7 @@ TEST_CASE("SLR(1) parse") {
         {},
     };
 
-    SLR_grammar grammar("common_tokens", "E", productions);
+    SLR_grammar grammar("printable-ASCII", "E", productions);
 
     auto parse_tree = grammar.get_parse_tree(symbol_string{});
     REQUIRE(parse_tree);

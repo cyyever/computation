@@ -99,8 +99,13 @@ namespace cyy::computation {
     }
 
     std::tuple<DFA, std::unordered_map<nonterminal_type, symbol_type>,
+               std::unordered_map<symbol_type, nonterminal_type>,
                std::unordered_map<DFA::state_type, new_LR_0_item_set>>
     get_DK() const;
+    void normalize_start_symbol();
+
+    void remove_head(nonterminal_type head,
+                     nonterminal_type new_start_symbol = {});
 
   protected:
     nonterminal_type get_new_head(nonterminal_type advise_head) const {
@@ -119,8 +124,6 @@ namespace cyy::computation {
       } while (heads.contains(advise_head));
       return advise_head;
     }
-
-    void normalize_start_head();
 
     friend std::ostream &operator<<(std::ostream &os, const CFG &cfg);
 

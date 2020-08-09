@@ -19,6 +19,7 @@
 namespace cyy::computation {
 
   std::tuple<DFA, std::unordered_map<CFG::nonterminal_type, symbol_type>,
+             std::unordered_map<symbol_type, CFG::nonterminal_type>,
              std::unordered_map<DFA::state_type, new_LR_0_item_set>>
   CFG::get_DK() const {
     auto max_symbol = alphabet->get_max_symbol();
@@ -71,6 +72,7 @@ namespace cyy::computation {
     for (auto const &[head, bodies] : productions) {
       for (auto const &body : bodies) {
         cyy::computation::LR_0_item cur_item({head, body});
+
         for (auto const &grammar_symbol : body) {
           auto next_item = cur_item;
           next_item.go();
@@ -95,21 +97,15 @@ namespace cyy::computation {
     auto [dfa, dfa_to_nfa_state_map] = nfa.to_DFA_with_mapping();
     std::unordered_map<DFA::state_type, new_LR_0_item_set> associated_items;
     for (auto const &[dfa_state, nfa_state_set] : dfa_to_nfa_state_map) {
-      if (!dfa.is_final_state(dfa_state)) {
-        continue;
-      }
-      assert(std::ranges::any_of(
-          nfa_state_set, [&nfa](auto s) { return nfa.is_final_state(s); }));
       for (auto const &nfa_state : nfa_state_set) {
-        if (nfa_state == nfa.get_start_state()) {
-          continue;
-        }
         auto it = NFA_state_to_item_map.find(nfa_state);
-        assert(it != NFA_state_to_item_map.end());
-        associated_items[dfa_state].add_item(it->second);
+        if (it != NFA_state_to_item_map.end()) {
+          associated_items[dfa_state].add_item(it->second);
+        }
       }
     }
-    return {dfa, nonterminal_to_symbol, associated_items};
+    return {dfa, nonterminal_to_symbol, symbol_to_nonterminal,
+            associated_items};
   }
 
 } // namespace cyy::computation

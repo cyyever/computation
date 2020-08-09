@@ -528,21 +528,24 @@ namespace cyy::computation {
     }
     return result;
   }
-  void CFG::normalize_start_head() {
+  void CFG::normalize_start_symbol() {
     if (!old_start_symbol.empty()) {
       return;
     }
-    for (const auto &[_, bodies] : productions) {
-      for (const auto &body : bodies) {
-        if (std::ranges::find(body, start_symbol) != body.end()) {
-          old_start_symbol = start_symbol;
-          start_symbol = get_new_head(start_symbol);
-          productions[start_symbol].emplace_back(
-              CFG_production::body_type{old_start_symbol});
-          return;
-        }
-      }
-    }
     old_start_symbol = start_symbol;
+    start_symbol = get_new_head(start_symbol);
+    productions[start_symbol].emplace_back(
+        CFG_production::body_type{old_start_symbol});
+    return;
+  }
+  void CFG::remove_head(nonterminal_type head,
+                        nonterminal_type new_start_symbol) {
+    productions.erase(head);
+    if (head == start_symbol) {
+      if (new_start_symbol.empty()) {
+        throw exception::no_CFG("no productions for start symbol");
+      }
+      start_symbol = new_start_symbol;
+    }
   }
 } // namespace cyy::computation

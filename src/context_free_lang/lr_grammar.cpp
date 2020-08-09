@@ -57,9 +57,8 @@ namespace cyy::computation {
 
       auto it = action_table.find({stack.back(), terminal});
       if (it == action_table.end()) {
-        std::cerr << "no action for ";
-        alphabet->to_string(terminal);
-        std::cerr << std::endl;
+        std::cerr << "no action for state " << stack.back() << " and terminal "
+                  << alphabet->to_string(terminal) << std::endl;
         return false;
       }
 

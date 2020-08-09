@@ -38,6 +38,8 @@ namespace cyy::computation {
   std::pair<LALR_grammar::collection_type,
             LALR_grammar::goto_transition_set_type>
   LALR_grammar::canonical_collection() const {
+    return {};
+    /*
     auto [canonical_LR_0_collection, SLR_goto_transitions] =
         SLR_grammar(alphabet->get_name(), start_symbol, productions)
             .canonical_collection();
@@ -110,6 +112,7 @@ namespace cyy::computation {
       collection.emplace(std::move(item_set), state);
     }
     return {collection, SLR_goto_transitions};
+    */
   }
 
   void LALR_grammar::construct_parsing_table() const {

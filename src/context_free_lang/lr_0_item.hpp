@@ -76,7 +76,7 @@ namespace cyy::computation {
       if(item.completed()) {
         completed_items.insert(item);
       }
-      if (item.get_dot_pos() == 0) {
+      if (item.get_dot_pos() == 0 && !item.get_body().empty()) {
         nonkernel_items.insert(item.get_head());
         return;
       }
@@ -88,6 +88,9 @@ namespace cyy::computation {
     auto const &get_completed_items() const { return completed_items; }
 
     bool operator==(const new_LR_0_item_set &rhs) const = default;
+    bool empty() const noexcept {
+      return kernel_items.empty() && nonkernel_items.empty();
+    }
 
   private:
     std::unordered_set<LR_0_item> kernel_items;
