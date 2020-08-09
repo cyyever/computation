@@ -93,7 +93,7 @@ namespace cyy::computation {
       }
     }
     auto [dfa, dfa_to_nfa_state_map] = nfa.to_DFA_with_mapping();
-    std::unordered_map<DFA::state_type, new_LR_0_item_set> accociatzed_items;
+    std::unordered_map<DFA::state_type, new_LR_0_item_set> associated_items;
     for (auto const &[dfa_state, nfa_state_set] : dfa_to_nfa_state_map) {
       if (!dfa.is_final_state(dfa_state)) {
         continue;
@@ -106,10 +106,10 @@ namespace cyy::computation {
         }
         auto it = NFA_state_to_item_map.find(nfa_state);
         assert(it != NFA_state_to_item_map.end());
-        accociatzed_items[dfa_state].add_item(it->second);
+        associated_items[dfa_state].add_item(it->second);
       }
     }
-    return {dfa, nonterminal_to_symbol, accociatzed_items};
+    return {dfa, nonterminal_to_symbol, associated_items};
   }
 
 } // namespace cyy::computation

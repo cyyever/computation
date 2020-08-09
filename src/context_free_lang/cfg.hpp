@@ -120,6 +120,8 @@ namespace cyy::computation {
       return advise_head;
     }
 
+    void normalize_start_head();
+
     friend std::ostream &operator<<(std::ostream &os, const CFG &cfg);
 
   private:
@@ -129,6 +131,7 @@ namespace cyy::computation {
   protected:
     ALPHABET_ptr alphabet;
     nonterminal_type start_symbol;
+    nonterminal_type old_start_symbol;
     production_set_type productions;
 
   private:

@@ -528,4 +528,21 @@ namespace cyy::computation {
     }
     return result;
   }
+  void CFG::normalize_start_head() {
+    if (!old_start_symbol.empty()) {
+      return;
+    }
+    for (const auto &[_, bodies] : productions) {
+      for (const auto &body : bodies) {
+        if (std::ranges::find(body, start_symbol) != body.end()) {
+          old_start_symbol = start_symbol;
+          start_symbol = get_new_head(start_symbol);
+          productions[start_symbol].emplace_back(
+              CFG_production::body_type{old_start_symbol});
+          return;
+        }
+      }
+    }
+    old_start_symbol = start_symbol;
+  }
 } // namespace cyy::computation
