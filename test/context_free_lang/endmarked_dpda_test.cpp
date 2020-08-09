@@ -6,11 +6,11 @@
 #include <doctest/doctest.h>
 
 #include "../../src/context_free_lang/dpda.hpp"
-#include "../../src/context_free_lang/endmarkered_dpda.hpp"
+#include "../../src/context_free_lang/endmarked_dpda.hpp"
 #include "../../src/lang/alphabet.hpp"
 
 using namespace cyy::computation;
-TEST_CASE("endmarkered DPDA") {
+TEST_CASE("endmarked DPDA") {
   auto endmarker = ALPHABET::endmarker;
   DPDA dpda({0, 1, 2}, "01_set", "01_set", 0,
             {{0,
@@ -44,28 +44,28 @@ TEST_CASE("endmarkered DPDA") {
     }
   }
 
-  SUBCASE("endmarkered_dpda") {
-    endmarkered_DPDA endmarkered_dpda(dpda);
+  SUBCASE("endmarked_dpda") {
+    endmarked_DPDA endmarked_dpda(dpda);
 
     auto endmarker = ALPHABET::endmarker;
-    std::u32string endmarkered_str;
+    std::u32string endmarked_str;
 
     SUBCASE("recognize") {
       for (auto str : {U"0", U"1"}) {
-        endmarkered_str = str;
-        endmarkered_str.push_back(endmarker);
-        CHECK(endmarkered_dpda.recognize(endmarkered_str));
+        endmarked_str = str;
+        endmarked_str.push_back(endmarker);
+        CHECK(endmarked_dpda.recognize(endmarked_str));
       }
     }
 
     SUBCASE("can't recognize") {
       for (auto str : {U"", U"01", U"00", U"10", U"11"}) {
-        endmarkered_str = str;
-        endmarkered_str.push_back(endmarker);
-        CHECK(!endmarkered_dpda.recognize(endmarkered_str));
+        endmarked_str = str;
+        endmarked_str.push_back(endmarker);
+        CHECK(!endmarked_dpda.recognize(endmarked_str));
       }
     }
 
-    SUBCASE("to DPDA") { auto reverted_dpda = endmarkered_dpda.to_DPDA(); }
+    SUBCASE("to DPDA") { auto reverted_dpda = endmarked_dpda.to_DPDA(); }
   }
 }

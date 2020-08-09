@@ -1,16 +1,16 @@
 /*!
- * \file endmarkered_dpda.cpp
+ * \file endmarked_dpda.cpp
  */
 
-#include "endmarkered_dpda.hpp"
-#include "lang/endmarkered_alphabet.hpp"
+#include "endmarked_dpda.hpp"
+#include "lang/endmarked_alphabet.hpp"
 #include "lang/range_alphabet.hpp"
 #include "lang/union_alphabet.hpp"
 #include <memory>
 
 namespace cyy::computation {
 
-  endmarkered_DPDA::endmarkered_DPDA(DPDA dpda) : DPDA(std::move(dpda)) {
+  endmarked_DPDA::endmarked_DPDA(DPDA dpda) : DPDA(std::move(dpda)) {
     if (alphabet->contain(ALPHABET::endmarker)) {
       return;
     }
@@ -49,14 +49,14 @@ namespace cyy::computation {
       transfers.merge(std::move(new_transfers));
     }
 
-    alphabet = std::make_shared<endmarkered_alphabet>(alphabet);
+    alphabet = std::make_shared<endmarked_alphabet>(alphabet);
     for (auto s : *alphabet) {
       transition_function[new_accept_state][{s}] = {reject_state_opt.value()};
     }
     final_states = {new_accept_state};
     check_transition_fuction();
   }
-  DPDA endmarkered_DPDA::to_DPDA() const {
+  DPDA endmarked_DPDA::to_DPDA() const {
     auto dpda = *this;
 
     dpda.normalize_transitions();
@@ -159,13 +159,13 @@ namespace cyy::computation {
     auto new_stack_alphabet = std::make_shared<union_alphabet>(
         stack_alphabet, stack_alphabet_of_state_set);
     dpda.stack_alphabet = new_stack_alphabet;
-    dpda.alphabet = std::dynamic_pointer_cast<endmarkered_alphabet>(alphabet)
+    dpda.alphabet = std::dynamic_pointer_cast<endmarked_alphabet>(alphabet)
                         ->original_alphabet();
     dpda.check_transition_fuction();
     return dpda;
   }
 
-  endmarkered_DPDA::state_set_type endmarkered_DPDA::get_accept_states() const {
+  endmarked_DPDA::state_set_type endmarked_DPDA::get_accept_states() const {
 
     state_set_map_type epsilon_transitions;
     state_set_type accept_states;
@@ -190,7 +190,7 @@ namespace cyy::computation {
     return accept_states;
   }
 
-  void endmarkered_DPDA::normalize_transitions() {
+  void endmarked_DPDA::normalize_transitions() {
     if (transition_normalized) {
       return;
     }

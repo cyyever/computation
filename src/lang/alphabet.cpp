@@ -12,13 +12,13 @@
 #include "alphabet.hpp"
 #include "ascii.hpp"
 #include "common_tokens.hpp"
-#include "endmarkered_alphabet.hpp"
+#include "endmarked_alphabet.hpp"
 #include "set_alphabet.hpp"
 
 namespace cyy::computation {
 
   std::shared_ptr<ALPHABET> ALPHABET::get(std::string_view name,
-                                          bool endmarkered) {
+                                          bool endmarked) {
     register_factory();
     auto it = factory.find(std::string(name));
     if (it == factory.end()) {
@@ -26,8 +26,8 @@ namespace cyy::computation {
     }
     it->second->name = name;
     auto alphabet = it->second;
-    if (endmarkered) {
-      alphabet = std::make_shared<endmarkered_alphabet>(alphabet);
+    if (endmarked) {
+      alphabet = std::make_shared<endmarked_alphabet>(alphabet);
     }
     return alphabet;
   }

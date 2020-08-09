@@ -70,8 +70,8 @@ namespace cyy::computation {
         std::pair<decltype(this->parsing_table)::const_iterator, size_t>>
         callback_arguments_stack;
 
-    auto endmarkered_view = endmarkered_symbol_string(view);
-    auto terminal_it = endmarkered_view.begin();
+    auto endmarked_view = endmarked_symbol_string(view);
+    auto terminal_it = endmarked_view.begin();
     while (!stack.empty()) {
       auto top_symbol = std::move(stack.back());
       stack.pop_back();
@@ -117,7 +117,7 @@ namespace cyy::computation {
       }
     }
     assert(callback_arguments_stack.empty());
-    assert(terminal_it == endmarkered_view.end());
+    assert(terminal_it == endmarked_view.end());
     return true;
   }
 

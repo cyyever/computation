@@ -113,7 +113,7 @@ namespace cyy::computation {
     virtual bool contains_ASCII() const { return false; }
 
     static std::shared_ptr<ALPHABET> get(std::string_view name,
-                                         bool endmarkered = false);
+                                         bool endmarked = false);
     static void set(const std::shared_ptr<ALPHABET> &alphabet);
     static constexpr symbol_type endmarker =
         std::numeric_limits<symbol_type>::max() - 1;
@@ -161,7 +161,7 @@ namespace cyy::computation {
     ALPHABET_ptr(const std::string &str) : shared_ptr(ALPHABET::get(str)) {}
   };
 
-  inline auto endmarkered_symbol_string(symbol_string_view str) {
+  inline auto endmarked_symbol_string(symbol_string_view str) {
     auto size = str.size() + 1;
     return std::views::iota(static_cast<size_t>(0), size) |
            std::views::transform([str, size](auto idx) {

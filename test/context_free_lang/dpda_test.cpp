@@ -6,7 +6,7 @@
 #include <doctest/doctest.h>
 
 #include "../../src/context_free_lang/dpda.hpp"
-#include "../../src/context_free_lang/endmarkered_dpda.hpp"
+#include "../../src/context_free_lang/endmarked_dpda.hpp"
 #include "../../src/lang/alphabet.hpp"
 
 using namespace cyy::computation;

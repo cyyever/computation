@@ -1,5 +1,5 @@
 /*!
- * \file endmarkered_dpda.hpp
+ * \file endmarked_dpda.hpp
  *
  */
 
@@ -9,9 +9,9 @@
 
 namespace cyy::computation {
 
-  class endmarkered_DPDA : public DPDA {
+  class endmarked_DPDA : public DPDA {
   public:
-    explicit endmarkered_DPDA(DPDA dpda);
+    explicit endmarked_DPDA(DPDA dpda);
 
     DPDA to_DPDA() const;
 

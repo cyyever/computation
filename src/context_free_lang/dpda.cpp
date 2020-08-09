@@ -14,7 +14,7 @@
 #include <vector>
 
 #include "dpda.hpp"
-#include "lang/endmarkered_alphabet.hpp"
+#include "lang/endmarked_alphabet.hpp"
 #include "lang/union_alphabet.hpp"
 
 namespace cyy::computation {
@@ -222,7 +222,7 @@ namespace cyy::computation {
     has_normalized = true;
     reject_state_opt = new_reject_state;
 
-    stack_alphabet = std::make_shared<endmarkered_alphabet>(stack_alphabet);
+    stack_alphabet = std::make_shared<endmarked_alphabet>(stack_alphabet);
 #ifndef NDEBUG
     check_transition_fuction();
 #endif

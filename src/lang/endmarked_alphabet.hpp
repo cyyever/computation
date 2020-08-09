@@ -11,15 +11,15 @@
 
 namespace cyy::computation {
 
-  class endmarkered_alphabet : public ALPHABET {
+  class endmarked_alphabet : public ALPHABET {
   public:
-    endmarkered_alphabet(std::shared_ptr<ALPHABET> alphabet_)
+    endmarked_alphabet(std::shared_ptr<ALPHABET> alphabet_)
         : ALPHABET("placeholder"), alphabet{alphabet_} {
       if (alphabet->contain(ALPHABET::endmarker)) {
         has_endmarker = true;
         set_name(alphabet->get_name());
       } else {
-        set_name(std::string("endmarkered_") + alphabet->get_name());
+        set_name(std::string("endmarked_") + alphabet->get_name());
       }
     }
 
