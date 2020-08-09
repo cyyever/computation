@@ -548,4 +548,25 @@ namespace cyy::computation {
       start_symbol = new_start_symbol;
     }
   }
+  std::string CFG::MMA_draw() const {
+    // by convention,we print start symbol first.
+    std::string cmd = "TableForm[{";
+    for (size_t i = 0; i < 2; i++) {
+      for (auto const &[head, bodies] : productions) {
+        if (i == 0 && head != start_symbol) {
+          continue;
+        }
+        if (i == 1 && head == start_symbol) {
+          continue;
+        }
+        for (auto const &body : bodies) {
+          cmd += CFG_production(head, body).MMA_draw(*alphabet, i == 0);
+          cmd.push_back(',');
+        }
+      }
+    }
+    cmd.back() = '}';
+    cmd.push_back(']');
+    return cmd;
+  }
 } // namespace cyy::computation

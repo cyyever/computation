@@ -106,6 +106,7 @@ namespace cyy::computation {
 
     void remove_head(nonterminal_type head,
                      nonterminal_type new_start_symbol = {});
+    std::string MMA_draw() const;
 
   protected:
     nonterminal_type get_new_head(nonterminal_type advise_head) const {

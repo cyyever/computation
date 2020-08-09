@@ -42,6 +42,9 @@ namespace cyy::computation {
     auto const &get_head() const { return head; }
     auto const &get_body() const { return body; }
 
+    std::string MMA_draw(const ALPHABET &alphabet,
+                         bool emphasize_head = false) const;
+
   private:
     void print_body(std::ostream &os, const ALPHABET &alphabet) const;
 

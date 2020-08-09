@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <functional>
 #include <iterator>
 #include <limits>
 #include <memory>
@@ -117,6 +116,8 @@ namespace cyy::computation {
     static void set(const std::shared_ptr<ALPHABET> &alphabet);
     static constexpr symbol_type endmarker =
         std::numeric_limits<symbol_type>::max() - 1;
+
+    std::string MMA_draw(symbol_type symbol) const;
 
   protected:
     void set_name(std::string_view name_) {

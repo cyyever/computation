@@ -69,4 +69,12 @@ namespace cyy::computation {
         0, std::numeric_limits<symbol_type>::max(), "all");
     factory.emplace(alphabet->get_name(), alphabet);
   }
+  std::string ALPHABET::MMA_draw(symbol_type symbol) const {
+    auto cmd = __to_string(symbol);
+    if (cmd[0] == '\'') {
+      cmd[0] = '\"';
+      cmd.back() = '\"';
+    }
+    return cmd;
+  }
 } // namespace cyy::computation

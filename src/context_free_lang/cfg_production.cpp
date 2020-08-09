@@ -27,4 +27,25 @@ namespace cyy::computation {
       }
     }
   }
+  std::string CFG_production::MMA_draw(const ALPHABET &alphabet,
+                                       bool emphasize_head) const {
+    std::string cmd = "Rule[";
+    if (emphasize_head) {
+      cmd += "Style[";
+    }
+    cmd += grammar_symbol_type(head).MMA_draw(alphabet);
+    if (emphasize_head) {
+      cmd += ",Red]";
+    }
+    cmd += ",{";
+    for (const auto &grammal_symbol : body) {
+      cmd += grammal_symbol.MMA_draw(alphabet);
+      cmd.push_back(',');
+    }
+    if (!body.empty()) {
+      cmd.pop_back();
+    }
+    cmd += "}]";
+    return cmd;
+  }
 } // namespace cyy::computation

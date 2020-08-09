@@ -223,3 +223,25 @@ TEST_CASE("to_PDA") {
     CHECK(!pda.recognize(str));
   }
 }
+TEST_CASE("MMA_draw") {
+  CFG::production_set_type productions;
+  auto id = static_cast<CFG::terminal_type>(common_token::id);
+  productions["E"] = {
+      {"T", "E'"},
+  };
+  productions["E'"] = {
+      {'+', "T", "E'"},
+      {},
+  };
+  productions["T"] = {
+      {"F", "T'"},
+  };
+  productions["T'"] = {
+      {'*', "F", "T'"},
+      {},
+  };
+  productions["F"] = {{'(', "E", ')'}, {id}};
+
+  CFG cfg("common_tokens", "E", productions);
+  std::cout << cfg.MMA_draw() << std::endl;
+}

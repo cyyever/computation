@@ -59,6 +59,12 @@ namespace cyy::computation {
         os << *get_nonterminal_ptr();
       }
     }
+    std::string MMA_draw(const ALPHABET &alphabet) const {
+      if (is_terminal()) {
+        return alphabet.MMA_draw(get_terminal());
+      }
+      return std::string("Style[\"")+get_nonterminal()+"\", Bold, Italic]";
+    }
   };
 
   class grammar_symbol_string_type : public std::vector<grammar_symbol_type> {
