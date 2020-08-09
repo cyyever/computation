@@ -8,8 +8,8 @@
 #pragma once
 
 #include "../hash.hpp"
+#include "lr_1_item.hpp"
 #include "lr_grammar.hpp"
-#include "lr_item.hpp"
 
 namespace cyy::computation {
 

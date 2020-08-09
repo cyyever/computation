@@ -11,7 +11,7 @@
 #include <utility>
 
 #include "cfg.hpp"
-#include "context_free_lang/lr_item.hpp"
+#include "context_free_lang/lr_0_item.hpp"
 #include "lang/range_alphabet.hpp"
 #include "lang/union_alphabet.hpp"
 #include "regular_lang/nfa.hpp"

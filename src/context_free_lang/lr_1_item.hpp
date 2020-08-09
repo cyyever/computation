@@ -21,38 +21,6 @@
 #include "cfg_production.hpp"
 
 namespace cyy::computation {
-  class LR_0_item_set {
-  public:
-    auto get_kernel_items() const noexcept -> const auto & {
-      return kernel_items;
-    }
-
-    auto get_nonkernel_items() const noexcept -> const auto & {
-      return nonkernel_items;
-    }
-    void add_kernel_item(const CFG &cfg, LR_0_item kernel_item);
-    bool empty() const noexcept { return kernel_items.empty(); }
-
-    bool operator==(const LR_0_item_set &rhs) const {
-      return kernel_items == rhs.kernel_items;
-    }
-
-  private:
-    std::unordered_set<LR_0_item> kernel_items;
-    std::unordered_set<CFG::nonterminal_type> nonkernel_items;
-  };
-} // namespace cyy::computation
-
-namespace std {
-  template <> struct hash<cyy::computation::LR_0_item_set> {
-    size_t operator()(const cyy::computation::LR_0_item_set &x) const noexcept {
-      return ::std::hash<decltype(x.get_kernel_items().size())>()(
-          x.get_kernel_items().size());
-    }
-  };
-} // namespace std
-
-namespace cyy::computation {
   class LR_1_item_set {
 
   public:
@@ -69,7 +37,9 @@ namespace cyy::computation {
     bool operator==(const LR_1_item_set &rhs) const {
       return kernel_items == rhs.kernel_items;
     }
-    bool empty() const noexcept { return kernel_items.empty(); }
+    bool empty() const noexcept {
+      return kernel_items.empty() && nonkernel_items.empty();
+    }
 
   private:
     void add_nonkernel_item(const CFG &cfg, grammar_symbol_const_span_type view,

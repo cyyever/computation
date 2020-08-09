@@ -5,51 +5,16 @@
  * \date 2018-04-21
  */
 
-#include "lr_item.hpp"
+#include "lr_1_item.hpp"
 
 namespace cyy::computation {
-
-  void LR_0_item_set ::add_kernel_item(const CFG &cfg, LR_0_item kernel_item) {
-
-    std::vector<CFG::nonterminal_type> tmp_nonkernel_items;
-    if (!kernel_item.completed()) {
-      auto const &symbol = kernel_item.get_grammar_symbal();
-      if (auto ptr = symbol.get_nonterminal_ptr(); ptr) {
-        if (!nonkernel_items.contains(*ptr)) {
-          tmp_nonkernel_items.push_back(*ptr);
-        }
-      }
-    }
-
-    kernel_items.emplace(std::move(kernel_item));
-    while (!tmp_nonkernel_items.empty()) {
-      auto nonkernel_item = std::move(tmp_nonkernel_items.back());
-      tmp_nonkernel_items.pop_back();
-      nonkernel_items.emplace(nonkernel_item);
-
-      auto it = cfg.get_productions().find(nonkernel_item);
-      for (auto const &body : it->second) {
-        if (body.empty()) {
-          kernel_items.emplace(LR_0_item{{it->first, body}, 0});
-          continue;
-        }
-
-        if (auto ptr = body[0].get_nonterminal_ptr(); ptr) {
-          if (!nonkernel_items.contains(*ptr)) {
-            tmp_nonkernel_items.push_back(*ptr);
-          }
-        }
-      }
-    }
-  }
-
   void
   LR_1_item_set::add_kernel_item(const CFG &cfg, const LR_0_item &kernel_item,
                                  std::set<CFG::terminal_type> lookahead_set) {
     if (!kernel_item.completed()) {
       add_nonkernel_item(cfg, kernel_item.prefix(), lookahead_set);
     }
-    kernel_items[kernel_item].merge(lookahead_set);
+    kernel_items[kernel_item].merge(std::move(lookahead_set));
   }
 
   void LR_1_item_set::add_nonkernel_item(
