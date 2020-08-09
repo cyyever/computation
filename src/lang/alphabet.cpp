@@ -75,6 +75,7 @@ namespace cyy::computation {
       cmd[0] = '\"';
       cmd.back() = '\"';
     }
+    cmd = std::string("Style[") + cmd + ",Bold,Purple]";
     return cmd;
   }
 } // namespace cyy::computation
