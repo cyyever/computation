@@ -89,7 +89,7 @@ namespace cyy::computation {
 
     std::map<nonterminal_type, std::set<terminal_type>> follow() const;
 
-    std::set<nonterminal_type> nullable() const;
+    std::unordered_set<nonterminal_type> nullable() const;
 
     std::pair<std::set<terminal_type>, bool>
     first(const grammar_symbol_const_span_type &alpha) const;

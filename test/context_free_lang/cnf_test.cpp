@@ -25,7 +25,7 @@ TEST_CASE("eliminate_epsilon_productions") {
   CFG cfg("ab_set", "S'", productions);
   SUBCASE("nullable") {
     auto nullable_nonterminals = cfg.nullable();
-    CHECK_EQ(nullable_nonterminals, std::set<CFG::nonterminal_type>{"S", "S'"});
+    CHECK_EQ(nullable_nonterminals, decltype(nullable_nonterminals){"S", "S'"});
   }
   SUBCASE("eliminate_epsilon_productions") {
     CFG::production_set_type new_productions;
