@@ -38,8 +38,6 @@ namespace cyy::computation {
   std::pair<LALR_grammar::collection_type,
             LALR_grammar::goto_transition_set_type>
   LALR_grammar::canonical_collection() const {
-    return {};
-    /*
     auto [canonical_LR_0_collection, SLR_goto_transitions] =
         SLR_grammar(alphabet->get_name(), start_symbol, productions)
             .canonical_collection();
@@ -48,14 +46,13 @@ namespace cyy::computation {
         kernel_item_table;
     std::unordered_map<const LR_0_item *, std::vector<const LR_0_item *>>
         propagation_relation;
-    std::unordered_map<state_type, const LR_0_item_set *>
+    std::unordered_map<state_type, const new_LR_0_item_set *>
         reversed_canonical_LR_0_collection;
 
-    for (auto const &[lr_0_item_set, state] : canonical_LR_0_collection) {
+    for (auto const &[state, lr_0_item_set] : canonical_LR_0_collection) {
       reversed_canonical_LR_0_collection[state] = &lr_0_item_set;
       for (const auto &kernel_item : lr_0_item_set.get_kernel_items()) {
-
-        if (kernel_item.get_production().get_head() == new_start_symbol) {
+        if (kernel_item.get_production().get_head() == start_symbol) {
           kernel_item_table[&kernel_item] = {ALPHABET::endmarker};
         } else {
           kernel_item_table[&kernel_item] = {};
@@ -63,7 +60,7 @@ namespace cyy::computation {
       }
     }
 
-    for (auto const &[lr_0_item_set, state] : canonical_LR_0_collection) {
+    for (auto const &[state, lr_0_item_set] : canonical_LR_0_collection) {
       for (const auto &kernel_item : lr_0_item_set.get_kernel_items()) {
         for (auto [symbol, lookahead_map] : check_lookahead(kernel_item)) {
 
@@ -103,7 +100,7 @@ namespace cyy::computation {
 
     collection_type collection;
 
-    for (auto const &[lr_0_item_set, state] : canonical_LR_0_collection) {
+    for (auto const &[state, lr_0_item_set] : canonical_LR_0_collection) {
       LR_1_item_set item_set;
       for (const auto &kernel_item : lr_0_item_set.get_kernel_items()) {
         item_set.add_kernel_item(*this, kernel_item,
@@ -112,12 +109,14 @@ namespace cyy::computation {
       collection.emplace(std::move(item_set), state);
     }
     return {collection, SLR_goto_transitions};
-    */
   }
 
   void LALR_grammar::construct_parsing_table() const {
     try {
+      const_cast<LALR_grammar *>(this)->normalize_start_symbol();
       canonical_LR_grammar::construct_parsing_table();
+      const_cast<LALR_grammar *>(this)->remove_head(start_symbol,
+                                                    old_start_symbol);
     } catch (const cyy::computation::exception::no_canonical_LR_grammar &e) {
       throw cyy::computation::exception::no_LALR_grammar(e.what());
     }

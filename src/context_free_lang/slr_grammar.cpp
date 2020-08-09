@@ -12,6 +12,24 @@
 
 namespace cyy::computation {
 
+  std::pair<SLR_grammar::collection_type, SLR_grammar::goto_transition_set_type>
+  SLR_grammar::canonical_collection() const {
+    goto_transition_set_type _goto_table;
+    auto [dk, _, symbol_to_nonterminal, state_to_item_set] = get_DK();
+
+    for (auto const &[situation, next_state] : dk.get_transition_function()) {
+      assert(state_to_item_set.contans(next_state));
+      if (state_to_item_set[next_state].empty()) {
+        continue;
+      }
+      auto it = symbol_to_nonterminal.find(situation.input_symbol);
+      if (it != symbol_to_nonterminal.end()) {
+        _goto_table[{situation.state, it->second}] = next_state;
+      }
+    }
+
+    return {state_to_item_set, _goto_table};
+  }
   void SLR_grammar::construct_parsing_table() const {
     const_cast<SLR_grammar *>(this)->normalize_start_symbol();
 
@@ -25,8 +43,6 @@ namespace cyy::computation {
       if (it != symbol_to_nonterminal.end()) {
         goto_table[{situation.state, it->second}] = next_state;
       } else {
-        std::cout << "shift of state " << situation.state << " and input_symbol"
-                  << (int)situation.input_symbol << std::endl;
         action_table[{situation.state, situation.input_symbol}] = next_state;
       }
     }

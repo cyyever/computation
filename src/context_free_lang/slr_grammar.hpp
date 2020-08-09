@@ -19,6 +19,14 @@ namespace cyy::computation {
   public:
     using LR_grammar::LR_grammar;
 
+    using collection_type = std::unordered_map<state_type, new_LR_0_item_set>;
+    using goto_transition_set_type =
+        std::unordered_map<std::pair<state_type, grammar_symbol_type>,
+                           state_type>;
+
+    std::pair<collection_type, goto_transition_set_type>
+    canonical_collection() const;
+
   private:
     void construct_parsing_table() const override;
   };

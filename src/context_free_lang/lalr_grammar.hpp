@@ -21,10 +21,10 @@ namespace cyy::computation {
   public:
     using canonical_LR_grammar::canonical_LR_grammar;
 
+  private:
     std::pair<collection_type, goto_transition_set_type>
     canonical_collection() const override;
 
-  private:
     using lookahead_map_type = std::unordered_map<
         grammar_symbol_type,
         std::unordered_map<CFG_production,
