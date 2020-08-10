@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <functional>
 #include <iosfwd>
 
 #include "../formal_grammar/grammar_symbol.hpp"
@@ -42,8 +43,11 @@ namespace cyy::computation {
     auto const &get_head() const { return head; }
     auto const &get_body() const { return body; }
 
-    std::string MMA_draw(const ALPHABET &alphabet,
-                         bool emphasize_head = false) const;
+    std::string MMA_draw(
+        const ALPHABET &alphabet, bool emphasize_head = false,
+        std::function<std::string(size_t)> pos_callback = [](size_t) {
+          return "";
+        }) const;
 
   private:
     void print_body(std::ostream &os, const ALPHABET &alphabet) const;
@@ -53,33 +57,6 @@ namespace cyy::computation {
     body_type body;
   };
 
-  /*
-  class CFG_production_view final {
-  public:
-    CFG_production_view() = default;
-    CFG_production_view(const CFG_production &production)
-        : head_view{production.get_head()}, body_view{production.get_body()} {}
-    CFG_production_view(CFG_production::head_type head_,
-                        grammar_symbol_const_span_type body_view_)
-        : head_view{head_}, body_view{body_view_} {}
-    bool operator==(const CFG_production_view &rhs) const {
-      return head_view == rhs.head_view &&
-             body_view.data() == rhs.body_view.data() &&
-             body_view.size() == rhs.body_view.size();
-    }
-    auto get_head_view() const { return head_view; }
-    auto get_body_view() const { return body_view; }
-    CFG_production get_production() const {
-      return CFG_production{
-          CFG_production::head_type{head_view},
-          CFG_production::body_type{body_view.begin(), body_view.end()}};
-    }
-
-  private:
-    std::string head_view;
-    grammar_symbol_const_span_type body_view;
-  };
-  */
 } // namespace cyy::computation
 namespace std {
   template <> struct hash<cyy::computation::CFG_production> {

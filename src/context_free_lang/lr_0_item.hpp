@@ -7,15 +7,11 @@
 
 #pragma once
 
-#include <functional>
-#include <map>
 #include <memory>
-#include <set>
-#include <string_view>
-#include <unordered_map>
 #include <unordered_set>
 
 #include "cfg_production.hpp"
+/* #include "hash.hpp" */
 
 namespace cyy::computation {
   class LR_0_item {
@@ -50,6 +46,14 @@ namespace cyy::computation {
       }
       return get_body()[dot_pos];
     }
+    std::string MMA_draw(const ALPHABET &alphabet) const {
+      return get_production().MMA_draw(alphabet, false, [&](size_t pos){
+        if (pos == dot_pos) {
+        return "\\[FilledSmallCircle]";
+        }
+        return "";
+      });
+    }
 
     const CFG_production &get_production() const { return *production_ptr; }
 
@@ -58,7 +62,7 @@ namespace cyy::computation {
     size_t dot_pos;
   };
 
-}
+} // namespace cyy::computation
 namespace std {
   template <> struct hash<cyy::computation::LR_0_item> {
     size_t operator()(const cyy::computation::LR_0_item &x) const noexcept {
@@ -68,12 +72,12 @@ namespace std {
              ::std::hash<size_t>()(x.get_dot_pos());
     }
   };
-}
+} // namespace std
 namespace cyy::computation {
   class new_LR_0_item_set {
   public:
     void add_item(LR_0_item item) {
-      if(item.completed()) {
+      if (item.completed()) {
         completed_items.insert(item);
       }
       if (item.get_dot_pos() == 0 && !item.get_body().empty()) {
@@ -103,6 +107,9 @@ namespace std {
   template <> struct hash<cyy::computation::new_LR_0_item_set> {
     size_t
     operator()(const cyy::computation::new_LR_0_item_set &x) const noexcept {
+      /* auto key_range=x.get_kernel_items()|std::views::all|std::views::keys;
+       */
+
       return ::std::hash<decltype(x.get_kernel_items().size())>()(
           x.get_kernel_items().size());
     }

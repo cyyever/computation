@@ -27,8 +27,9 @@ namespace cyy::computation {
       }
     }
   }
-  std::string CFG_production::MMA_draw(const ALPHABET &alphabet,
-                                       bool emphasize_head) const {
+  std::string CFG_production::MMA_draw(
+      const ALPHABET &alphabet, bool emphasize_head,
+      std::function<std::string(size_t)> pos_callback) const {
     std::string cmd = "Rule[";
     if (emphasize_head) {
       cmd += "Style[";
@@ -38,13 +39,14 @@ namespace cyy::computation {
       cmd += ",Red]";
     }
     cmd += ",{";
-    for (const auto &grammal_symbol : body) {
+    for (size_t i = 0; i < body.size(); i++) {
+      const auto &grammal_symbol = body[i];
+      cmd += pos_callback(i);
+      cmd.push_back(',');
       cmd += grammal_symbol.MMA_draw(alphabet);
       cmd.push_back(',');
     }
-    if (!body.empty()) {
-      cmd.pop_back();
-    }
+    cmd.pop_back();
     cmd += "}]";
     return cmd;
   }

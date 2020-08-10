@@ -7,18 +7,12 @@
 
 #pragma once
 
-#include <functional>
-#include <map>
 #include <memory>
 #include <set>
-#include <string_view>
 #include <unordered_map>
-#include <unordered_set>
 
 #include "cfg.hpp"
 #include "lr_0_item.hpp"
-
-#include "cfg_production.hpp"
 
 namespace cyy::computation {
   class LR_1_item_set {
@@ -40,6 +34,7 @@ namespace cyy::computation {
     bool empty() const noexcept {
       return kernel_items.empty() && nonkernel_items.empty();
     }
+    std::string MMA_draw(const ALPHABET &alphabet) const;
 
   private:
     void add_nonkernel_item(const CFG &cfg, grammar_symbol_const_span_type view,

@@ -13,6 +13,7 @@ namespace cyy::computation {
                                  std::set<CFG::terminal_type> lookahead_set) {
     if (!kernel_item.completed()) {
       add_nonkernel_item(cfg, kernel_item.prefix(), lookahead_set);
+      /* return; */
     }
     kernel_items[kernel_item].merge(std::move(lookahead_set));
   }
@@ -21,8 +22,9 @@ namespace cyy::computation {
       const CFG &cfg, grammar_symbol_const_span_type view,
       const std::set<CFG::terminal_type> &lookahead_set) {
 
+    assert(!views.empty());
     if (view.empty()) {
-      return;
+      throw std::runtime_error("invalid LR_0_item");
     }
 
     auto ptr = view[0].get_nonterminal_ptr();
@@ -63,4 +65,8 @@ namespace cyy::computation {
       add_nonkernel_item(cfg, {new_body}, nonkernel_items[*ptr]);
     }
   }
+  std::string LR_1_item_set::MMA_draw(const ALPHABET &alphabet) const {
+    return "";
+  }
+
 } // namespace cyy::computation
