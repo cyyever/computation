@@ -7,27 +7,15 @@
 
 #pragma once
 
-#include <unordered_map>
-
-#include "../hash.hpp"
-#include "lr_grammar.hpp"
+#include "lr_1_grammar.hpp"
 
 namespace cyy::computation {
 
-  class SLR_grammar final : public LR_grammar {
-
+  class SLR_grammar final : public LR_1_grammar {
   public:
-    using LR_grammar::LR_grammar;
-
-    using collection_type = std::unordered_map<state_type, new_LR_0_item_set>;
-    using goto_transition_set_type =
-        std::unordered_map<std::pair<state_type, grammar_symbol_type>,
-                           state_type>;
-
-    std::pair<collection_type, goto_transition_set_type>
-    canonical_collection() const;
-
+    using LR_1_grammar::LR_1_grammar;
   private:
-    void construct_parsing_table() const override;
+    std::pair<collection_type, goto_transition_map_type>
+    get_collection() const override;
   };
 } // namespace cyy::computation

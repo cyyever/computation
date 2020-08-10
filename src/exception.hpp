@@ -99,6 +99,10 @@ namespace cyy::computation::exception {
     using invalid_argument::invalid_argument;
   };
 
+  class no_LR_1_grammar : public std::invalid_argument {
+  public:
+    using invalid_argument::invalid_argument;
+  };
   class no_LALR_grammar : public std::invalid_argument {
   public:
     using invalid_argument::invalid_argument;

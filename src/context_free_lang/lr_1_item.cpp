@@ -13,7 +13,6 @@ namespace cyy::computation {
                                  std::set<CFG::terminal_type> lookahead_set) {
     if (!kernel_item.completed()) {
       add_nonkernel_item(cfg, kernel_item.prefix(), lookahead_set);
-      /* return; */
     }
     kernel_items[kernel_item].merge(std::move(lookahead_set));
   }
