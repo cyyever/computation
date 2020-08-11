@@ -53,7 +53,7 @@ namespace cyy::computation {
     nonkernel_items[*ptr].merge(diff);
 
     auto it = cfg.get_productions().find(*ptr);
-
+    assert(it != cfg.get_productions().end());
     for (auto const &new_body : it->second) {
       if (new_body.empty()) {
         LR_0_item new_item{{*ptr, new_body}, 0};

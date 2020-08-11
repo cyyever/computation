@@ -15,7 +15,6 @@ namespace cyy::computation {
   public:
     using LR_1_grammar::LR_1_grammar;
 
-  private:
     std::pair<collection_type, goto_transition_map_type>
     get_collection() const override;
   };

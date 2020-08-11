@@ -4,11 +4,6 @@
  * \brief 测试cfg
  */
 
-#if __has_include(<CppCoreCheck\Warnings.h>)
-#include <CppCoreCheck\Warnings.h>
-#pragma warning(disable : ALL_CPPCORECHECK_WARNINGS)
-#endif
-
 #include <doctest/doctest.h>
 
 #include "../../src/context_free_lang/canonical_lr_grammar.hpp"
@@ -29,6 +24,7 @@ TEST_CASE("canonical_collection") {
   };
 
   canonical_LR_grammar grammar("common_tokens", "S", productions);
+  grammar.normalize_start_symbol();
 
   std::unordered_set<LR_1_item_set> sets;
   {
@@ -116,8 +112,8 @@ TEST_CASE("canonical_collection") {
   }
 
   std::unordered_set<LR_1_item_set> collection;
-  for (auto &[set, _] : grammar.canonical_collection().first) {
-    collection.emplace(set);
+  for (auto [_, set] : grammar.get_collection().first) {
+    collection.emplace(std::move(set));
   }
 
   CHECK(sets == collection);

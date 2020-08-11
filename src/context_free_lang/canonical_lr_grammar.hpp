@@ -6,31 +6,20 @@
  */
 
 #pragma once
-
-#include "../hash.hpp"
-#include "lr_1_item.hpp"
-#include "lr_grammar.hpp"
+#include "lr_1_grammar.hpp"
 
 namespace cyy::computation {
 
-  class canonical_LR_grammar : public LR_grammar {
+  class canonical_LR_grammar : public LR_1_grammar {
 
   public:
-    using LR_grammar::LR_grammar;
-    using collection_type = std::unordered_map<LR_1_item_set, state_type>;
-    using goto_transition_set_type =
-        std::unordered_map<std::pair<state_type, grammar_symbol_type>,
-                           state_type>;
+    using LR_1_grammar::LR_1_grammar;
 
-    virtual std::pair<collection_type, goto_transition_set_type>
-    canonical_collection() const;
+    std::pair<collection_type, goto_transition_map_type>
+    get_collection() const override;
 
-  protected:
+  private:
     std::unordered_map<grammar_symbol_type, LR_1_item_set>
     GOTO(const LR_1_item_set &set) const;
-    void construct_parsing_table() const override;
-
-  protected:
-    nonterminal_type new_start_symbol{get_new_head(start_symbol)};
   };
 } // namespace cyy::computation

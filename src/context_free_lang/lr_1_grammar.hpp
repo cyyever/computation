@@ -19,9 +19,10 @@ namespace cyy::computation {
         std::unordered_map<std::pair<state_type, grammar_symbol_type>,
                            state_type>;
 
-  private:
     virtual std::pair<collection_type, goto_transition_map_type>
     get_collection() const = 0;
+
+  private:
     void construct_parsing_table() const override;
   };
 } // namespace cyy::computation
