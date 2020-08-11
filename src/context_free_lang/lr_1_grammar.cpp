@@ -24,10 +24,8 @@ namespace cyy::computation {
       }
     }
     for (auto const &[state, set] : collection) {
-      for (const auto &[kernel_item, lookahead_set] : set.get_kernel_items()) {
-        if (!kernel_item.completed()) {
-          continue;
-        }
+      for (const auto &[kernel_item, lookahead_set] :
+           set.get_completed_items()) {
 
         for (const auto &lookahead : lookahead_set) {
           // conflict

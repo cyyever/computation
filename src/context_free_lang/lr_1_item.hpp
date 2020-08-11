@@ -19,8 +19,12 @@ namespace cyy::computation {
 
   public:
     auto const &get_kernel_items() const { return kernel_items; }
-
     auto const &get_nonkernel_items() const { return nonkernel_items; }
+    auto get_completed_items() const {
+      return get_kernel_items() | std::views::filter([](auto const &p) {
+               return p.first.completed();
+             });
+    }
     void add_kernel_item(const CFG &cfg, const LR_0_item &kernel_item,
                          std::set<CFG::terminal_type> lookahead_set);
 
