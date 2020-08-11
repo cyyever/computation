@@ -14,7 +14,7 @@ namespace cyy::computation {
     goto_transition_map_type _goto_table;
     auto [dk, _, symbol_to_nonterminal, state_to_item_set] = get_DK();
     for (auto const &[situation, next_state] : dk.get_transition_function()) {
-      assert(state_to_item_set.contans(next_state));
+      assert(state_to_item_set.contains(next_state));
       if (state_to_item_set[next_state].empty()) {
         continue;
       }
@@ -34,7 +34,7 @@ namespace cyy::computation {
           set.add_kernel_item(*this, item, follow_sets[item.get_head()]);
         }
       }
-      collection[state] = set;
+      collection[state] = std::move(set);
     }
     return {collection, _goto_table};
   }

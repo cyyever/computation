@@ -21,7 +21,7 @@ namespace cyy::computation {
       const CFG &cfg, grammar_symbol_const_span_type view,
       const std::set<CFG::terminal_type> &lookahead_set) {
 
-    assert(!views.empty());
+    assert(!view.empty());
     if (view.empty()) {
       throw std::runtime_error("invalid LR_0_item");
     }

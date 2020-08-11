@@ -18,13 +18,9 @@ namespace cyy::computation {
   class LR_1_item_set {
 
   public:
-    auto get_kernel_items() const noexcept -> const auto & {
-      return kernel_items;
-    }
+    auto const &get_kernel_items() const { return kernel_items; }
 
-    auto get_nonkernel_items() const noexcept -> const auto & {
-      return nonkernel_items;
-    }
+    auto const &get_nonkernel_items() const { return nonkernel_items; }
     void add_kernel_item(const CFG &cfg, const LR_0_item &kernel_item,
                          std::set<CFG::terminal_type> lookahead_set);
 

@@ -97,10 +97,11 @@ namespace cyy::computation {
     auto [dfa, dfa_to_nfa_state_map] = nfa.to_DFA_with_mapping();
     std::unordered_map<DFA::state_type, new_LR_0_item_set> associated_items;
     for (auto const &[dfa_state, nfa_state_set] : dfa_to_nfa_state_map) {
+      auto &item_set = associated_items[dfa_state];
       for (auto const &nfa_state : nfa_state_set) {
         auto it = NFA_state_to_item_map.find(nfa_state);
         if (it != NFA_state_to_item_map.end()) {
-          associated_items[dfa_state].add_item(it->second);
+          item_set.add_item(it->second);
         }
       }
     }

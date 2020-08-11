@@ -19,6 +19,7 @@ namespace cyy::computation {
       if (ptr) {
         goto_table[{p.first, *ptr}] = next_state;
       } else {
+        assert(p.second.get_terminal() != ALPHABET::endmarker);
         action_table[{p.first, p.second.get_terminal()}] = next_state;
       }
     }
@@ -28,20 +29,24 @@ namespace cyy::computation {
           continue;
         }
 
-        if (kernel_item.get_head() == start_symbol) {
-          action_table[{state, ALPHABET::endmarker}] = true;
-          continue;
-        }
-
         for (const auto &lookahead : lookahead_set) {
           // conflict
-          if (action_table.contains({state, lookahead})) {
+          auto it = action_table.find({state, lookahead});
+          if (it != action_table.end()) {
             std::ostringstream os;
-            os << "state " << state << " conflict with follow terminal"
-               << static_cast<int>(lookahead) << std::endl;
+            os << "state " << state << " with head " << kernel_item.get_head()
+               << " conflict with follow terminal "
+               << alphabet->to_string(lookahead) << " and action index "
+               << it->second.index();
             throw cyy::computation::exception::no_LR_1_grammar(os.str());
           }
-          action_table[{state, lookahead}] = kernel_item.get_production();
+          if (lookahead == ALPHABET::endmarker &&
+              kernel_item.get_head() == start_symbol) {
+            assert(lookahead_set.size() == 1);
+            action_table[{state, lookahead}] = true;
+          } else {
+            action_table[{state, lookahead}] = kernel_item.get_production();
+          }
         }
       }
     }
