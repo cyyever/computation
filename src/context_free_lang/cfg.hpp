@@ -64,6 +64,8 @@ namespace cyy::computation {
     auto const &get_alphabet() const noexcept { return *alphabet; }
 
     auto const &get_productions() const noexcept { return productions; }
+    const std::vector<CFG_production::body_type> &
+    get_bodies(const auto &nonterminal_type head) const;
 
     std::set<terminal_type> get_terminals() const;
     std::set<nonterminal_type> get_nonterminals() const;

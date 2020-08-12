@@ -582,4 +582,12 @@ namespace cyy::computation {
     cmd.push_back(']');
     return cmd;
   }
+  const std::vector<CFG_production::body_type> &
+  CFG::get_bodies(const auto &nonterminal_type head) const {
+    auto it = productions.find(head);
+    if (it == productions.end()) {
+      throw std::runtime_error("no bodies");
+    }
+    return it->second;
+  }
 } // namespace cyy::computation
