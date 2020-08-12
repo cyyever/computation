@@ -34,6 +34,10 @@ namespace cyy::computation {
     bool empty() const noexcept {
       return kernel_items.empty() && nonkernel_items.empty();
     }
+
+    std::unordered_map<grammar_symbol_type, LR_1_item_set>
+    go(const CFG &cfg) const;
+
     std::string MMA_draw(const ALPHABET &alphabet) const;
 
   private:

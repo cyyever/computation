@@ -13,34 +13,6 @@
 
 namespace cyy::computation {
 
-  std::unordered_map<grammar_symbol_type, LR_1_item_set>
-  canonical_LR_grammar::GOTO(const LR_1_item_set &set) const {
-
-    std::unordered_map<grammar_symbol_type, LR_1_item_set> res;
-
-    for (auto const &[kernel_item, lookahead_set] : set.get_kernel_items()) {
-      if (!kernel_item.completed()) {
-        auto const &symbol = kernel_item.get_grammar_symbal();
-        auto new_kernel_item = kernel_item;
-        new_kernel_item.go();
-        res[symbol].add_kernel_item(*this, new_kernel_item, lookahead_set);
-      }
-    }
-
-    for (auto const &[nonterminal, lookahead_set] : set.get_nonkernel_items()) {
-      auto it = productions.find(nonterminal);
-
-      for (auto const &body : it->second) {
-        if (body.empty()) {
-          continue;
-        }
-        LR_0_item new_kernel_item{{nonterminal, body}, 1};
-        res[body[0]].add_kernel_item(*this, new_kernel_item, lookahead_set);
-      }
-    }
-    return res;
-  }
-
   std::pair<canonical_LR_grammar::collection_type,
             canonical_LR_grammar::goto_transition_map_type>
   canonical_LR_grammar::get_collection() const {
@@ -62,7 +34,7 @@ namespace cyy::computation {
 
       auto cur_state = node.mapped();
 
-      auto next_sets = GOTO(node.key());
+      auto next_sets = node.key().go(*this);
       reversed_collection.emplace(std::move(node.key()), cur_state);
 
       for (auto &[symbol, next_set] : next_sets) {

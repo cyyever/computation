@@ -17,6 +17,34 @@ namespace cyy::computation {
     kernel_items[kernel_item].merge(std::move(lookahead_set));
   }
 
+  std::unordered_map<grammar_symbol_type, LR_1_item_set>
+  LR_1_item_set::go(const CFG &cfg) const {
+
+    std::unordered_map<grammar_symbol_type, LR_1_item_set> res;
+
+    for (auto const &[kernel_item, lookahead_set] : get_kernel_items()) {
+      if (!kernel_item.completed()) {
+        auto const &symbol = kernel_item.get_grammar_symbal();
+        auto new_kernel_item = kernel_item;
+        new_kernel_item.go();
+        res[symbol].add_kernel_item(cfg, new_kernel_item, lookahead_set);
+      }
+    }
+
+    for (auto const &[nonterminal, lookahead_set] : get_nonkernel_items()) {
+      auto it = cfg.get_productions().find(nonterminal);
+      assert(it != cfg.get_productions().end());
+      for (auto const &body : it->second) {
+        if (body.empty()) {
+          continue;
+        }
+        LR_0_item new_kernel_item{{nonterminal, body}, 1};
+        res[body[0]].add_kernel_item(cfg, new_kernel_item, lookahead_set);
+      }
+    }
+    return res;
+  }
+
   void LR_1_item_set::add_nonkernel_item(
       const CFG &cfg, grammar_symbol_const_span_type view,
       const std::set<CFG::terminal_type> &lookahead_set) {

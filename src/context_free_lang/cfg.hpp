@@ -106,6 +106,8 @@ namespace cyy::computation {
 
     void remove_head(nonterminal_type head,
                      nonterminal_type new_start_symbol = {});
+
+    bool contains(const grammar_symbol_type &grammar_symbol) const;
     std::string MMA_draw() const;
 
   protected:

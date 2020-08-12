@@ -74,8 +74,6 @@ namespace cyy::computation {
     ALPHABET &operator=(ALPHABET &&) noexcept = default;
     virtual ~ALPHABET() = default;
 
-    symbol_type get_unincluded_symbol() const { return add_max_symbol(2); }
-
     auto get_view() const {
       return std::views::iota(static_cast<size_t>(0), size()) |
              std::views::transform(

@@ -10,6 +10,124 @@
 
 using namespace cyy::computation;
 
+TEST_CASE("canonical_collection") {
+  std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
+      productions;
+  auto endmarker = ALPHABET::endmarker;
+  auto id = static_cast<CFG::terminal_type>(common_token::id);
+  productions["S"] = {
+      {"L", U'=', "R"},
+      {"R"},
+  };
+
+  productions["L"] = {
+      {U'*', "R"},
+      {id},
+  };
+  productions["R"] = {
+      {"L"},
+  };
+
+  LALR_grammar grammar("common_tokens", "S", productions);
+  grammar.normalize_start_symbol();
+
+  std::unordered_set<LR_1_item_set> sets;
+  {
+    LR_1_item_set set;
+
+    set.add_kernel_item(grammar, LR_0_item{CFG_production{"S'", {"S"}}, 0},
+                        {endmarker});
+    sets.emplace(std::move(set));
+  }
+
+  {
+    LR_1_item_set set;
+
+    set.add_kernel_item(grammar, LR_0_item{CFG_production{"S'", {"S"}}, 1},
+                        {endmarker});
+    sets.emplace(std::move(set));
+  }
+
+  {
+    LR_1_item_set set;
+
+    set.add_kernel_item(grammar,
+                        LR_0_item{CFG_production{"S", {{"L", U'=', "R"}}}, 1},
+                        {endmarker});
+    set.add_kernel_item(grammar, LR_0_item{CFG_production{"R", {{"L"}}}, 1},
+                        {endmarker});
+    sets.emplace(std::move(set));
+  }
+
+  {
+    LR_1_item_set set;
+
+    set.add_kernel_item(grammar, LR_0_item{CFG_production{"S", {"R"}}, 1},
+                        {endmarker});
+
+    sets.emplace(std::move(set));
+  }
+
+  {
+    LR_1_item_set set;
+
+    set.add_kernel_item(grammar, LR_0_item{CFG_production{"L", {U'*', "R"}}, 1},
+                        {U'=', endmarker});
+
+    sets.emplace(std::move(set));
+  }
+
+  {
+    LR_1_item_set set;
+
+    set.add_kernel_item(grammar, LR_0_item{CFG_production{"L", {id}}, 1},
+                        {U'=', endmarker});
+    sets.emplace(std::move(set));
+  }
+
+  {
+    LR_1_item_set set;
+
+    set.add_kernel_item(grammar,
+                        LR_0_item{CFG_production{"S", {{"L", U'=', "R"}}}, 2},
+                        {endmarker});
+
+    sets.emplace(std::move(set));
+  }
+
+  {
+    LR_1_item_set set;
+
+    set.add_kernel_item(grammar, LR_0_item{CFG_production{"L", {U'*', "R"}}, 2},
+                        {U'=', endmarker});
+
+    sets.emplace(std::move(set));
+  }
+
+  {
+    LR_1_item_set set;
+
+    set.add_kernel_item(grammar, LR_0_item{CFG_production{"R", {"L"}}, 1},
+                        {U'=', endmarker});
+    sets.emplace(std::move(set));
+  }
+
+  {
+    LR_1_item_set set;
+
+    set.add_kernel_item(grammar,
+                        LR_0_item{CFG_production{"S", {{"L", U'=', "R"}}}, 3},
+                        {endmarker});
+    sets.emplace(std::move(set));
+  }
+
+  std::unordered_set<LR_1_item_set> collection;
+  for (auto &[_, set] : grammar.get_collection().first) {
+    collection.emplace(set);
+  }
+
+  CHECK(sets == collection);
+}
 TEST_CASE("LALR(1) parse") {
   SUBCASE("parse expression grammar") {
 

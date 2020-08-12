@@ -548,6 +548,19 @@ namespace cyy::computation {
       start_symbol = new_start_symbol;
     }
   }
+  bool CFG::contains(const grammar_symbol_type &grammar_symbol) const {
+    for (auto const &[head, bodies] : productions) {
+      if (head == grammar_symbol) {
+        return true;
+      }
+      for (auto const &body : bodies) {
+        if (std::ranges::find(body, grammar_symbol) != body.end()) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
   std::string CFG::MMA_draw() const {
     // by convention,we print start symbol first.
     std::string cmd = "TableForm[{";

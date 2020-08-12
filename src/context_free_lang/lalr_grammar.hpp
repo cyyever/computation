@@ -7,29 +7,26 @@
 
 #pragma once
 
-#include <functional>
 #include <set>
 #include <unordered_map>
 
-#include "canonical_lr_grammar.hpp"
-#include "lr_1_item.hpp"
+#include "lr_1_grammar.hpp"
 
 namespace cyy::computation {
 
-  class LALR_grammar final : public canonical_LR_grammar {
+  class LALR_grammar final : public LR_1_grammar {
 
   public:
-    using canonical_LR_grammar::canonical_LR_grammar;
+    using LR_1_grammar::LR_1_grammar;
+
+    std::pair<collection_type, goto_transition_map_type>
+    get_collection() const override;
 
   private:
-    std::pair<collection_type, goto_transition_set_type>
-    canonical_collection() const override;
-
     using lookahead_map_type = std::unordered_map<
         grammar_symbol_type,
         std::unordered_map<CFG_production,
                            std::pair<bool, std::set<terminal_type>>>>;
     lookahead_map_type check_lookahead(const LR_0_item &item) const;
-    void construct_parsing_table() const override;
   };
 } // namespace cyy::computation
