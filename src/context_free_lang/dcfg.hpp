@@ -14,9 +14,9 @@ namespace cyy::computation {
   class DCFG : public CFG {
 
   public:
-    DCFG(std::shared_ptr<ALPHABET> alphabet, nonterminal_type start_symbol_,
+    DCFG(std::shared_ptr<ALPHABET> alphabet_, nonterminal_type start_symbol_,
          production_set_type productions_)
-        : CFG(alphabet, start_symbol_, std::move(productions_)),
+        : CFG(alphabet_, start_symbol_, std::move(productions_)),
           new_start_symbol{get_new_head(start_symbol)} {
       if (!DK_test()) {
         throw exception::no_DCFG("DK test failed");

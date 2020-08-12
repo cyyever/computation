@@ -583,7 +583,7 @@ namespace cyy::computation {
     return cmd;
   }
   const std::vector<CFG_production::body_type> &
-  CFG::get_bodies(const auto &nonterminal_type head) const {
+  CFG::get_bodies(const nonterminal_type &head) const {
     auto it = productions.find(head);
     if (it == productions.end()) {
       throw std::runtime_error("no bodies");

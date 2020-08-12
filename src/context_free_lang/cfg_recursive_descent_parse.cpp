@@ -27,11 +27,9 @@ namespace cyy::computation {
                                    grammar_symbol_type grammar_symbol_)
           : grammar_symbol(std::move(grammar_symbol_)), cfg(cfg_) {
         if (grammar_symbol.is_nonterminal()) {
-          auto it =
-              cfg.get_productions().find(grammar_symbol.get_nonterminal());
-          assert(it != cfg.get_productions().end());
-          begin_body_it_opt = it->second.begin();
-          end_body_it_opt = it->second.end();
+          auto const &bodies = cfg.get_bodies(grammar_symbol.get_nonterminal());
+          begin_body_it_opt = bodies.begin();
+          end_body_it_opt = bodies.end();
           reset_iter();
         }
       }

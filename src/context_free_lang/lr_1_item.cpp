@@ -32,9 +32,7 @@ namespace cyy::computation {
     }
 
     for (auto const &[nonterminal, lookahead_set] : get_nonkernel_items()) {
-      auto it = cfg.get_productions().find(nonterminal);
-      assert(it != cfg.get_productions().end());
-      for (auto const &body : it->second) {
+      for (auto const &body : cfg.get_bodies(nonterminal)) {
         if (body.empty()) {
           continue;
         }
@@ -80,9 +78,7 @@ namespace cyy::computation {
 
     nonkernel_items[*ptr].merge(diff);
 
-    auto it = cfg.get_productions().find(*ptr);
-    assert(it != cfg.get_productions().end());
-    for (auto const &new_body : it->second) {
+    for (auto const &new_body : cfg.get_bodies(*ptr)) {
       if (new_body.empty()) {
         LR_0_item new_item{{*ptr, new_body}, 0};
         kernel_items[new_item] = nonkernel_items[*ptr];
