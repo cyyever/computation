@@ -41,12 +41,17 @@ namespace cyy::computation {
     cmd += ",{";
     for (size_t i = 0; i < body.size(); i++) {
       const auto &grammal_symbol = body[i];
-      cmd += pos_callback(i);
-      cmd.push_back(',');
+      auto sub_cmd = pos_callback(i);
+      if (!sub_cmd.empty()) {
+        cmd += sub_cmd;
+        cmd.push_back(',');
+      }
       cmd += grammal_symbol.MMA_draw(alphabet);
       cmd.push_back(',');
     }
-    cmd.pop_back();
+    if (cmd.back() == ',') {
+      cmd.pop_back();
+    }
     cmd += "}]";
     return cmd;
   }

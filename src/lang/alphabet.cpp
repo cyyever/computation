@@ -70,7 +70,7 @@ namespace cyy::computation {
     factory.emplace(alphabet->get_name(), alphabet);
   }
   std::string ALPHABET::MMA_draw(symbol_type symbol) const {
-    auto cmd = __to_string(symbol);
+    auto cmd = to_string(symbol);
     if (cmd[0] == '\'') {
       cmd[0] = '\"';
       cmd.back() = '\"';

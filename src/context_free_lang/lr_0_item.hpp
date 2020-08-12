@@ -8,6 +8,7 @@
 #pragma once
 
 #include <memory>
+#include <ranges>
 #include <unordered_set>
 
 #include "cfg_production.hpp"
@@ -47,9 +48,9 @@ namespace cyy::computation {
       return get_body()[dot_pos];
     }
     std::string MMA_draw(const ALPHABET &alphabet) const {
-      return get_production().MMA_draw(alphabet, false, [&](size_t pos){
+      return get_production().MMA_draw(alphabet, false, [&](size_t pos) {
         if (pos == dot_pos) {
-        return "\\[FilledSmallCircle]";
+          return "Style[\\[FilledSmallCircle],Red]";
         }
         return "";
       });
@@ -77,9 +78,6 @@ namespace cyy::computation {
   class new_LR_0_item_set {
   public:
     void add_item(LR_0_item item) {
-      if (item.completed()) {
-        completed_items.insert(item);
-      }
       if (item.get_dot_pos() == 0 && !item.get_body().empty()) {
         nonkernel_items.insert(item.get_head());
         return;
@@ -89,16 +87,19 @@ namespace cyy::computation {
 
     auto const &get_kernel_items() const { return kernel_items; }
     auto const &get_nonkernel_items() const { return nonkernel_items; }
-    auto const &get_completed_items() const { return completed_items; }
+    auto get_completed_items() const {
+      return get_kernel_items() |
+             std::views::filter([](auto const &p) { return p.completed(); });
+    }
 
     bool operator==(const new_LR_0_item_set &rhs) const = default;
     bool empty() const noexcept {
       return kernel_items.empty() && nonkernel_items.empty();
     }
+    std::string MMA_draw(const ALPHABET &alphabet) const;
 
   private:
     std::unordered_set<LR_0_item> kernel_items;
-    std::unordered_set<LR_0_item> completed_items;
     std::unordered_set<CFG_production::head_type> nonkernel_items;
   };
 } // namespace cyy::computation
