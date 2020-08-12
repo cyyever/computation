@@ -8,11 +8,8 @@
 #pragma once
 
 #include <functional>
-#include <map>
 #include <utility>
-#include <vector>
 
-#include "../hash.hpp"
 #include "cfg.hpp"
 
 namespace cyy::computation {
@@ -21,7 +18,7 @@ namespace cyy::computation {
 
   public:
     using CFG::CFG;
-    using state_type = uint64_t;
+    using state_type = finite_automaton::state_type;
 
     virtual ~LR_grammar() = default;
 
@@ -33,9 +30,6 @@ namespace cyy::computation {
           const std::function<void(const CFG_production &)> &reduction_callback)
         const;
 
-  private:
-    virtual void construct_parsing_table() const = 0;
-
   protected:
     using action_table_type =
         std::unordered_map<std::pair<state_type, terminal_type>,
@@ -44,5 +38,13 @@ namespace cyy::computation {
     using goto_table_type =
         std::unordered_map<std::pair<state_type, nonterminal_type>, state_type>;
     mutable goto_table_type goto_table;
+    using goto_transition_map_type =
+        std::unordered_map<std::pair<state_type, grammar_symbol_type>,
+                           state_type>;
+    std::pair<lr_0_item_set_collection_type, goto_transition_map_type>
+    get_lr_0_item_set_collection() const;
+
+  private:
+    virtual void construct_parsing_table() const = 0;
   };
 } // namespace cyy::computation

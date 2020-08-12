@@ -100,9 +100,12 @@ namespace cyy::computation {
       return start_symbol;
     }
 
+    using lr_0_item_set_collection_type =
+        std::unordered_map<DFA::state_type, new_LR_0_item_set>;
+
     std::tuple<DFA, std::unordered_map<nonterminal_type, symbol_type>,
                std::unordered_map<symbol_type, nonterminal_type>,
-               std::unordered_map<DFA::state_type, new_LR_0_item_set>>
+               lr_0_item_set_collection_type>
     get_DK() const;
     void normalize_start_symbol();
 

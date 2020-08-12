@@ -23,10 +23,10 @@ TEST_CASE("DCFG") {
   };
   SUBCASE("DK") {
     CFG cfg(ALPHABET::get("parentheses", true), "S", productions);
-   auto [dk,_,__,state_to_item_set]= cfg.get_DK();
-   for (auto const&[_,set]:state_to_item_set) {
-     std::cout<< set.MMA_draw(cfg.get_alphabet())<<std::endl;
-   }
+    auto [dk, _, __, state_to_item_set] = cfg.get_DK();
+    for (auto const &[_, set] : state_to_item_set) {
+      std::cout << set.MMA_draw(cfg.get_alphabet()) << std::endl;
+    }
   }
   SUBCASE("DCFG") {
     DCFG dcfg(ALPHABET::get("parentheses", true), "S", productions);
