@@ -93,10 +93,10 @@ namespace cyy::computation {
     return true;
   }
   std::pair<LR_grammar::lr_0_item_set_collection_type,
-            LR_grammar::goto_transition_map_type>
+            LR_grammar::goto_table_type>
   LR_grammar::get_lr_0_item_set_collection() const {
 
-    goto_transition_map_type _goto_table;
+    goto_table_type _goto_table;
     auto [dk, _, symbol_to_nonterminal, state_to_item_set] = get_DK();
     for (auto const &[situation, next_state] : dk.get_transition_function()) {
       assert(state_to_item_set.contains(next_state));

@@ -36,10 +36,9 @@ namespace cyy::computation {
     return res;
   }
 
-  std::pair<LALR_grammar::collection_type,
-            LALR_grammar::goto_transition_map_type>
+  std::pair<LALR_grammar::collection_type, LALR_grammar::goto_table_type>
   LALR_grammar::get_collection() const {
-    goto_transition_map_type _goto_table;
+    goto_table_type _goto_table;
     auto [dk, _, symbol_to_nonterminal, state_to_item_set] = get_DK();
     for (auto const &[situation, next_state] : dk.get_transition_function()) {
       assert(state_to_item_set.contains(next_state));

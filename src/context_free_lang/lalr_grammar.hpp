@@ -19,8 +19,7 @@ namespace cyy::computation {
   public:
     using LR_1_grammar::LR_1_grammar;
 
-    std::pair<collection_type, goto_transition_map_type>
-    get_collection() const override;
+    std::pair<collection_type, goto_table_type> get_collection() const override;
 
   private:
     using lookahead_map_type = std::unordered_map<

@@ -14,7 +14,7 @@
 namespace cyy::computation {
 
   std::pair<canonical_LR_grammar::collection_type,
-            canonical_LR_grammar::goto_transition_map_type>
+            canonical_LR_grammar::goto_table_type>
   canonical_LR_grammar::get_collection() const {
 
     LR_1_item_set init_set;
@@ -27,7 +27,7 @@ namespace cyy::computation {
 
     state_type next_state = 1;
 
-    goto_transition_map_type goto_transitions;
+    goto_table_type goto_transitions;
     while (!unchecked_sets.empty()) {
 
       auto node = unchecked_sets.extract(unchecked_sets.begin());

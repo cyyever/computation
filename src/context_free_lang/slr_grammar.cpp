@@ -9,25 +9,15 @@
 
 namespace cyy::computation {
 
-  std::pair<SLR_grammar::collection_type, SLR_grammar::goto_transition_map_type>
+  std::pair<SLR_grammar::collection_type, SLR_grammar::goto_table_type>
   SLR_grammar::get_collection() const {
-    goto_transition_map_type _goto_table;
-    auto [dk, _, symbol_to_nonterminal, state_to_item_set] = get_DK();
-    for (auto const &[situation, next_state] : dk.get_transition_function()) {
-      assert(state_to_item_set.contains(next_state));
-      if (state_to_item_set[next_state].empty()) {
-        continue;
-      }
-      auto it = symbol_to_nonterminal.find(situation.input_symbol);
-      if (it != symbol_to_nonterminal.end()) {
-        _goto_table[{situation.state, it->second}] = next_state;
-      } else {
-        _goto_table[{situation.state, situation.input_symbol}] = next_state;
-      }
-    }
+
+    auto const &[lr_0_item_set_collection, goto_table] =
+        get_lr_0_item_set_collection();
+
     collection_type collection;
     auto follow_sets = follow();
-    for (auto const &[state, lr_0_item_set] : state_to_item_set) {
+    for (auto const &[state, lr_0_item_set] : lr_0_item_set_collection) {
       LR_1_item_set set;
       for (auto const &item : lr_0_item_set.get_kernel_items()) {
         if (item.completed()) {
@@ -36,6 +26,6 @@ namespace cyy::computation {
       }
       collection[state] = std::move(set);
     }
-    return {collection, _goto_table};
+    return {collection, goto_table};
   }
 } // namespace cyy::computation

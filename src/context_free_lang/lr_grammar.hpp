@@ -36,12 +36,10 @@ namespace cyy::computation {
                            std::variant<state_type, CFG_production, bool>>;
     mutable action_table_type action_table;
     using goto_table_type =
-        std::unordered_map<std::pair<state_type, nonterminal_type>, state_type>;
-    mutable goto_table_type goto_table;
-    using goto_transition_map_type =
         std::unordered_map<std::pair<state_type, grammar_symbol_type>,
                            state_type>;
-    std::pair<lr_0_item_set_collection_type, goto_transition_map_type>
+    mutable goto_table_type goto_table;
+    std::pair<lr_0_item_set_collection_type, goto_table_type>
     get_lr_0_item_set_collection() const;
 
   private:
