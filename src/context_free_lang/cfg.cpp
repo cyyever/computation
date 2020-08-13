@@ -482,18 +482,6 @@ namespace cyy::computation {
     return follow_sets;
   }
 
-  CFG::parse_node_ptr
-  CFG::parse_node::make_parse_node(CFG::nonterminal_type head,
-                                   CFG_production::body_span_type body) {
-
-    auto node = std::make_shared<parse_node>(std::move(head));
-    node->children.reserve(body.size());
-    for (auto const &grammar_symbol : body) {
-      node->children.push_back(std::make_shared<parse_node>(grammar_symbol));
-    }
-    return node;
-  }
-
   std::map<CFG::nonterminal_type, std::set<CFG::nonterminal_type>>
   CFG::get_head_dependency() const {
     std::map<CFG::nonterminal_type, std::set<CFG::nonterminal_type>> result;

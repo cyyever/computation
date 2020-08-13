@@ -33,15 +33,19 @@ namespace cyy::computation {
     struct parse_node;
     using parse_node_ptr = std::shared_ptr<parse_node>;
     struct parse_node {
+    public:
       explicit parse_node(grammar_symbol_type grammar_symbol_)
           : grammar_symbol(std::move(grammar_symbol_)) {}
 
-      grammar_symbol_type grammar_symbol;
-      std::vector<parse_node_ptr> children;
-
+      std::string MMA_draw(const ALPHABET&alphabet) const;
       static parse_node_ptr
       make_parse_node(nonterminal_type head,
                       CFG_production::body_span_type body);
+      grammar_symbol_type grammar_symbol;
+      std::vector<parse_node_ptr> children;
+
+    private:
+      std::pair<std::string,size_t>MMA_draw_edge(const ALPHABET&alphabet,size_t vertex_id) const;
     };
 
     CFG(ALPHABET_ptr alphabet_, nonterminal_type start_symbol_,
