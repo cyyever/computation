@@ -45,8 +45,8 @@ namespace cyy::computation {
       std::vector<parse_node_ptr> children;
 
     private:
-      std::pair<std::string, size_t> MMA_draw_edge(const ALPHABET &alphabet,
-                                                   size_t vertex_id) const;
+      std::tuple<std::string, std::string, size_t>
+      MMA_draw_edge(const ALPHABET &alphabet, size_t vertex_id) const;
     };
 
     CFG(ALPHABET_ptr alphabet_, nonterminal_type start_symbol_,

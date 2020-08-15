@@ -27,31 +27,37 @@ namespace cyy::computation {
     return node;
   }
   std::string CFG::parse_node::MMA_draw(const ALPHABET &alphabet) const {
-    std::string cmd = "TreeGraph[{" + MMA_draw_edge(alphabet, 0).first + "}]";
+    auto [vertex_cmd, edge_cmd, _] = MMA_draw_edge(alphabet, 0);
+    std::string cmd =
+        "TreeGraph[{" + edge_cmd + "},VertexLabels ->{" + vertex_cmd +
+        "},VertexStyle -> {0->Orange},EdgeStyle->Thin,ImageSize->Large]";
     return cmd;
   }
-  std::pair<std::string, size_t>
+  std::tuple<std::string, std::string, size_t>
   CFG::parse_node::MMA_draw_edge(const ALPHABET &alphabet,
                                  size_t vertex_id) const {
+    auto vertex_cmd = std::to_string(vertex_id) + "->" +
+                      grammar_symbol_type(grammar_symbol).MMA_draw(alphabet);
     if (children.empty()) {
-      return {"", vertex_id};
+      return {vertex_cmd, "", vertex_id};
     }
-    std::stringstream is;
-    std::string sub_cmd;
+    std::string edge_cmd;
     auto last_vertex_id = vertex_id;
     for (size_t i = 0; i < children.size(); i++) {
-      auto const &child = children[i];
-      is << "Labeled[" << vertex_id << "->" << last_vertex_id + 1 << ','
-         << child->grammar_symbol.MMA_draw(alphabet) << "],";
-      std::tie(sub_cmd, last_vertex_id) =
-          child->MMA_draw_edge(alphabet, last_vertex_id + 1);
-      if (!sub_cmd.empty()) {
-        is << sub_cmd << ',';
+      if (i != 0) {
+        edge_cmd.push_back(',');
+      }
+      edge_cmd +=
+          std::to_string(vertex_id) + "->" + std::to_string(last_vertex_id + 1);
+      std::string sub_vertex_cmd, sub_edge_cmd;
+      std::tie(sub_vertex_cmd, sub_edge_cmd, last_vertex_id) =
+          children[i]->MMA_draw_edge(alphabet, last_vertex_id + 1);
+      vertex_cmd += "," + sub_vertex_cmd;
+      if (!sub_edge_cmd.empty()) {
+        edge_cmd += "," + sub_edge_cmd;
       }
     }
-    auto cmd = is.str();
-    cmd.pop_back();
-    return {cmd, last_vertex_id};
+    return {vertex_cmd, edge_cmd, last_vertex_id};
   }
 
 } // namespace cyy::computation
