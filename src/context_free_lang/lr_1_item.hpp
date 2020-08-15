@@ -28,9 +28,7 @@ namespace cyy::computation {
     void add_kernel_item(const CFG &cfg, const LR_0_item &kernel_item,
                          std::set<CFG::terminal_type> lookahead_set);
 
-    bool operator==(const LR_1_item_set &rhs) const {
-      return kernel_items == rhs.kernel_items;
-    }
+    bool operator==(const LR_1_item_set &rhs) const = default;
     bool empty() const noexcept {
       return kernel_items.empty() && nonkernel_items.empty();
     }

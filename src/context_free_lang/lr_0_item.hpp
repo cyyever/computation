@@ -12,7 +12,6 @@
 #include <unordered_set>
 
 #include "cfg_production.hpp"
-/* #include "hash.hpp" */
 
 namespace cyy::computation {
   class LR_0_item {
@@ -75,7 +74,7 @@ namespace std {
   };
 } // namespace std
 namespace cyy::computation {
-  class new_LR_0_item_set {
+  class LR_0_item_set {
   public:
     void add_item(LR_0_item item) {
       if (item.get_dot_pos() == 0 && !item.get_body().empty()) {
@@ -92,7 +91,7 @@ namespace cyy::computation {
              std::views::filter([](auto const &p) { return p.completed(); });
     }
 
-    bool operator==(const new_LR_0_item_set &rhs) const = default;
+    bool operator==(const LR_0_item_set &rhs) const = default;
     bool empty() const noexcept {
       return kernel_items.empty() && nonkernel_items.empty();
     }
@@ -105,9 +104,8 @@ namespace cyy::computation {
 } // namespace cyy::computation
 
 namespace std {
-  template <> struct hash<cyy::computation::new_LR_0_item_set> {
-    size_t
-    operator()(const cyy::computation::new_LR_0_item_set &x) const noexcept {
+  template <> struct hash<cyy::computation::LR_0_item_set> {
+    size_t operator()(const cyy::computation::LR_0_item_set &x) const noexcept {
       /* auto key_range=x.get_kernel_items()|std::views::all|std::views::keys;
        */
 

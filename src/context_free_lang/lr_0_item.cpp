@@ -5,7 +5,7 @@
 #include "lr_0_item.hpp"
 
 namespace cyy::computation {
-  std::string new_LR_0_item_set::MMA_draw(const ALPHABET &alphabet) const {
+  std::string LR_0_item_set::MMA_draw(const ALPHABET &alphabet) const {
     std::string cmd = "Framed[TableForm[{";
     for (auto const &item : kernel_items) {
       cmd += item.MMA_draw(alphabet);

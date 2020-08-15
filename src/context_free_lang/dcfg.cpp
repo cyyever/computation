@@ -3,6 +3,15 @@
 #include "dcfg.hpp"
 #include "lang/number_set_alphabet.hpp"
 namespace cyy::computation {
+  DCFG::DCFG(std::shared_ptr<ALPHABET> alphabet_,
+             nonterminal_type start_symbol_, production_set_type productions_)
+
+      : CFG(alphabet_, start_symbol_, std::move(productions_)) {
+    if (!DK_test()) {
+      throw exception::no_DCFG("DK test failed");
+    }
+  }
+
   bool DCFG::DK_test() const {
 
     std::unordered_map<symbol_type, nonterminal_type> symbol_to_nonterminal;
