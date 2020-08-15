@@ -26,9 +26,9 @@ namespace cyy::computation {
     }
     return node;
   }
-  std::string CFG::parse_node::MMA_draw(const ALPHABET &alphabet) const { 
-    std::string cmd= "TreeGraph["+MMA_draw_edge(alphabet,0).first+"]";
-    return cmd; 
+  std::string CFG::parse_node::MMA_draw(const ALPHABET &alphabet) const {
+    std::string cmd = "TreeGraph[" + MMA_draw_edge(alphabet, 0).first + "]";
+    return cmd;
   }
   std::pair<std::string, size_t>
   CFG::parse_node::MMA_draw_edge(const ALPHABET &alphabet,
@@ -41,11 +41,13 @@ namespace cyy::computation {
     auto last_vertex_id = vertex_id;
     for (size_t i = 0; i < children.size(); i++) {
       auto const &child = children[i];
-      is << "Labeled[ " << last_vertex_id << "->" << last_vertex_id + 1 << ','
+      is << "Labeled[" << last_vertex_id << "->" << last_vertex_id + 1 << ','
          << child->grammar_symbol.MMA_draw(alphabet) << "],";
       std::tie(sub_cmd, last_vertex_id) =
-          child->MMA_draw_edge(alphabet,last_vertex_id + 1);
-      is << sub_cmd << ',';
+          child->MMA_draw_edge(alphabet, last_vertex_id + 1);
+      if(!sub_cmd.empty()) {
+        is << sub_cmd << ',';
+      }
     }
     auto cmd = is.str();
     cmd.pop_back();
