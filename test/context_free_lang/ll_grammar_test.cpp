@@ -40,6 +40,7 @@ TEST_CASE("LL(1) parse tree") {
 
   auto parse_tree = grammar.get_parse_tree(symbol_string{id, '+', id, '*', id});
   REQUIRE(parse_tree);
+  std::cout << parse_tree->MMA_draw(grammar.get_alphabet()) << std::endl;
   CHECK(parse_tree->children.size() == 2);
 }
 
