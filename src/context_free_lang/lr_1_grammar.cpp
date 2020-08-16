@@ -36,9 +36,11 @@ namespace cyy::computation {
                << it->second.index();
             throw cyy::computation::exception::no_LR_1_grammar(os.str());
           }
-          if (lookahead == ALPHABET::endmarker &&
-              kernel_item.get_head() == get_start_symbol()) {
+          if (kernel_item.get_head() == get_start_symbol()) {
+            /* if (lookahead == ALPHABET::endmarker && */
+            /*     kernel_item.get_head() == get_start_symbol()) { */
             assert(lookahead_set.size() == 1);
+            assert(lookahead == ALPHABET::endmarker);
             action_table[{state, lookahead}] = true;
           } else {
             action_table[{state, lookahead}] = kernel_item.get_production();

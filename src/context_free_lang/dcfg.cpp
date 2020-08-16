@@ -116,24 +116,25 @@ namespace cyy::computation {
                 transition_function);
   }
   void DCFG::construct_parsing_table() const {
-    /*
     const_cast<DCFG *>(this)->normalize_start_symbol();
     auto const &collection = dk_dfa_ptr->get_LR_0_item_set_collection();
-    goto_table=dk_dfa_ptr->get_goto_table();
+    goto_table = dk_dfa_ptr->get_goto_table();
 
-    for (auto const &[p, next_state] : goto_transitions) {
-      auto ptr = p.second.get_terminal_ptr();
-      if (ptr) {
-      } else {
-        assert(p.second.get_terminal() != ALPHABET::endmarker);
-        action_table[{p.first, p.second.get_terminal()}] = next_state;
+    for (auto const &[p, next_state] : goto_table) {
+      if (p.second.is_terminal()) {
+        if(p.second.get_terminal() != ALPHABET::endmarker) {
+          action_table[{p.first, p.second.get_terminal()}] = next_state;
+        }
       }
     }
-    for (auto const &[state, set] : collection) {
-      for (const auto &[kernel_item, lookahead_set] :
-           set.get_completed_items()) {
 
-        for (const auto &lookahead : lookahead_set) {
+    for (auto const &[state, set] : collection) {
+      for (const auto &kernel_item : set.get_completed_items()) {
+
+        for (auto lookahead : get_terminals()) {
+          if (kernel_item.get_head() == get_start_symbol()) {
+            lookahead = ALPHABET::endmarker;
+          }
           // conflict
           auto it = action_table.find({state, lookahead});
           if (it != action_table.end()) {
@@ -142,12 +143,11 @@ namespace cyy::computation {
                << " conflict with follow terminal "
                << alphabet->to_string(lookahead) << " and action index "
                << it->second.index();
-            throw cyy::computation::exception::no_LR_1_grammar(os.str());
+            throw cyy::computation::exception::no_LR_grammar(os.str());
           }
-          if (lookahead == ALPHABET::endmarker &&
-              kernel_item.get_head() == get_start_symbol()) {
-            assert(lookahead_set.size() == 1);
+          if (kernel_item.get_head() == get_start_symbol()) {
             action_table[{state, lookahead}] = true;
+            break;
           } else {
             action_table[{state, lookahead}] = kernel_item.get_production();
           }
@@ -155,6 +155,5 @@ namespace cyy::computation {
       }
     }
     const_cast<DCFG *>(this)->remove_head(get_start_symbol());
-    */
   }
 } // namespace cyy::computation

@@ -11,20 +11,30 @@
 
 using namespace cyy::computation;
 TEST_CASE("DCFG") {
-  auto endmarker = ALPHABET::endmarker;
-
-  CFG::production_set_type productions;
-  productions["S"] = {
-      {"T", endmarker},
-  };
-  productions["T"] = {
-      {"T", '(', "T", ')'},
+  SUBCASE("parse") {
+    CFG::production_set_type productions;
+    /* productions["S"] = { */
+    /*   {"T"}, */
+    /* }; */
+    productions["S"] = {
+      {'(', "S", ')'},
       {},
-  };
-  SUBCASE("DCFG") {
+    };
     DCFG dcfg(ALPHABET::get("parentheses", true), "S", productions);
+    auto parse_tree=dcfg.get_parse_tree(U"()");
+    CHECK(parse_tree);
   }
   SUBCASE("DPDA") {
+    auto endmarker = ALPHABET::endmarker;
+
+    CFG::production_set_type productions;
+    productions["S"] = {
+      {"T",endmarker},
+    };
+    productions["T"] = {
+      {"T", '(', "T", ')'},
+      {},
+    };
     DCFG dcfg(ALPHABET::get("parentheses", true), "S", productions);
     auto dpda = dcfg.to_DPDA();
     symbol_string str = U"()";
