@@ -11,6 +11,35 @@
 
 namespace cyy::computation {
 
+  DK_DFA::DK_DFA(
+      DFA dfa_,
+      std::unordered_map<grammar_symbol_type::nonterminal_type, symbol_type>
+          nonterminal_to_state_,
+      std::unordered_map<symbol_type, grammar_symbol_type::nonterminal_type>
+          state_to_nonterminal_,
+      lr_0_item_set_collection_type collection_)
+      : dfa(std::move(dfa_)),
+        nonterminal_to_state(std::move(nonterminal_to_state_)),
+        state_to_nonterminal(std::move(state_to_nonterminal_)),
+        collection(std::move(collection_)) {}
+
+  DK_DFA::goto_table_type DK_DFA::get_goto_table() const {
+    goto_table_type goto_table;
+    for (auto const &[situation, next_state] : dfa.get_transition_function()) {
+      assert(collection.contains(next_state));
+      if (collection.find(next_state)->second.empty()) {
+        continue;
+      }
+      auto it = state_to_nonterminal.find(situation.input_symbol);
+      if (it != state_to_nonterminal.end()) {
+        goto_table[{situation.state, it->second}] = next_state;
+      } else {
+        goto_table[{situation.state, situation.input_symbol}] = next_state;
+      }
+    }
+    return goto_table;
+  }
+
   std::tuple<DFA, std::unordered_map<CFG::nonterminal_type, symbol_type>,
              std::unordered_map<symbol_type, CFG::nonterminal_type>,
              CFG::lr_0_item_set_collection_type>
