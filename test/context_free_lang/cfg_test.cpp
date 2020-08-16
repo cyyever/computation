@@ -72,8 +72,7 @@ TEST_CASE("get_terminals") {
   productions["F"] = {{'(', "E", ')'}, {id}};
 
   CFG cfg("common_tokens", "E", productions);
-  CHECK(cfg.get_terminals() ==
-        std::set<CFG::terminal_type>{'+', '*', ')', '(', id});
+  CHECK(cfg.get_terminals() == CFG::terminal_set_type{'+', '*', ')', '(', id});
 }
 
 TEST_CASE("eliminate_left_recursion") {
@@ -170,22 +169,21 @@ TEST_CASE("first_and_follow") {
   CFG cfg("common_tokens", "E", productions);
   auto first_sets = cfg.first();
 
-  CHECK(first_sets["F"].first == std::set<CFG::terminal_type>{'(', id});
-  CHECK(first_sets["T"].first == std::set<CFG::terminal_type>{'(', id});
-  CHECK(first_sets["E"].first == std::set<CFG::terminal_type>{'(', id});
-  CHECK(first_sets["E'"].first == std::set<CFG::terminal_type>{'+'});
-  CHECK(first_sets["T'"].first == std::set<CFG::terminal_type>{'*'});
+  CHECK(first_sets["F"].first == CFG::terminal_set_type{'(', id});
+  CHECK(first_sets["T"].first == CFG::terminal_set_type{'(', id});
+  CHECK(first_sets["E"].first == CFG::terminal_set_type{'(', id});
+  CHECK(first_sets["E'"].first == CFG::terminal_set_type{'+'});
+  CHECK(first_sets["T'"].first == CFG::terminal_set_type{'*'});
   CHECK(first_sets["E'"].second);
   CHECK(first_sets["T'"].second);
   auto follow_sets = cfg.follow();
 
-  CHECK(follow_sets["E"] == std::set<CFG::terminal_type>{')', endmarker});
-  CHECK(follow_sets["E'"] == std::set<CFG::terminal_type>{')', endmarker});
+  CHECK(follow_sets["E"] == CFG::terminal_set_type{')', endmarker});
+  CHECK(follow_sets["E'"] == CFG::terminal_set_type{')', endmarker});
 
-  CHECK(follow_sets["T"] == std::set<CFG::terminal_type>{'+', ')', endmarker});
-  CHECK(follow_sets["T'"] == std::set<CFG::terminal_type>{'+', ')', endmarker});
-  CHECK(follow_sets["F"] ==
-        std::set<CFG::terminal_type>{'+', '*', ')', endmarker});
+  CHECK(follow_sets["T"] == CFG::terminal_set_type{'+', ')', endmarker});
+  CHECK(follow_sets["T'"] == CFG::terminal_set_type{'+', ')', endmarker});
+  CHECK(follow_sets["F"] == CFG::terminal_set_type{'+', '*', ')', endmarker});
 }
 
 TEST_CASE("to_PDA") {

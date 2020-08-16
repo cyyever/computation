@@ -8,9 +8,9 @@
 #include "lr_1_item.hpp"
 
 namespace cyy::computation {
-  void
-  LR_1_item_set::add_kernel_item(const CFG &cfg, const LR_0_item &kernel_item,
-                                 std::set<CFG::terminal_type> lookahead_set) {
+  void LR_1_item_set::add_kernel_item(const CFG &cfg,
+                                      const LR_0_item &kernel_item,
+                                      CFG::terminal_set_type lookahead_set) {
     if (!kernel_item.completed()) {
       add_nonkernel_item(cfg, kernel_item.prefix(), lookahead_set);
     }
@@ -45,7 +45,7 @@ namespace cyy::computation {
 
   void LR_1_item_set::add_nonkernel_item(
       const CFG &cfg, grammar_symbol_const_span_type view,
-      const std::set<CFG::terminal_type> &lookahead_set) {
+      const CFG::terminal_set_type &lookahead_set) {
 
     assert(!view.empty());
     if (view.empty()) {

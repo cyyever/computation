@@ -11,6 +11,7 @@
 #include <memory>
 #include <set>
 #include <string>
+#include <unordered_map>
 #include <unordered_set>
 #include <vector>
 
@@ -27,6 +28,10 @@ namespace cyy::computation {
   public:
     using terminal_type = grammar_symbol_type::terminal_type;
     using nonterminal_type = grammar_symbol_type::nonterminal_type;
+    /* using terminal_set_type = std::set<terminal_type>; */
+    /* using nonterminal_set_type = std::set<nonterminal_type>; */
+    using terminal_set_type = std::unordered_set<terminal_type>;
+    using nonterminal_set_type = std::unordered_set<nonterminal_type>;
     using production_set_type =
         std::unordered_map<nonterminal_type,
                            std::vector<CFG_production::body_type>>;
@@ -65,7 +70,8 @@ namespace cyy::computation {
 
     bool has_production(const CFG_production &production) const;
 
-    std::set<nonterminal_type> get_heads() const;
+    nonterminal_set_type get_heads() const;
+    auto get_head_view() const { return productions | std::views::keys; }
 
     auto const &get_alphabet() const noexcept { return *alphabet; }
 
@@ -73,8 +79,8 @@ namespace cyy::computation {
     const std::vector<CFG_production::body_type> &
     get_bodies(const nonterminal_type &head) const;
 
-    std::set<terminal_type> get_terminals() const;
-    std::set<nonterminal_type> get_nonterminals() const;
+    terminal_set_type get_terminals() const;
+    nonterminal_set_type get_nonterminals() const;
 
     void eliminate_useless_symbols();
 
@@ -92,14 +98,15 @@ namespace cyy::computation {
 
     bool recursive_descent_parse(symbol_string_view view) const;
 
-    const std::map<nonterminal_type, std::pair<std::set<terminal_type>, bool>> &
+    const std::unordered_map<nonterminal_type,
+                             std::pair<terminal_set_type, bool>> &
     first() const;
 
-    std::map<nonterminal_type, std::set<terminal_type>> follow() const;
+    std::unordered_map<nonterminal_type, terminal_set_type> follow() const;
 
-    std::unordered_set<nonterminal_type> nullable() const;
+    nonterminal_set_type nullable() const;
 
-    std::pair<std::set<terminal_type>, bool>
+    std::pair<terminal_set_type, bool>
     first(const grammar_symbol_const_span_type &alpha) const;
 
     const nonterminal_type &get_start_symbol() const noexcept {
@@ -130,9 +137,8 @@ namespace cyy::computation {
     }
 
     void normalize_productions();
-    static nonterminal_type
-    get_new_head(nonterminal_type advise_head,
-                 const std::set<nonterminal_type> &heads) {
+    static nonterminal_type get_new_head(nonterminal_type advise_head,
+                                         const nonterminal_set_type &heads) {
       do {
         advise_head.push_back('\'');
       } while (heads.contains(advise_head));
@@ -142,7 +148,7 @@ namespace cyy::computation {
     friend std::ostream &operator<<(std::ostream &os, const CFG &cfg);
 
   private:
-    std::unordered_map<nonterminal_type, std::set<nonterminal_type>>
+    std::unordered_map<nonterminal_type, nonterminal_set_type>
     get_head_dependency() const;
 
   protected:
@@ -152,7 +158,8 @@ namespace cyy::computation {
     production_set_type productions;
 
   private:
-    mutable std::map<nonterminal_type, std::pair<std::set<terminal_type>, bool>>
+    mutable std::unordered_map<nonterminal_type,
+                               std::pair<terminal_set_type, bool>>
         first_sets;
   };
 

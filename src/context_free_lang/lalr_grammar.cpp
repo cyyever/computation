@@ -22,7 +22,7 @@ namespace cyy::computation {
       for (auto const &[next_kernel_item, lookahead_set] :
            next_item_set.get_kernel_items()) {
         bool propagation = false;
-        std::set<CFG::terminal_type> spontaneous_lookahead_set;
+        CFG::terminal_set_type spontaneous_lookahead_set;
         if (lookahead_set.contains(unincluded_symbol)) {
           propagation = true;
         }
@@ -52,7 +52,7 @@ namespace cyy::computation {
         _goto_table[{situation.state, situation.input_symbol}] = next_state;
       }
     }
-    std::unordered_map<const LR_0_item *, std::set<CFG::terminal_type>>
+    std::unordered_map<const LR_0_item *, CFG::terminal_set_type>
         kernel_item_table;
 
     for (auto const &[state, lr_0_item_set] : state_to_item_set) {

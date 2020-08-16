@@ -62,16 +62,15 @@ namespace cyy::computation {
     return os;
   }
 
-  std::set<CFG::nonterminal_type> CFG::get_heads() const {
-    std::set<nonterminal_type> heads;
+  CFG::nonterminal_set_type CFG::get_heads() const {
+    nonterminal_set_type heads;
     for (auto const &[head, _] : productions) {
       heads.insert(head);
     }
     return heads;
   }
-
-  std::set<CFG::terminal_type> CFG::get_terminals() const {
-    std::set<terminal_type> terminals;
+  CFG::terminal_set_type CFG::get_terminals() const {
+    terminal_set_type terminals;
     for (auto const &[_, bodies] : productions) {
       for (auto const &body : bodies) {
         for (auto const s : body.get_terminal_view()) {
@@ -82,8 +81,8 @@ namespace cyy::computation {
     return terminals;
   }
 
-  std::set<CFG::nonterminal_type> CFG::get_nonterminals() const {
-    std::set<nonterminal_type> nonterminals;
+  CFG::nonterminal_set_type CFG::get_nonterminals() const {
+    nonterminal_set_type nonterminals;
     for (auto const &[head, bodies] : productions) {
       nonterminals.insert(head);
       for (auto const &body : bodies) {
@@ -123,7 +122,7 @@ namespace cyy::computation {
     }
 
     // eliminate unreachable heads from start symbol
-    std::set<nonterminal_type> reachable_heads{start_symbol};
+    nonterminal_set_type reachable_heads{start_symbol};
     while (true) {
       auto prev_size = reachable_heads.size();
       for (const auto &[head, bodies] : productions) {
@@ -149,7 +148,7 @@ namespace cyy::computation {
     }
 
     // eliminate unused productions
-    std::set<nonterminal_type> in_use_heads;
+    nonterminal_set_type in_use_heads;
     decltype(productions) new_productions;
     bool has_new_production = true;
     while (has_new_production) {
@@ -177,7 +176,7 @@ namespace cyy::computation {
     productions = std::move(new_productions);
 
     // eliminate empty production only head
-    std::set<nonterminal_type> non_empty_heads;
+    nonterminal_set_type non_empty_heads;
     auto flag = true;
     while (flag) {
       flag = false;
@@ -355,8 +354,8 @@ namespace cyy::computation {
     normalize_productions();
   }
 
-  const std::map<CFG::nonterminal_type,
-                 std::pair<std::set<CFG::terminal_type>, bool>> &
+  const std::unordered_map<CFG::nonterminal_type,
+                           std::pair<CFG::terminal_set_type, bool>> &
   CFG::first() const {
 
     if (!first_sets.empty()) {
@@ -416,11 +415,11 @@ namespace cyy::computation {
     return first_sets;
   }
 
-  std::pair<std::set<CFG::terminal_type>, bool>
+  std::pair<CFG::terminal_set_type, bool>
   CFG::first(const grammar_symbol_const_span_type &alpha) const {
 
     first();
-    std::set<terminal_type> view_first_set;
+    terminal_set_type view_first_set;
     for (auto const &symbol : alpha) {
       if (symbol.is_terminal()) {
         view_first_set.insert(symbol.get_terminal());
@@ -439,10 +438,9 @@ namespace cyy::computation {
     return {view_first_set, true};
   }
 
-  std::map<CFG::nonterminal_type, std::set<CFG::terminal_type>>
+  std::unordered_map<CFG::nonterminal_type, CFG::terminal_set_type>
   CFG::follow() const {
-
-    std::map<nonterminal_type, std::set<terminal_type>> follow_sets;
+    std::unordered_map<nonterminal_type, terminal_set_type> follow_sets;
 
     follow_sets[start_symbol].insert(ALPHABET::endmarker);
 
@@ -482,10 +480,9 @@ namespace cyy::computation {
     return follow_sets;
   }
 
-  std::unordered_map<CFG::nonterminal_type, std::set<CFG::nonterminal_type>>
+  std::unordered_map<CFG::nonterminal_type, CFG::nonterminal_set_type>
   CFG::get_head_dependency() const {
-    std::unordered_map<CFG::nonterminal_type, std::set<CFG::nonterminal_type>>
-        result;
+    std::unordered_map<CFG::nonterminal_type, CFG::nonterminal_set_type> result;
 
     for (const auto &[head, bodies] : productions) {
       for (const auto &body : bodies) {
@@ -508,7 +505,7 @@ namespace cyy::computation {
             continue;
           }
           auto prev_size = v_set.size();
-          v_set.merge(std::set<CFG::nonterminal_type>(it->second));
+          v_set.merge(CFG::nonterminal_set_type(it->second));
           if (v_set.size() > prev_size) {
             flag = true;
           }

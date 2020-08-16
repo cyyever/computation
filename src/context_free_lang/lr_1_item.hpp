@@ -26,7 +26,7 @@ namespace cyy::computation {
              });
     }
     void add_kernel_item(const CFG &cfg, const LR_0_item &kernel_item,
-                         std::set<CFG::terminal_type> lookahead_set);
+                         CFG::terminal_set_type lookahead_set);
 
     bool operator==(const LR_1_item_set &rhs) const = default;
     bool empty() const noexcept {
@@ -40,11 +40,11 @@ namespace cyy::computation {
 
   private:
     void add_nonkernel_item(const CFG &cfg, grammar_symbol_const_span_type view,
-                            const std::set<CFG::terminal_type> &lookahead_set);
+                            const CFG::terminal_set_type &lookahead_set);
 
   private:
-    std::unordered_map<LR_0_item, std::set<CFG::terminal_type>> kernel_items;
-    std::unordered_map<CFG::nonterminal_type, std::set<CFG::terminal_type>>
+    std::unordered_map<LR_0_item, CFG::terminal_set_type> kernel_items;
+    std::unordered_map<CFG::nonterminal_type, CFG::terminal_set_type>
         nonkernel_items;
   };
 

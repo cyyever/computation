@@ -69,8 +69,8 @@ namespace cyy::computation {
     assert(nullable().size() <= 1);
   }
 
-  std::unordered_set<CFG::nonterminal_type> CFG::nullable() const {
-    std::unordered_set<CFG::nonterminal_type> nullable_nonterminals;
+  CFG::nonterminal_set_type CFG::nullable() const {
+    nonterminal_set_type nullable_nonterminals;
 
     bool has_new_nullable_nonterminals = true;
     while (has_new_nullable_nonterminals) {
