@@ -1,3 +1,7 @@
+/*!
+ * \file dk.hpp
+ */
+#pragma once
 #include "cfg.hpp"
 #include "context_free_lang/lr_0_item.hpp"
 #include "formal_grammar/grammar_symbol.hpp"

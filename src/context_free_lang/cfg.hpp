@@ -117,10 +117,6 @@ namespace cyy::computation {
     using lr_0_item_set_collection_type =
         std::unordered_map<DFA::state_type, LR_0_item_set>;
 
-    std::tuple<DFA, std::unordered_map<nonterminal_type, symbol_type>,
-               std::unordered_map<symbol_type, nonterminal_type>,
-               lr_0_item_set_collection_type>
-    get_DK() const;
     void normalize_start_symbol();
 
     void remove_head(nonterminal_type head);

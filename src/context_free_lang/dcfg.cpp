@@ -115,5 +115,46 @@ namespace cyy::computation {
     return DPDA(dpda_finite_automaton, dk_state_set_alphabet->get_name(),
                 transition_function);
   }
-  void DCFG::construct_parsing_table() const {}
+  void DCFG::construct_parsing_table() const {
+    /*
+    const_cast<DCFG *>(this)->normalize_start_symbol();
+    auto const &collection = dk_dfa_ptr->get_LR_0_item_set_collection();
+    goto_table=dk_dfa_ptr->get_goto_table();
+
+    for (auto const &[p, next_state] : goto_transitions) {
+      auto ptr = p.second.get_terminal_ptr();
+      if (ptr) {
+      } else {
+        assert(p.second.get_terminal() != ALPHABET::endmarker);
+        action_table[{p.first, p.second.get_terminal()}] = next_state;
+      }
+    }
+    for (auto const &[state, set] : collection) {
+      for (const auto &[kernel_item, lookahead_set] :
+           set.get_completed_items()) {
+
+        for (const auto &lookahead : lookahead_set) {
+          // conflict
+          auto it = action_table.find({state, lookahead});
+          if (it != action_table.end()) {
+            std::ostringstream os;
+            os << "state " << state << " with head " << kernel_item.get_head()
+               << " conflict with follow terminal "
+               << alphabet->to_string(lookahead) << " and action index "
+               << it->second.index();
+            throw cyy::computation::exception::no_LR_1_grammar(os.str());
+          }
+          if (lookahead == ALPHABET::endmarker &&
+              kernel_item.get_head() == get_start_symbol()) {
+            assert(lookahead_set.size() == 1);
+            action_table[{state, lookahead}] = true;
+          } else {
+            action_table[{state, lookahead}] = kernel_item.get_production();
+          }
+        }
+      }
+    }
+    const_cast<DCFG *>(this)->remove_head(get_start_symbol());
+    */
+  }
 } // namespace cyy::computation

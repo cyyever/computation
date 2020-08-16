@@ -12,13 +12,11 @@
 namespace cyy::computation {
   void LR_1_grammar::construct_parsing_table() const {
     const_cast<LR_1_grammar *>(this)->normalize_start_symbol();
-    auto [collection, goto_transitions] = get_collection();
+    collection_type collection;
+    std::tie(collection, goto_table) = get_collection();
 
-    for (auto const &[p, next_state] : goto_transitions) {
-      auto ptr = p.second.get_nonterminal_ptr();
-      if (ptr) {
-        goto_table[{p.first, *ptr}] = next_state;
-      } else {
+    for (auto const &[p, next_state] : goto_table) {
+      if (p.second.is_terminal()) {
         assert(p.second.get_terminal() != ALPHABET::endmarker);
         action_table[{p.first, p.second.get_terminal()}] = next_state;
       }
