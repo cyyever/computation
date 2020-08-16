@@ -1,17 +1,10 @@
 /*!
- * \file grammar.cpp
+ * \file dk.cpp
  *
- * \author cyy
- * \date 2018-03-04
  */
 
-#include <algorithm>
-#include <cassert>
-#include <unordered_map>
-#include <utility>
-
+#include "dk.hpp"
 #include "cfg.hpp"
-#include "context_free_lang/lr_0_item.hpp"
 #include "lang/range_alphabet.hpp"
 #include "lang/union_alphabet.hpp"
 #include "regular_lang/nfa.hpp"

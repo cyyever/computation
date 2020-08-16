@@ -12,6 +12,7 @@
 #include <unordered_set>
 
 #include "cfg_production.hpp"
+#include "regular_lang/dfa.hpp"
 
 namespace cyy::computation {
   class LR_0_item {
@@ -101,6 +102,8 @@ namespace cyy::computation {
     std::unordered_set<LR_0_item> kernel_items;
     std::unordered_set<CFG_production::head_type> nonkernel_items;
   };
+  using lr_0_item_set_collection_type =
+      std::unordered_map<DFA::state_type, LR_0_item_set>;
 } // namespace cyy::computation
 
 namespace std {
