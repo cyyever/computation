@@ -136,7 +136,7 @@ namespace cyy::computation {
     start_symbol = new_start_symbol;
     eliminate_single_productions();
 
-    std::map<terminal_type, nonterminal_type> terminal_to_nonterminal;
+    std::unordered_map<terminal_type, nonterminal_type> terminal_to_nonterminal;
 
     auto heads = get_heads();
     auto get_terminal_head = [&terminal_to_nonterminal,

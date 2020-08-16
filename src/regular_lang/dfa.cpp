@@ -32,7 +32,7 @@ namespace cyy::computation {
       return false;
     }
 
-    std::map<state_type, state_type> state_map{
+    std::unordered_map<state_type, state_type> state_map{
         {get_start_state(), rhs.get_start_state()}};
     while (true) {
 
@@ -161,7 +161,7 @@ namespace cyy::computation {
     if (live_states_opt.has_value()) {
       return;
     }
-    std::map<state_type, state_set_type> state_dep;
+    std::unordered_map<state_type, state_set_type> state_dep;
     for (auto const &[p, next_state] : transition_function) {
       state_dep[next_state].insert(p.state);
     }

@@ -21,8 +21,8 @@ namespace cyy::computation {
   class GNFA final : public finite_automaton {
   public:
     using transition_function_type =
-        std::map<std::pair<state_type, state_type>,
-                 std::shared_ptr<regex::syntax_node>>;
+        std::unordered_map<std::pair<state_type, state_type>,
+                           std::shared_ptr<regex::syntax_node>>;
     explicit GNFA(DFA dfa);
 
     GNFA(const GNFA &) = default;

@@ -48,7 +48,7 @@ namespace cyy::computation {
   std::pair<DFA, std::unordered_map<DFA::state_type, NFA::state_set_type>>
   NFA::to_DFA_with_mapping() const {
     DFA::transition_function_type DFA_transition_function;
-    std::map<state_set_type, state_type> subsets{
+    std::unordered_map<state_set_type, state_type> subsets{
         {get_epsilon_closure(epsilon_closures, get_start_state(),
                              epsilon_transition_function),
          0}};
