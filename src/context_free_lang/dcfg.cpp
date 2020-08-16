@@ -6,7 +6,7 @@ namespace cyy::computation {
   DCFG::DCFG(std::shared_ptr<ALPHABET> alphabet_,
              nonterminal_type start_symbol_, production_set_type productions_)
 
-      : CFG(alphabet_, start_symbol_, std::move(productions_)) {
+      : LR_grammar(alphabet_, start_symbol_, std::move(productions_)) {
     if (!DK_test()) {
       throw exception::no_DCFG("DK test failed");
     }
@@ -123,4 +123,5 @@ namespace cyy::computation {
     return DPDA(dpda_finite_automaton, dk_state_set_alphabet->get_name(),
                 transition_function);
   }
+  void DCFG::construct_parsing_table() const {}
 } // namespace cyy::computation

@@ -5,13 +5,14 @@
 
 #pragma once
 
-#include "cfg.hpp"
-#include "dpda.hpp"
 #include <optional>
+
+#include "dpda.hpp"
+#include "lr_1_grammar.hpp"
 
 namespace cyy::computation {
 
-  class DCFG : public CFG {
+  class DCFG : public LR_grammar {
 
   public:
     DCFG(std::shared_ptr<ALPHABET> alphabet_, nonterminal_type start_symbol_,
@@ -21,6 +22,7 @@ namespace cyy::computation {
 
   private:
     bool DK_test() const;
+    void construct_parsing_table() const override;
 
   private:
     mutable std::optional<DFA> dk_opt;
