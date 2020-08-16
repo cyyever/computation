@@ -28,7 +28,8 @@ namespace cyy::computation {
     using terminal_type = grammar_symbol_type::terminal_type;
     using nonterminal_type = grammar_symbol_type::nonterminal_type;
     using production_set_type =
-        std::map<nonterminal_type, std::vector<CFG_production::body_type>>;
+        std::unordered_map<nonterminal_type,
+                           std::vector<CFG_production::body_type>>;
 
     struct parse_node;
     using parse_node_ptr = std::shared_ptr<parse_node>;
@@ -141,7 +142,7 @@ namespace cyy::computation {
     friend std::ostream &operator<<(std::ostream &os, const CFG &cfg);
 
   private:
-    std::map<nonterminal_type, std::set<nonterminal_type>>
+    std::unordered_map<nonterminal_type, std::set<nonterminal_type>>
     get_head_dependency() const;
 
   protected:

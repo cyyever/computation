@@ -482,9 +482,10 @@ namespace cyy::computation {
     return follow_sets;
   }
 
-  std::map<CFG::nonterminal_type, std::set<CFG::nonterminal_type>>
+  std::unordered_map<CFG::nonterminal_type, std::set<CFG::nonterminal_type>>
   CFG::get_head_dependency() const {
-    std::map<CFG::nonterminal_type, std::set<CFG::nonterminal_type>> result;
+    std::unordered_map<CFG::nonterminal_type, std::set<CFG::nonterminal_type>>
+        result;
 
     for (const auto &[head, bodies] : productions) {
       for (const auto &body : bodies) {

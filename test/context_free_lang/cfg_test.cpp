@@ -91,8 +91,7 @@ TEST_CASE("eliminate_left_recursion") {
   CFG cfg("common_tokens", "S", productions);
   cfg.eliminate_left_recursion({"S", "A"});
 
-  std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
-      reduced_productions;
+  CFG::production_set_type reduced_productions;
   reduced_productions["S"] = {
       {"A", 'a'},
       {'b'},
@@ -121,8 +120,7 @@ TEST_CASE("left_factoring") {
 
   CFG cfg("common_tokens", "S", productions);
   cfg.left_factoring();
-  std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
-      reduced_productions;
+  CFG::production_set_type reduced_productions;
   reduced_productions["S"] = {
       {'i', "E", 't', "S", "S'"},
       {'a'},
@@ -191,8 +189,7 @@ TEST_CASE("first_and_follow") {
 }
 
 TEST_CASE("to_PDA") {
-  std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
-      productions;
+  CFG::production_set_type productions;
   productions["S"] = {{'a', "T", 'b'}, {'c', 'd'}, {'b'}};
   productions["T"] = {
       {"T", 'a'},

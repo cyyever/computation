@@ -12,8 +12,7 @@
 using namespace cyy::computation;
 
 TEST_CASE("canonical_collection") {
-  std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
-      productions;
+  CFG::production_set_type productions;
   auto endmarker = ALPHABET::endmarker;
   productions["S"] = {
       {"C", "C"},
@@ -121,9 +120,7 @@ TEST_CASE("canonical_collection") {
 
 TEST_CASE("canonical_LR(1) parse") {
   SUBCASE("parse expression grammar") {
-
-    std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
-        productions;
+    CFG::production_set_type productions;
     auto id = static_cast<CFG::terminal_type>(common_token::id);
     productions["E"] = {
         {"T", "E'"},
@@ -152,9 +149,7 @@ TEST_CASE("canonical_LR(1) parse") {
   }
 
   SUBCASE("parse grammar with epsilon production") {
-
-    std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
-        productions;
+    CFG::production_set_type productions;
     productions["E"] = {
         {U'a', "E"},
         {},

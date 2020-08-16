@@ -109,8 +109,7 @@ namespace cyy::computation {
     std::set<CFG::terminal_type> operators{'|', '*', '(', '\\', ')', '+',
                                            '?', '[', ']', '.',  '^', '-'};
 
-    std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
-        productions;
+    CFG::production_set_type productions;
     productions["rexpr"] = {{"rterm", "rexpr'"}};
     productions["rexpr'"] = {{'|', "rterm", "rexpr'"}, {}};
     productions["rterm"] = {

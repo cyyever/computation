@@ -40,9 +40,7 @@ TEST_CASE("eliminate_epsilon_productions") {
 }
 
 TEST_CASE("eliminate_single_productions") {
-
-  std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
-      productions;
+  CFG::production_set_type productions;
   auto id = static_cast<CFG::terminal_type>(common_token::id);
   productions["E"] = {{"E", '+', "T"}, {"T"}};
   productions["T"] = {{"T", '*', "F"}, {"F"}};
@@ -61,8 +59,7 @@ TEST_CASE("eliminate_single_productions") {
 }
 
 TEST_CASE("to_CNF") {
-  std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
-      productions;
+  CFG::production_set_type productions;
   productions["S"] = {
       {'a', "S", 'b', "S"},
       {'b', "S", 'a', "S"},

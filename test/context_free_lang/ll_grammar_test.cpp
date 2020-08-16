@@ -3,10 +3,6 @@
  *
  * \brief 测试cfg
  */
-#if __has_include(<CppCoreCheck\Warnings.h>)
-#include <CppCoreCheck\Warnings.h>
-#pragma warning(disable : ALL_CPPCORECHECK_WARNINGS)
-#endif
 #include <doctest/doctest.h>
 
 #include "../../src/context_free_lang/ll_grammar.hpp"
@@ -15,8 +11,7 @@
 using namespace cyy::computation;
 
 TEST_CASE("LL(1) parse tree") {
-  std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
-      productions;
+  CFG::production_set_type productions;
   auto id = static_cast<CFG::terminal_type>(common_token::id);
   productions["E"] = {
       {"T", "E'"},
@@ -45,8 +40,7 @@ TEST_CASE("LL(1) parse tree") {
 }
 
 TEST_CASE("LL(1) parse") {
-  std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
-      productions;
+  CFG::production_set_type productions;
   auto id = static_cast<CFG::terminal_type>(common_token::id);
   productions["E"] = {
       {"T", "E'"},
