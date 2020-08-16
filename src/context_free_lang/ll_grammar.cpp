@@ -15,7 +15,7 @@ namespace cyy::computation {
 
   void LL_grammar::construct_parsing_table() const {
     auto follow_sets = follow();
-    for (const auto &[head, bodies] : productions) {
+    for (const auto &[head, bodies] : get_productions()) {
       for (auto const &body : bodies) {
         auto const [first_set, epsilon_in_first] = first({body});
 
@@ -65,7 +65,8 @@ namespace cyy::computation {
     if (parsing_table.empty()) {
       construct_parsing_table();
     }
-    std::vector<grammar_symbol_type> stack{ALPHABET::endmarker, start_symbol};
+    std::vector<grammar_symbol_type> stack{ALPHABET::endmarker,
+                                           get_start_symbol()};
     std::vector<
         std::pair<decltype(this->parsing_table)::const_iterator, size_t>>
         callback_arguments_stack;
@@ -123,7 +124,7 @@ namespace cyy::computation {
 
   CFG::parse_node_ptr
   LL_grammar::get_parse_tree(symbol_string_view view) const {
-    auto root = std::make_shared<parse_node>(start_symbol);
+    auto root = std::make_shared<parse_node>(get_start_symbol());
 
     std::vector<parse_node_ptr> stack{root};
 

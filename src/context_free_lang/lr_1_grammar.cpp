@@ -39,7 +39,7 @@ namespace cyy::computation {
             throw cyy::computation::exception::no_LR_1_grammar(os.str());
           }
           if (lookahead == ALPHABET::endmarker &&
-              kernel_item.get_head() == start_symbol) {
+              kernel_item.get_head() == get_start_symbol()) {
             assert(lookahead_set.size() == 1);
             action_table[{state, lookahead}] = true;
           } else {
@@ -48,7 +48,6 @@ namespace cyy::computation {
         }
       }
     }
-    const_cast<LR_1_grammar *>(this)->remove_head(start_symbol,
-                                                  old_start_symbol);
+    const_cast<LR_1_grammar *>(this)->remove_head(get_start_symbol());
   }
 } // namespace cyy::computation

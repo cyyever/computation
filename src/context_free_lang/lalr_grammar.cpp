@@ -57,7 +57,7 @@ namespace cyy::computation {
 
     for (auto const &[state, lr_0_item_set] : state_to_item_set) {
       for (const auto &kernel_item : lr_0_item_set.get_kernel_items()) {
-        if (kernel_item.get_production().get_head() == start_symbol) {
+        if (kernel_item.get_production().get_head() == get_start_symbol()) {
           kernel_item_table[&kernel_item] = {ALPHABET::endmarker};
         } else {
           kernel_item_table[&kernel_item] = {};

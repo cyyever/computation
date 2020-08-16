@@ -64,7 +64,7 @@ namespace cyy::computation {
 
   CFG::nonterminal_set_type CFG::get_heads() const {
     nonterminal_set_type heads;
-    for (auto const &[head, _] : productions) {
+    for (auto const &head : get_head_view()) {
       heads.insert(head);
     }
     return heads;
@@ -524,14 +524,14 @@ namespace cyy::computation {
         CFG_production::body_type{old_start_symbol});
     return;
   }
-  void CFG::remove_head(nonterminal_type head,
-                        nonterminal_type new_start_symbol) {
+  void CFG::remove_head(nonterminal_type head) {
     productions.erase(head);
     if (head == start_symbol) {
-      if (new_start_symbol.empty()) {
+      if (old_start_symbol.empty()) {
         throw exception::no_CFG("no productions for start symbol");
       }
-      start_symbol = new_start_symbol;
+      start_symbol = old_start_symbol;
+      old_start_symbol.clear();
     }
   }
   bool CFG::contains(const grammar_symbol_type &grammar_symbol) const {

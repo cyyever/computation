@@ -19,7 +19,10 @@ namespace cyy::computation {
 
     LR_1_item_set init_set;
     init_set.add_kernel_item(
-        *this, LR_0_item{CFG_production{start_symbol, {old_start_symbol}}, 0},
+        *this,
+        LR_0_item{CFG_production{get_start_symbol(),
+                                 get_bodies(get_start_symbol())[0]},
+                  0},
         {ALPHABET::endmarker});
     std::unordered_map<LR_1_item_set, state_type> unchecked_sets,
         reversed_collection;

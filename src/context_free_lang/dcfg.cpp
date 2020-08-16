@@ -74,8 +74,7 @@ namespace cyy::computation {
       auto const &head = kernel_item.get_head();
       auto const &body = kernel_item.get_body();
 
-      // TODO use new start symbol
-      if (head == start_symbol) {
+      if (head == get_start_symbol()) {
         transition_function[looping_state][{{}, dk_final_state}] = {
             accept_state};
         continue;

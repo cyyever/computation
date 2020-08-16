@@ -11,14 +11,14 @@
 
 namespace cyy::computation {
   bool CNF::valid() const {
-    for (auto &[head, bodies] : productions) {
+    for (auto &[head, bodies] : get_productions()) {
       for (auto &body : bodies) {
         auto body_size = body.size();
         if (body_size > 2) {
           return false;
         }
         if (body_size == 0) {
-          if (head != start_symbol) {
+          if (head != get_start_symbol()) {
             return false;
           }
         }
@@ -29,7 +29,7 @@ namespace cyy::computation {
         }
         if (body_size == 2) {
           if (std::any_of(body.begin(), body.end(), [*this](auto const &g) {
-                return g.is_terminal() || g == start_symbol;
+                return g.is_terminal() || g == get_start_symbol();
               })) {
             return false;
           }
@@ -41,7 +41,7 @@ namespace cyy::computation {
   bool CNF::parse(symbol_string_view view) const {
     make_reverse_productions();
     if (view.empty()) {
-      return reverse_productions[{}].contains(start_symbol);
+      return reverse_productions[{}].contains(get_start_symbol());
     }
     std::vector<std::vector<std::set<nonterminal_type>>> table(view.size());
     for (size_t i = 0; i < view.size(); i++) {
@@ -64,13 +64,13 @@ namespace cyy::computation {
         }
       }
     }
-    return table[0][view.size() - 1].contains(start_symbol);
+    return table[0][view.size() - 1].contains(get_start_symbol());
   }
   void CNF::make_reverse_productions() const {
     if (!reverse_productions.empty()) {
       return;
     }
-    for (auto const &[head, bodies] : productions) {
+    for (auto const &[head, bodies] : get_productions()) {
       for (auto const &body : bodies) {
         reverse_productions[body].emplace(head);
       }

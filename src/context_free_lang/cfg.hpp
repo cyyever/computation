@@ -122,8 +122,7 @@ namespace cyy::computation {
     get_DK() const;
     void normalize_start_symbol();
 
-    void remove_head(nonterminal_type head,
-                     nonterminal_type new_start_symbol = {});
+    void remove_head(nonterminal_type head);
 
     bool contains(const grammar_symbol_type &grammar_symbol) const;
     std::string MMA_draw() const;
@@ -153,6 +152,8 @@ namespace cyy::computation {
 
   protected:
     ALPHABET_ptr alphabet;
+
+  private:
     nonterminal_type start_symbol;
     nonterminal_type old_start_symbol;
     production_set_type productions;
