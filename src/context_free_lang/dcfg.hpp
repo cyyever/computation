@@ -5,10 +5,11 @@
 
 #pragma once
 
-#include <optional>
+#include <memory>
 
+#include "dk.hpp"
 #include "dpda.hpp"
-#include "lr_1_grammar.hpp"
+#include "lr_grammar.hpp"
 
 namespace cyy::computation {
 
@@ -25,10 +26,6 @@ namespace cyy::computation {
     void construct_parsing_table() const override;
 
   private:
-    mutable std::optional<DFA> dk_opt;
-    mutable std::unordered_map<nonterminal_type, symbol_type>
-        nonterminal_to_symbol;
-    mutable std::unordered_map<DFA::state_type, LR_0_item_set>
-        state_to_LR_0_item_set;
+    std::shared_ptr<DK_DFA> dk_dfa_ptr;
   };
 } // namespace cyy::computation

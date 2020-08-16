@@ -1,3 +1,4 @@
+#include <iostream>
 #include <ranges>
 
 #include "dcfg.hpp"
@@ -6,21 +7,17 @@ namespace cyy::computation {
   DCFG::DCFG(std::shared_ptr<ALPHABET> alphabet_,
              nonterminal_type start_symbol_, production_set_type productions_)
 
-      : LR_grammar(alphabet_, start_symbol_, std::move(productions_)) {
+      : LR_grammar(alphabet_, start_symbol_, std::move(productions_)),
+        dk_dfa_ptr(std::make_shared<DK_DFA>(*this)) {
     if (!DK_test()) {
       throw exception::no_DCFG("DK test failed");
     }
   }
 
   bool DCFG::DK_test() const {
-
-    std::unordered_map<symbol_type, nonterminal_type> symbol_to_nonterminal;
-    std::tie(dk_opt, nonterminal_to_symbol, symbol_to_nonterminal,
-             state_to_LR_0_item_set) = get_DK();
-    for (auto final_state : dk_opt->get_final_states()) {
+    for (auto final_state : dk_dfa_ptr->get_dfa().get_final_states()) {
       size_t completed_cnt = 0;
-      assert(state_to_LR_0_item_set.contains(final_state));
-      auto const &item_set = state_to_LR_0_item_set[final_state];
+      auto const &item_set = dk_dfa_ptr->get_LR_0_item_set(final_state);
       for (auto const &kernel_item : item_set.get_kernel_items()) {
         if (kernel_item.completed()) {
           completed_cnt++;
@@ -31,18 +28,18 @@ namespace cyy::computation {
         }
       }
       if (completed_cnt != 1) {
-        printf("cnt %zu\n", completed_cnt);
+        std::cerr << "completed_cnt is " << completed_cnt << std::endl;
         return false;
       }
     }
     return true;
   }
   DPDA DCFG::to_DPDA() const {
-    using state_type = DPDA::state_type;
     finite_automaton dpda_finite_automaton{{0}, alphabet, {0}, {}};
 
+    auto const &dfa = dk_dfa_ptr->get_dfa();
     std::set<symbol_type> state_symbol_set;
-    for (auto const s : dk_opt->get_states()) {
+    for (auto const s : dfa.get_states()) {
       state_symbol_set.insert(s);
     }
     auto dk_state_set_alphabet =
@@ -52,24 +49,25 @@ namespace cyy::computation {
     DPDA::transition_function_type transition_function;
     auto looping_state = dpda_finite_automaton.add_new_state();
     transition_function[dpda_finite_automaton.get_start_state()][{}] = {
-        looping_state, dk_opt->get_start_state()};
+        looping_state, dfa.get_start_state()};
 
     for (auto const dk_state : state_symbol_set) {
-      if (dk_opt->is_final_state(dk_state)) {
+      if (dfa.is_final_state(dk_state)) {
         continue;
       }
       for (auto const input_symbol : *alphabet) {
         transition_function.check_stack_and_action(
             looping_state, {input_symbol, dk_state},
-            {looping_state, dk_opt->get_transition_function()
+            {looping_state, dfa.get_transition_function()
                                 .find({dk_state, input_symbol})
                                 ->second},
             dpda_finite_automaton);
       }
     }
     auto accept_state = dpda_finite_automaton.add_new_state();
-    for (auto dk_final_state : dk_opt->get_final_states()) {
-      auto const &item_set = state_to_LR_0_item_set[dk_final_state];
+    auto goto_table = dk_dfa_ptr->get_goto_table();
+    for (auto dk_final_state : dfa.get_final_states()) {
+      auto const &item_set = dk_dfa_ptr->get_LR_0_item_set(dk_final_state);
       auto const &kernel_item = *item_set.get_completed_items().begin();
       auto const &head = kernel_item.get_head();
       auto const &body = kernel_item.get_body();
@@ -85,10 +83,7 @@ namespace cyy::computation {
         transition_function[looping_state][{{}, dk_final_state}] = {
             pop_state, dk_final_state};
         transition_function[pop_state][{}] = {
-            looping_state,
-            dk_opt->get_transition_function()
-                .find({dk_final_state, nonterminal_to_symbol[head]})
-                ->second};
+            looping_state, goto_table[{dk_final_state, head}]};
       } else {
         auto from_state = looping_state;
         state_type to_state;
@@ -107,9 +102,7 @@ namespace cyy::computation {
 
         for (auto const dk_state : state_symbol_set) {
           transition_function[to_state][{{}, dk_state}] = {
-              looping_state, dk_opt->get_transition_function()
-                                 .find({dk_state, nonterminal_to_symbol[head]})
-                                 ->second};
+              looping_state, goto_table[{dk_state, head}]};
         }
       }
     }

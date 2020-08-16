@@ -74,6 +74,7 @@ namespace cyy::computation {
     auto get_head_view() const { return productions | std::views::keys; }
 
     auto const &get_alphabet() const noexcept { return *alphabet; }
+    auto get_alphabet_ptr() const noexcept { return alphabet; }
 
     auto const &get_productions() const noexcept { return productions; }
     const std::vector<CFG_production::body_type> &
