@@ -92,24 +92,4 @@ namespace cyy::computation {
     assert(terminal_it == endmarked_view.end());
     return true;
   }
-  std::pair<LR_grammar::lr_0_item_set_collection_type,
-            LR_grammar::goto_table_type>
-  LR_grammar::get_lr_0_item_set_collection() const {
-
-    goto_table_type _goto_table;
-    auto [dk, _, symbol_to_nonterminal, state_to_item_set] = get_DK();
-    for (auto const &[situation, next_state] : dk.get_transition_function()) {
-      assert(state_to_item_set.contains(next_state));
-      if (state_to_item_set[next_state].empty()) {
-        continue;
-      }
-      auto it = symbol_to_nonterminal.find(situation.input_symbol);
-      if (it != symbol_to_nonterminal.end()) {
-        _goto_table[{situation.state, it->second}] = next_state;
-      } else {
-        _goto_table[{situation.state, situation.input_symbol}] = next_state;
-      }
-    }
-    return {state_to_item_set, _goto_table};
-  }
 } // namespace cyy::computation

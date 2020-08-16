@@ -30,6 +30,7 @@ namespace cyy::computation {
     goto_table_type get_goto_table() const;
 
     const LR_0_item_set &get_LR_0_item_set(state_type state) const;
+    const auto &get_LR_0_item_set_collection() const { return collection; }
 
   private:
     std::optional<DFA> dfa_opt;

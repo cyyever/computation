@@ -39,8 +39,6 @@ namespace cyy::computation {
         std::unordered_map<std::pair<state_type, grammar_symbol_type>,
                            state_type>;
     mutable goto_table_type goto_table;
-    std::pair<lr_0_item_set_collection_type, goto_table_type>
-    get_lr_0_item_set_collection() const;
 
   private:
     virtual void construct_parsing_table() const = 0;
