@@ -18,10 +18,8 @@ namespace cyy::computation {
     for (auto const &[state, lr_0_item_set] :
          dk.get_LR_0_item_set_collection()) {
       LR_1_item_set set;
-      for (auto const &item : lr_0_item_set.get_kernel_items()) {
-        if (item.completed()) {
-          set.add_kernel_item(*this, item, follow_sets[item.get_head()]);
-        }
+      for (auto const &item : lr_0_item_set.get_completed_items()) {
+        set.add_kernel_item(*this, item, follow_sets[item.get_head()]);
       }
       collection[state] = std::move(set);
     }

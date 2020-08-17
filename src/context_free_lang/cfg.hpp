@@ -18,7 +18,6 @@
 #include "cfg_production.hpp"
 #include "formal_grammar/grammar_symbol.hpp"
 #include "lang/alphabet.hpp"
-#include "lr_0_item.hpp"
 #include "regular_lang/dfa.hpp"
 
 namespace cyy::computation {
@@ -113,9 +112,6 @@ namespace cyy::computation {
     const nonterminal_type &get_start_symbol() const noexcept {
       return start_symbol;
     }
-
-    using lr_0_item_set_collection_type =
-        std::unordered_map<DFA::state_type, LR_0_item_set>;
 
     void normalize_start_symbol();
 

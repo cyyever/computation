@@ -108,14 +108,13 @@ namespace cyy::computation {
 
     bool operator==(const ALPHABET &rhs) const = default;
     virtual bool contains_ASCII() const { return false; }
+    std::string MMA_draw(symbol_type symbol) const;
 
     static std::shared_ptr<ALPHABET> get(std::string_view name,
                                          bool endmarked = false);
     static void set(const std::shared_ptr<ALPHABET> &alphabet);
     static constexpr symbol_type endmarker =
         std::numeric_limits<symbol_type>::max() - 1;
-
-    std::string MMA_draw(symbol_type symbol) const;
 
   protected:
     void set_name(std::string_view name_) {

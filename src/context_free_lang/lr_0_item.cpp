@@ -6,6 +6,20 @@
 #include <iostream>
 
 namespace cyy::computation {
+  std::unordered_set<LR_0_item>
+  LR_0_item_set::expand_nonkernel_items(const CFG &cfg) const {
+    std::unordered_set<LR_0_item> item_set;
+    for (auto const &head : nonkernel_items) {
+      auto const &bodies = cfg.get_bodies(head);
+      for (auto const &body : bodies) {
+        if (body.empty()) {
+          continue;
+        }
+        item_set.emplace(head, body);
+      }
+    }
+    return item_set;
+  }
   std::string LR_0_item::MMA_draw(const ALPHABET &alphabet) const {
     return get_production().MMA_draw(alphabet, false, [&](size_t pos) {
       if (pos == dot_pos) {

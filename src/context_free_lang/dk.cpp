@@ -47,7 +47,7 @@ namespace cyy::computation {
     std::unordered_map<CFG::nonterminal_type, state_set_type> head_states;
     for (auto const &[head, bodies] : cfg.get_productions()) {
       for (auto const &body : bodies) {
-        cyy::computation::LR_0_item init_item({head, body});
+        cyy::computation::LR_0_item init_item(head, body);
         auto state = item_to_nfa_state(init_item);
         if (head == cfg.get_start_symbol()) {
           nfa.add_epsilon_transition(nfa.get_start_state(), {state});
@@ -58,7 +58,7 @@ namespace cyy::computation {
 
     for (auto const &[head, bodies] : cfg.get_productions()) {
       for (auto const &body : bodies) {
-        cyy::computation::LR_0_item cur_item({head, body});
+        cyy::computation::LR_0_item cur_item(head, body);
 
         for (auto const &grammar_symbol : body) {
           auto next_item = cur_item;
@@ -128,8 +128,8 @@ namespace cyy::computation {
       cmd += std::to_string(state) + "->" + set.MMA_draw(alphabet);
       cmd.push_back(',');
     }
-    auto dfa_cmd=dfa_ptr->MMA_draw();
-    cmd += dfa_cmd+"}]";
+    auto dfa_cmd = dfa_ptr->MMA_draw();
+    cmd += dfa_cmd + "}]";
     return cmd;
   }
 

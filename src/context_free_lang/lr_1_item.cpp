@@ -23,12 +23,13 @@ namespace cyy::computation {
     std::unordered_map<grammar_symbol_type, LR_1_item_set> res;
 
     for (auto const &[kernel_item, lookahead_set] : get_kernel_items()) {
-      if (!kernel_item.completed()) {
-        auto const &symbol = kernel_item.get_grammar_symbal();
-        auto new_kernel_item = kernel_item;
-        new_kernel_item.go();
-        res[symbol].add_kernel_item(cfg, new_kernel_item, lookahead_set);
+      if (kernel_item.completed()) {
+        continue;
       }
+      auto const &symbol = kernel_item.get_grammar_symbal();
+      auto new_kernel_item = kernel_item;
+      new_kernel_item.go();
+      res[symbol].add_kernel_item(cfg, new_kernel_item, lookahead_set);
     }
 
     for (auto const &[nonterminal, lookahead_set] : get_nonkernel_items()) {

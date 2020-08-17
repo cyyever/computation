@@ -12,8 +12,9 @@
 #include <set>
 #include <vector>
 
-#include "../exception.hpp"
 #include "dfa.hpp"
+#include "exception.hpp"
+#include "lang/set_alphabet.hpp"
 
 namespace cyy::computation {
   bool DFA::equivalent_with(const DFA &rhs) const {
@@ -229,12 +230,20 @@ namespace cyy::computation {
             transition_function, new_final_states};
   }
   std::string DFA::MMA_draw() const {
+    std::unordered_map<std::pair<state_type, state_type>, std::set<symbol_type>>
+        edge_labels;
+    for (auto const &[situation, my_next_state] : transition_function) {
+      edge_labels[{situation.state, my_next_state}].emplace(
+          situation.input_symbol);
+    }
     std::stringstream is;
     is << "Graph[{";
-    for (auto const &[situation, my_next_state] : transition_function) {
-      is << "Labeled[ " << situation.state << "->" << my_next_state << ","
-         << alphabet->MMA_draw(situation.input_symbol) << "],";
+    for (auto const &[k, v] : edge_labels) {
+      auto [from_state, to_state] = k;
+      is << "Labeled[ " << from_state << "->" << to_state << ","
+         << set_alphabet(v, "MMA edge labels").MMA_draw() << "],";
     }
+
     // drop last ,
     is.seekp(-1, std::ios_base::end);
     is << "}," << finite_automaton::MMA_draw() << ']';

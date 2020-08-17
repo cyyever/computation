@@ -31,6 +31,16 @@ namespace cyy::computation {
     }
     size_t size() const noexcept override { return symbols.size(); }
 
+    std::string MMA_draw() const {
+      std::string cmd = "{";
+      for (auto s : symbols) {
+        cmd += ALPHABET::MMA_draw(s);
+        cmd.push_back(',');
+      }
+      cmd.back() = '}';
+      return cmd;
+    }
+
   private:
     symbol_type get_symbol(size_t index) const noexcept override {
       return symbols[index];

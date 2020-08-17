@@ -11,6 +11,7 @@
 #include <ranges>
 #include <unordered_set>
 
+#include "cfg.hpp"
 #include "cfg_production.hpp"
 #include "regular_lang/dfa.hpp"
 
@@ -21,6 +22,10 @@ namespace cyy::computation {
         : production_ptr{std::make_shared<CFG_production>(
               std::move(production))},
           dot_pos{dot_pos_} {}
+    LR_0_item(CFG_production::head_type head, CFG_production::body_type body,
+              size_t dot_pos_ = 0)
+        : LR_0_item(CFG_production{std::move(head), std::move(body)},
+                    dot_pos_) {}
     LR_0_item(const LR_0_item &) = default;
     LR_0_item &operator=(const LR_0_item &) = default;
     LR_0_item(LR_0_item &&) = default;
@@ -79,11 +84,11 @@ namespace cyy::computation {
     }
 
     auto const &get_kernel_items() const { return kernel_items; }
-    auto const &get_nonkernel_items() const { return nonkernel_items; }
     auto get_completed_items() const {
-      return get_kernel_items() |
+      return kernel_items |
              std::views::filter([](auto const &p) { return p.completed(); });
     }
+    std::unordered_set<LR_0_item> expand_nonkernel_items(const CFG &cfg) const;
 
     bool operator==(const LR_0_item_set &rhs) const = default;
     bool empty() const noexcept {
@@ -102,9 +107,6 @@ namespace cyy::computation {
 namespace std {
   template <> struct hash<cyy::computation::LR_0_item_set> {
     size_t operator()(const cyy::computation::LR_0_item_set &x) const noexcept {
-      /* auto key_range=x.get_kernel_items()|std::views::all|std::views::keys;
-       */
-
       return ::std::hash<decltype(x.get_kernel_items().size())>()(
           x.get_kernel_items().size());
     }

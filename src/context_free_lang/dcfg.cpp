@@ -18,18 +18,23 @@ namespace cyy::computation {
     for (auto final_state : dk_dfa_ptr->get_dfa().get_final_states()) {
       size_t completed_cnt = 0;
       auto const &item_set = dk_dfa_ptr->get_LR_0_item_set(final_state);
-      for (auto const &kernel_item : item_set.get_kernel_items()) {
-        if (kernel_item.completed()) {
+      for (auto const &item : item_set.get_kernel_items()) {
+        if (item.completed()) {
           completed_cnt++;
           continue;
         }
-        if (kernel_item.get_grammar_symbal().is_terminal()) {
+        if (item.get_grammar_symbal().is_terminal()) {
           return false;
         }
       }
       if (completed_cnt != 1) {
         std::cerr << "completed_cnt is " << completed_cnt << std::endl;
         return false;
+      }
+      for (auto const &item : item_set.expand_nonkernel_items(*this)) {
+        if (item.get_grammar_symbal().is_terminal()) {
+          return false;
+        }
       }
     }
     return true;
@@ -68,9 +73,9 @@ namespace cyy::computation {
     auto goto_table = dk_dfa_ptr->get_goto_table();
     for (auto dk_final_state : dfa.get_final_states()) {
       auto const &item_set = dk_dfa_ptr->get_LR_0_item_set(dk_final_state);
-      auto const &kernel_item = *item_set.get_completed_items().begin();
-      auto const &head = kernel_item.get_head();
-      auto const &body = kernel_item.get_body();
+      auto const &item = *item_set.get_completed_items().begin();
+      auto const &head = item.get_head();
+      auto const &body = item.get_body();
 
       if (head == get_start_symbol()) {
         transition_function[looping_state][{{}, dk_final_state}] = {
@@ -116,44 +121,42 @@ namespace cyy::computation {
                 transition_function);
   }
   void DCFG::construct_parsing_table() const {
-    const_cast<DCFG *>(this)->normalize_start_symbol();
     auto const &collection = dk_dfa_ptr->get_LR_0_item_set_collection();
     goto_table = dk_dfa_ptr->get_goto_table();
 
     for (auto const &[p, next_state] : goto_table) {
-      if (p.second.is_terminal()) {
-        if (p.second.get_terminal() != ALPHABET::endmarker) {
-          action_table[{p.first, p.second.get_terminal()}] = next_state;
+      auto const &[from_state,grammar_symbol]=p;
+      if (grammar_symbol.is_terminal()) {
+        if (grammar_symbol.get_terminal() != ALPHABET::endmarker) {
+          action_table[{from_state, grammar_symbol.get_terminal()}] = next_state;
         }
       }
     }
 
     for (auto const &[state, set] : collection) {
-      for (const auto &kernel_item : set.get_completed_items()) {
-
+      for (const auto &item : set.get_completed_items()) {
         for (auto lookahead : get_terminals()) {
-          if (kernel_item.get_head() == get_start_symbol()) {
+          if (item.get_head() == get_start_symbol()) {
             lookahead = ALPHABET::endmarker;
           }
           // conflict
           auto it = action_table.find({state, lookahead});
           if (it != action_table.end()) {
             std::ostringstream os;
-            os << "state " << state << " with head " << kernel_item.get_head()
+            os << "state " << state << " with head " << item.get_head()
                << " conflict with follow terminal "
                << alphabet->to_string(lookahead) << " and action index "
                << it->second.index();
             throw cyy::computation::exception::no_LR_grammar(os.str());
           }
-          if (kernel_item.get_head() == get_start_symbol()) {
+          if (item.get_head() == get_start_symbol()) {
             action_table[{state, lookahead}] = true;
             break;
           } else {
-            action_table[{state, lookahead}] = kernel_item.get_production();
+            action_table[{state, lookahead}] = item.get_production();
           }
         }
       }
     }
-    const_cast<DCFG *>(this)->remove_head(get_start_symbol());
   }
 } // namespace cyy::computation
