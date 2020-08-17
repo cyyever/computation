@@ -27,7 +27,6 @@ namespace cyy::computation {
         cfg.get_alphabet_ptr(), alphabet_of_nonterminals);
     ALPHABET::set(nfa_alphabet);
 
-    using state_type = NFA::state_type;
     using state_set_type = NFA::state_set_type;
 
     std::unordered_map<LR_0_item, state_type> item_to_nfa_state_map;
@@ -82,6 +81,7 @@ namespace cyy::computation {
         nfa.add_final_state(item_to_nfa_state(cur_item));
       }
     }
+
     auto [dfa, dfa_to_nfa_state_map] = nfa.to_DFA_with_mapping();
     for (auto const &[dfa_state, nfa_state_set] : dfa_to_nfa_state_map) {
       auto &item_set = collection[dfa_state];
@@ -92,25 +92,13 @@ namespace cyy::computation {
         }
       }
     }
-    dfa_opt = std::move(dfa);
+    dfa_ptr = std::make_shared<DFA>(std::move(dfa));
   }
-
-  DK_DFA::DK_DFA(
-      DFA dfa_,
-      std::unordered_map<grammar_symbol_type::nonterminal_type, symbol_type>
-          nonterminal_to_state_,
-      std::unordered_map<symbol_type, grammar_symbol_type::nonterminal_type>
-          state_to_nonterminal_,
-      lr_0_item_set_collection_type collection_)
-      : dfa_opt(std::move(dfa_)),
-        nonterminal_to_state(std::move(nonterminal_to_state_)),
-        state_to_nonterminal(std::move(state_to_nonterminal_)),
-        collection(std::move(collection_)) {}
 
   DK_DFA::goto_table_type DK_DFA::get_goto_table() const {
     goto_table_type goto_table;
     for (auto const &[situation, next_state] :
-         dfa_opt.value().get_transition_function()) {
+         dfa_ptr->get_transition_function()) {
       assert(collection.contains(next_state));
       if (collection.find(next_state)->second.empty()) {
         continue;
@@ -132,6 +120,17 @@ namespace cyy::computation {
       throw std::runtime_error("invalid state");
     }
     return it->second;
+  }
+  std::string DK_DFA::MMA_draw() const {
+    auto const &alphabet = dfa_ptr->get_alphabet();
+    std::string cmd = "TableForm[{";
+    for (auto const &[state, set] : collection) {
+      cmd += std::to_string(state) + "->" + set.MMA_draw(alphabet);
+      cmd.push_back(',');
+    }
+    cmd.pop_back();
+    cmd += "}]";
+    return cmd;
   }
 
 } // namespace cyy::computation

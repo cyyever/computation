@@ -39,15 +39,16 @@ namespace cyy::computation {
       cmd += ",Red]";
     }
     cmd += ",{";
-    for (size_t i = 0; i < body.size(); i++) {
-      const auto &grammal_symbol = body[i];
+    for (size_t i = 0; i <= body.size(); i++) {
       auto sub_cmd = pos_callback(i);
       if (!sub_cmd.empty()) {
         cmd += sub_cmd;
         cmd.push_back(',');
       }
-      cmd += grammal_symbol.MMA_draw(alphabet);
-      cmd.push_back(',');
+      if (i < body.size()) {
+        cmd += body[i].MMA_draw(alphabet);
+        cmd.push_back(',');
+      }
     }
     if (cmd.back() == ',') {
       cmd.pop_back();

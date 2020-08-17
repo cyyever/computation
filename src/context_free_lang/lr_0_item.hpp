@@ -47,14 +47,7 @@ namespace cyy::computation {
       }
       return get_body()[dot_pos];
     }
-    std::string MMA_draw(const ALPHABET &alphabet) const {
-      return get_production().MMA_draw(alphabet, false, [&](size_t pos) {
-        if (pos == dot_pos) {
-          return "Style[\\[FilledSmallCircle],Red]";
-        }
-        return "";
-      });
-    }
+    std::string MMA_draw(const ALPHABET &alphabet) const;
 
     const CFG_production &get_production() const { return *production_ptr; }
 

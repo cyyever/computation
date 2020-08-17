@@ -3,8 +3,17 @@
  */
 
 #include "lr_0_item.hpp"
+#include <iostream>
 
 namespace cyy::computation {
+  std::string LR_0_item::MMA_draw(const ALPHABET &alphabet) const {
+    return get_production().MMA_draw(alphabet, false, [&](size_t pos) {
+      if (pos == dot_pos) {
+        return "Style[\\[FilledSmallCircle],Red]";
+      }
+      return "";
+    });
+  }
   std::string LR_0_item_set::MMA_draw(const ALPHABET &alphabet) const {
     std::string cmd = "Framed[TableForm[{";
     for (auto const &item : kernel_items) {

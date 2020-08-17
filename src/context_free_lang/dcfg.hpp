@@ -20,6 +20,7 @@ namespace cyy::computation {
          production_set_type productions_);
 
     DPDA to_DPDA() const;
+    const DK_DFA &get_dk() const { return *dk_dfa_ptr; }
 
   private:
     bool DK_test() const;

@@ -122,7 +122,7 @@ namespace cyy::computation {
 
     for (auto const &[p, next_state] : goto_table) {
       if (p.second.is_terminal()) {
-        if(p.second.get_terminal() != ALPHABET::endmarker) {
+        if (p.second.get_terminal() != ALPHABET::endmarker) {
           action_table[{p.first, p.second.get_terminal()}] = next_state;
         }
       }
