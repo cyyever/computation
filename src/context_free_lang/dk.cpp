@@ -128,8 +128,8 @@ namespace cyy::computation {
       cmd += std::to_string(state) + "->" + set.MMA_draw(alphabet);
       cmd.push_back(',');
     }
-    cmd.pop_back();
-    cmd += "}]";
+    auto dfa_cmd=dfa_ptr->MMA_draw();
+    cmd += dfa_cmd+"}]";
     return cmd;
   }
 
