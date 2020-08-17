@@ -7,33 +7,32 @@
 #include <iostream>
 
 #include "../../src/context_free_lang/dcfg.hpp"
+#include "../../src/context_free_lang/dk.hpp"
 #include "../../src/lang/alphabet.hpp"
 
 using namespace cyy::computation;
 TEST_CASE("DCFG") {
   SUBCASE("parse") {
     CFG::production_set_type productions;
-    /* productions["S"] = { */
-    /*   {"T"}, */
-    /* }; */
     productions["S"] = {
-      {'(', "S", ')'},
-      {},
+        {"S", '(', "S", ')'},
+        {},
     };
-    DCFG dcfg(ALPHABET::get("parentheses", true), "S", productions);
-    auto parse_tree=dcfg.get_parse_tree(U"()");
+    DCFG dcfg(ALPHABET::get("parentheses"), "S", productions);
+    auto parse_tree = dcfg.get_parse_tree(U"()");
     CHECK(parse_tree);
+    std::cout << parse_tree->MMA_draw(dcfg.get_alphabet()) << std::endl;
   }
   SUBCASE("DPDA") {
     auto endmarker = ALPHABET::endmarker;
 
     CFG::production_set_type productions;
     productions["S"] = {
-      {"T",endmarker},
+        {"T", endmarker},
     };
     productions["T"] = {
-      {"T", '(', "T", ')'},
-      {},
+        {"T", '(', "T", ')'},
+        {},
     };
     DCFG dcfg(ALPHABET::get("parentheses", true), "S", productions);
     auto dpda = dcfg.to_DPDA();
