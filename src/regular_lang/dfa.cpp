@@ -232,8 +232,8 @@ namespace cyy::computation {
     std::stringstream is;
     is << "Graph[{";
     for (auto const &[situation, my_next_state] : transition_function) {
-      is << "Labeled[ " << situation.state << "->" << my_next_state << ",\""
-         << alphabet->to_string(situation.input_symbol) << "\"],";
+      is << "Labeled[ " << situation.state << "->" << my_next_state << ","
+         << alphabet->MMA_draw(situation.input_symbol) << "],";
     }
     // drop last ,
     is.seekp(-1, std::ios_base::end);

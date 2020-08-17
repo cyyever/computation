@@ -90,8 +90,8 @@ namespace cyy::computation {
     is << "Graph[{";
     for (auto const &[situation, next_state_set] : transition_function) {
       for (auto my_next_state : next_state_set) {
-        is << "Labeled[ " << situation.state << "->" << my_next_state << ",\""
-           << alphabet->to_string(situation.input_symbol) << "\"],";
+        is << "Labeled[ " << situation.state << "->" << my_next_state << ","
+           << alphabet->MMA_draw(situation.input_symbol) << "],";
       }
     }
     for (auto const &[from_state, next_state_set] :
