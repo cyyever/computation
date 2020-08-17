@@ -39,7 +39,14 @@ namespace cyy::computation {
     auto vertex_cmd = std::to_string(vertex_id) + "->" +
                       grammar_symbol_type(grammar_symbol).MMA_draw(alphabet);
     if (children.empty()) {
-      return {vertex_cmd, "", vertex_id};
+      if(grammar_symbol.is_terminal()) {
+        return {vertex_cmd,"",vertex_id};
+      }
+      vertex_cmd += "," + std::to_string(vertex_id + 1) +
+                    "-> Style[\\[Epsilon], Bold, Italic]";
+      return {vertex_cmd,
+              std::to_string(vertex_id) + "->" + std::to_string(vertex_id + 1),
+              vertex_id + 1};
     }
     std::string edge_cmd;
     auto last_vertex_id = vertex_id;
