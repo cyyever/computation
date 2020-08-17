@@ -39,8 +39,8 @@ namespace cyy::computation {
     auto vertex_cmd = std::to_string(vertex_id) + "->" +
                       grammar_symbol_type(grammar_symbol).MMA_draw(alphabet);
     if (children.empty()) {
-      if(grammar_symbol.is_terminal()) {
-        return {vertex_cmd,"",vertex_id};
+      if (grammar_symbol.is_terminal()) {
+        return {vertex_cmd, "", vertex_id};
       }
       vertex_cmd += "," + std::to_string(vertex_id + 1) +
                     "-> Style[\\[Epsilon], Bold, Italic]";
