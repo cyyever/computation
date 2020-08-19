@@ -94,7 +94,7 @@ namespace cyy::computation {
     bool empty() const noexcept {
       return kernel_items.empty() && nonkernel_items.empty();
     }
-    std::string MMA_draw(const ALPHABET &alphabet) const;
+    std::string MMA_draw(const CFG &cfg) const;
 
   private:
     std::unordered_set<LR_0_item> kernel_items;

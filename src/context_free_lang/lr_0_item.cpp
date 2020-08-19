@@ -28,7 +28,8 @@ namespace cyy::computation {
       return "";
     });
   }
-  std::string LR_0_item_set::MMA_draw(const ALPHABET &alphabet) const {
+  std::string LR_0_item_set::MMA_draw(const CFG &cfg) const {
+    auto const &alphabet = cfg.get_alphabet();
     std::string cmd = "Framed[TableForm[{";
     for (auto const &item : kernel_items) {
       cmd += item.MMA_draw(alphabet);
@@ -36,8 +37,8 @@ namespace cyy::computation {
     }
     if (!nonkernel_items.empty()) {
       cmd += "Framed[TableForm[{";
-      for (auto const &item : nonkernel_items) {
-        cmd += grammar_symbol_type(item).MMA_draw(alphabet);
+      for (auto const &item : expand_nonkernel_items(cfg)) {
+        cmd += item.MMA_draw(alphabet);
         cmd.push_back(',');
       }
       cmd.pop_back();

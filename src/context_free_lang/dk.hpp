@@ -30,7 +30,7 @@ namespace cyy::computation {
 
     const LR_0_item_set &get_LR_0_item_set(state_type state) const;
     const auto &get_LR_0_item_set_collection() const { return collection; }
-    std::string MMA_draw() const;
+    std::string MMA_draw(const CFG &cfg) const;
 
   private:
     std::shared_ptr<DFA> dfa_ptr;
