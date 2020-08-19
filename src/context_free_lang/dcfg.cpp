@@ -49,7 +49,6 @@ namespace cyy::computation {
     }
     auto dk_state_set_alphabet =
         std::make_shared<number_set_alphabet>(state_symbol_set, "dk_state_set");
-    ALPHABET::set(dk_state_set_alphabet);
 
     DPDA::transition_function_type transition_function;
     auto looping_state = dpda_finite_automaton.add_new_state();
@@ -106,7 +105,7 @@ namespace cyy::computation {
         }
 
         for (auto const dk_state : state_symbol_set) {
-          transition_function[to_state][{{}, dk_state}] = {
+          transition_function[from_state][{{}, dk_state}] = {
               looping_state, goto_table[{dk_state, head}]};
         }
       }
@@ -117,7 +116,7 @@ namespace cyy::computation {
     }
     transition_function.make_reject_state(reject_state, alphabet);
     dpda_finite_automaton.replace_final_states(accept_state);
-    return DPDA(dpda_finite_automaton, dk_state_set_alphabet->get_name(),
+    return DPDA(dpda_finite_automaton, dk_state_set_alphabet,
                 transition_function);
   }
   void DCFG::construct_parsing_table() const {
