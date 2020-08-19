@@ -7,6 +7,7 @@
 #include "cfg.hpp"
 #include "context_free_lang/lr_0_item.hpp"
 #include "formal_grammar/grammar_symbol.hpp"
+#include "lang/map_alphabet.hpp"
 #include "regular_lang/dfa.hpp"
 
 namespace cyy::computation {
@@ -33,10 +34,7 @@ namespace cyy::computation {
 
   private:
     std::shared_ptr<DFA> dfa_ptr;
-    std::unordered_map<grammar_symbol_type::nonterminal_type, symbol_type>
-        nonterminal_to_state;
-    std::map<symbol_type, grammar_symbol_type::nonterminal_type>
-        state_to_nonterminal;
+    std::shared_ptr<map_alphabet> alphabet_of_nonterminals;
     lr_0_item_set_collection_type collection;
   };
 } // namespace cyy::computation

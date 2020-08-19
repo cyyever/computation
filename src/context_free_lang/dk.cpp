@@ -5,7 +5,6 @@
 
 #include "dk.hpp"
 #include "cfg.hpp"
-#include "lang/map_alphabet.hpp"
 #include "lang/range_alphabet.hpp"
 #include "lang/union_alphabet.hpp"
 #include "regular_lang/nfa.hpp"
@@ -16,14 +15,18 @@ namespace cyy::computation {
     auto max_symbol = cfg.get_alphabet().get_max_symbol();
     auto nonterminals = cfg.get_nonterminals();
 
+    std::map<symbol_type, grammar_symbol_type::nonterminal_type>
+        symbol_to_ninterminal;
+    std::unordered_map<grammar_symbol_type::nonterminal_type, symbol_type>
+        nonterminal_to_symbol;
     for (auto const &nonterminal : nonterminals) {
       max_symbol++;
-      nonterminal_to_state.emplace(nonterminal, max_symbol);
-      state_to_nonterminal.emplace(max_symbol, nonterminal);
+      nonterminal_to_symbol.emplace(nonterminal, max_symbol);
+      symbol_to_ninterminal.emplace(max_symbol, nonterminal);
     }
 
-    auto alphabet_of_nonterminals = std::make_shared<map_alphabet>(
-        state_to_nonterminal, "alphabet_of_nonterminals");
+    alphabet_of_nonterminals = std::make_shared<map_alphabet>(
+        symbol_to_ninterminal, "alphabet_of_nonterminals");
 
     auto nfa_alphabet = std::make_shared<union_alphabet>(
         cfg.get_alphabet_ptr(), alphabet_of_nonterminals);
@@ -72,7 +75,7 @@ namespace cyy::computation {
             nfa.add_epsilon_transition(
                 cur_state,
                 state_set_type(head_states[grammar_symbol.get_nonterminal()]));
-            symbol = nonterminal_to_state[grammar_symbol.get_nonterminal()];
+            symbol = nonterminal_to_symbol[grammar_symbol.get_nonterminal()];
           }
           nfa.add_transition({cur_state, symbol},
                              {item_to_nfa_state(next_item)});
@@ -104,9 +107,9 @@ namespace cyy::computation {
       if (collection.find(next_state)->second.empty()) {
         continue;
       }
-      auto it = state_to_nonterminal.find(situation.input_symbol);
-      if (it != state_to_nonterminal.end()) {
-        goto_table[{situation.state, it->second}] = next_state;
+      if (alphabet_of_nonterminals->contain(situation.input_symbol)) {
+        goto_table[{situation.state, alphabet_of_nonterminals->get_data(
+                                         situation.input_symbol)}] = next_state;
       } else {
         goto_table[{situation.state, situation.input_symbol}] = next_state;
       }
