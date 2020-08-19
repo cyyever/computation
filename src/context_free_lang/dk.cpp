@@ -5,6 +5,7 @@
 
 #include "dk.hpp"
 #include "cfg.hpp"
+#include "lang/map_alphabet.hpp"
 #include "lang/range_alphabet.hpp"
 #include "lang/union_alphabet.hpp"
 #include "regular_lang/nfa.hpp"
@@ -15,24 +16,24 @@ namespace cyy::computation {
     auto max_symbol = cfg.get_alphabet().get_max_symbol();
     auto nonterminals = cfg.get_nonterminals();
 
-    auto alphabet_of_nonterminals = std::make_shared<range_alphabet>(
-        max_symbol + 1, max_symbol + nonterminals.size(),
-        "alphabet_of_nonterminals");
     for (auto const &nonterminal : nonterminals) {
       max_symbol++;
       nonterminal_to_state.emplace(nonterminal, max_symbol);
       state_to_nonterminal.emplace(max_symbol, nonterminal);
     }
+
+    auto alphabet_of_nonterminals = std::make_shared<map_alphabet>(
+        state_to_nonterminal, "alphabet_of_nonterminals");
+
     auto nfa_alphabet = std::make_shared<union_alphabet>(
         cfg.get_alphabet_ptr(), alphabet_of_nonterminals);
-    ALPHABET::set(nfa_alphabet);
 
     using state_set_type = NFA::state_set_type;
 
     std::unordered_map<LR_0_item, state_type> item_to_nfa_state_map;
     std::unordered_map<state_type, LR_0_item> NFA_state_to_item_map;
 
-    NFA nfa{{0}, nfa_alphabet->get_name(), 0, {}, {}};
+    NFA nfa{{0}, nfa_alphabet, 0, {}, {}};
     auto item_to_nfa_state = [&item_to_nfa_state_map, &NFA_state_to_item_map,
                               &nfa](const LR_0_item &item) {
       auto it = item_to_nfa_state_map.find(item);

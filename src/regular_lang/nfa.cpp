@@ -78,9 +78,9 @@ namespace cyy::computation {
       state_map.emplace(DFA_state, subset);
     }
 
-    return {{DFA_states, alphabet->get_name(), 0, DFA_transition_function,
-             DFA_final_states},
-            state_map};
+    return {
+        {DFA_states, alphabet, 0, DFA_transition_function, DFA_final_states},
+        state_map};
   }
 
   DFA NFA::to_DFA() const { return to_DFA_with_mapping().first; }

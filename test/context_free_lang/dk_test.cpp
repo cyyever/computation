@@ -25,8 +25,6 @@ TEST_CASE("DCFG") {
   SUBCASE("DK") {
     CFG cfg(ALPHABET::get("parentheses", true), "S", productions);
     auto dk = DK_DFA(cfg);
-    for (auto const &[_, set] : dk.get_LR_0_item_set_collection()) {
-      std::cout << set.MMA_draw(cfg.get_alphabet()) << std::endl;
-    }
+    std::cout << dk.MMA_draw() << std::endl;
   }
 }

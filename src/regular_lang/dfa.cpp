@@ -14,7 +14,6 @@
 
 #include "dfa.hpp"
 #include "exception.hpp"
-#include "lang/set_alphabet.hpp"
 
 namespace cyy::computation {
   bool DFA::equivalent_with(const DFA &rhs) const {
@@ -240,8 +239,13 @@ namespace cyy::computation {
     is << "Graph[{";
     for (auto const &[k, v] : edge_labels) {
       auto [from_state, to_state] = k;
-      is << "Labeled[ " << from_state << "->" << to_state << ","
-         << set_alphabet(v, "MMA edge labels").MMA_draw() << "],";
+      is << "Labeled[ " << from_state << "->" << to_state << ",{";
+      for (auto const label : v) {
+        is << alphabet->MMA_draw(label) << ',';
+      }
+      // drop last ,
+      is.seekp(-1, std::ios_base::end);
+      is << "}],";
     }
 
     // drop last ,

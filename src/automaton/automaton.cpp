@@ -115,8 +115,8 @@ namespace cyy::computation {
     is << "GraphLayout -> \"CircularEmbedding\", ImageSize -> "
           "Large,VertexLabels -> "
           "Placed[\"Name\",Center],VertexSize -> "
-          "0.1,VertexShapeFunction -> {";
-    is << get_start_state() << " -> \"Square\"},VertexStyle -> {Gray,";
+          "0.1,VertexShapeFunction -> {"
+       << get_start_state() << " -> \"Square\"},VertexStyle -> {Gray";
     for (auto const s : get_final_states()) {
       is << "," << s << "-> Green";
     }

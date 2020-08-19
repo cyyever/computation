@@ -24,7 +24,6 @@ namespace cyy::computation {
         throw cyy::computation::exception::invalid_alphabet("alphabet1 is not less thant alphabet2");
       }
 
-
       if (name_.empty()) {
         set_name(alphabet1->get_name() + "_union_" + alphabet2->get_name());
       }
@@ -46,6 +45,13 @@ namespace cyy::computation {
       }
       auto it2 = alphabet2->begin();
       return *(it2 + (index - alphabet1_size));
+    }
+  private:
+    std::string __to_string(symbol_type symbol) const override {
+      if (alphabet1->contain(symbol)) {
+        return alphabet1->to_string(symbol);
+      }
+      return alphabet2->to_string(symbol);
     }
 
   private:

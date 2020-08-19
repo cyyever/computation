@@ -35,7 +35,7 @@ namespace cyy::computation {
     std::shared_ptr<DFA> dfa_ptr;
     std::unordered_map<grammar_symbol_type::nonterminal_type, symbol_type>
         nonterminal_to_state;
-    std::unordered_map<symbol_type, grammar_symbol_type::nonterminal_type>
+    std::map<symbol_type, grammar_symbol_type::nonterminal_type>
         state_to_nonterminal;
     lr_0_item_set_collection_type collection;
   };

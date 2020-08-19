@@ -11,8 +11,8 @@
 #include <set>
 #include <vector>
 
-#include "../exception.hpp"
 #include "alphabet.hpp"
+#include "exception.hpp"
 
 namespace cyy::computation {
 
@@ -30,16 +30,6 @@ namespace cyy::computation {
       return std::ranges::binary_search(symbols, s);
     }
     size_t size() const noexcept override { return symbols.size(); }
-
-    std::string MMA_draw() const {
-      std::string cmd = "{";
-      for (auto s : symbols) {
-        cmd += ALPHABET::MMA_draw(s);
-        cmd.push_back(',');
-      }
-      cmd.back() = '}';
-      return cmd;
-    }
 
   private:
     symbol_type get_symbol(size_t index) const noexcept override {
