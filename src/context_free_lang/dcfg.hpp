@@ -9,11 +9,11 @@
 
 #include "dk.hpp"
 #include "dpda.hpp"
-#include "lr_grammar.hpp"
+#include "lr_0_grammar.hpp"
 
 namespace cyy::computation {
 
-  class DCFG : public LR_grammar {
+  class DCFG : public LR_0_grammar {
 
   public:
     DCFG(std::shared_ptr<ALPHABET> alphabet_, nonterminal_type start_symbol_,
@@ -24,7 +24,7 @@ namespace cyy::computation {
 
   private:
     bool DK_test() const;
-    void construct_parsing_table() const override;
+    std::pair<collection_type, goto_table_type> get_collection() const override;
 
   private:
     std::shared_ptr<DK_DFA> dk_dfa_ptr;
