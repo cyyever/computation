@@ -25,6 +25,6 @@ TEST_CASE("DCFG") {
   SUBCASE("DK") {
     CFG cfg(ALPHABET::get("parentheses", true), "S", productions);
     auto dk = DK_DFA(cfg);
-    std::cout << dk.MMA_draw() << std::endl;
+    std::cout << dk.MMA_draw(cfg) << std::endl;
   }
 }
