@@ -99,13 +99,18 @@ namespace cyy::computation {
     dfa_ptr = std::make_shared<DFA>(std::move(dfa));
   }
 
-  DK_DFA::goto_table_type DK_DFA::get_goto_table() const {
+  DK_DFA::goto_table_type DK_DFA::get_goto_table(bool skip_fail_state) const {
     goto_table_type goto_table;
     for (auto const &[situation, next_state] :
          dfa_ptr->get_transition_function()) {
       assert(collection.contains(next_state));
-      if (collection.find(next_state)->second.empty()) {
-        continue;
+      if (skip_fail_state) {
+        if (collection.find(situation.state)->second.empty()) {
+          continue;
+        }
+        if (collection.find(next_state)->second.empty()) {
+          continue;
+        }
       }
       if (alphabet_of_nonterminals->contain(situation.input_symbol)) {
         goto_table[{situation.state, alphabet_of_nonterminals->get_data(

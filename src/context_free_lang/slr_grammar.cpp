@@ -23,6 +23,6 @@ namespace cyy::computation {
       }
       collection[state] = std::move(set);
     }
-    return {collection, dk.get_goto_table()};
+    return {collection, dk.get_goto_table(true)};
   }
 } // namespace cyy::computation

@@ -26,7 +26,7 @@ namespace cyy::computation {
     using goto_table_type =
         std::unordered_map<std::pair<DFA::state_type, grammar_symbol_type>,
                            DFA::state_type>;
-    goto_table_type get_goto_table() const;
+    goto_table_type get_goto_table(bool skip_fail_state = false) const;
 
     const LR_0_item_set &get_LR_0_item_set(state_type state) const;
     const auto &get_LR_0_item_set_collection() const { return collection; }

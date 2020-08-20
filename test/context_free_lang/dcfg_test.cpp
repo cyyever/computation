@@ -39,5 +39,8 @@ TEST_CASE("DCFG") {
     symbol_string str = U"()";
     str.push_back(endmarker);
     CHECK(dpda.recognize(str));
+    str = U"";
+    str.push_back(endmarker);
+    CHECK(dpda.recognize(str));
   }
 }

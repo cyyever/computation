@@ -55,23 +55,20 @@ namespace cyy::computation {
     transition_function[dpda_finite_automaton.get_start_state()][{}] = {
         looping_state, dfa.get_start_state()};
 
-    for (auto const dk_state : state_symbol_set) {
-      if (dfa.is_final_state(dk_state)) {
-        continue;
-      }
-      for (auto const input_symbol : *alphabet) {
-        transition_function.check_stack_and_action(
-            looping_state, {input_symbol, dk_state},
-            {looping_state, dfa.get_transition_function()
-                                .find({dk_state, input_symbol})
-                                ->second},
-            dpda_finite_automaton);
-      }
-    }
     auto accept_state = dpda_finite_automaton.add_new_state();
     auto goto_table = dk_dfa_ptr->get_goto_table();
-    for (auto dk_final_state : dfa.get_final_states()) {
-      auto const &item_set = dk_dfa_ptr->get_LR_0_item_set(dk_final_state);
+    for (auto const dk_state : state_symbol_set) {
+      if (!dfa.is_final_state(dk_state)) {
+        for (auto const input_symbol : *alphabet) {
+          transition_function.check_stack_and_action(
+              looping_state, {input_symbol, dk_state},
+              {looping_state, goto_table[{dk_state, input_symbol}]},
+              dpda_finite_automaton);
+        }
+        continue;
+      }
+      auto dk_final_state = dk_state;
+      auto const &item_set = dk_dfa_ptr->get_LR_0_item_set(dk_state);
       auto const &item = *item_set.get_completed_items().begin();
       auto const &head = item.get_head();
       auto const &body = item.get_body();
@@ -83,11 +80,12 @@ namespace cyy::computation {
       }
 
       if (body.empty()) {
-        auto pop_state = dpda_finite_automaton.add_new_state();
-        transition_function[looping_state][{{}, dk_final_state}] = {
-            pop_state, dk_final_state};
-        transition_function[pop_state][{}] = {
-            looping_state, goto_table[{dk_final_state, head}]};
+        transition_function.check_stack_and_action(
+            looping_state, {{}, dk_final_state},
+            {looping_state, goto_table[{dk_final_state, head}]},
+
+            dpda_finite_automaton);
+
       } else {
         auto from_state = looping_state;
         state_type to_state;
