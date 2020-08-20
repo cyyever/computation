@@ -64,55 +64,63 @@ namespace cyy::computation {
               looping_state, {input_symbol, dk_state},
               {looping_state, goto_table[{dk_state, input_symbol}]},
               dpda_finite_automaton);
+          transition_function.check_stack_and_action(
+              accept_state, {input_symbol, dk_state},
+              {looping_state, goto_table[{dk_state, input_symbol}]},
+              dpda_finite_automaton);
         }
         continue;
       }
       auto dk_final_state = dk_state;
-      auto const &item_set = dk_dfa_ptr->get_LR_0_item_set(dk_state);
-      auto const &item = *item_set.get_completed_items().begin();
+      auto const &item = *(dk_dfa_ptr->get_LR_0_item_set(dk_state)
+                               .get_completed_items()
+                               .begin());
       auto const &head = item.get_head();
       auto const &body = item.get_body();
 
+      bool reduction_in_looping_state = true;
       if (head == get_start_symbol()) {
         transition_function[looping_state][{{}, dk_final_state}] = {
             accept_state};
-        continue;
-      }
-
-      if (body.empty()) {
         transition_function.check_stack_and_action(
-            looping_state, {{}, dk_final_state},
-            {looping_state, goto_table[{dk_final_state, head}]},
-
+            accept_state, {{}, dk_final_state}, {accept_state, dk_final_state},
             dpda_finite_automaton);
+        reduction_in_looping_state = false;
+      }
 
-      } else {
-        auto from_state = looping_state;
-        state_type to_state;
-        // pop body states from stack
-        for (size_t i = 0; i < body.size(); i++) {
-          to_state = dpda_finite_automaton.add_new_state();
-          if (i == 0) {
-            transition_function[from_state][{{}, dk_final_state}] = {to_state};
-          } else {
-            for (auto dk_state : *dk_state_set_alphabet) {
-              transition_function[from_state][{{}, dk_state}] = {to_state};
-            }
-          }
-          from_state = to_state;
+      for (auto tmp_looping_state : {looping_state, accept_state}) {
+        if (tmp_looping_state == looping_state && !reduction_in_looping_state) {
+          continue;
         }
+        if (body.empty()) {
+          transition_function.check_stack_and_action(
+              tmp_looping_state, {{}, dk_final_state},
+              {tmp_looping_state, goto_table[{dk_final_state, head}]},
+              dpda_finite_automaton);
+        } else {
+          auto from_state = tmp_looping_state;
+          state_type to_state;
+          // pop body states from stack
+          for (size_t i = 0; i < body.size(); i++) {
+            to_state = dpda_finite_automaton.add_new_state();
+            if (i == 0) {
+              transition_function[from_state][{{}, dk_final_state}] = {
+                  to_state};
+            } else {
+              for (auto dk_state : *dk_state_set_alphabet) {
+                transition_function[from_state][{{}, dk_state}] = {to_state};
+              }
+            }
+            from_state = to_state;
+          }
 
-        for (auto const dk_state : state_symbol_set) {
-          transition_function[from_state][{{}, dk_state}] = {
-              looping_state, goto_table[{dk_state, head}]};
+          for (auto const dk_state : state_symbol_set) {
+            transition_function[from_state][{{}, dk_state}] = {
+                tmp_looping_state, goto_table[{dk_state, head}]};
+          }
         }
       }
     }
-    auto reject_state = dpda_finite_automaton.add_new_state();
-    for (auto const input_symbol : *alphabet) {
-      transition_function[accept_state][{input_symbol}] = {reject_state};
-    }
-    transition_function.make_reject_state(reject_state, alphabet);
     dpda_finite_automaton.replace_final_states(accept_state);
     return DPDA(dpda_finite_automaton, dk_state_set_alphabet,
                 transition_function);
