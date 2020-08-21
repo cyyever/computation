@@ -11,7 +11,7 @@
 
 namespace cyy::computation {
 
-  class endmarked_alphabet : public ALPHABET {
+  class endmarked_alphabet final : public ALPHABET {
   public:
     endmarked_alphabet(std::shared_ptr<ALPHABET> alphabet_)
         : ALPHABET("placeholder"), alphabet{alphabet_} {
@@ -36,7 +36,15 @@ namespace cyy::computation {
       real_size += alphabet->size();
       return real_size;
     }
+    bool support_ASCII_escape_sequence() const override {
+      return alphabet->support_ASCII_escape_sequence();
+    }
     auto original_alphabet() const { return alphabet; }
+
+  protected:
+    std::string __to_string(symbol_type symbol) const override {
+      return alphabet->to_string(symbol);
+    }
 
   private:
     symbol_type get_symbol(size_t index) const noexcept override {

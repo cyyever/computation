@@ -46,6 +46,9 @@ namespace cyy::computation {
       auto it2 = alphabet2->begin();
       return *(it2 + (index - alphabet1_size));
     }
+    bool support_ASCII_escape_sequence() const override {
+      return alphabet1->support_ASCII_escape_sequence() || alphabet2->support_ASCII_escape_sequence();
+    }
   private:
     std::string __to_string(symbol_type symbol) const override {
       if (alphabet1->contain(symbol)) {

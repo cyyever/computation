@@ -182,7 +182,7 @@ namespace cyy::computation {
     using syntax_node_ptr = std::shared_ptr<regex::syntax_node>;
 
     auto escape_symbol = [this](symbol_type symbol) -> symbol_type {
-      if (alphabet->contains_ASCII()) {
+      if (alphabet->support_ASCII_escape_sequence()) {
         switch (symbol) {
           case 'f':
             return '\f';
@@ -266,7 +266,7 @@ namespace cyy::computation {
         if (finish_production && body.size() == 1 && body[0].is_terminal()) {
           auto symbol = body[0].get_terminal();
           if (symbol == '.') {
-            if (alphabet->contains_ASCII()) {
+            if (alphabet->support_ASCII_escape_sequence()) {
               node_stack.emplace_back(
                   make_complemented_character_class({'\n', '\r'}));
             } else {

@@ -6,6 +6,7 @@
  */
 
 #include "common_tokens.hpp"
+#include "ascii.hpp"
 
 namespace cyy::computation {
   std::string common_tokens::__to_string(symbol_type symbol) const {
@@ -33,7 +34,6 @@ namespace cyy::computation {
       case common_token::__end:
         return "";
     }
-    return ALPHABET::__to_string(symbol);
+    return ASCII().to_string(symbol);
   }
-  bool common_tokens::contains_ASCII() const { return true; }
 } // namespace cyy::computation

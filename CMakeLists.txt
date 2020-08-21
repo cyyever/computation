@@ -22,7 +22,7 @@ endif()
 
 target_include_directories(
   MyComputationLib PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
-                          $<INSTALL_INTERFACE:include>)
+                          $<INSTALL_INTERFACE:include/cyy/computation>)
 
 # test
   add_subdirectory(test)

@@ -131,7 +131,6 @@ namespace cyy::computation {
     return it->second;
   }
   std::string DK_DFA::MMA_draw(const CFG &cfg) const {
-    auto const &alphabet = dfa_ptr->get_alphabet();
     std::string cmd = "TableForm[{";
     for (auto const &[state, set] : collection) {
       cmd += std::to_string(state) + "->" + set.MMA_draw(cfg);

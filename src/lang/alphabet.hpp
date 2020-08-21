@@ -107,7 +107,7 @@ namespace cyy::computation {
     const std::string &get_name() const { return name; }
 
     bool operator==(const ALPHABET &rhs) const = default;
-    virtual bool contains_ASCII() const { return false; }
+    virtual bool support_ASCII_escape_sequence() const { return false; }
     std::string MMA_draw(symbol_type symbol) const;
 
     static std::shared_ptr<ALPHABET> get(std::string_view name,

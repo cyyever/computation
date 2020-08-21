@@ -32,7 +32,7 @@ namespace cyy::computation {
 
   private:
     std::string __to_string(symbol_type symbol) const override;
-    bool contains_ASCII() const override;
+    bool support_ASCII_escape_sequence() const override { return true; }
   };
 
 } // namespace cyy::computation
