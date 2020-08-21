@@ -123,11 +123,11 @@ namespace cyy::computation {
       }
       name = std::move(name_);
     }
+
+  private:
     virtual std::string __to_string(symbol_type symbol) const {
       return {'\'', static_cast<char>(symbol), '\''};
     }
-
-  private:
     virtual symbol_type get_symbol(size_t index) const = 0;
 
     symbol_type add_max_symbol(size_t inc) const {

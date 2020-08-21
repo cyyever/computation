@@ -41,12 +41,11 @@ namespace cyy::computation {
     }
     auto original_alphabet() const { return alphabet; }
 
-  protected:
+  private:
     std::string __to_string(symbol_type symbol) const override {
       return alphabet->to_string(symbol);
     }
 
-  private:
     symbol_type get_symbol(size_t index) const noexcept override {
       if (index + 1 == size()) {
         return ALPHABET::endmarker;
