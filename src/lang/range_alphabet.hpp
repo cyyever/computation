@@ -28,7 +28,6 @@ namespace cyy::computation {
     }
 
   private:
-
     symbol_type get_symbol(size_t index) const noexcept override {
       return static_cast<symbol_type>(min_symbol + index);
     }
