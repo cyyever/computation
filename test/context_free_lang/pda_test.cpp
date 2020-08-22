@@ -39,31 +39,13 @@ TEST_CASE("recognize PDA") {
               {{2, {}, endmarker}, {{3, {}}}},
           });
 
-  SUBCASE("0") {
-    symbol_string str = U"0";
-    CHECK(!pda.recognize(str));
-  }
+  SUBCASE("0") { CHECK(!pda.recognize(U"0")); }
 
-  SUBCASE("01") {
-    symbol_string str = U"01";
-    CHECK(!pda.recognize(str));
-  }
-  SUBCASE("010") {
-    symbol_string str = U"010";
-    CHECK(!pda.recognize(str));
-  }
-  SUBCASE("0101") {
-    symbol_string str = U"0101";
-    CHECK(!pda.recognize(str));
-  }
-  SUBCASE("0110") {
-    symbol_string str = U"0110";
-    CHECK(pda.recognize(str));
-  }
-  SUBCASE("1001") {
-    symbol_string str = U"1001";
-    CHECK(pda.recognize(str));
-  }
+  SUBCASE("01") { CHECK(!pda.recognize(U"01")); }
+  SUBCASE("010") { CHECK(!pda.recognize(U"010")); }
+  SUBCASE("0101") { CHECK(!pda.recognize(U"0101")); }
+  SUBCASE("0110") { CHECK(pda.recognize(U"0110")); }
+  SUBCASE("1001") { CHECK(pda.recognize(U"1001")); }
   SUBCASE("prepare_CFG_conversion") {
     pda.prepare_CFG_conversion();
     symbol_string str = U"1001";
@@ -75,10 +57,14 @@ TEST_CASE("recognize PDA") {
     auto cfg = PDA_to_CFG(PDA(pda));
     cfg.to_CNF();
     CNF cnf(cfg);
-    symbol_string str = U"1001";
-    CHECK(cnf.parse(str));
-    str = U"0101";
-    CHECK(!cnf.parse(str));
+
+    SUBCASE("0") { CHECK(!cnf.parse(U"0")); }
+
+    SUBCASE("01") { CHECK(!cnf.parse(U"01")); }
+    SUBCASE("010") { CHECK(!cnf.parse(U"010")); }
+    SUBCASE("0101") { CHECK(!cnf.parse(U"0101")); }
+    SUBCASE("0110") { CHECK(cnf.parse(U"0110")); }
+    SUBCASE("1001") { CHECK(cnf.parse(U"1001")); }
   }
   SUBCASE("draw") { std::cout << pda.MMA_draw() << std::endl; }
 }

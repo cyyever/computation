@@ -109,6 +109,7 @@ namespace cyy::computation {
 
     void normalize();
     DPDA complement() const;
+    auto const &get_transition_function() const { return transition_function; }
 
     std::string MMA_draw() const;
 

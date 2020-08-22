@@ -68,6 +68,7 @@ namespace cyy::computation {
     auto const get_states() const noexcept { return std::views::all(states); }
     auto const &get_state_set() const noexcept { return states; }
     auto const &get_alphabet() const noexcept { return *alphabet; }
+    auto const &get_alphabet_ptr() const noexcept { return alphabet; }
     auto const &get_final_states() const noexcept { return final_states; }
     state_type get_start_state() const noexcept { return start_state; }
     bool operator==(const finite_automaton &rhs) const = default;

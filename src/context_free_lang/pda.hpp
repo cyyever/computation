@@ -35,7 +35,9 @@ namespace cyy::computation {
       std::optional<input_symbol_type> input_symbol;
       std::optional<stack_symbol_type> stack_symbol;
       bool use_input() const { return input_symbol.has_value(); }
+      auto get_input() const { return input_symbol.value(); }
       bool has_pop() const { return stack_symbol.has_value(); }
+      auto get_stack_symbol() const { return stack_symbol.value(); }
       bool operator==(const situation_type &) const noexcept = default;
     };
 

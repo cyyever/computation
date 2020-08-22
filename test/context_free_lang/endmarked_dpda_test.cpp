@@ -5,9 +5,11 @@
  */
 #include <doctest/doctest.h>
 
-#include "../../src/context_free_lang/dpda.hpp"
-#include "../../src/context_free_lang/endmarked_dpda.hpp"
-#include "../../src/lang/alphabet.hpp"
+#include "context_free_lang/cnf.hpp"
+#include "context_free_lang/dpda.hpp"
+#include "context_free_lang/endmarked_dpda.hpp"
+#include "context_free_lang/model_transform.hpp"
+#include "lang/alphabet.hpp"
 
 using namespace cyy::computation;
 TEST_CASE("endmarked DPDA") {
@@ -65,7 +67,7 @@ TEST_CASE("endmarked DPDA") {
     }
 
     SUBCASE("prepare_CFG_conversion") {
-      endmarked_dpda.prepare_CFG_conversion();
+      endmarked_dpda.prepare_DCFG_conversion();
       SUBCASE("recognize") {
         for (auto str : {U"0", U"1"}) {
           endmarked_str = str;
@@ -79,6 +81,21 @@ TEST_CASE("endmarked DPDA") {
           endmarked_str = str;
           endmarked_str.push_back(ALPHABET::endmarker);
           CHECK(!endmarked_dpda.recognize(endmarked_str));
+        }
+      }
+    }
+    SUBCASE("to CFG") {
+      auto cfg = DPDA_to_CFG(endmarked_dpda);
+      CNF cnf(cfg);
+      SUBCASE("recognize") {
+        for (auto str : {U"0", U"1"}) {
+          CHECK(cnf.parse(str));
+        }
+      }
+
+      SUBCASE("can't recognize") {
+        for (auto str : {U"", U"01", U"00", U"10", U"11"}) {
+          CHECK(!cnf.parse(str));
         }
       }
     }

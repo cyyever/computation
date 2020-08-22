@@ -321,7 +321,7 @@ namespace cyy::computation {
     transition_normalized = true;
   }
 
-  void endmarked_DPDA::prepare_CFG_conversion() {
+  void endmarked_DPDA::prepare_DCFG_conversion() {
     auto new_start_state = add_new_state();
     transition_function.add_epsilon_transition(
         new_start_state, {get_start_state(), ALPHABET::endmarker});
@@ -330,6 +330,7 @@ namespace cyy::computation {
     assert(final_states.size() == 1);
     auto state_of_clearing_stack = add_new_state();
     for (auto final_state : final_states) {
+      transition_function.erase(final_state);
       transition_function.add_epsilon_transition(final_state,
                                                  {state_of_clearing_stack});
     }
@@ -387,6 +388,7 @@ namespace cyy::computation {
         assert(situation.has_pop() != action.has_push());
       }
     }
+    check_transition_fuction();
 #endif
   }
 } // namespace cyy::computation

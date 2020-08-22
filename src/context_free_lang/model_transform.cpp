@@ -5,9 +5,11 @@
  * \date 2018-03-04
  */
 
-#include "model_transform.hpp"
-#include "automaton/automaton.hpp"
 #include <unordered_map>
+#include <vector>
+
+#include "automaton/automaton.hpp"
+#include "model_transform.hpp"
 
 namespace cyy::computation {
 
@@ -126,26 +128,22 @@ namespace cyy::computation {
     using from_state_type = PDA::state_type;
     using to_state_type = PDA::state_type;
     std::map<PDA::stack_symbol_type,
-             std::set<std::tuple<from_state_type,
-                                 std::optional<PDA::input_symbol_type>,
-                                 to_state_type>>>
+             std::vector<std::tuple<PDA::situation_type, to_state_type>>>
         push_stack_transitions;
 
     std::map<PDA::stack_symbol_type,
-             std::set<std::tuple<from_state_type,
-                                 std::optional<PDA::input_symbol_type>,
-                                 to_state_type>>>
+             std::vector<std::tuple<PDA::situation_type, to_state_type>>>
         pop_stack_transitions;
 
     for (auto &[situation, actions] : pda.get_transition_function()) {
       auto const &top_symbol = situation.stack_symbol;
       for (auto const &action : actions) {
         if (top_symbol.has_value()) {
-          pop_stack_transitions[*top_symbol].emplace(
-              situation.state, situation.input_symbol, action.state);
+          pop_stack_transitions[*top_symbol].emplace_back(situation,
+                                                          action.state);
         } else if (action.stack_symbol.has_value()) {
-          push_stack_transitions[*action.stack_symbol].emplace(
-              situation.state, situation.input_symbol, action.state);
+          push_stack_transitions[*action.stack_symbol].emplace_back(
+              situation, action.state);
         }
       }
     }
@@ -166,22 +164,21 @@ namespace cyy::computation {
         continue;
       }
 
-      for (auto const &[prev_from_state, prev_input, prev_to_state] :
-           prev_step) {
-        for (auto const &[next_from_state, next_input, next_to_state] :
-             it->second) {
+      for (auto const &[prev_situation, prev_to_state] : prev_step) {
+        for (auto const &[next_situation, next_to_state] : it->second) {
 
           CFG_production::body_type body;
 
-          if (prev_input.has_value()) {
-            body.emplace_back(*prev_input);
+          if (prev_situation.use_input()) {
+            body.emplace_back(prev_situation.get_input());
           }
-          body.emplace_back(get_nonterminal(prev_to_state, next_from_state));
+          body.emplace_back(
+              get_nonterminal(prev_to_state, next_situation.state));
 
-          if (next_input.has_value()) {
-            body.emplace_back(*next_input);
+          if (next_situation.use_input()) {
+            body.emplace_back(next_situation.get_input());
           }
-          productions[get_nonterminal(prev_from_state, next_to_state)]
+          productions[get_nonterminal(prev_situation.state, next_to_state)]
               .emplace_back(std::move(body));
         }
       }
@@ -196,8 +193,85 @@ namespace cyy::computation {
       }
     }
     return CFG(
-        pda.get_alphabet().get_name(),
+        pda.get_alphabet_ptr(),
         get_nonterminal(pda.get_start_state(), *pda.get_final_states().begin()),
         productions);
+  }
+  CFG DPDA_to_CFG(endmarked_DPDA dpda) {
+    dpda.prepare_DCFG_conversion();
+    using from_state_type = endmarked_DPDA::state_type;
+    using to_state_type = endmarked_DPDA::state_type;
+    using input_symbol_type = endmarked_DPDA::input_symbol_type;
+    using stack_symbol_type = endmarked_DPDA::stack_symbol_type;
+
+    std::map<
+        stack_symbol_type,
+        std::set<std::tuple<from_state_type, std::optional<input_symbol_type>,
+                            to_state_type>>>
+        push_stack_transitions;
+
+    std::map<
+        stack_symbol_type,
+        std::set<std::tuple<from_state_type, std::optional<input_symbol_type>,
+                            to_state_type>>>
+        pop_stack_transitions;
+
+    for (auto &[from_state, transfers] : dpda.get_transition_function()) {
+      for (const auto &[situation, action] : transfers) {
+        auto next_state = action.state;
+        auto const &top_symbol = situation.stack_symbol;
+        if (top_symbol.has_value()) {
+          pop_stack_transitions[*top_symbol].emplace(
+              from_state, situation.input_symbol, next_state);
+        } else if (action.stack_symbol.has_value()) {
+          push_stack_transitions[*action.stack_symbol].emplace(
+              from_state, situation.input_symbol, next_state);
+        }
+      }
+    }
+
+    auto get_nonterminal = [](from_state_type from_state,
+                              to_state_type to_state) {
+      return "A_" + std::to_string(from_state) + "_" + std::to_string(to_state);
+    };
+
+    CFG::production_set_type productions;
+    for (auto const s : dpda.get_states()) {
+      productions[get_nonterminal(s, s)] = {{}};
+    }
+
+    for (auto const &[stack_symbol, prev_step] : push_stack_transitions) {
+      auto it = pop_stack_transitions.find(stack_symbol);
+      if (it == pop_stack_transitions.end()) {
+        continue;
+      }
+
+      for (auto const &[prev_from_state, prev_input, prev_to_state] :
+           prev_step) {
+        for (auto const &[next_from_state, next_input, next_to_state] :
+             it->second) {
+          for (auto state : dpda.get_states()) {
+            auto head = get_nonterminal(state, next_to_state);
+            CFG_production::body_type body;
+            body.emplace_back(get_nonterminal(state, prev_from_state));
+
+            if (prev_input.has_value()) {
+              body.emplace_back(*prev_input);
+            }
+            body.emplace_back(get_nonterminal(prev_to_state, next_from_state));
+
+            if (next_input.has_value()) {
+              body.emplace_back(*next_input);
+            }
+            productions[head].emplace_back(std::move(body));
+          }
+        }
+      }
+    }
+    assert(dpda.get_final_states().size() == 1);
+    return CFG(dpda.get_alphabet_ptr(),
+               get_nonterminal(dpda.get_start_state(),
+                               *dpda.get_final_states().begin()),
+               productions);
   }
 } // namespace cyy::computation
