@@ -28,8 +28,6 @@ namespace cyy::computation {
   public:
     using terminal_type = grammar_symbol_type::terminal_type;
     using nonterminal_type = grammar_symbol_type::nonterminal_type;
-    /* using terminal_set_type = std::set<terminal_type>; */
-    /* using nonterminal_set_type = std::set<nonterminal_type>; */
     using terminal_set_type = std::unordered_set<terminal_type>;
     using nonterminal_set_type = std::unordered_set<nonterminal_type>;
     using production_set_type =

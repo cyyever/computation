@@ -71,6 +71,11 @@ namespace cyy::computation {
     public:
       using __transition_function_type::__transition_function_type;
 
+      void add_epsilon_transition(state_type from_state, action_type action) {
+        auto &transfers = operator[](from_state);
+        transfers.emplace(situation_type{}, std::move(action));
+      }
+
       void check_stack_and_action(state_type from_state,
                                   situation_type situation, action_type action,
                                   finite_automaton &automata) {
@@ -98,23 +103,12 @@ namespace cyy::computation {
       check_transition_fuction();
     }
 
-    /*
-    DPDA(state_set_type states_, ALPHABET_ptr input_alphabet_,
-         ALPHABET_ptr stack_alphabet_, state_type start_state_,
-         transition_function_type transition_function_,
-         state_set_type final_states_)
-        : DPDA(finite_automaton(std::move(states_), input_alphabet_,
-                                start_state_, std::move(final_states_)),
-               stack_alphabet_, std::move(transition_function_)) {}
-               */
     bool operator==(const DPDA &rhs) const = default;
 
     bool recognize(symbol_string_view view) const;
 
     void normalize();
     DPDA complement() const;
-
-    /* void prepare_CFG_conversion(); */
 
     std::string MMA_draw() const;
 

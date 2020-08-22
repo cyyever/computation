@@ -15,6 +15,8 @@ namespace cyy::computation {
 
     DPDA to_DPDA() const;
 
+    void prepare_CFG_conversion();
+
   private:
     state_set_type get_accept_states() const;
     void normalize_transitions();

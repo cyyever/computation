@@ -321,4 +321,72 @@ namespace cyy::computation {
     transition_normalized = true;
   }
 
+  void endmarked_DPDA::prepare_CFG_conversion() {
+    auto new_start_state = add_new_state();
+    transition_function.add_epsilon_transition(
+        new_start_state, {get_start_state(), ALPHABET::endmarker});
+    change_start_state(new_start_state);
+
+    assert(final_states.size() == 1);
+    auto state_of_clearing_stack = add_new_state();
+    for (auto final_state : final_states) {
+      transition_function.add_epsilon_transition(final_state,
+                                                 {state_of_clearing_stack});
+    }
+
+    for (auto const used_stack_symbol : *stack_alphabet) {
+      transition_function[state_of_clearing_stack][{{}, used_stack_symbol}] = {
+          state_of_clearing_stack};
+    }
+    auto new_accept_state = add_new_state();
+    transition_function[state_of_clearing_stack][{{}, ALPHABET::endmarker}] = {
+        new_accept_state};
+    for (auto s : *alphabet) {
+      transition_function[new_accept_state][{s}] = {reject_state_opt.value()};
+    }
+    replace_final_states(new_accept_state);
+
+    transition_function_type new_transition;
+
+    auto placeholder_stack_symbol = stack_alphabet->get_min_symbol();
+    for (auto &[from_state, transfers] : transition_function) {
+      decltype(transfers) new_transfers;
+      for (auto &[situation, action] : transfers) {
+        // pop or push
+        if (situation.has_pop() != action.has_push()) {
+          new_transfers.emplace(std::move(situation), std::move(action));
+          continue;
+        }
+
+        // no pop and push
+        if (!situation.has_pop()) {
+          auto old_action = action;
+          auto new_state = add_new_state();
+          action = {new_state, placeholder_stack_symbol};
+          new_transfers.emplace(std::move(situation), std::move(action));
+          for (auto stack_symbol : *stack_alphabet) {
+            new_transition[new_state][{{}, stack_symbol}] = {old_action.state};
+          }
+          continue;
+        }
+
+        // pop and push
+        auto old_action = action;
+        auto new_state = add_new_state();
+        action = {new_state};
+        new_transfers.emplace(std::move(situation), std::move(action));
+        new_transition[new_state][{}] = old_action;
+      }
+      transfers = std::move(new_transfers);
+    }
+
+    transition_function.merge(std::move(new_transition));
+#ifndef NDEBUG
+    for (auto &[from_state, transfers] : transition_function) {
+      for (auto &[situation, action] : transfers) {
+        assert(situation.has_pop() != action.has_push());
+      }
+    }
+#endif
+  }
 } // namespace cyy::computation

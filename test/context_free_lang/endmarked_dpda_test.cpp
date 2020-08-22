@@ -11,7 +11,6 @@
 
 using namespace cyy::computation;
 TEST_CASE("endmarked DPDA") {
-  auto endmarker = ALPHABET::endmarker;
   finite_automaton dpda_automata({0, 1, 2}, "01_set", 0, {1});
   DPDA dpda(dpda_automata, "01_set",
             {{0,
@@ -44,16 +43,15 @@ TEST_CASE("endmarked DPDA") {
     }
   }
 
-  SUBCASE("endmarked_dpda") {
+  SUBCASE("test endmarked_DPDA") {
     endmarked_DPDA endmarked_dpda(dpda);
 
-    auto endmarker = ALPHABET::endmarker;
     std::u32string endmarked_str;
 
     SUBCASE("recognize") {
       for (auto str : {U"0", U"1"}) {
         endmarked_str = str;
-        endmarked_str.push_back(endmarker);
+        endmarked_str.push_back(ALPHABET::endmarker);
         CHECK(endmarked_dpda.recognize(endmarked_str));
       }
     }
@@ -61,11 +59,45 @@ TEST_CASE("endmarked DPDA") {
     SUBCASE("can't recognize") {
       for (auto str : {U"", U"01", U"00", U"10", U"11"}) {
         endmarked_str = str;
-        endmarked_str.push_back(endmarker);
+        endmarked_str.push_back(ALPHABET::endmarker);
         CHECK(!endmarked_dpda.recognize(endmarked_str));
       }
     }
 
-    SUBCASE("to DPDA") { auto reverted_dpda = endmarked_dpda.to_DPDA(); }
+    SUBCASE("prepare_CFG_conversion") {
+      endmarked_dpda.prepare_CFG_conversion();
+      SUBCASE("recognize") {
+        for (auto str : {U"0", U"1"}) {
+          endmarked_str = str;
+          endmarked_str.push_back(ALPHABET::endmarker);
+          CHECK(endmarked_dpda.recognize(endmarked_str));
+        }
+      }
+
+      SUBCASE("can't recognize") {
+        for (auto str : {U"", U"01", U"00", U"10", U"11"}) {
+          endmarked_str = str;
+          endmarked_str.push_back(ALPHABET::endmarker);
+          CHECK(!endmarked_dpda.recognize(endmarked_str));
+        }
+      }
+    }
+
+    SUBCASE("to DPDA") {
+      auto reverted_dpda = endmarked_dpda.to_DPDA();
+      /*
+      SUBCASE("recognize") {
+        for (auto str : {U"0", U"1"}) {
+          CHECK(reverted_dpda.recognize(str));
+        }
+      }
+
+      SUBCASE("can't recognize") {
+        for (auto str : {U"", U"01", U"00", U"10", U"11"}) {
+          CHECK(!reverted_dpda.recognize(str));
+        }
+      }
+      */
+    }
   }
 }

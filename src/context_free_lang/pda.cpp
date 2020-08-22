@@ -138,7 +138,6 @@ namespace cyy::computation {
     }
 
     transition_function.merge(std::move(new_transition));
-    assert(final_states.size() == 1);
 
 #ifndef NDEBUG
     for (const auto &[k, v] : transition_function) {
