@@ -122,7 +122,7 @@ namespace cyy::computation {
   }
 
   CFG PDA_to_CFG(PDA pda) {
-    pda.normalize_transitions();
+    pda.prepare_CFG_conversion();
     using from_state_type = PDA::state_type;
     using to_state_type = PDA::state_type;
     std::map<PDA::stack_symbol_type,

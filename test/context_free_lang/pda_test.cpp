@@ -64,8 +64,8 @@ TEST_CASE("recognize PDA") {
     symbol_string str = U"1001";
     CHECK(pda.recognize(str));
   }
-  SUBCASE("normalize") {
-    pda.normalize_transitions();
+  SUBCASE("prepare_CFG_conversion") {
+    pda.prepare_CFG_conversion();
     symbol_string str = U"1001";
     CHECK(pda.recognize(str));
     str = U"0101";

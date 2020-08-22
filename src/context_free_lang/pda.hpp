@@ -85,7 +85,7 @@ namespace cyy::computation {
 
     bool recognize(symbol_string_view view) const;
 
-    void normalize_transitions();
+    void prepare_CFG_conversion();
 
     std::string MMA_draw() const;
 

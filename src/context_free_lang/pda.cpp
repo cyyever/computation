@@ -94,7 +94,7 @@ namespace cyy::computation {
     transition_function[{from_state}] = {{to_state}};
   }
 
-  void PDA::normalize_transitions() {
+  void PDA::prepare_CFG_conversion() {
     auto new_start_state = add_new_state();
     transition_function[{new_start_state}] = {
         {get_start_state(), ALPHABET::endmarker}};
@@ -105,7 +105,7 @@ namespace cyy::computation {
       add_epsilon_transition(final_state, state_of_clearing_stack);
     }
 
-    for (auto const used_stack_symbol : *stack_alphabet) {
+    for (auto const used_stack_symbol : get_in_use_stack_symbols()) {
       transition_function[{state_of_clearing_stack, {}, used_stack_symbol}] = {
           {state_of_clearing_stack}};
     }
