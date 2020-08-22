@@ -43,6 +43,9 @@ namespace cyy::computation {
     std::string get_data(symbol_type symbol) const {
       return symbol_map.at(symbol);
     }
+    symbol_type get_symbol(const std::string& data) const {
+      return reverse_symbol_map.at(data);
+    }
 
   private:
     std::string __to_string(symbol_type symbol) const override {

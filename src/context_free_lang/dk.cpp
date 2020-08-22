@@ -15,28 +15,14 @@ namespace cyy::computation {
     auto max_symbol = cfg.get_alphabet().get_max_symbol();
     auto nonterminals = cfg.get_nonterminals();
 
-    std::map<symbol_type, grammar_symbol_type::nonterminal_type>
-        symbol_to_ninterminal;
-    std::unordered_map<grammar_symbol_type::nonterminal_type, symbol_type>
-        nonterminal_to_symbol;
-    for (auto const &nonterminal : nonterminals) {
-      max_symbol++;
-      nonterminal_to_symbol.emplace(nonterminal, max_symbol);
-      symbol_to_ninterminal.emplace(max_symbol, nonterminal);
-    }
-
-    alphabet_of_nonterminals = std::make_shared<map_alphabet>(
-        symbol_to_ninterminal, "alphabet_of_nonterminals");
-
-    auto nfa_alphabet = std::make_shared<union_alphabet>(
-        cfg.get_alphabet_ptr(), alphabet_of_nonterminals);
+    alphabet_of_nonterminals = cfg.get_nonterminal_alphabet();
 
     using state_set_type = NFA::state_set_type;
 
     std::unordered_map<LR_0_item, state_type> item_to_nfa_state_map;
     std::unordered_map<state_type, LR_0_item> NFA_state_to_item_map;
 
-    NFA nfa{{0}, nfa_alphabet, 0, {}, {}};
+    NFA nfa{{0}, cfg.get_full_alphabet(), 0, {}, {}};
     auto item_to_nfa_state = [&item_to_nfa_state_map, &NFA_state_to_item_map,
                               &nfa](const LR_0_item &item) {
       auto it = item_to_nfa_state_map.find(item);
@@ -75,7 +61,8 @@ namespace cyy::computation {
             nfa.add_epsilon_transition(
                 cur_state,
                 state_set_type(head_states[grammar_symbol.get_nonterminal()]));
-            symbol = nonterminal_to_symbol[grammar_symbol.get_nonterminal()];
+            symbol = alphabet_of_nonterminals->get_symbol(
+                grammar_symbol.get_nonterminal());
           }
           nfa.add_transition({cur_state, symbol},
                              {item_to_nfa_state(next_item)});
