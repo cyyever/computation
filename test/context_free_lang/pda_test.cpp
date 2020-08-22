@@ -19,7 +19,8 @@ TEST_CASE("recognize PDA") {
   ALPHABET::set(input_alphabet);
 
   auto endmarker = ALPHABET::endmarker;
-  PDA pda({0, 1, 2, 3}, "01_set", "01_set", 0,
+  finite_automaton pda_automata({0, 1, 2, 3}, "01_set", 0, {3});
+  PDA pda(std::move(pda_automata), "01_set",
           {
               {{0}, {{1, endmarker}}},
               {{
@@ -36,8 +37,7 @@ TEST_CASE("recognize PDA") {
               {{2, U'0', U'0'}, {{2, {}}}},
               {{2, U'1', U'1'}, {{2, {}}}},
               {{2, {}, endmarker}, {{3, {}}}},
-          },
-          {3});
+          });
 
   SUBCASE("0") {
     symbol_string str = U"0";

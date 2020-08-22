@@ -18,6 +18,12 @@ namespace cyy::computation {
       if (symbol_map.empty()) {
         throw exception::empty_alphabet("symbol map is empty");
       }
+      for (auto const &[symbol, data] : symbol_map) {
+        auto has_inserted=reverse_symbol_map.try_emplace(data, symbol).second;
+        if(!has_inserted) {
+          throw exception::invalid_alphabet(std::string("same data ")+data+" in several symbols");
+        }
+      }
     }
     bool contain(symbol_type s) const noexcept override {
       return symbol_map.contains(s);
@@ -44,12 +50,13 @@ namespace cyy::computation {
     }
     symbol_type get_symbol(size_t index) const noexcept override {
       auto it = symbol_map.begin();
-      std::advance(it,index);
+      std::advance(it, index);
       return it->first;
     }
 
   private:
     std::map<symbol_type, std::string> symbol_map;
+    std::map<std::string, symbol_type> reverse_symbol_map;
   };
 
 } // namespace cyy::computation

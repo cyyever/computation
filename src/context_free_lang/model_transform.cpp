@@ -6,7 +6,7 @@
  */
 
 #include "model_transform.hpp"
-#include "../automaton/automaton.hpp"
+#include "automaton/automaton.hpp"
 #include <unordered_map>
 
 namespace cyy::computation {
@@ -63,8 +63,10 @@ namespace cyy::computation {
     PDA::state_type loop_state = 1;
     PDA::state_type final_state = 2;
     std::set<PDA::state_type> states{start_state, loop_state, final_state};
+    finite_automaton dpda_automata(states, cfg.get_alphabet_ptr(), start_state,
+                                   {final_state});
     PDA::transition_function_type transition_function;
-    auto push_body = [&states, &get_stack_symbol, &transition_function](
+    auto push_body = [&dpda_automata, &get_stack_symbol, &transition_function](
                          PDA::state_type from_state, PDA::state_type to_state,
                          const std::optional<CFG::nonterminal_type> &head,
                          const CFG_production::body_type &body) {
@@ -74,8 +76,7 @@ namespace cyy::computation {
         if (body.size() <= 1) {
           new_state = to_state;
         } else {
-          new_state = *states.rbegin() + 1;
-          states.insert(new_state);
+          new_state = dpda_automata.add_new_state();
         }
         std::optional<PDA::stack_symbol_type> new_top;
         if (it != body.rend()) {
@@ -93,8 +94,7 @@ namespace cyy::computation {
         if (it + 1 == body.rend()) {
           new_state = to_state;
         } else {
-          new_state = *states.rbegin() + 1;
-          states.insert(new_state);
+          new_state = dpda_automata.add_new_state();
         }
 
         transition_function[{old_state}].emplace(new_state,
@@ -117,8 +117,8 @@ namespace cyy::computation {
     }
     transition_function[{loop_state, {}, get_stack_symbol(ALPHABET::endmarker)}]
         .emplace(final_state, std::optional<PDA::stack_symbol_type>{});
-    return PDA(std::move(states), cfg.get_alphabet().get_name(), "all",
-               start_state, std::move(transition_function), {final_state});
+    return PDA(std::move(dpda_automata), cfg.get_full_alphabet(),
+               std::move(transition_function));
   }
 
   CFG PDA_to_CFG(PDA pda) {

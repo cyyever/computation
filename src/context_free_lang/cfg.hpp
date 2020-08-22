@@ -18,6 +18,7 @@
 #include "cfg_production.hpp"
 #include "formal_grammar/grammar_symbol.hpp"
 #include "lang/alphabet.hpp"
+#include "lang/map_alphabet.hpp"
 #include "regular_lang/dfa.hpp"
 
 namespace cyy::computation {
@@ -71,6 +72,9 @@ namespace cyy::computation {
 
     nonterminal_set_type get_heads() const;
     auto get_head_view() const { return productions | std::views::keys; }
+
+    std::shared_ptr<map_alphabet> get_nonterminal_alphabet() const;
+    ALPHABET_ptr get_full_alphabet() const;
 
     auto const &get_alphabet() const noexcept { return *alphabet; }
     auto get_alphabet_ptr() const noexcept { return alphabet; }

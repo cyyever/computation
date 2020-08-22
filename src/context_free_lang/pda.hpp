@@ -77,14 +77,6 @@ namespace cyy::computation {
           stack_alphabet(stack_alphabet_),
           transition_function(std::move(transition_function_)) {}
 
-    PDA(state_set_type states_, ALPHABET_ptr input_alphabet_,
-        ALPHABET_ptr stack_alphabet_, state_type start_state_,
-        transition_function_type transition_function_,
-        state_set_type final_states_)
-        : PDA(finite_automaton(std::move(states_), input_alphabet_,
-                               start_state_, std::move(final_states_)),
-              stack_alphabet_, std::move(transition_function_)) {}
-
     bool operator==(const PDA &rhs) const noexcept = default;
 
     auto const &get_transition_function() const noexcept {

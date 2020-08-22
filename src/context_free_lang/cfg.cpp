@@ -12,6 +12,7 @@
 #include <utility>
 
 #include "cfg.hpp"
+#include "lang/union_alphabet.hpp"
 
 namespace cyy::computation {
 
@@ -575,5 +576,21 @@ namespace cyy::computation {
       throw std::runtime_error("no bodies");
     }
     return it->second;
+  }
+  std::shared_ptr<map_alphabet> CFG::get_nonterminal_alphabet() const {
+    auto max_symbol = get_alphabet().get_max_symbol();
+    std::map<symbol_type, nonterminal_type> symbol_to_nonterminal;
+    auto nonterminals = get_nonterminals();
+    for (auto &nonterminal : nonterminals) {
+      max_symbol++;
+      symbol_to_nonterminal.emplace(max_symbol, std::move(nonterminal));
+    }
+
+    return std::make_shared<map_alphabet>(symbol_to_nonterminal,
+                                          "alphabet_of_nonterminals");
+  }
+  ALPHABET_ptr CFG::get_full_alphabet() const {
+    return std::make_shared<union_alphabet>(get_alphabet_ptr(),
+                                            get_nonterminal_alphabet());
   }
 } // namespace cyy::computation

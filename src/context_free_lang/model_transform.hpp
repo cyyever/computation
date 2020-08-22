@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include "../regular_lang/nfa.hpp"
 #include "cfg.hpp"
 #include "pda.hpp"
+#include "regular_lang/nfa.hpp"
 
 namespace cyy::computation {
   CFG NFA_to_CFG(const NFA &nfa);

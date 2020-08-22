@@ -53,11 +53,6 @@ namespace cyy::computation {
       }
     }
 
-    finite_automaton(state_set_type states_, std::string_view alphabet_name,
-                     state_type start_state_, state_set_type final_states_)
-        : finite_automaton(std::move(states_),
-                           ::cyy::computation::ALPHABET::get(alphabet_name),
-                           start_state_, std::move(final_states_)) {}
     finite_automaton(const finite_automaton &) = default;
     finite_automaton &operator=(const finite_automaton &) = default;
     finite_automaton(finite_automaton &&) = default;
