@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "automaton/automaton.hpp"
+#include "cfg_production.hpp"
 #include "model_transform.hpp"
 
 namespace cyy::computation {
@@ -141,10 +142,10 @@ namespace cyy::computation {
         if (top_symbol.has_value()) {
           pop_stack_transitions[*top_symbol].emplace_back(situation,
                                                           action.state);
-        } else if (action.stack_symbol.has_value()) {
-          push_stack_transitions[*action.stack_symbol].emplace_back(
-              situation, action.state);
+          continue;
         }
+        push_stack_transitions[*action.stack_symbol].emplace_back(situation,
+                                                                  action.state);
       }
     }
 
@@ -195,9 +196,9 @@ namespace cyy::computation {
     return CFG(
         pda.get_alphabet_ptr(),
         get_nonterminal(pda.get_start_state(), *pda.get_final_states().begin()),
-        productions);
+        std::move(productions));
   }
-  CFG DPDA_to_CFG(endmarked_DPDA dpda) {
+  DCFG DPDA_to_DCFG(endmarked_DPDA dpda) {
     dpda.prepare_DCFG_conversion();
     using from_state_type = endmarked_DPDA::state_type;
     using to_state_type = endmarked_DPDA::state_type;
@@ -220,13 +221,15 @@ namespace cyy::computation {
       for (const auto &[situation, action] : transfers) {
         auto next_state = action.state;
         auto const &top_symbol = situation.stack_symbol;
+        // pop
         if (top_symbol.has_value()) {
           pop_stack_transitions[*top_symbol].emplace(
               from_state, situation.input_symbol, next_state);
-        } else if (action.stack_symbol.has_value()) {
-          push_stack_transitions[*action.stack_symbol].emplace(
-              from_state, situation.input_symbol, next_state);
+          continue;
         }
+        // push
+        push_stack_transitions[*action.stack_symbol].emplace(
+            from_state, situation.input_symbol, next_state);
       }
     }
 
@@ -259,7 +262,6 @@ namespace cyy::computation {
               body.emplace_back(*prev_input);
             }
             body.emplace_back(get_nonterminal(prev_to_state, next_from_state));
-
             if (next_input.has_value()) {
               body.emplace_back(*next_input);
             }
@@ -269,9 +271,9 @@ namespace cyy::computation {
       }
     }
     assert(dpda.get_final_states().size() == 1);
-    return CFG(dpda.get_alphabet_ptr(),
-               get_nonterminal(dpda.get_start_state(),
-                               *dpda.get_final_states().begin()),
-               productions);
+    return DCFG(dpda.get_alphabet_ptr(),
+                get_nonterminal(dpda.get_start_state(),
+                                *dpda.get_final_states().begin()),
+                std::move(productions));
   }
 } // namespace cyy::computation

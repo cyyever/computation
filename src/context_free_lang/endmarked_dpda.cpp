@@ -39,7 +39,7 @@ namespace cyy::computation {
 
       transition_function_type::mapped_type new_transfers;
       for (const auto &[situation, action] : transfers) {
-        if (!situation.input_symbol) {
+        if (!situation.use_input()) {
           continue;
         }
         assert(situation.stack_symbol.has_value());
@@ -322,10 +322,6 @@ namespace cyy::computation {
   }
 
   void endmarked_DPDA::prepare_DCFG_conversion() {
-    auto new_start_state = add_new_state();
-    transition_function.add_epsilon_transition(
-        new_start_state, {get_start_state(), ALPHABET::endmarker});
-    change_start_state(new_start_state);
 
     assert(final_states.size() == 1);
     auto state_of_clearing_stack = add_new_state();
@@ -347,6 +343,8 @@ namespace cyy::computation {
     }
     replace_final_states(new_accept_state);
 
+    check_transition_fuction();
+
     transition_function_type new_transition;
 
     auto placeholder_stack_symbol = stack_alphabet->get_min_symbol();
@@ -355,28 +353,32 @@ namespace cyy::computation {
       for (auto &[situation, action] : transfers) {
         // pop or push
         if (situation.has_pop() != action.has_push()) {
-          new_transfers.emplace(std::move(situation), std::move(action));
+          new_transfers.emplace(situation, std::move(action));
           continue;
         }
 
         // no pop and push
         if (!situation.has_pop()) {
-          auto old_action = action;
+          assert(!action.has_push());
           auto new_state = add_new_state();
-          action = {new_state, placeholder_stack_symbol};
-          new_transfers.emplace(std::move(situation), std::move(action));
+          // push
+          new_transfers.emplace(
+              situation, action_type{new_state, placeholder_stack_symbol});
+          // pop
           for (auto stack_symbol : *stack_alphabet) {
-            new_transition[new_state][{{}, stack_symbol}] = {old_action.state};
+            new_transition[new_state][{{}, stack_symbol}] = std::move(action);
           }
           continue;
         }
 
         // pop and push
-        auto old_action = action;
+        assert(situation.has_pop());
+        assert(action.has_push());
         auto new_state = add_new_state();
-        action = {new_state};
-        new_transfers.emplace(std::move(situation), std::move(action));
-        new_transition[new_state][{}] = old_action;
+        // pop
+        new_transfers.emplace(situation, action_type{new_state});
+        // push
+        new_transition[new_state][{}] = std::move(action);
       }
       transfers = std::move(new_transfers);
     }

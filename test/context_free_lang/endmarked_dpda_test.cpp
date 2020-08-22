@@ -84,18 +84,23 @@ TEST_CASE("endmarked DPDA") {
         }
       }
     }
-    SUBCASE("to CFG") {
-      auto cfg = DPDA_to_CFG(endmarked_dpda);
-      CNF cnf(cfg);
+    SUBCASE("to DCFG") {
+      auto dcfg = DPDA_to_DCFG(endmarked_dpda);
+      dcfg.to_CNF();
+      CNF cnf(dcfg);
       SUBCASE("recognize") {
         for (auto str : {U"0", U"1"}) {
-          CHECK(cnf.parse(str));
+          endmarked_str = str;
+          endmarked_str.push_back(ALPHABET::endmarker);
+          CHECK(cnf.parse(endmarked_str));
         }
       }
 
       SUBCASE("can't recognize") {
         for (auto str : {U"", U"01", U"00", U"10", U"11"}) {
-          CHECK(!cnf.parse(str));
+          endmarked_str = str;
+          endmarked_str.push_back(ALPHABET::endmarker);
+          CHECK(!cnf.parse(endmarked_str));
         }
       }
     }

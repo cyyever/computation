@@ -178,17 +178,17 @@ namespace cyy::computation {
         if (!situation.use_input()) {
           is << "\\[Epsilon]";
         } else {
-          is << alphabet->to_string(situation.input_symbol.value());
+          is << alphabet->to_string(situation.get_input());
         }
         is << ',';
         if (situation.has_pop()) {
-          is << stack_alphabet->to_string(situation.stack_symbol.value());
+          is << stack_alphabet->to_string(situation.get_stack_symbol());
         } else {
           is << "\\[Epsilon]";
         }
         is << '/';
         if (action.has_push()) {
-          is << stack_alphabet->to_string(action.stack_symbol.value());
+          is << stack_alphabet->to_string(action.get_stack_symbol());
         } else {
           is << "\\[Epsilon]";
         }

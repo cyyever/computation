@@ -31,14 +31,14 @@ namespace cyy::computation {
                      stack_symbol_type stack_symbol_)
           : state(state_), input_symbol{input_symbol_}, stack_symbol{
                                                             stack_symbol_} {}
-      state_type state;
-      std::optional<input_symbol_type> input_symbol;
-      std::optional<stack_symbol_type> stack_symbol;
       bool use_input() const { return input_symbol.has_value(); }
       auto get_input() const { return input_symbol.value(); }
       bool has_pop() const { return stack_symbol.has_value(); }
       auto get_stack_symbol() const { return stack_symbol.value(); }
       bool operator==(const situation_type &) const noexcept = default;
+      state_type state;
+      std::optional<input_symbol_type> input_symbol;
+      std::optional<stack_symbol_type> stack_symbol;
     };
 
     struct situation_hash_type {
@@ -65,6 +65,7 @@ namespace cyy::computation {
       bool operator==(const action_type &) const noexcept = default;
       auto operator<=>(const action_type &) const noexcept = default;
       bool has_push() const { return stack_symbol.has_value(); }
+      auto get_stack_symbol() const { return stack_symbol.value(); }
       state_type state{};
       std::optional<stack_symbol_type> stack_symbol;
     };
