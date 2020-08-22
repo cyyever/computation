@@ -12,7 +12,10 @@
 using namespace cyy::computation;
 TEST_CASE("recognize DPDA") {
   auto endmarker = U'1';
-  DPDA dpda({0, 1, 2, 3, 4}, "01_set", "01_set", 0,
+  finite_automaton dpda_automata(
+
+      {0, 1, 2, 3, 4}, "01_set", 0, {0, 3});
+  DPDA dpda(dpda_automata, "01_set",
             {{0,
               {
                   {{}, {1, endmarker}},
@@ -37,8 +40,7 @@ TEST_CASE("recognize DPDA") {
               {
                   {{U'0'}, {4}},
                   {{U'1'}, {4}},
-              }}},
-            {0, 3});
+              }}});
 
   SUBCASE("") { CHECK(dpda.recognize(U"")); }
   SUBCASE("0") { CHECK(!dpda.recognize(U"0")); }
