@@ -95,16 +95,23 @@ namespace cyy::computation {
   }
 
   void PDA::normalize_transitions() {
+    auto new_start_state = add_new_state();
+    transition_function[{new_start_state}] = {
+        {get_start_state(), ALPHABET::endmarker}};
+    change_start_state(new_start_state);
+
     auto state_of_clearing_stack = add_new_state();
     for (auto final_state : final_states) {
       add_epsilon_transition(final_state, state_of_clearing_stack);
     }
-    for (auto const used_stack_symbol : get_in_use_stack_symbols()) {
+
+    for (auto const used_stack_symbol : *stack_alphabet) {
       transition_function[{state_of_clearing_stack, {}, used_stack_symbol}] = {
           {state_of_clearing_stack}};
     }
     auto new_final_state = add_new_state();
-    add_epsilon_transition(state_of_clearing_stack, new_final_state);
+    transition_function[{state_of_clearing_stack, {}, ALPHABET::endmarker}] = {
+        {new_final_state}};
     replace_final_states(new_final_state);
 
     transition_function_type new_transition;
