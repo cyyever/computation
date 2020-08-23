@@ -7,11 +7,8 @@
 
 #pragma once
 
-#include <algorithm>
 #include <boost/dynamic_bitset.hpp>
-#include <map>
 #include <memory>
-#include <optional>
 #include <ranges>
 #include <set>
 #include <string>
@@ -59,6 +56,8 @@ namespace cyy::computation {
     finite_automaton &operator=(finite_automaton &&) = default;
     ~finite_automaton() = default;
 
+    bool operator==(const finite_automaton &rhs) const = default;
+
     const finite_automaton &get_finite_automaton() const & { return *this; }
 
     finite_automaton get_finite_automaton() && {
@@ -71,7 +70,7 @@ namespace cyy::computation {
     auto const &get_alphabet_ptr() const noexcept { return alphabet; }
     auto const &get_final_states() const noexcept { return final_states; }
     state_type get_start_state() const noexcept { return start_state; }
-    bool operator==(const finite_automaton &rhs) const = default;
+    state_type get_max_state() const { return *states.rbegin(); }
 
     bool contain_final_state(const state_set_type &T) const {
       auto it = T.begin();
@@ -102,10 +101,7 @@ namespace cyy::computation {
     }
 
     state_type add_new_state() {
-      state_type new_state = 0;
-      if (!states.empty()) {
-        new_state = *states.rbegin() + 1;
-      }
+      auto new_state = *states.rbegin() + 1;
       states.insert(new_state);
       return new_state;
     }
@@ -178,7 +174,6 @@ namespace cyy::computation {
 
   private:
     state_set_type states;
-
     state_type start_state;
 
   protected:

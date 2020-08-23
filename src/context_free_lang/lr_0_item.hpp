@@ -44,7 +44,7 @@ namespace cyy::computation {
       }
       dot_pos++;
     }
-    auto prefix() const {
+    [[deprecated]] auto prefix() const {
       return grammar_symbol_const_span_type(get_body()).subspan(dot_pos);
     }
     auto const &get_grammar_symbal() const {

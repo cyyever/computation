@@ -64,11 +64,6 @@ namespace cyy::computation {
       }
     }
 
-    using finite_automaton::add_final_states;
-    using finite_automaton::add_new_state;
-    using finite_automaton::change_final_states;
-    using finite_automaton::change_start_state;
-
     auto const &get_transition_function() const noexcept {
       return transition_function;
     }

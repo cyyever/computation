@@ -18,6 +18,7 @@ namespace cyy::computation {
 
   class LR_1_item {
   public:
+    LR_1_item(LR_0_item item) : lr_0_item(std::move(item)) {}
     LR_1_item(LR_0_item item, CFG::terminal_type lookahead_symbol)
         : lr_0_item(std::move(item)), lookahead_symbols{lookahead_symbol} {}
     LR_1_item(const LR_1_item &) = default;
@@ -26,11 +27,18 @@ namespace cyy::computation {
     LR_1_item &operator=(LR_1_item &&) = default;
     bool operator==(const LR_1_item &rhs) const = default;
 
+    void go() { lr_0_item.go(); }
+
+    auto completed() const { return lr_0_item.completed(); }
+
+    CFG::terminal_set_type follow_of_dot(const CFG &cfg) const;
+
     const auto &get_lr_0_item() const { return lr_0_item; }
     const auto &get_lookahead_symbols() const & { return lookahead_symbols; }
     auto &get_lookahead_symbols() && { return lookahead_symbols; }
 
     void add_lookahead_symbol(CFG::terminal_type lookahead_symbol);
+    void add_lookahead_symbols(CFG::terminal_set_type lookahead_symbols);
     std::string MMA_draw(const ALPHABET &alphabet) const;
 
   private:

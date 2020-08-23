@@ -62,9 +62,13 @@ namespace cyy::computation {
       return {};
     }
 
-    bool is_live_state(state_type s) const {
+    const state_set_type &get_live_states() const {
       mark_live_states();
-      return live_states_opt.value().contains(s);
+      return live_states_opt.value();
+    }
+
+    bool is_live_state(state_type s) const {
+      return get_live_states().contains(s);
     }
 
     DFA minimize() const;

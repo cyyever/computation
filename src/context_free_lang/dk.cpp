@@ -5,17 +5,10 @@
 
 #include "dk.hpp"
 #include "cfg.hpp"
-#include "lang/range_alphabet.hpp"
-#include "lang/union_alphabet.hpp"
 #include "regular_lang/nfa.hpp"
 
 namespace cyy::computation {
-  DK_DFA::DK_DFA(const CFG &cfg) {
-
-    auto nonterminals = cfg.get_nonterminals();
-
-    alphabet_of_nonterminals = cfg.get_nonterminal_alphabet();
-
+  DK_DFA::DK_DFA(const CFG &cfg) : DK_DFA_base(cfg) {
     using state_set_type = NFA::state_set_type;
 
     std::unordered_map<LR_0_item, state_type> item_to_nfa_state_map;
@@ -83,29 +76,6 @@ namespace cyy::computation {
       }
     }
     dfa_ptr = std::make_shared<DFA>(std::move(dfa));
-  }
-
-  DK_DFA::goto_table_type DK_DFA::get_goto_table(bool skip_fail_state) const {
-    goto_table_type goto_table;
-    for (auto const &[situation, next_state] :
-         dfa_ptr->get_transition_function()) {
-      assert(collection.contains(next_state));
-      if (skip_fail_state) {
-        if (collection.find(situation.state)->second.empty()) {
-          continue;
-        }
-        if (collection.find(next_state)->second.empty()) {
-          continue;
-        }
-      }
-      if (alphabet_of_nonterminals->contain(situation.input_symbol)) {
-        goto_table[{situation.state, alphabet_of_nonterminals->get_data(
-                                         situation.input_symbol)}] = next_state;
-      } else {
-        goto_table[{situation.state, situation.input_symbol}] = next_state;
-      }
-    }
-    return goto_table;
   }
 
   const LR_0_item_set &DK_DFA::get_LR_0_item_set(state_type state) const {

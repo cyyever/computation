@@ -8,8 +8,25 @@
 #include "lr_1_item.hpp"
 
 namespace cyy::computation {
+  CFG::terminal_set_type LR_1_item::follow_of_dot(const CFG &cfg) const {
+    assert(!completed());
+    auto [first_set, epsilon_in_first] =
+        cfg.first(grammar_symbol_const_span_type(
+            lr_0_item.get_body().begin() + lr_0_item.get_dot_pos() + 1,
+            lr_0_item.get_body().end()
+
+                ));
+    if (epsilon_in_first) {
+      first_set.merge(CFG::terminal_set_type(lookahead_symbols));
+    }
+    return first_set;
+  }
   void LR_1_item::add_lookahead_symbol(CFG::terminal_type lookahead_symbol) {
     lookahead_symbols.insert(lookahead_symbol);
+  }
+  void
+  LR_1_item::add_lookahead_symbols(CFG::terminal_set_type lookahead_symbols) {
+    lookahead_symbols.merge(lookahead_symbols);
   }
 
   void LR_1_item_set::add_kernel_item(const CFG &cfg,
