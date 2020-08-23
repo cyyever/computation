@@ -15,8 +15,26 @@
 #include "lr_0_item.hpp"
 
 namespace cyy::computation {
-  class LR_1_item_set {
 
+  class LR_1_item {
+  public:
+    LR_1_item(LR_0_item item, CFG::terminal_type lookahead_symbol)
+        : lr_0_item(std::move(item)), lookahead_symbols{lookahead_symbol} {}
+    LR_1_item(const LR_1_item &) = default;
+    LR_1_item &operator=(const LR_1_item &) = default;
+    LR_1_item(LR_1_item &&) = default;
+    LR_1_item &operator=(LR_1_item &&) = default;
+    bool operator==(const LR_1_item &rhs) const = default;
+
+    void add_lookahead_symbol(CFG::terminal_type lookahead_symbol);
+    std::string MMA_draw(const ALPHABET &alphabet) const;
+
+  private:
+    LR_0_item lr_0_item;
+    CFG::terminal_set_type lookahead_symbols;
+  };
+
+  class LR_1_item_set {
   public:
     auto const &get_kernel_items() const { return kernel_items; }
     auto const &get_nonkernel_items() const { return nonkernel_items; }

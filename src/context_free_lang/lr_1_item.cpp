@@ -8,6 +8,10 @@
 #include "lr_1_item.hpp"
 
 namespace cyy::computation {
+  void LR_1_item::add_lookahead_symbol(CFG::terminal_type lookahead_symbol) {
+    lookahead_symbols.insert(lookahead_symbol);
+  }
+
   void LR_1_item_set::add_kernel_item(const CFG &cfg,
                                       const LR_0_item &kernel_item,
                                       CFG::terminal_set_type lookahead_set) {

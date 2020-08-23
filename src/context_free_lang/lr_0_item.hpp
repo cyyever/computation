@@ -101,15 +101,4 @@ namespace cyy::computation {
     std::unordered_set<LR_0_item> kernel_items;
     std::unordered_set<CFG_production::head_type> nonkernel_items;
   };
-  using lr_0_item_set_collection_type =
-      std::unordered_map<DFA::state_type, LR_0_item_set>;
 } // namespace cyy::computation
-
-namespace std {
-  template <> struct hash<cyy::computation::LR_0_item_set> {
-    size_t operator()(const cyy::computation::LR_0_item_set &x) const noexcept {
-      return ::std::hash<decltype(x.get_kernel_items().size())>()(
-          x.get_kernel_items().size());
-    }
-  };
-} // namespace std

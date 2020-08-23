@@ -6,7 +6,6 @@
 
 #include "cfg.hpp"
 #include "context_free_lang/lr_0_item.hpp"
-#include "formal_grammar/grammar_symbol.hpp"
 #include "lang/map_alphabet.hpp"
 #include "regular_lang/dfa.hpp"
 
@@ -14,6 +13,8 @@ namespace cyy::computation {
   class DK_DFA final {
   public:
     using state_type = DFA::state_type;
+    using lr_0_item_set_collection_type =
+        std::unordered_map<DFA::state_type, LR_0_item_set>;
     DK_DFA(const CFG &cfg);
     DK_DFA(const DK_DFA &) = default;
     DK_DFA &operator=(const DK_DFA &) = default;
