@@ -26,6 +26,10 @@ namespace cyy::computation {
     LR_1_item &operator=(LR_1_item &&) = default;
     bool operator==(const LR_1_item &rhs) const = default;
 
+    const auto &get_lr_0_item() const { return lr_0_item; }
+    const auto &get_lookahead_symbols() const & { return lookahead_symbols; }
+    auto &get_lookahead_symbols() && { return lookahead_symbols; }
+
     void add_lookahead_symbol(CFG::terminal_type lookahead_symbol);
     std::string MMA_draw(const ALPHABET &alphabet) const;
 
@@ -33,7 +37,45 @@ namespace cyy::computation {
     LR_0_item lr_0_item;
     CFG::terminal_set_type lookahead_symbols;
   };
+} // namespace cyy::computation
+namespace std {
+  template <> struct hash<cyy::computation::LR_1_item> {
+    size_t operator()(const cyy::computation::LR_1_item &x) const noexcept {
+      return ::std::hash<cyy::computation::LR_0_item>()(x.get_lr_0_item()) ^
+             ::std::hash<cyy::computation::CFG::terminal_set_type>()(
+                 x.get_lookahead_symbols());
+    }
+  };
+} // namespace std
+namespace cyy::computation {
+  class new_LR_1_item_set {
+  public:
+    void add_item(LR_1_item item) {
+      auto const &lr_0_item = item.get_lr_0_item();
 
+      if (lr_0_item.get_dot_pos() == 0 && !lr_0_item.completed()) {
+        nonkernel_items[lr_0_item.get_head()].merge(
+            std::move(item).get_lookahead_symbols());
+        return;
+      }
+      kernel_items.emplace(std::move(item));
+    }
+    bool operator==(const new_LR_1_item_set &rhs) const = default;
+    bool empty() const noexcept {
+      return kernel_items.empty() && nonkernel_items.empty();
+    }
+
+    /* std::string MMA_draw(const ALPHABET &alphabet) const; */
+
+  private:
+    std::unordered_set<LR_1_item> kernel_items;
+    std::unordered_map<CFG::nonterminal_type, CFG::terminal_set_type>
+        nonkernel_items;
+  };
+
+} // namespace cyy::computation
+
+namespace cyy::computation {
   class LR_1_item_set {
   public:
     auto const &get_kernel_items() const { return kernel_items; }

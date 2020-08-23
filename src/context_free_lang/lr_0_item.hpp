@@ -77,7 +77,7 @@ namespace cyy::computation {
   class LR_0_item_set {
   public:
     void add_item(LR_0_item item) {
-      if (item.get_dot_pos() == 0 && !item.get_body().empty()) {
+      if (item.get_dot_pos() == 0 && !item.completed()) {
         nonkernel_items.insert(item.get_head());
         return;
       }
