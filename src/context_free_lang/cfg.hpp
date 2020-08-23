@@ -71,6 +71,7 @@ namespace cyy::computation {
     nonterminal_set_type get_heads() const;
     auto get_head_view() const { return productions | std::views::keys; }
 
+    ALPHABET_ptr get_terminal_alphabet() const;
     std::shared_ptr<map_alphabet> get_nonterminal_alphabet() const;
     ALPHABET_ptr get_full_alphabet() const;
 

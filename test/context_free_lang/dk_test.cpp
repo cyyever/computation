@@ -1,17 +1,14 @@
 /*!
- * \file dcfg_test.cpp
- *
- * \brief
+ * \file dk_test.cpp
  */
 #include <doctest/doctest.h>
 #include <iostream>
 
-#include "../../src/context_free_lang/dcfg.hpp"
 #include "../../src/context_free_lang/dk.hpp"
 #include "../../src/lang/alphabet.hpp"
 
 using namespace cyy::computation;
-TEST_CASE("DCFG") {
+TEST_CASE("DK") {
   auto endmarker = ALPHABET::endmarker;
 
   CFG::production_set_type productions;
@@ -22,9 +19,7 @@ TEST_CASE("DCFG") {
       {"T", '(', "T", ')'},
       {},
   };
-  SUBCASE("DK") {
-    CFG cfg(ALPHABET::get("parentheses", true), "S", productions);
-    auto dk = DK_DFA(cfg);
-    std::cout << dk.MMA_draw(cfg) << std::endl;
-  }
+  CFG cfg(ALPHABET::get("parentheses", true), "S", productions);
+  auto dk = DK_DFA(cfg);
+  std::cout << dk.MMA_draw(cfg) << std::endl;
 }

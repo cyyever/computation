@@ -25,8 +25,58 @@ namespace cyy::computation {
     lookahead_symbols.insert(lookahead_symbol);
   }
   void
-  LR_1_item::add_lookahead_symbols(CFG::terminal_set_type lookahead_symbols) {
-    lookahead_symbols.merge(lookahead_symbols);
+  LR_1_item::add_lookahead_symbols(CFG::terminal_set_type lookahead_symbols_) {
+    lookahead_symbols.merge(lookahead_symbols_);
+  }
+
+  std::string LR_1_item::MMA_draw(const ALPHABET &alphabet) const {
+    auto cmd = std::string("Labeled[") + lr_0_item.MMA_draw(alphabet);
+    cmd += ",{";
+    for (auto a : lookahead_symbols) {
+      cmd += alphabet.MMA_draw(a);
+      cmd.push_back(',');
+    }
+    cmd.back() = '}';
+    cmd += ",Right]";
+    return cmd;
+  }
+
+  std::string new_LR_1_item_set::MMA_draw(const CFG &cfg) const {
+    auto const &alphabet = cfg.get_alphabet();
+    std::string cmd = "Framed[TableForm[{";
+    for (auto const &item : kernel_items) {
+      cmd += item.MMA_draw(alphabet);
+      cmd.push_back(',');
+    }
+    if (!nonkernel_items.empty()) {
+      cmd += "Framed[TableForm[{";
+      for (auto const &item : expand_nonkernel_items(cfg)) {
+        cmd += item.MMA_draw(alphabet);
+        cmd.push_back(',');
+      }
+      cmd.pop_back();
+      cmd += "}],Background -> LightGray,FrameStyle-> Dotted]";
+    }
+    if (cmd.back() == ',') {
+      cmd.pop_back();
+    }
+    cmd += "}]]";
+    return cmd;
+  }
+
+  std::unordered_set<LR_1_item>
+  new_LR_1_item_set::expand_nonkernel_items(const CFG &cfg) const {
+    std::unordered_set<LR_1_item> item_set;
+    for (auto const &[head, lookahead_symbols] : nonkernel_items) {
+      auto const &bodies = cfg.get_bodies(head);
+      for (auto const &body : bodies) {
+        if (body.empty()) {
+          continue;
+        }
+        item_set.emplace(LR_0_item{head, body}, lookahead_symbols);
+      }
+    }
+    return item_set;
   }
 
   void LR_1_item_set::add_kernel_item(const CFG &cfg,

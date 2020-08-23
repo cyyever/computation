@@ -21,6 +21,9 @@ namespace cyy::computation {
     LR_1_item(LR_0_item item) : lr_0_item(std::move(item)) {}
     LR_1_item(LR_0_item item, CFG::terminal_type lookahead_symbol)
         : lr_0_item(std::move(item)), lookahead_symbols{lookahead_symbol} {}
+    LR_1_item(LR_0_item item, CFG::terminal_set_type lookahead_symbols_)
+        : lr_0_item(std::move(item)), lookahead_symbols{
+                                          std::move(lookahead_symbols_)} {}
     LR_1_item(const LR_1_item &) = default;
     LR_1_item &operator=(const LR_1_item &) = default;
     LR_1_item(LR_1_item &&) = default;
@@ -38,7 +41,7 @@ namespace cyy::computation {
     auto &get_lookahead_symbols() && { return lookahead_symbols; }
 
     void add_lookahead_symbol(CFG::terminal_type lookahead_symbol);
-    void add_lookahead_symbols(CFG::terminal_set_type lookahead_symbols);
+    void add_lookahead_symbols(CFG::terminal_set_type lookahead_symbols_);
     std::string MMA_draw(const ALPHABET &alphabet) const;
 
   private:
@@ -73,7 +76,9 @@ namespace cyy::computation {
       return kernel_items.empty() && nonkernel_items.empty();
     }
 
-    /* std::string MMA_draw(const ALPHABET &alphabet) const; */
+    std::unordered_set<LR_1_item> expand_nonkernel_items(const CFG &cfg) const;
+
+    std::string MMA_draw(const CFG &cfg) const;
 
   private:
     std::unordered_set<LR_1_item> kernel_items;

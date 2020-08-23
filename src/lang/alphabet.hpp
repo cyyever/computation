@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <functional>
 #include <iterator>
 #include <limits>
 #include <memory>
@@ -108,7 +109,12 @@ namespace cyy::computation {
 
     bool operator==(const ALPHABET &rhs) const = default;
     virtual bool support_ASCII_escape_sequence() const { return false; }
-    std::string MMA_draw(symbol_type symbol) const;
+
+    void set_MMA_draw_fun(
+        std::function<std::string(const ALPHABET &, symbol_type)> fun) {
+      MMA_draw_fun_ptr = std::make_shared<decltype(fun)>(fun);
+    }
+    virtual std::string MMA_draw(symbol_type symbol) const;
 
     static std::shared_ptr<ALPHABET> get(std::string_view name,
                                          bool endmarked = false);
@@ -142,6 +148,8 @@ namespace cyy::computation {
     static void register_factory();
 
   private:
+    std::shared_ptr<std::function<std::string(const ALPHABET &, symbol_type)>>
+        MMA_draw_fun_ptr;
     std::string name;
 
   private:

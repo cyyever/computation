@@ -19,9 +19,10 @@ namespace cyy::computation {
         throw exception::empty_alphabet("symbol map is empty");
       }
       for (auto const &[symbol, data] : symbol_map) {
-        auto has_inserted=reverse_symbol_map.try_emplace(data, symbol).second;
-        if(!has_inserted) {
-          throw exception::invalid_alphabet(std::string("same data ")+data+" in several symbols");
+        auto has_inserted = reverse_symbol_map.try_emplace(data, symbol).second;
+        if (!has_inserted) {
+          throw exception::invalid_alphabet(std::string("same data ") + data +
+                                            " in several symbols");
         }
       }
     }
@@ -43,7 +44,7 @@ namespace cyy::computation {
     std::string get_data(symbol_type symbol) const {
       return symbol_map.at(symbol);
     }
-    symbol_type get_symbol(const std::string& data) const {
+    symbol_type get_symbol(const std::string &data) const {
       return reverse_symbol_map.at(data);
     }
 

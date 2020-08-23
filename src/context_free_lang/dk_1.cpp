@@ -4,6 +4,7 @@
 
 #include "dk_1.hpp"
 #include "regular_lang/nfa.hpp"
+#include <iostream>
 
 namespace cyy::computation {
   DK_1_DFA::DK_1_DFA(const CFG &cfg) : DK_DFA_base(cfg) {
@@ -24,22 +25,25 @@ namespace cyy::computation {
       return it->second;
     };
 
+    auto init_follows = cfg.get_terminals();
+    if (!init_follows.contains(ALPHABET::endmarker)) {
+      init_follows = {ALPHABET::endmarker};
+    }
     std::unordered_map<CFG::nonterminal_type, state_set_type> head_states;
 
     // begin from start symbol
     for (auto const &[head, bodies] : cfg.get_productions()) {
+      if (head != cfg.get_start_symbol()) {
+        continue;
+      }
       for (auto const &body : bodies) {
-        LR_1_item init_item(LR_0_item{head, body});
-        if (head == cfg.get_start_symbol()) {
-          init_item.add_lookahead_symbol(ALPHABET::endmarker);
-        }
+        LR_1_item init_item(LR_0_item{head, body}, init_follows);
         auto state = item_to_nfa_state(init_item);
-        if (head == cfg.get_start_symbol()) {
-          nfa.add_epsilon_transition(nfa.get_start_state(), {state});
-        }
+        nfa.add_epsilon_transition(nfa.get_start_state(), {state});
         head_states[head].insert(state);
       }
     }
+
     for (state_type cur_state = 1; cur_state <= nfa.get_max_state();
          cur_state++) {
       auto it = NFA_state_to_item_map.find(cur_state);
@@ -59,6 +63,15 @@ namespace cyy::computation {
       } else {
         auto follow_set = cur_item.follow_of_dot(cfg);
         auto const &head = grammar_symbol.get_nonterminal();
+
+        if (!head_states.contains(head)) {
+          for (auto const &body : cfg.get_bodies(head)) {
+            LR_1_item init_item(LR_0_item{head, body});
+            auto state = item_to_nfa_state(init_item);
+            head_states[head].insert(state);
+          }
+        }
+
         for (auto head_state : head_states[head]) {
           it = NFA_state_to_item_map.find(head_state);
           assert(it != NFA_state_to_item_map.end());
@@ -94,15 +107,15 @@ namespace cyy::computation {
     }
     return it->second;
   }
-  /* std::string DK_1_DFA::MMA_draw(const CFG &cfg) const { */
-  /*   std::string cmd = "TableForm[{"; */
-  /*   for (auto const &[state, set] : collection) { */
-  /*     cmd += std::to_string(state) + "->" + set.MMA_draw(cfg); */
-  /*     cmd.push_back(','); */
-  /*   } */
-  /*   auto dfa_cmd = dfa_ptr->MMA_draw(); */
-  /*   cmd += dfa_cmd + "}]"; */
-  /*   return cmd; */
-  /* } */
+  std::string DK_1_DFA::MMA_draw(const CFG &cfg) const {
+    std::string cmd = "TableForm[{";
+    for (auto const &[state, set] : collection) {
+      cmd += std::to_string(state) + "->" + set.MMA_draw(cfg);
+      cmd.push_back(',');
+    }
+    auto dfa_cmd = dfa_ptr->MMA_draw();
+    cmd += dfa_cmd + "}]";
+    return cmd;
+  }
 
 } // namespace cyy::computation

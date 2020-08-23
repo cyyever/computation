@@ -51,6 +51,8 @@ namespace cyy::computation {
     std::shared_ptr<ALPHABET> alphabet;
     alphabet = std::make_shared<common_tokens>();
     factory.emplace(alphabet->get_name(), alphabet);
+    alphabet = std::make_shared<ASCII>();
+    factory.emplace(alphabet->get_name(), alphabet);
     alphabet = std::make_shared<printable_ASCII>();
     factory.emplace(alphabet->get_name(), alphabet);
     alphabet = std::make_shared<set_alphabet>(std::set<symbol_type>{'a', 'b'},
@@ -67,6 +69,9 @@ namespace cyy::computation {
     factory.emplace(alphabet->get_name(), alphabet);
   }
   std::string ALPHABET::MMA_draw(symbol_type symbol) const {
+    if (MMA_draw_fun_ptr) {
+      return (*MMA_draw_fun_ptr)(*this, symbol);
+    }
     auto cmd = to_string(symbol);
     if (cmd[0] == '\'') {
       cmd[0] = '\"';

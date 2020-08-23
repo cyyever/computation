@@ -49,6 +49,14 @@ namespace cyy::computation {
     bool support_ASCII_escape_sequence() const override {
       return alphabet1->support_ASCII_escape_sequence() || alphabet2->support_ASCII_escape_sequence();
     }
+
+    std::string MMA_draw(symbol_type symbol) const override {
+      if (alphabet1->contain(symbol)) {
+        return alphabet1->MMA_draw(symbol);
+      }
+      return alphabet2->MMA_draw(symbol);
+
+    }
   private:
     std::string __to_string(symbol_type symbol) const override {
       if (alphabet1->contain(symbol)) {

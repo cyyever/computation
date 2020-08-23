@@ -12,6 +12,7 @@
 #include <utility>
 
 #include "cfg.hpp"
+#include "lang/sub_alphabet.hpp"
 #include "lang/union_alphabet.hpp"
 
 namespace cyy::computation {
@@ -577,6 +578,17 @@ namespace cyy::computation {
     }
     return it->second;
   }
+
+  ALPHABET_ptr CFG::get_terminal_alphabet() const {
+    auto terminal_set = get_terminals();
+    if (terminal_set.size() < alphabet->size()) {
+      return std::make_shared<sub_alphabet>(
+          alphabet,
+          std::set<terminal_type>(terminal_set.begin(), terminal_set.end()));
+    }
+    return alphabet;
+  }
+
   std::shared_ptr<map_alphabet> CFG::get_nonterminal_alphabet() const {
     auto max_symbol = get_alphabet().get_max_symbol();
     std::map<symbol_type, nonterminal_type> symbol_to_nonterminal;
@@ -586,11 +598,19 @@ namespace cyy::computation {
       symbol_to_nonterminal.emplace(max_symbol, std::move(nonterminal));
     }
 
-    return std::make_shared<map_alphabet>(symbol_to_nonterminal,
-                                          "alphabet_of_nonterminals");
+    auto nonterminal_alphabet_ptr = std::make_shared<map_alphabet>(
+        symbol_to_nonterminal, "alphabet_of_nonterminals");
+    nonterminal_alphabet_ptr->set_MMA_draw_fun(
+        [](auto const &nonterminal_alphabet, auto symbol) {
+          return grammar_symbol_type(reinterpret_cast<const map_alphabet *>(
+                                         &nonterminal_alphabet)
+                                         ->get_data(symbol))
+              .MMA_draw(nonterminal_alphabet);
+        });
+    return nonterminal_alphabet_ptr;
   }
   ALPHABET_ptr CFG::get_full_alphabet() const {
-    return std::make_shared<union_alphabet>(get_alphabet_ptr(),
+    return std::make_shared<union_alphabet>(get_terminal_alphabet(),
                                             get_nonterminal_alphabet());
   }
 } // namespace cyy::computation
