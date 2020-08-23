@@ -12,7 +12,6 @@
 namespace cyy::computation {
   DK_DFA::DK_DFA(const CFG &cfg) {
 
-    auto max_symbol = cfg.get_alphabet().get_max_symbol();
     auto nonterminals = cfg.get_nonterminals();
 
     alphabet_of_nonterminals = cfg.get_nonterminal_alphabet();

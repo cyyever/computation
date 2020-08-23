@@ -31,7 +31,8 @@ namespace cyy::computation {
     LR_0_item(LR_0_item &&) = default;
     LR_0_item &operator=(LR_0_item &&) = default;
     bool operator==(const LR_0_item &rhs) const {
-      return *production_ptr == *rhs.production_ptr && dot_pos == rhs.dot_pos;
+      return dot_pos == rhs.dot_pos && (production_ptr == rhs.production_ptr ||
+                                        *production_ptr == *rhs.production_ptr);
     }
     auto const &get_head() const noexcept { return production_ptr->get_head(); }
     auto const &get_body() const noexcept { return production_ptr->get_body(); }
