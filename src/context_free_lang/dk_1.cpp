@@ -56,7 +56,7 @@ namespace cyy::computation {
 
       assert(!cur_item.get_lookahead_symbols().empty());
 
-      auto grammar_symbol = cur_item.get_lr_0_item().get_grammar_symbal();
+      auto grammar_symbol = cur_item.get_grammar_symbal();
       symbol_type symbol;
       if (grammar_symbol.is_terminal()) {
         symbol = grammar_symbol.get_terminal();

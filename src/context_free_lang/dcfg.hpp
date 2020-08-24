@@ -16,7 +16,7 @@ namespace cyy::computation {
   class DCFG : public LR_0_grammar {
 
   public:
-    DCFG(std::shared_ptr<ALPHABET> alphabet_, nonterminal_type start_symbol_,
+    DCFG(ALPHABET_ptr alphabet_, nonterminal_type start_symbol_,
          production_set_type productions_);
 
     DPDA to_DPDA() const;

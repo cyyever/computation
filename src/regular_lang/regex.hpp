@@ -243,7 +243,7 @@ namespace cyy::computation {
     const LL_grammar &get_grammar() const;
 
   private:
-    std::shared_ptr<ALPHABET> alphabet;
+    ALPHABET_ptr alphabet;
     mutable std::shared_ptr<regex::syntax_node> syntax_tree;
   };
 } // namespace cyy::computation

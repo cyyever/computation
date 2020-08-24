@@ -13,7 +13,7 @@ namespace cyy::computation {
 
   class endmarked_alphabet final : public ALPHABET {
   public:
-    endmarked_alphabet(std::shared_ptr<ALPHABET> alphabet_)
+    endmarked_alphabet(ALPHABET_ptr alphabet_)
         : ALPHABET("placeholder"), alphabet{alphabet_} {
       if (alphabet->contain(ALPHABET::endmarker)) {
         has_endmarker = true;
@@ -55,7 +55,7 @@ namespace cyy::computation {
     }
 
   private:
-    std::shared_ptr<ALPHABET> alphabet;
+    ALPHABET_ptr alphabet;
     bool has_endmarker{false};
   };
 } // namespace cyy::computation

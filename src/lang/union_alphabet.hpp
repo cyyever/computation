@@ -13,8 +13,8 @@ namespace cyy::computation {
 
   class union_alphabet : public ALPHABET {
   public:
-    union_alphabet(std::shared_ptr<ALPHABET> alphabet1_,
-                   std::shared_ptr<ALPHABET> alphabet2_,
+    union_alphabet(ALPHABET_ptr alphabet1_,
+                   ALPHABET_ptr alphabet2_,
                    std::string_view name_ = "")
         : ALPHABET("placeholder"), alphabet1{alphabet1_}, alphabet2{
                                                               alphabet2_} {
@@ -66,7 +66,7 @@ namespace cyy::computation {
     }
 
   private:
-    std::shared_ptr<ALPHABET> alphabet1;
-    std::shared_ptr<ALPHABET> alphabet2;
+    ALPHABET_ptr alphabet1;
+    ALPHABET_ptr alphabet2;
   };
 } // namespace cyy::computation

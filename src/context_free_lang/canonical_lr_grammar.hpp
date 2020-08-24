@@ -6,6 +6,7 @@
  */
 
 #pragma once
+#include "dk_1.hpp"
 #include "lr_1_grammar.hpp"
 
 namespace cyy::computation {
@@ -13,8 +14,15 @@ namespace cyy::computation {
   class canonical_LR_grammar final : public LR_1_grammar {
 
   public:
-    using LR_1_grammar::LR_1_grammar;
+    canonical_LR_grammar(ALPHABET_ptr alphabet_, nonterminal_type start_symbol_,
+                         production_set_type productions_);
 
     std::pair<collection_type, goto_table_type> get_collection() const override;
+
+  private:
+    bool DK_test() const;
+
+  private:
+    std::shared_ptr<DK_1_DFA> dk_1_dfa_ptr;
   };
 } // namespace cyy::computation

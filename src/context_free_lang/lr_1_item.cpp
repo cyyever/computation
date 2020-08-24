@@ -12,8 +12,7 @@ namespace cyy::computation {
     assert(!completed());
     auto [first_set, epsilon_in_first] =
         cfg.first(grammar_symbol_const_span_type(
-            lr_0_item.get_body().begin() + lr_0_item.get_dot_pos() + 1,
-            lr_0_item.get_body().end()
+            get_body().begin() + get_dot_pos() + 1, get_body().end()
 
                 ));
     if (epsilon_in_first) {
@@ -30,7 +29,7 @@ namespace cyy::computation {
   }
 
   std::string LR_1_item::MMA_draw(const ALPHABET &alphabet) const {
-    auto cmd = std::string("Labeled[") + lr_0_item.MMA_draw(alphabet);
+    auto cmd = std::string("Labeled[") + LR_0_item::MMA_draw(alphabet);
     cmd += ",{";
     for (auto a : lookahead_symbols) {
       cmd += alphabet.MMA_draw(a);

@@ -4,8 +4,8 @@
 #include "dcfg.hpp"
 #include "lang/number_set_alphabet.hpp"
 namespace cyy::computation {
-  DCFG::DCFG(std::shared_ptr<ALPHABET> alphabet_,
-             nonterminal_type start_symbol_, production_set_type productions_)
+  DCFG::DCFG(ALPHABET_ptr alphabet_, nonterminal_type start_symbol_,
+             production_set_type productions_)
 
       : LR_0_grammar(alphabet_, start_symbol_, std::move(productions_)),
         dk_dfa_ptr(std::make_shared<DK_DFA>(*this)) {
@@ -15,7 +15,6 @@ namespace cyy::computation {
   }
 
   bool DCFG::DK_test() const {
-    /* for (auto final_state : dk_dfa_ptr->get_dfa().get_final_states()) { */
     for (auto &[_, item_set] : dk_dfa_ptr->get_LR_0_item_set_collection()) {
       if (!item_set.has_completed_items()) {
         continue;
