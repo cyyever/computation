@@ -53,7 +53,7 @@ namespace cyy::computation {
       }
       return get_body()[dot_pos];
     }
-    std::string MMA_draw(const ALPHABET &alphabet) const;
+    std::string MMA_draw(const CFG &cfg) const;
 
     const CFG_production &get_production() const { return *production_ptr; }
 

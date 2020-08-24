@@ -38,7 +38,7 @@ namespace cyy::computation {
 
     void add_lookahead_symbol(CFG::terminal_type lookahead_symbol);
     void add_lookahead_symbols(CFG::terminal_set_type lookahead_symbols_);
-    std::string MMA_draw(const ALPHABET &alphabet) const;
+    std::string MMA_draw(const CFG &cfg) const;
 
   private:
     CFG::terminal_set_type lookahead_symbols;
@@ -132,14 +132,16 @@ namespace cyy::computation {
 } // namespace cyy::computation
 */
 
-namespace std {
-  template <> struct hash<cyy::computation::new_LR_1_item_set> {
-    size_t operator()(const cyy::computation::new_LR_1_item_set &x) const {
-      return 0;
-      /* auto hash_value = */
-      /*     ::std::hash<std::unordered_set<cyy::computation::LR_1_item>>()( */
-      /*         x.get_kernel_items()); */
-      /* return hash_value; */
-    }
-  };
-} // namespace std */
+/* namespace std { */
+/*   template <> struct hash<cyy::computation::new_LR_1_item_set> { */
+/*     size_t operator()(const cyy::computation::new_LR_1_item_set &x) const {
+ */
+/*       return 0; */
+/*       /1* auto hash_value = *1/ */
+/*       /1*     ::std::hash<std::unordered_set<cyy::computation::LR_1_item>>()(
+ * *1/ */
+/*       /1*         x.get_kernel_items()); *1/ */
+/*       /1* return hash_value; *1/ */
+/*     } */
+/*   }; */
+/* } // namespace std *1/ */

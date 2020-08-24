@@ -28,11 +28,11 @@ namespace cyy::computation {
     lookahead_symbols.merge(lookahead_symbols_);
   }
 
-  std::string LR_1_item::MMA_draw(const ALPHABET &alphabet) const {
-    auto cmd = std::string("Labeled[") + LR_0_item::MMA_draw(alphabet);
+  std::string LR_1_item::MMA_draw(const CFG &cfg) const {
+    auto cmd = std::string("Labeled[") + LR_0_item::MMA_draw(cfg);
     cmd += ",{";
     for (auto a : lookahead_symbols) {
-      cmd += alphabet.MMA_draw(a);
+      cmd += cfg.get_alphabet().MMA_draw(a);
       cmd.push_back(',');
     }
     cmd.back() = '}';
@@ -44,13 +44,13 @@ namespace cyy::computation {
     auto const &alphabet = cfg.get_alphabet();
     std::string cmd = "Framed[TableForm[{";
     for (auto const &item : kernel_items) {
-      cmd += item.MMA_draw(alphabet);
+      cmd += item.MMA_draw(cfg);
       cmd.push_back(',');
     }
     if (!nonkernel_items.empty()) {
       cmd += "Framed[TableForm[{";
       for (auto const &item : expand_nonkernel_items(cfg)) {
-        cmd += item.MMA_draw(alphabet);
+        cmd += item.MMA_draw(cfg);
         cmd.push_back(',');
       }
       cmd.pop_back();
