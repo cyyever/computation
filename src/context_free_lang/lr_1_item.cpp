@@ -78,6 +78,7 @@ namespace cyy::computation {
     return item_set;
   }
 
+  /*
   void LR_1_item_set::add_kernel_item(const CFG &cfg,
                                       const LR_0_item &kernel_item,
                                       CFG::terminal_set_type lookahead_set) {
@@ -162,5 +163,6 @@ namespace cyy::computation {
   std::string LR_1_item_set::MMA_draw(const ALPHABET &alphabet) const {
     return "";
   }
+  */
 
 } // namespace cyy::computation

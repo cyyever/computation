@@ -12,6 +12,7 @@
 namespace cyy::computation {
   LALR_grammar::lookahead_map_type
   LALR_grammar::check_lookahead(const LR_0_item &item) const {
+    /*
     LR_1_item_set item_set;
     auto const unincluded_symbol = ALPHABET::endmarker;
     assert(!(contains(unincluded_symbol)));
@@ -34,6 +35,8 @@ namespace cyy::computation {
       }
     }
     return res;
+    */
+    return {};
   }
 
   std::pair<LALR_grammar::collection_type, LALR_grammar::goto_table_type>

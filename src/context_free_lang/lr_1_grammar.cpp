@@ -16,32 +16,38 @@ namespace cyy::computation {
     std::tie(collection, goto_table) = get_collection();
 
     for (auto const &[p, next_state] : goto_table) {
+      assert(collection.contains(p.first));
+      if (collection[p.first].empty()) {
+        continue;
+      }
       if (p.second.is_terminal()) {
         assert(p.second.get_terminal() != ALPHABET::endmarker);
+        if (collection[next_state].empty()) {
+          continue;
+        }
         action_table[{p.first, p.second.get_terminal()}] = next_state;
       }
     }
     for (auto const &[state, set] : collection) {
-      for (const auto &[kernel_item, lookahead_set] :
-           set.get_completed_items()) {
+      for (const auto &item : set.get_completed_items()) {
+        for (const auto &lookahead : item.get_lookahead_symbols()) {
 
-        for (const auto &lookahead : lookahead_set) {
           // conflict
           auto it = action_table.find({state, lookahead});
           if (it != action_table.end()) {
             std::ostringstream os;
-            os << "state " << state << " with head " << kernel_item.get_head()
+            os << "state " << state << " with head " << item.get_head()
                << " conflict with follow terminal "
                << alphabet->to_string(lookahead) << " and action index "
                << it->second.index();
             throw cyy::computation::exception::no_LR_1_grammar(os.str());
           }
-          if (kernel_item.get_head() == get_start_symbol()) {
-            assert(lookahead_set.size() == 1);
+          if (item.get_head() == get_start_symbol()) {
+            assert(item.get_lookahead_symbols().size() == 1);
             assert(lookahead == ALPHABET::endmarker);
             action_table[{state, lookahead}] = true;
           } else {
-            action_table[{state, lookahead}] = kernel_item.get_production();
+            action_table[{state, lookahead}] = item.get_production();
           }
         }
       }

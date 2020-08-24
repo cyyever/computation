@@ -11,7 +11,7 @@
 namespace cyy::computation {
   class DK_1_DFA final : public DK_DFA_base {
   public:
-    using lr_1_item_set_collection_type =
+    using LR_1_item_set_collection_type =
         std::unordered_map<DFA::state_type, new_LR_1_item_set>;
     DK_1_DFA(const CFG &cfg);
     DK_1_DFA(const DK_1_DFA &) = default;
@@ -27,6 +27,6 @@ namespace cyy::computation {
     std::string MMA_draw(const CFG &cfg) const;
 
   private:
-    lr_1_item_set_collection_type collection;
+    LR_1_item_set_collection_type collection;
   };
 } // namespace cyy::computation

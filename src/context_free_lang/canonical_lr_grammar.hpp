@@ -20,9 +20,7 @@ namespace cyy::computation {
     std::pair<collection_type, goto_table_type> get_collection() const override;
 
   private:
-    bool DK_test() const;
-
-  private:
-    std::shared_ptr<DK_1_DFA> dk_1_dfa_ptr;
+    bool
+    DK_1_test(const DK_1_DFA::LR_1_item_set_collection_type &collection) const;
   };
 } // namespace cyy::computation

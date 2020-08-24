@@ -12,6 +12,7 @@
 #include <unordered_map>
 
 #include "cfg.hpp"
+#include "hash.hpp"
 #include "lr_0_item.hpp"
 
 namespace cyy::computation {
@@ -65,6 +66,7 @@ namespace cyy::computation {
       kernel_items.emplace(std::move(item));
     }
     auto const &get_kernel_items() const { return kernel_items; }
+    auto const &get_nonkernel_items() const { return nonkernel_items; }
     bool empty() const noexcept {
       return kernel_items.empty() && nonkernel_items.empty();
     }
@@ -72,6 +74,10 @@ namespace cyy::computation {
     bool has_completed_items() const {
       return std::ranges::any_of(kernel_items,
                                  [](auto const &p) { return p.completed(); });
+    }
+    auto get_completed_items() const {
+      return kernel_items |
+             std::views::filter([](auto const &p) { return p.completed(); });
     }
     std::unordered_set<LR_1_item> expand_nonkernel_items(const CFG &cfg) const;
 
@@ -85,6 +91,7 @@ namespace cyy::computation {
 
 } // namespace cyy::computation
 
+/*
 namespace cyy::computation {
   class LR_1_item_set {
   public:
@@ -123,16 +130,16 @@ namespace cyy::computation {
   };
 
 } // namespace cyy::computation
+*/
 
 namespace std {
-  template <> struct hash<cyy::computation::LR_1_item_set> {
-    size_t operator()(const cyy::computation::LR_1_item_set &x) const {
-      const auto size = x.get_kernel_items().size();
-      if (size >= 1) {
-        return ::std::hash<cyy::computation::LR_0_item>()(
-            x.get_kernel_items().begin()->first);
-      }
+  template <> struct hash<cyy::computation::new_LR_1_item_set> {
+    size_t operator()(const cyy::computation::new_LR_1_item_set &x) const {
       return 0;
+      /* auto hash_value = */
+      /*     ::std::hash<std::unordered_set<cyy::computation::LR_1_item>>()( */
+      /*         x.get_kernel_items()); */
+      /* return hash_value; */
     }
   };
-} // namespace std
+} // namespace std */
