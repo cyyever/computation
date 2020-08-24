@@ -15,9 +15,12 @@ namespace cyy::computation {
   }
 
   bool DCFG::DK_test() const {
-    for (auto final_state : dk_dfa_ptr->get_dfa().get_final_states()) {
+    /* for (auto final_state : dk_dfa_ptr->get_dfa().get_final_states()) { */
+    for (auto &[_, item_set] : dk_dfa_ptr->get_LR_0_item_set_collection()) {
+      if (!item_set.has_completed_items()) {
+        continue;
+      }
       size_t completed_cnt = 0;
-      auto const &item_set = dk_dfa_ptr->get_LR_0_item_set(final_state);
       for (auto const &item : item_set.get_kernel_items()) {
         if (item.completed()) {
           completed_cnt++;
