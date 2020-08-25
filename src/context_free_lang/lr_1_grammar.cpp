@@ -10,10 +10,55 @@
 #include "lr_1_grammar.hpp"
 
 namespace cyy::computation {
+  bool LR_1_grammar::DK_1_test(const collection_type &collection) const {
+    for (auto &[_, item_set] : collection) {
+      if (!item_set.has_completed_items()) {
+        continue;
+      }
+      std::vector<LR_1_item> uncompleted_items;
+      std::vector<LR_1_item> completed_items;
+      for (auto const &item : item_set.get_kernel_items()) {
+        if (item.completed()) {
+          completed_items.emplace_back(item);
+          continue;
+        }
+        uncompleted_items.emplace_back(item);
+      }
+      for (auto const &item : item_set.expand_nonkernel_items(*this)) {
+        uncompleted_items.emplace_back(item);
+      }
+      for (auto it = completed_items.begin(); it != completed_items.end();
+           it++) {
+        for (auto it2 = it + 1; it2 != completed_items.end(); it2++) {
+          if (std::ranges::includes(it->get_lookahead_symbols(),
+                                    it2->get_lookahead_symbols())) {
+            return false;
+          }
+        }
+      }
+      for (auto &uncompleted_item : uncompleted_items) {
+        if (!uncompleted_item.get_grammar_symbal().is_terminal()) {
+          continue;
+        }
+        auto terminal = uncompleted_item.get_grammar_symbal().get_terminal();
+
+        for (auto &completed_item : completed_items) {
+          if (completed_item.get_lookahead_symbols().contains(terminal)) {
+            return false;
+          }
+        }
+      }
+    }
+    return true;
+  }
+
   void LR_1_grammar::construct_parsing_table() const {
     const_cast<LR_1_grammar *>(this)->normalize_start_symbol();
     collection_type collection;
     std::tie(collection, goto_table) = get_collection();
+    if (!DK_1_test(collection)) {
+      throw exception::no_LR_1_grammar("DK 1 test failed");
+    }
 
     for (auto const &[p, next_state] : goto_table) {
       assert(collection.contains(p.first));

@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "dk_1.hpp"
 #include "lr_1_item.hpp"
 #include "lr_grammar.hpp"
 
@@ -14,7 +15,7 @@ namespace cyy::computation {
 
   public:
     using LR_grammar::LR_grammar;
-    using collection_type = std::unordered_map<state_type, new_LR_1_item_set>;
+    using collection_type = DK_1_DFA::LR_1_item_set_collection_type;
     virtual std::pair<collection_type, goto_table_type>
     get_collection() const = 0;
 
@@ -25,6 +26,7 @@ namespace cyy::computation {
         const override;
 
   private:
+    bool DK_1_test(const collection_type &collection) const;
     void construct_parsing_table() const override;
   };
 } // namespace cyy::computation

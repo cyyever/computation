@@ -18,9 +18,5 @@ namespace cyy::computation {
                          production_set_type productions_);
 
     std::pair<collection_type, goto_table_type> get_collection() const override;
-
-  private:
-    bool
-    DK_1_test(const DK_1_DFA::LR_1_item_set_collection_type &collection) const;
   };
 } // namespace cyy::computation
