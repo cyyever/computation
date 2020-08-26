@@ -40,8 +40,18 @@ namespace cyy::computation {
     return cmd;
   }
 
+  new_LR_1_item_set::new_LR_1_item_set(const LR_0_item_set &set) {
+    for (auto lr_0_item : set.get_kernel_items()) {
+      kernel_items.emplace(std::move(lr_0_item));
+    }
+
+    for (auto nonkernel_item : set.get_nonkernel_items()) {
+      nonkernel_items.try_emplace(std::move(nonkernel_item),
+                                  CFG::terminal_set_type{});
+    }
+  }
+
   std::string new_LR_1_item_set::MMA_draw(const CFG &cfg) const {
-    auto const &alphabet = cfg.get_alphabet();
     std::string cmd = "Framed[TableForm[{";
     for (auto const &item : kernel_items) {
       cmd += item.MMA_draw(cfg);

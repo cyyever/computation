@@ -56,6 +56,9 @@ namespace std {
 namespace cyy::computation {
   class new_LR_1_item_set {
   public:
+    new_LR_1_item_set() = default;
+    new_LR_1_item_set(const LR_0_item_set &set);
+
     bool operator==(const new_LR_1_item_set &rhs) const = default;
     void add_item(LR_1_item item) {
       if (item.get_dot_pos() == 0 && !item.completed()) {
@@ -78,6 +81,11 @@ namespace cyy::computation {
     auto get_completed_items() const {
       return kernel_items |
              std::views::filter([](auto const &p) { return p.completed(); });
+    }
+    void add_nonkernel_item(CFG::nonterminal_type head,
+                            CFG::terminal_set_type lookahead_symbols = {}) {
+      nonkernel_items.try_emplace(std::move(head),
+                                  std::move(lookahead_symbols));
     }
     std::unordered_set<LR_1_item> expand_nonkernel_items(const CFG &cfg) const;
 

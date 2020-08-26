@@ -85,6 +85,7 @@ namespace cyy::computation {
     }
 
     auto const &get_kernel_items() const { return kernel_items; }
+    auto const &get_nonkernel_items() const { return nonkernel_items; }
     auto get_completed_items() const {
       return kernel_items |
              std::views::filter([](auto const &p) { return p.completed(); });

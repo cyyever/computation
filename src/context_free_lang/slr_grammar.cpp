@@ -23,12 +23,10 @@ namespace cyy::computation {
         if (lr_0_item.completed()) {
           lr_1_item.add_lookahead_symbols(follow_sets[lr_0_item.get_head()]);
         }
-        set.add_item(lr_1_item);
+        set.add_item(std::move(lr_1_item));
       }
-      for (auto const &lr_0_item :
-           lr_0_item_set.expand_nonkernel_items(*this)) {
-        LR_1_item lr_1_item(lr_0_item);
-        set.add_item(lr_1_item);
+      for (auto const &nonkernel_item : lr_0_item_set.get_nonkernel_items()) {
+        set.add_nonkernel_item(nonkernel_item);
       }
       collection[state] = std::move(set);
     }
