@@ -17,6 +17,7 @@ namespace cyy::computation {
 
       : LR_1_grammar(alphabet_, start_symbol_, std::move(productions_)) {}
 
+#if 0
   DPDA canonical_LR_grammar::to_DPDA() const {
     finite_automaton dpda_finite_automaton{{0}, alphabet, {0}, {}};
 
@@ -35,18 +36,16 @@ namespace cyy::computation {
         looping_state, dfa.get_start_state()};
 
     auto accept_state = dpda_finite_automaton.add_new_state();
-    auto goto_table = dk_dfa_ptr->get_goto_table();
+    auto goto_table = dk_1_dfa.get_goto_table();
     for (auto const dk_state : state_symbol_set) {
       if (!dfa.is_final_state(dk_state)) {
         for (auto const input_symbol : *alphabet) {
-          transition_function.check_stack_and_action(
-              looping_state, {input_symbol, dk_state},
-              {looping_state, goto_table[{dk_state, input_symbol}]},
-              dpda_finite_automaton);
-          transition_function.check_stack_and_action(
-              accept_state, {input_symbol, dk_state},
-              {looping_state, goto_table[{dk_state, input_symbol}]},
-              dpda_finite_automaton);
+          for (auto from_state:{looping_state,accept_state}) {
+            transition_function.check_stack_and_action(
+                from_state, {input_symbol, dk_state},
+                {looping_state, goto_table[{dk_state, input_symbol}]},
+                dpda_finite_automaton);
+          }
         }
         continue;
       }
@@ -104,6 +103,7 @@ namespace cyy::computation {
     return DPDA(dpda_finite_automaton, dk_state_set_alphabet,
                 transition_function);
   }
+#endif
 
   std::pair<canonical_LR_grammar::collection_type,
             canonical_LR_grammar::goto_table_type>

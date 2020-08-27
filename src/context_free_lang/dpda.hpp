@@ -76,6 +76,14 @@ namespace cyy::computation {
         transfers.emplace(situation_type{}, std::move(action));
       }
 
+      void pop_stack_and_action(state_type from_state, action_type action,
+                                const ALPHABET &stack_alphabet) {
+        auto &transfers = operator[](from_state);
+        for (auto stack_symbol : stack_alphabet) {
+          transfers[{{}, stack_symbol}] = action;
+        }
+      }
+
       void check_stack_and_action(state_type from_state,
                                   situation_type situation, action_type action,
                                   finite_automaton &automata) {

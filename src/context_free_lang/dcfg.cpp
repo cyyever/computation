@@ -62,14 +62,12 @@ namespace cyy::computation {
     for (auto const dk_state : state_symbol_set) {
       if (!dfa.is_final_state(dk_state)) {
         for (auto const input_symbol : *alphabet) {
-          transition_function.check_stack_and_action(
-              looping_state, {input_symbol, dk_state},
-              {looping_state, goto_table[{dk_state, input_symbol}]},
-              dpda_finite_automaton);
-          transition_function.check_stack_and_action(
-              accept_state, {input_symbol, dk_state},
-              {looping_state, goto_table[{dk_state, input_symbol}]},
-              dpda_finite_automaton);
+          for (auto from_state : {looping_state, accept_state}) {
+            transition_function.check_stack_and_action(
+                from_state, {input_symbol, dk_state},
+                {looping_state, goto_table[{dk_state, input_symbol}]},
+                dpda_finite_automaton);
+          }
         }
         continue;
       }
@@ -109,16 +107,15 @@ namespace cyy::computation {
               transition_function[from_state][{{}, dk_final_state}] = {
                   to_state};
             } else {
-              for (auto dk_state : *dk_state_set_alphabet) {
-                transition_function[from_state][{{}, dk_state}] = {to_state};
-              }
+              transition_function.pop_stack_and_action(from_state, {to_state},
+                                                       *dk_state_set_alphabet);
             }
             from_state = to_state;
           }
 
-          for (auto const dk_state : state_symbol_set) {
-            transition_function[from_state][{{}, dk_state}] = {
-                tmp_looping_state, goto_table[{dk_state, head}]};
+          for (auto const prev_dk_state : state_symbol_set) {
+            transition_function[from_state][{{}, prev_dk_state}] = {
+                tmp_looping_state, goto_table[{prev_dk_state, head}]};
           }
         }
       }
