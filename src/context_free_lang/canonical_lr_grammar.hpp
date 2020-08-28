@@ -18,6 +18,6 @@ namespace cyy::computation {
                          production_set_type productions_);
 
     std::pair<collection_type, goto_table_type> get_collection() const override;
-    /* DPDA to_DPDA() const; */
+    DPDA to_DPDA() const;
   };
 } // namespace cyy::computation

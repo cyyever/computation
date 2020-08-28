@@ -17,7 +17,6 @@ namespace cyy::computation {
 
       : LR_1_grammar(alphabet_, start_symbol_, std::move(productions_)) {}
 
-#if 0
   DPDA canonical_LR_grammar::to_DPDA() const {
     finite_automaton dpda_finite_automaton{{0}, alphabet, {0}, {}};
 
@@ -38,9 +37,10 @@ namespace cyy::computation {
     auto accept_state = dpda_finite_automaton.add_new_state();
     auto goto_table = dk_1_dfa.get_goto_table();
     for (auto const dk_state : state_symbol_set) {
+      // shift
       if (!dfa.is_final_state(dk_state)) {
         for (auto const input_symbol : *alphabet) {
-          for (auto from_state:{looping_state,accept_state}) {
+          for (auto from_state : {looping_state, accept_state}) {
             transition_function.check_stack_and_action(
                 from_state, {input_symbol, dk_state},
                 {looping_state, goto_table[{dk_state, input_symbol}]},
@@ -49,34 +49,29 @@ namespace cyy::computation {
         }
         continue;
       }
+      // reduce
       auto dk_final_state = dk_state;
-      auto const &item = *(dk_dfa_ptr->get_LR_0_item_set(dk_state)
-                               .get_completed_items()
-                               .begin());
+      auto const &item =
+          *(dk_1_dfa.get_LR_1_item_set(dk_state).get_completed_items().begin());
       auto const &head = item.get_head();
       auto const &body = item.get_body();
 
-      bool reduction_in_looping_state = true;
+      auto reduction_states = std::vector{accept_state, looping_state};
       if (head == get_start_symbol()) {
-        transition_function[looping_state][{{}, dk_final_state}] = {
-            accept_state};
         transition_function.check_stack_and_action(
-            accept_state, {{}, dk_final_state}, {accept_state, dk_final_state},
+            looping_state, {{}, dk_final_state}, {accept_state},
             dpda_finite_automaton);
-        reduction_in_looping_state = false;
+        reduction_states.pop_back();
       }
 
-      for (auto tmp_looping_state : {looping_state, accept_state}) {
-        if (tmp_looping_state == looping_state && !reduction_in_looping_state) {
-          continue;
-        }
+      for (auto reduction_state : reduction_states) {
         if (body.empty()) {
           transition_function.check_stack_and_action(
-              tmp_looping_state, {{}, dk_final_state},
-              {tmp_looping_state, goto_table[{dk_final_state, head}]},
+              reduction_state, {{}, dk_final_state},
+              {reduction_state, goto_table[{dk_final_state, head}]},
               dpda_finite_automaton);
         } else {
-          auto from_state = tmp_looping_state;
+          auto from_state = reduction_state;
           state_type to_state;
           // pop body states from stack
           for (size_t i = 0; i < body.size(); i++) {
@@ -85,16 +80,15 @@ namespace cyy::computation {
               transition_function[from_state][{{}, dk_final_state}] = {
                   to_state};
             } else {
-              for (auto dk_state : *dk_state_set_alphabet) {
-                transition_function[from_state][{{}, dk_state}] = {to_state};
-              }
+              transition_function.pop_stack_and_action(from_state, {to_state},
+                                                       *dk_state_set_alphabet);
             }
             from_state = to_state;
           }
 
-          for (auto const dk_state : state_symbol_set) {
-            transition_function[from_state][{{}, dk_state}] = {
-                tmp_looping_state, goto_table[{dk_state, head}]};
+          for (auto const prev_dk_state : state_symbol_set) {
+            transition_function[from_state][{{}, prev_dk_state}] = {
+                reduction_state, goto_table[{prev_dk_state, head}]};
           }
         }
       }
@@ -103,7 +97,6 @@ namespace cyy::computation {
     return DPDA(dpda_finite_automaton, dk_state_set_alphabet,
                 transition_function);
   }
-#endif
 
   std::pair<canonical_LR_grammar::collection_type,
             canonical_LR_grammar::goto_table_type>

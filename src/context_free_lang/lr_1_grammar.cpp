@@ -76,7 +76,6 @@ namespace cyy::computation {
     for (auto const &[state, set] : collection) {
       for (const auto &item : set.get_completed_items()) {
         for (const auto &lookahead : item.get_lookahead_symbols()) {
-
           // conflict
           auto it = action_table.find({state, lookahead});
           if (it != action_table.end()) {
