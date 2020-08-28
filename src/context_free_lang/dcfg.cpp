@@ -60,6 +60,7 @@ namespace cyy::computation {
     auto accept_state = dpda_finite_automaton.add_new_state();
     auto goto_table = dk_dfa_ptr->get_goto_table();
     for (auto const dk_state : state_symbol_set) {
+      // shift
       if (!dfa.is_final_state(dk_state)) {
         for (auto const input_symbol : *alphabet) {
           for (auto from_state : {looping_state, accept_state}) {
@@ -71,6 +72,7 @@ namespace cyy::computation {
         }
         continue;
       }
+      // reduce
       auto dk_final_state = dk_state;
       auto const &item = *(dk_dfa_ptr->get_LR_0_item_set(dk_state)
                                .get_completed_items()
@@ -78,27 +80,22 @@ namespace cyy::computation {
       auto const &head = item.get_head();
       auto const &body = item.get_body();
 
-      bool reduction_in_looping_state = true;
+      auto reduction_states = std::vector{accept_state, looping_state};
       if (head == get_start_symbol()) {
-        transition_function[looping_state][{{}, dk_final_state}] = {
-            accept_state};
         transition_function.check_stack_and_action(
-            accept_state, {{}, dk_final_state}, {accept_state, dk_final_state},
+            looping_state, {{}, dk_final_state}, {accept_state},
             dpda_finite_automaton);
-        reduction_in_looping_state = false;
+        reduction_states.pop_back();
       }
 
-      for (auto tmp_looping_state : {looping_state, accept_state}) {
-        if (tmp_looping_state == looping_state && !reduction_in_looping_state) {
-          continue;
-        }
+      for (auto reduction_state : reduction_states) {
         if (body.empty()) {
           transition_function.check_stack_and_action(
-              tmp_looping_state, {{}, dk_final_state},
-              {tmp_looping_state, goto_table[{dk_final_state, head}]},
+              reduction_state, {{}, dk_final_state},
+              {reduction_state, goto_table[{dk_final_state, head}]},
               dpda_finite_automaton);
         } else {
-          auto from_state = tmp_looping_state;
+          auto from_state = reduction_state;
           state_type to_state;
           // pop body states from stack
           for (size_t i = 0; i < body.size(); i++) {
@@ -115,7 +112,7 @@ namespace cyy::computation {
 
           for (auto const prev_dk_state : state_symbol_set) {
             transition_function[from_state][{{}, prev_dk_state}] = {
-                tmp_looping_state, goto_table[{prev_dk_state, head}]};
+                reduction_state, goto_table[{prev_dk_state, head}]};
           }
         }
       }
