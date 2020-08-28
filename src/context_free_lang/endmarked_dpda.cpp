@@ -53,7 +53,7 @@ namespace cyy::computation {
     for (auto s : *alphabet) {
       transition_function[new_accept_state][{s}] = {reject_state_opt.value()};
     }
-    final_states = {new_accept_state};
+    replace_final_states(new_accept_state);
     check_transition_fuction();
   }
   DPDA endmarked_DPDA::to_DPDA() const {
