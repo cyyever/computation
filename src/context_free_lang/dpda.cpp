@@ -407,6 +407,7 @@ namespace cyy::computation {
   }
 
   void DPDA::check_transition_fuction() const {
+#ifdef NDEBUG
     for (auto state : get_states()) {
       auto it = transition_function.find(state);
       if (it == transition_function.end()) {
@@ -439,6 +440,7 @@ namespace cyy::computation {
         }
       }
     }
+#endif
   }
   std::string DPDA::MMA_draw() const {
     std::stringstream is;
