@@ -4,6 +4,7 @@
  * \brief
  */
 #include <doctest/doctest.h>
+#define private public
 
 #include "context_free_lang/cnf.hpp"
 #include "context_free_lang/dpda.hpp"
@@ -106,14 +107,32 @@ TEST_CASE("endmarked DPDA") {
     }
 
     SUBCASE("to DPDA") {
+      SUBCASE("normalize_functions") {
+        endmarked_dpda.normalize_transitions();
+        SUBCASE("recognize") {
+          for (auto str : {U"0", U"1"}) {
+            endmarked_str = str;
+            endmarked_str.push_back(ALPHABET::endmarker);
+            CHECK(endmarked_dpda.recognize(endmarked_str));
+          }
+        }
+
+        SUBCASE("can't recognize") {
+          for (auto str : {U"", U"01", U"00", U"10", U"11"}) {
+            endmarked_str = str;
+            endmarked_str.push_back(ALPHABET::endmarker);
+            CHECK(!endmarked_dpda.recognize(endmarked_str));
+          }
+        }
+      }
       auto reverted_dpda = endmarked_dpda.to_DPDA();
-      /*
       SUBCASE("recognize") {
         for (auto str : {U"0", U"1"}) {
           CHECK(reverted_dpda.recognize(str));
         }
       }
 
+      /*
       SUBCASE("can't recognize") {
         for (auto str : {U"", U"01", U"00", U"10", U"11"}) {
           CHECK(!reverted_dpda.recognize(str));
