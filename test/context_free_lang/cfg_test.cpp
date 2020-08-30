@@ -4,6 +4,7 @@
  * \brief 测试cfg
  */
 #include <doctest/doctest.h>
+#define private public
 
 #include "../../src/context_free_lang/cfg.hpp"
 #include "../../src/context_free_lang/model_transform.hpp"

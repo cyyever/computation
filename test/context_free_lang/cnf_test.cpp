@@ -3,11 +3,8 @@
  *
  * \brief 测试cfg
  */
-#if __has_include(<CppCoreCheck\Warnings.h>)
-#include <CppCoreCheck\Warnings.h>
-#pragma warning(disable : ALL_CPPCORECHECK_WARNINGS)
-#endif
 #include <doctest/doctest.h>
+#define private public
 
 #include "../../src/context_free_lang/cnf.hpp"
 #include "../../src/lang/common_tokens.hpp"

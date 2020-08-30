@@ -92,7 +92,7 @@ namespace cyy::computation {
         if (body.empty()) {
           transition_function.check_stack_and_action(
               reduction_state, {{}, dk_final_state},
-              {reduction_state, goto_table[{dk_final_state, head}]},
+              {looping_state, goto_table[{dk_final_state, head}]},
               dpda_finite_automaton);
         } else {
           auto from_state = reduction_state;
@@ -111,8 +111,10 @@ namespace cyy::computation {
           }
 
           for (auto const prev_dk_state : state_symbol_set) {
-            transition_function[from_state][{{}, prev_dk_state}] = {
-                reduction_state, goto_table[{prev_dk_state, head}]};
+            transition_function.check_stack_and_action(
+                to_state, {{}, prev_dk_state},
+                {looping_state, goto_table[{prev_dk_state, head}]},
+                dpda_finite_automaton);
           }
         }
       }

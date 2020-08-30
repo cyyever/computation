@@ -85,14 +85,15 @@ namespace cyy::computation {
     terminal_set_type get_terminals() const;
     nonterminal_set_type get_nonterminals() const;
 
-    void eliminate_useless_symbols();
-
     bool has_left_recursion() const;
     void eliminate_left_recursion(std::vector<nonterminal_type> old_heads = {});
 
-    void eliminate_epsilon_productions();
+    const std::unordered_map<nonterminal_type,
+                             std::pair<terminal_set_type, bool>> &
+    first() const;
 
-    void eliminate_single_productions();
+    std::pair<terminal_set_type, bool>
+    first(const grammar_symbol_const_span_type &alpha) const;
 
     //! convert grammar to Chomsky normal form
     void to_CNF();
@@ -101,22 +102,11 @@ namespace cyy::computation {
 
     bool recursive_descent_parse(symbol_string_view view) const;
 
-    const std::unordered_map<nonterminal_type,
-                             std::pair<terminal_set_type, bool>> &
-    first() const;
-
     std::unordered_map<nonterminal_type, terminal_set_type> follow() const;
-
-    nonterminal_set_type nullable() const;
-
-    std::pair<terminal_set_type, bool>
-    first(const grammar_symbol_const_span_type &alpha) const;
 
     const nonterminal_type &get_start_symbol() const noexcept {
       return start_symbol;
     }
-
-    void normalize_start_symbol();
 
     void remove_head(nonterminal_type head);
 
@@ -124,6 +114,7 @@ namespace cyy::computation {
     std::string MMA_draw() const;
 
   protected:
+    void normalize_start_symbol();
     nonterminal_type get_new_head(nonterminal_type advise_head) const {
       do {
         advise_head.push_back('\'');
@@ -131,7 +122,6 @@ namespace cyy::computation {
       return advise_head;
     }
 
-    void normalize_productions();
     static nonterminal_type get_new_head(nonterminal_type advise_head,
                                          const nonterminal_set_type &heads) {
       do {
@@ -143,8 +133,13 @@ namespace cyy::computation {
     friend std::ostream &operator<<(std::ostream &os, const CFG &cfg);
 
   private:
+    void normalize_productions();
     std::unordered_map<nonterminal_type, nonterminal_set_type>
     get_head_dependency() const;
+    void eliminate_useless_symbols();
+    void eliminate_epsilon_productions();
+    void eliminate_single_productions();
+    nonterminal_set_type nullable() const;
 
   protected:
     ALPHABET_ptr alphabet;
