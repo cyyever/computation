@@ -129,9 +129,11 @@ namespace cyy::computation {
       }
     }
 
+    void clear_final_states() { final_states.clear(); }
+
     template <std::ranges::range U>
     void change_final_states(U new_final_states) {
-      final_states.clear();
+      clear_final_states();
       add_final_states(new_final_states);
     }
 

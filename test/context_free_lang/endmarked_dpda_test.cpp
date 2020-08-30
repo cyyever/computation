@@ -132,13 +132,11 @@ TEST_CASE("endmarked DPDA") {
         }
       }
 
-      /*
       SUBCASE("can't recognize") {
         for (auto str : {U"", U"01", U"00", U"10", U"11"}) {
           CHECK(!reverted_dpda.recognize(str));
         }
       }
-      */
     }
   }
 }
