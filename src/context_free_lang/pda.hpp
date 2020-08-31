@@ -14,13 +14,13 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include "../automaton/automaton.hpp"
+#include "../automata/automata.hpp"
 #include "../exception.hpp"
 #include "../hash.hpp"
 
 namespace cyy::computation {
 
-  class PDA final : public finite_automaton {
+  class PDA final : public finite_automata {
   public:
     struct situation_type {
       situation_type(state_type state_) : state(state_) {}
@@ -74,9 +74,9 @@ namespace cyy::computation {
         std::unordered_map<situation_type, std::set<action_type>,
                            situation_hash_type>;
 
-    PDA(finite_automaton finite_automaton_, ALPHABET_ptr stack_alphabet_,
+    PDA(finite_automata finite_automata_, ALPHABET_ptr stack_alphabet_,
         transition_function_type transition_function_)
-        : finite_automaton(std::move(finite_automaton_)),
+        : finite_automata(std::move(finite_automata_)),
           stack_alphabet(stack_alphabet_),
           transition_function(std::move(transition_function_)) {}
 

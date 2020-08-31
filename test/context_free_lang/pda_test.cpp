@@ -19,7 +19,7 @@ TEST_CASE("recognize PDA") {
   ALPHABET::set(input_alphabet);
 
   auto endmarker = ALPHABET::endmarker;
-  finite_automaton pda_automata({0, 1, 2, 3}, "01_set", 0, {3});
+  finite_automata pda_automata({0, 1, 2, 3}, "01_set", 0, {3});
   PDA pda(std::move(pda_automata), "01_set",
           {
               {{0}, {{1, endmarker}}},

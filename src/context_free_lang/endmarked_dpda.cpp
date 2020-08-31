@@ -69,7 +69,7 @@ namespace cyy::computation {
     auto new_stack_alphabet = std::make_shared<union_alphabet>(
         const_dpda.stack_alphabet, stack_alphabet_of_state_set);
 
-    auto pda_finite_automata = const_dpda.get_finite_automaton();
+    auto pda_finite_automata = const_dpda.get_finite_automata();
     auto pda_transition_function = const_dpda.get_transition_function();
     auto accept_states = const_dpda.get_accept_states();
     auto new_start_state = pda_finite_automata.add_new_state();

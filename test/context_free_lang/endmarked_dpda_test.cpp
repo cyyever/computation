@@ -14,7 +14,7 @@
 
 using namespace cyy::computation;
 TEST_CASE("endmarked DPDA") {
-  finite_automaton dpda_automata({0, 1, 2}, "01_set", 0, {1});
+  finite_automata dpda_automata({0, 1, 2}, "01_set", 0, {1});
   DPDA dpda(dpda_automata, "01_set",
             {{0,
               {

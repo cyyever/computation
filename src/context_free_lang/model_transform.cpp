@@ -8,7 +8,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "automaton/automaton.hpp"
+#include "automata/automata.hpp"
 #include "cfg_production.hpp"
 #include "model_transform.hpp"
 
@@ -17,7 +17,7 @@ namespace cyy::computation {
   CFG NFA_to_CFG(const NFA &nfa) {
     CFG::production_set_type productions;
 
-    auto const state_to_nonterminal = [](finite_automaton::state_type state) {
+    auto const state_to_nonterminal = [](finite_automata::state_type state) {
       return std::string("S") + std::to_string(state);
     };
 
@@ -66,8 +66,8 @@ namespace cyy::computation {
     PDA::state_type loop_state = 1;
     PDA::state_type final_state = 2;
     std::set<PDA::state_type> states{start_state, loop_state, final_state};
-    finite_automaton dpda_automata(states, cfg.get_alphabet_ptr(), start_state,
-                                   {final_state});
+    finite_automata dpda_automata(states, cfg.get_alphabet_ptr(), start_state,
+                                  {final_state});
     PDA::transition_function_type transition_function;
     auto push_body = [&dpda_automata, &get_stack_symbol, &transition_function](
                          PDA::state_type from_state, PDA::state_type to_state,

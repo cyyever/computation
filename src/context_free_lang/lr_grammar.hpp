@@ -18,7 +18,7 @@ namespace cyy::computation {
 
   public:
     using CFG::CFG;
-    using state_type = finite_automaton::state_type;
+    using state_type = finite_automata::state_type;
 
     virtual ~LR_grammar() = default;
 

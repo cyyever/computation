@@ -1,5 +1,5 @@
 /*!
- * \file automaton.hpp
+ * \file automata.hpp
  *
  * \author cyy
  * \date 2018-03-03
@@ -20,7 +20,7 @@
 
 namespace cyy::computation {
 
-  class finite_automaton {
+  class finite_automata {
   public:
     using state_type = uint64_t;
     using state_set_type = std::set<state_type>;
@@ -34,15 +34,15 @@ namespace cyy::computation {
       bool operator==(const situation_type &) const noexcept = default;
     };
 
-    finite_automaton(state_set_type states_, ALPHABET_ptr alphabet_,
-                     state_type start_state_, state_set_type final_states_)
+    finite_automata(state_set_type states_, ALPHABET_ptr alphabet_,
+                    state_type start_state_, state_set_type final_states_)
         : alphabet(alphabet_), states(std::move(states_)),
           start_state(start_state_), final_states(std::move(final_states_)) {
       if (states.empty()) {
-        throw cyy::computation::exception::no_finite_automaton("no state");
+        throw cyy::computation::exception::no_finite_automata("no state");
       }
       if (!has_state(start_state)) {
-        throw cyy::computation::exception::no_finite_automaton(
+        throw cyy::computation::exception::no_finite_automata(
             "unexisted start state");
       }
       for (auto const &final_state : final_states) {
@@ -50,18 +50,18 @@ namespace cyy::computation {
       }
     }
 
-    finite_automaton(const finite_automaton &) = default;
-    finite_automaton &operator=(const finite_automaton &) = default;
-    finite_automaton(finite_automaton &&) = default;
-    finite_automaton &operator=(finite_automaton &&) = default;
-    ~finite_automaton() = default;
+    finite_automata(const finite_automata &) = default;
+    finite_automata &operator=(const finite_automata &) = default;
+    finite_automata(finite_automata &&) = default;
+    finite_automata &operator=(finite_automata &&) = default;
+    ~finite_automata() = default;
 
-    bool operator==(const finite_automaton &rhs) const = default;
+    bool operator==(const finite_automata &rhs) const = default;
 
-    const finite_automaton &get_finite_automaton() const & { return *this; }
+    const finite_automata &get_finite_automata() const & { return *this; }
 
-    finite_automaton get_finite_automaton() && {
-      return finite_automaton(std::move(*this));
+    finite_automata get_finite_automata() && {
+      return finite_automata(std::move(*this));
     }
 
     auto const get_states() const noexcept { return std::views::all(states); }
@@ -124,7 +124,7 @@ namespace cyy::computation {
     bool has_state(state_type s) const { return states.contains(s); }
     void check_state(state_type s) const {
       if (!has_state(s)) {
-        throw cyy::computation::exception::no_finite_automaton(
+        throw cyy::computation::exception::no_finite_automata(
             std::string("unexisted state ") + std::to_string(s));
       }
     }
@@ -185,18 +185,18 @@ namespace cyy::computation {
 } // namespace cyy::computation
 
 namespace std {
-  template <> struct hash<cyy::computation::finite_automaton::situation_type> {
+  template <> struct hash<cyy::computation::finite_automata::situation_type> {
     std::size_t
-    operator()(const cyy::computation::finite_automaton::situation_type &x)
+    operator()(const cyy::computation::finite_automata::situation_type &x)
         const noexcept {
       size_t seed = 0;
 
       boost::hash_combine(
           seed,
-          std::hash<cyy::computation::finite_automaton::state_type>()(x.state));
+          std::hash<cyy::computation::finite_automata::state_type>()(x.state));
       boost::hash_combine(
           seed,
-          std::hash<cyy::computation::finite_automaton::input_symbol_type>()(
+          std::hash<cyy::computation::finite_automata::input_symbol_type>()(
               x.input_symbol));
       return seed;
     }

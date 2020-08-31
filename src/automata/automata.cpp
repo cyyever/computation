@@ -1,10 +1,10 @@
 
-#include "automaton.hpp"
+#include "automata.hpp"
 #include "../util.hpp"
 #include <sstream>
 namespace cyy::computation {
 
-  finite_automaton::state_set_type &finite_automaton::get_epsilon_closure(
+  finite_automata::state_set_type &finite_automata::get_epsilon_closure(
       state_set_map_type &epsilon_closures, state_type s,
       const state_set_map_type &epsilon_transition_function) {
 
@@ -78,9 +78,9 @@ namespace cyy::computation {
     }
     return epsilon_closures[s];
   }
-  finite_automaton::state_bitset_type
-  finite_automaton::state_set_to_bitset(const state_set_type &all_state_set,
-                                        const state_set_type &state_set) {
+  finite_automata::state_bitset_type
+  finite_automata::state_set_to_bitset(const state_set_type &all_state_set,
+                                       const state_set_type &state_set) {
     state_bitset_type bitset(all_state_set.size());
     auto it = all_state_set.begin();
     auto it2 = state_set.begin();
@@ -100,17 +100,17 @@ namespace cyy::computation {
     return bitset;
   }
 
-  finite_automaton::state_bitset_type
-  finite_automaton::state_set_to_bitset(const state_set_type &state_set) const {
+  finite_automata::state_bitset_type
+  finite_automata::state_set_to_bitset(const state_set_type &state_set) const {
     return state_set_to_bitset(states, state_set);
   }
   bool
-  finite_automaton::state_biset_contains(const state_bitset_type &state_bitset,
-                                         state_type state) const {
+  finite_automata::state_biset_contains(const state_bitset_type &state_bitset,
+                                        state_type state) const {
     return state_bitset.test(std::distance(states.begin(), states.find(state)));
   }
 
-  std::string finite_automaton::MMA_draw() const {
+  std::string finite_automata::MMA_draw() const {
     std::stringstream is;
     is << "GraphLayout -> \"CircularEmbedding\", ImageSize -> "
           "Large,VertexLabels -> "

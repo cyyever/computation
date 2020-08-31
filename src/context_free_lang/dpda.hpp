@@ -14,13 +14,13 @@
 #include <string_view>
 #include <unordered_map>
 
-#include "../automaton/automaton.hpp"
+#include "../automata/automata.hpp"
 #include "../exception.hpp"
 #include "../hash.hpp"
 
 namespace cyy::computation {
 
-  class DPDA : public finite_automaton {
+  class DPDA : public finite_automata {
   public:
     struct situation_type {
       situation_type() = default;
@@ -86,7 +86,7 @@ namespace cyy::computation {
 
       void check_stack_and_action(state_type from_state,
                                   situation_type situation, action_type action,
-                                  finite_automaton &automata) {
+                                  finite_automata &automata) {
         assert(situation.has_pop());
         auto &transfers = operator[](from_state);
         auto new_state = automata.add_new_state();
@@ -103,9 +103,9 @@ namespace cyy::computation {
       }
     };
 
-    DPDA(finite_automaton finite_automaton_, ALPHABET_ptr stack_alphabet_,
+    DPDA(finite_automata finite_automata_, ALPHABET_ptr stack_alphabet_,
          transition_function_type transition_function_)
-        : finite_automaton(std::move(finite_automaton_)),
+        : finite_automata(std::move(finite_automata_)),
           stack_alphabet(stack_alphabet_),
           transition_function(std::move(transition_function_)) {
       check_transition_fuction();
