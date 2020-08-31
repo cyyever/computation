@@ -85,7 +85,7 @@ namespace cyy::computation {
   }
 
   finite_automata::state_bitset_type
-  finite_automata::state_set_to_bitset(const state_set_type &state_set) const {
+  finite_automata::get_bitset(const state_set_type &state_set) const {
     state_bitset_type bitset(states.size());
     auto it = states.begin();
     auto it2 = state_set.begin();
@@ -105,8 +105,8 @@ namespace cyy::computation {
     return bitset;
   }
   bool
-  finite_automata::state_biset_contains(const state_bitset_type &state_bitset,
-                                        state_type state) const {
+  finite_automata::state_bitset_contains(const state_bitset_type &state_bitset,
+                                         state_type state) const {
     return state_bitset.test(std::distance(states.begin(), states.find(state)));
   }
 

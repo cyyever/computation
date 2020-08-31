@@ -159,13 +159,12 @@ namespace cyy::computation {
     std::string MMA_draw() const;
 
   protected:
-    state_bitset_type
-    state_set_to_bitset(const state_set_type &state_set) const;
+    state_bitset_type get_bitset(const state_set_type &state_set) const;
 
     state_bitset_type get_bitset(uint64_t bitset_value) const;
 
-    bool state_biset_contains(const state_bitset_type &state_bitset,
-                              state_type state) const;
+    bool state_bitset_contains(const state_bitset_type &state_bitset,
+                               state_type state) const;
 
     static state_set_type &
     get_epsilon_closure(state_set_map_type &epsilon_closures, state_type s,

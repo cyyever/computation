@@ -70,15 +70,12 @@ namespace cyy::computation {
         const_dpda.stack_alphabet, stack_alphabet_of_state_set);
 
     auto dpda_finite_automata = const_dpda.get_finite_automata();
-    auto dpda_transition_function = const_dpda.get_transition_function();
-    auto const endmarked_dpda_state_size = const_dpda.get_state_set().size();
     auto new_start_state = dpda_finite_automata.add_new_state();
-
+    transition_function_type dpda_transition_function;
     dpda_transition_function[new_start_state][{}] = {
         dpda_finite_automata.get_start_state(),
         stack_alphabet_of_state_set->get_min_symbol() +
-            const_dpda.state_set_to_bitset(const_dpda.get_accept_states())
-                .to_ulong()};
+            const_dpda.get_bitset(const_dpda.get_accept_states()).to_ulong()};
     dpda_finite_automata.change_start_state(new_start_state);
     dpda_finite_automata.clear_final_states();
     std::unordered_map<state_type, state_type> pop_temporary_states;
@@ -87,6 +84,8 @@ namespace cyy::computation {
       for (auto const &[situation, action] : dpda_transfers) {
         // pop
         if (situation.has_pop()) {
+          assert(!situation.use_input());
+          assert(!action.has_push());
           if (!pop_temporary_states.contains(from_state)) {
             pop_temporary_states[from_state] =
                 dpda_finite_automata.add_new_state();
@@ -117,17 +116,17 @@ namespace cyy::computation {
 
           state_set_type new_accept_states;
           if (stack_alphabet_of_state_set->contain(old_stack_symbol)) {
-            for (auto const &[old_from_state, old_transfers] :
+            for (auto const &[new_from_state, new_transfers] :
                  const_dpda.get_transition_function()) {
-              for (auto const &[old_situation, old_action] : old_transfers) {
-                if (old_situation.stack_symbol != action.stack_symbol) {
+              for (auto const &[new_situation, new_action] : new_transfers) {
+                if (new_situation.stack_symbol != action.stack_symbol) {
                   continue;
                 }
 
-                if (state_biset_contains(
+                if (const_dpda.state_bitset_contains(
                         const_dpda.get_bitset(old_stack_symbol),
-                        old_action.state)) {
-                  new_accept_states.emplace(old_from_state);
+                        new_action.state)) {
+                  new_accept_states.emplace(new_from_state);
                 }
               }
             }
@@ -137,7 +136,7 @@ namespace cyy::computation {
           dpda_transition_function[new_state2][{}] = {
               action.state,
               stack_alphabet_of_state_set->get_min_symbol() +
-                  const_dpda.state_set_to_bitset(new_accept_states).to_ulong()};
+                  const_dpda.get_bitset(new_accept_states).to_ulong()};
         }
       }
     }
@@ -151,30 +150,35 @@ namespace cyy::computation {
         }
         assert(!action.has_push());
         assert(!situation.has_pop());
-        auto const &old_states = const_dpda.get_state_set();
         if (!parallel_states.contains(action.state)) {
           auto parallel_state = dpda_finite_automata.add_new_state();
           parallel_states[action.state] = parallel_state;
           dpda_transition_function[parallel_state] =
               dpda_transition_function[action.state];
+          dpda_finite_automata.add_final_state(parallel_state);
         }
         auto parallel_state = parallel_states[action.state];
-        dpda_finite_automata.add_final_state(parallel_state);
-        auto &new_transfers = dpda_transition_function[from_state];
         for (auto stack_symbol : *new_stack_alphabet) {
           if (!stack_alphabet_of_state_set->contain(stack_symbol)) {
-            new_transfers[{situation.input_symbol, stack_symbol}] = {
-                action.state, stack_symbol};
+            dpda_transition_function[from_state]
+                                    [{situation.input_symbol, stack_symbol}] = {
+                                        action.state, stack_symbol};
             continue;
           }
-          if ((state_bitset_type(old_states.size(), {action.state}) |
-               state_bitset_type(old_states.size(), stack_symbol))
-                  .any()) {
-            new_transfers[{situation.input_symbol, stack_symbol}] = {
-                parallel_state, stack_symbol};
+          if (const_dpda.state_bitset_contains(
+                  const_dpda.get_bitset(stack_symbol), action.state)) {
+
+            std::cout << "from state is " << from_state << " and stack is "
+                      << (int)stack_symbol << " final_state is "
+                      << parallel_state << " of " << action.state << std::endl;
+
+            dpda_transition_function[from_state]
+                                    [{situation.input_symbol, stack_symbol}] = {
+                                        parallel_state, stack_symbol};
           } else {
-            new_transfers[{situation.input_symbol, stack_symbol}] = {
-                action.state, stack_symbol};
+            dpda_transition_function[from_state]
+                                    [{situation.input_symbol, stack_symbol}] = {
+                                        action.state, stack_symbol};
           }
         }
       }
