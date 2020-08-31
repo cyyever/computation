@@ -78,15 +78,20 @@ namespace cyy::computation {
     }
     return epsilon_closures[s];
   }
+
   finite_automata::state_bitset_type
-  finite_automata::state_set_to_bitset(const state_set_type &all_state_set,
-                                       const state_set_type &state_set) {
-    state_bitset_type bitset(all_state_set.size());
-    auto it = all_state_set.begin();
+  finite_automata::get_bitset(uint64_t bitset_value) const {
+    return state_bitset_type(states.size(), bitset_value);
+  }
+
+  finite_automata::state_bitset_type
+  finite_automata::state_set_to_bitset(const state_set_type &state_set) const {
+    state_bitset_type bitset(states.size());
+    auto it = states.begin();
     auto it2 = state_set.begin();
-    while (it != all_state_set.end() && it2 != state_set.end()) {
+    while (it != states.end() && it2 != state_set.end()) {
       if (*it == *it2) {
-        bitset.set(std::distance(all_state_set.begin(), it));
+        bitset.set(std::distance(states.begin(), it));
         it++;
         it2++;
         continue;
@@ -98,11 +103,6 @@ namespace cyy::computation {
       it2++;
     }
     return bitset;
-  }
-
-  finite_automata::state_bitset_type
-  finite_automata::state_set_to_bitset(const state_set_type &state_set) const {
-    return state_set_to_bitset(states, state_set);
   }
   bool
   finite_automata::state_biset_contains(const state_bitset_type &state_bitset,

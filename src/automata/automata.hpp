@@ -159,11 +159,11 @@ namespace cyy::computation {
     std::string MMA_draw() const;
 
   protected:
-    static state_bitset_type
-    state_set_to_bitset(const state_set_type &all_state_set,
-                        const state_set_type &state_set);
     state_bitset_type
     state_set_to_bitset(const state_set_type &state_set) const;
+
+    state_bitset_type get_bitset(uint64_t bitset_value) const;
+
     bool state_biset_contains(const state_bitset_type &state_bitset,
                               state_type state) const;
 
