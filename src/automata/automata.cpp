@@ -104,6 +104,20 @@ namespace cyy::computation {
     }
     return bitset;
   }
+
+  finite_automata::state_set_type
+  finite_automata::from_bitset(const state_bitset_type &bitset) const {
+    state_set_type result;
+    size_t n = 0;
+    for (auto const state : states) {
+      if (bitset.test(n)) {
+        result.emplace(state);
+      }
+      n++;
+    }
+    return result;
+  }
+
   bool
   finite_automata::state_bitset_contains(const state_bitset_type &state_bitset,
                                          state_type state) const {

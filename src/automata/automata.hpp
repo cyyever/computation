@@ -72,6 +72,7 @@ namespace cyy::computation {
     state_type get_start_state() const noexcept { return start_state; }
     state_type get_max_state() const { return *states.rbegin(); }
 
+    void set_alphabet(ALPHABET_ptr alphabet_) { alphabet = alphabet_; }
     bool contain_final_state(const state_set_type &T) const {
       auto it = T.begin();
       auto it2 = final_states.begin();
@@ -163,6 +164,7 @@ namespace cyy::computation {
 
     state_bitset_type get_bitset(uint64_t bitset_value) const;
 
+    state_set_type from_bitset(const state_bitset_type &bitset) const;
     bool state_bitset_contains(const state_bitset_type &state_bitset,
                                state_type state) const;
 

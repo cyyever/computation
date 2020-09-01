@@ -108,6 +108,9 @@ namespace cyy::computation {
         : finite_automata(std::move(finite_automata_)),
           stack_alphabet(stack_alphabet_),
           transition_function(std::move(transition_function_)) {
+      if (alphabet->contain(ALPHABET::endmarker)) {
+        throw exception::invalid_alphabet("alphabet contain endmarker");
+      }
       check_transition_fuction();
     }
 
