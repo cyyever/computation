@@ -440,39 +440,46 @@ namespace cyy::computation {
 #endif
   }
   std::string DPDA::MMA_draw() const {
-    std::stringstream is;
-    is << "Graph[{";
+    std::map<
+        std::tuple<state_type, state_type, std::optional<input_symbol_type>>,
+        std::vector<std::string>>
+        stack_cmds;
     for (auto &[from_state, transfers] : transition_function) {
       for (const auto &[situation, action] : transfers) {
-        if (!situation.use_input()) {
-          is << "Style[";
-        }
-        is << "Labeled[ " << from_state << "->" << action.state << ',';
-        is << '"';
-        if (!situation.use_input()) {
-          is << "\\[Epsilon]";
-        } else {
-          is << alphabet->to_string(situation.input_symbol.value());
-        }
-        is << ',';
+        std::string sub_cmd = "{";
         if (situation.has_pop()) {
-          is << stack_alphabet->to_string(situation.stack_symbol.value());
+          sub_cmd += stack_alphabet->MMA_draw(situation.stack_symbol.value());
         } else {
-          is << "\\[Epsilon]";
+          sub_cmd += "\\[Epsilon]";
         }
-        is << '/';
+        sub_cmd += ",\"/\",";
         if (action.has_push()) {
-          is << stack_alphabet->to_string(action.stack_symbol.value());
+          sub_cmd += stack_alphabet->MMA_draw(action.stack_symbol.value());
         } else {
-          is << "\\[Epsilon]";
+          sub_cmd += "\\[Epsilon]";
         }
-        is << '"';
-        is << ']';
-        if (!situation.use_input()) {
-          is << ",Dashed]";
-        }
-        is << ',';
+        sub_cmd += "}";
+        stack_cmds[{from_state, action.state, situation.input_symbol}]
+            .emplace_back(std::move(sub_cmd));
       }
+    }
+
+    std::stringstream is;
+    is << "Graph[{";
+    for (auto &[k, v] : stack_cmds) {
+      auto const &[from_state, to_state, input_symbol] = k;
+      is << "Labeled[ " << from_state << "->" << to_state << ",{";
+      if (input_symbol.has_value()) {
+        is << alphabet->MMA_draw(input_symbol.value());
+      } else {
+        is << "\\[Epsilon]";
+      }
+      is << ",{";
+      for (auto stack_cmd : v) {
+        is << stack_cmd << ',';
+      }
+      is.seekp(-1, std::ios_base::end);
+      is << "}}],";
     }
     // drop last ,
     is.seekp(-1, std::ios_base::end);
