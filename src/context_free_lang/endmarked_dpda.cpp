@@ -6,6 +6,7 @@
 #include "lang/endmarked_alphabet.hpp"
 #include "lang/range_alphabet.hpp"
 #include "lang/union_alphabet.hpp"
+#include <algorithm>
 #include <memory>
 
 namespace cyy::computation {
@@ -67,9 +68,6 @@ namespace cyy::computation {
             (static_cast<size_t>(1)
              << (const_endmarked_dpda.get_states().size())),
         "stack_alphabet_of_state_set");
-    std::cout << "min symbol is "
-              << (int)stack_alphabet_of_state_set->get_min_symbol()
-              << std::endl;
     auto new_stack_alphabet = std::make_shared<union_alphabet>(
         const_endmarked_dpda.stack_alphabet, stack_alphabet_of_state_set);
 
@@ -87,6 +85,7 @@ namespace cyy::computation {
         stack_alphabet_of_state_set->get_min_symbol() +
             const_endmarked_dpda.get_bitset(accept_states_in_empty_stack)
                 .to_ulong()};
+    // FIXME:: check empty input string
     dpda_finite_automata.change_start_state(new_start_state);
     dpda_finite_automata.clear_final_states();
     std::unordered_map<state_type, state_type> pop_temporary_states;
@@ -145,10 +144,6 @@ namespace cyy::computation {
             }
             new_accept_states.merge(
                 state_set_type(accept_states_in_empty_stack));
-            std::cout
-                << "new bit set is"
-                << const_endmarked_dpda.get_bitset(new_accept_states).to_ulong()
-                << std::endl;
           }
           dpda_transition_function[new_state2][{}] = {
               action.state,
@@ -164,9 +159,6 @@ namespace cyy::computation {
          const_endmarked_dpda.transition_function) {
       for (auto const &[situation, action] : dpda_transfers) {
         if (!situation.use_input()) {
-          continue;
-        }
-        if (situation.input_symbol == ALPHABET::endmarker) {
           continue;
         }
         assert(!action.has_push());
@@ -195,9 +187,6 @@ namespace cyy::computation {
             dpda_transition_function[from_state]
                                     [{situation.input_symbol, stack_symbol}] = {
                                         parallel_state, stack_symbol};
-            std::cout << " from state is " << from_state << " stack_symbol is "
-                      << (int)stack_symbol << "  and parallel_state is "
-                      << parallel_state << std::endl;
           } else {
             dpda_transition_function[from_state]
                                     [{situation.input_symbol, stack_symbol}] = {
@@ -215,23 +204,6 @@ namespace cyy::computation {
       }
     }
 
-    for (auto s :
-         const_endmarked_dpda.from_bitset(const_endmarked_dpda.get_bitset(
-             114 - stack_alphabet_of_state_set->get_min_symbol()))) {
-      std::cout << "114 state is " << s << std::endl;
-    }
-    for (auto s : const_endmarked_dpda.get_final_states()) {
-      std::cout << "old finial state is " << s << std::endl;
-    }
-    if (const_endmarked_dpda.state_bitset_contains(
-            const_endmarked_dpda.get_bitset(
-                114 - stack_alphabet_of_state_set->get_min_symbol()),
-            2)) {
-      std::cout << "114 contains 2" << std::endl;
-    } else {
-      std::cout << "114 not contains 2" << std::endl;
-    }
-
     return DPDA(dpda_finite_automata, new_stack_alphabet,
                 dpda_transition_function);
   }
@@ -241,6 +213,17 @@ namespace cyy::computation {
     state_set_type accept_states;
 
     state_set_map_type epsilon_closures;
+    // found states one step to finial states
+    for (const auto &[from_state, transfers] : transition_function) {
+      for (const auto &[situation, action] : transfers) {
+        if (!situation.use_input() ||
+            situation.input_symbol.value() != ALPHABET::endmarker) {
+          continue;
+        }
+        accept_states.insert(from_state);
+      }
+    }
+
     // FIXME: check stack is empty
     for (const auto &[from_state, transfers] : transition_function) {
       for (const auto &[situation, action] : transfers) {
@@ -250,13 +233,25 @@ namespace cyy::computation {
         epsilon_transitions[from_state].insert(action.state);
       }
     }
-    for (auto const &[from_state, _] : epsilon_transitions) {
-      if (contain_final_state(get_epsilon_closure(epsilon_closures, from_state,
-                                                  epsilon_transitions))) {
-        accept_states.insert(from_state);
+
+    while (true) {
+      bool flag = false;
+
+      for (auto const &[from_state, _] : epsilon_transitions) {
+        if (accept_states.contains(from_state)) {
+          continue;
+        }
+        if (has_intersection(accept_states,
+                             get_epsilon_closure(epsilon_closures, from_state,
+                                                 epsilon_transitions))) {
+          accept_states.insert(from_state);
+          flag = true;
+        }
+      }
+      if (!flag) {
+        break;
       }
     }
-    accept_states.merge(state_set_type(final_states));
     return accept_states;
   }
 

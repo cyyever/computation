@@ -5,13 +5,10 @@
  * \date 2018-03-03
  */
 
-#include <algorithm>
 #include <cassert>
-#include <iterator>
 #include <memory>
 #include <stdexcept>
 #include <unordered_map>
-#include <vector>
 
 #include "dpda.hpp"
 #include "lang/endmarked_alphabet.hpp"
@@ -35,14 +32,6 @@ namespace cyy::computation {
       configuration = std::move(configuration_opt.value());
     }
     while (!is_final_state(configuration.state)) {
-      if (!configuration.stack.empty()) {
-        std::cout << "cur state " << configuration.state << " and stack is "
-                  << (int)configuration.stack.back() << std::endl;
-      } else {
-
-        std::cout << "cur state " << configuration.state
-                  << " and stack is empty" << std::endl;
-      }
       auto configuration_opt = go(std::move(configuration));
       if (!configuration_opt) {
         return false;
