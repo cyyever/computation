@@ -463,23 +463,30 @@ namespace cyy::computation {
             .emplace_back(std::move(sub_cmd));
       }
     }
+    std::map<std::tuple<state_type, state_type>, std::string> edge_cmds;
+    for (auto &[k, v] : stack_cmds) {
+      auto const &[from_state, to_state, input_symbol] = k;
+      std::string sub_cmd = "{";
+      if (input_symbol.has_value()) {
+        sub_cmd += alphabet->MMA_draw(input_symbol.value());
+      } else {
+        sub_cmd += "\\[Epsilon]";
+      }
+      sub_cmd += ",{";
+      for (auto stack_cmd : v) {
+        sub_cmd += stack_cmd;
+        sub_cmd.push_back(',');
+      }
+      sub_cmd.pop_back();
+      sub_cmd += "}}";
+      edge_cmds[{from_state, to_state}] += "," + sub_cmd;
+    }
 
     std::stringstream is;
     is << "Graph[{";
-    for (auto &[k, v] : stack_cmds) {
-      auto const &[from_state, to_state, input_symbol] = k;
-      is << "Labeled[ " << from_state << "->" << to_state << ",{";
-      if (input_symbol.has_value()) {
-        is << alphabet->MMA_draw(input_symbol.value());
-      } else {
-        is << "\\[Epsilon]";
-      }
-      is << ",{";
-      for (auto stack_cmd : v) {
-        is << stack_cmd << ',';
-      }
-      is.seekp(-1, std::ios_base::end);
-      is << "}}],";
+    for (auto &[k, v] : edge_cmds) {
+      auto const &[from_state, to_state] = k;
+      is << "Labeled[ " << from_state << "->" << to_state << v << "],";
     }
     // drop last ,
     is.seekp(-1, std::ios_base::end);
