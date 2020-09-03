@@ -137,4 +137,21 @@ namespace cyy::computation {
     is << '}';
     return is.str();
   }
+
+  bool finite_automata::has_intersection(const state_set_type &a,
+                                         const state_set_type &b) {
+    auto it = a.begin();
+    auto it2 = b.begin();
+    while (it != a.end() && it2 != b.end()) {
+      if (*it == *it2) {
+        return true;
+      }
+      if (*it < *it2) {
+        it++;
+      } else {
+        it2++;
+      }
+    }
+    return false;
+  }
 } // namespace cyy::computation

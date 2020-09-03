@@ -74,19 +74,7 @@ namespace cyy::computation {
 
     void set_alphabet(ALPHABET_ptr alphabet_) { alphabet = alphabet_; }
     bool contain_final_state(const state_set_type &T) const {
-      auto it = T.begin();
-      auto it2 = final_states.begin();
-      while (it != T.end() && it2 != final_states.end()) {
-        if (*it == *it2) {
-          return true;
-        }
-        if (*it < *it2) {
-          it++;
-        } else {
-          it2++;
-        }
-      }
-      return false;
+      return has_intersection(final_states, T);
     }
 
     bool is_final_state(state_type final_state) const {
@@ -167,6 +155,9 @@ namespace cyy::computation {
     state_set_type from_bitset(const state_bitset_type &bitset) const;
     bool state_bitset_contains(const state_bitset_type &state_bitset,
                                state_type state) const;
+
+    static bool has_intersection(const state_set_type &a,
+                                 const state_set_type &b);
 
     static state_set_type &
     get_epsilon_closure(state_set_map_type &epsilon_closures, state_type s,
