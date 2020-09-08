@@ -34,6 +34,6 @@ namespace cyy::computation {
     mutable std::unordered_set<state_type> final_states;
 
   private:
-    void construct_parsing_table() const;
+    void construct_parsing_table() const override;
   };
 } // namespace cyy::computation
