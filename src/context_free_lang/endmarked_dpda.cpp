@@ -43,8 +43,8 @@ namespace cyy::computation {
         if (!situation.use_input()) {
           continue;
         }
-        assert(situation.stack_symbol.has_value());
-        new_transfers[{ALPHABET::endmarker, situation.stack_symbol.value()}] = {
+        assert(situation.has_pop());
+        new_transfers[{ALPHABET::endmarker, situation.get_poped_symbol()}] = {
             next_state};
       }
       transfers.merge(std::move(new_transfers));
@@ -297,16 +297,16 @@ namespace cyy::computation {
       std::map<stack_symbol_type, state_type> parallel_stack_states;
       std::map<input_symbol_type, state_type> parallel_input_states;
 
-      for (auto &[configuration, action] : transfers) {
-        if (!configuration.use_input()) {
-          new_transfers[std::move(configuration)] = std::move(action);
+      for (auto &[situation, action] : transfers) {
+        if (!situation.use_input()) {
+          new_transfers[std::move(situation)] = std::move(action);
           continue;
         }
-        auto input_symbol = configuration.input_symbol.value();
+        auto input_symbol = situation.input_symbol.value();
         if (has_input_epsilon) {
           assert(!has_stack_epsilon);
-          assert(configuration.has_pop());
-          auto stack_symbol = configuration.stack_symbol.value();
+          assert(situation.has_pop());
+          auto stack_symbol = situation.get_poped_symbol();
           if (!parallel_stack_states.contains(stack_symbol)) {
             parallel_stack_states[stack_symbol] = add_new_state();
           }
@@ -326,7 +326,7 @@ namespace cyy::computation {
           continue;
         }
         assert(has_stack_epsilon);
-        if (configuration.has_pop()) {
+        if (situation.has_pop()) {
           // a a
           // a b
           // ... a z
@@ -337,15 +337,14 @@ namespace cyy::computation {
 
           auto next_state = parallel_input_states[input_symbol];
           new_transfers[input_symbol] = {next_state};
-          new_transitions[next_state]
-                         [{{}, configuration.stack_symbol.value()}] =
-                             std::move(action);
+          new_transitions[next_state][{{}, situation.get_poped_symbol()}] =
+              std::move(action);
           continue;
         }
 
         // a epsilon
         if (!action.has_push()) {
-          new_transfers[std::move(configuration)] = std::move(action);
+          new_transfers[std::move(situation)] = std::move(action);
           continue;
         }
         if (!parallel_input_states.contains(input_symbol)) {
@@ -365,24 +364,23 @@ namespace cyy::computation {
     // process stack
     for (auto &[from_state, transfers] : transition_function) {
       transition_function_type::mapped_type new_transfers;
-      for (auto &[configuration, action] : transfers) {
-        if (configuration.stack_symbol.has_value() !=
-            action.stack_symbol.has_value()) {
-          new_transfers[std::move(configuration)] = std::move(action);
+      for (auto &[situation, action] : transfers) {
+        if (situation.has_pop() != action.has_push()) {
+          new_transfers[std::move(situation)] = std::move(action);
           continue;
         }
-        if (configuration.use_input() && !configuration.has_pop()) {
-          new_transfers[std::move(configuration)] = std::move(action);
+        if (situation.use_input() && !situation.has_pop()) {
+          new_transfers[std::move(situation)] = std::move(action);
           continue;
         }
         auto next_state = add_new_state();
-        if (configuration.has_pop()) {
-          new_transfers[std::move(configuration)] = {next_state};
+        if (situation.has_pop()) {
+          new_transfers[std::move(situation)] = {next_state};
           new_transitions[next_state][{}] = std::move(action);
           continue;
         }
         for (auto stack_symbol : *stack_alphabet) {
-          new_transfers[std::move(configuration)] = {next_state, stack_symbol};
+          new_transfers[std::move(situation)] = {next_state, stack_symbol};
           new_transitions[next_state][{{}, stack_symbol}] = std::move(action);
         }
       }
@@ -393,12 +391,12 @@ namespace cyy::computation {
 
 #ifndef NDEBUG
     for (auto &[from_state, transfers] : transition_function) {
-      for (auto &[configuration, action] : transfers) {
+      for (auto &[situation, action] : transfers) {
         size_t cnt = 0;
-        if (configuration.use_input()) {
+        if (situation.use_input()) {
           cnt++;
         }
-        if (configuration.has_pop()) {
+        if (situation.has_pop()) {
           cnt++;
         }
         if (action.has_push()) {
