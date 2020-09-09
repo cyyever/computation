@@ -220,7 +220,11 @@ namespace cyy::computation {
             situation.input_symbol.value() != ALPHABET::endmarker) {
           continue;
         }
+        if (!is_final_state(action.state)) {
+          continue;
+        }
         accept_states.insert(from_state);
+        std::cout << "step one s is " << from_state << std::endl;
       }
     }
 
@@ -251,6 +255,9 @@ namespace cyy::computation {
       if (!flag) {
         break;
       }
+    }
+    for (auto s : accept_states) {
+      std::cout << "final s is " << s << std::endl;
     }
     return accept_states;
   }
