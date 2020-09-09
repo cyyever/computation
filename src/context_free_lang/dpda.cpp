@@ -486,7 +486,8 @@ namespace cyy::computation {
     is << "Graph[{";
     for (auto &[k, v] : edge_cmds) {
       auto const &[from_state, to_state] = k;
-      is << "Labeled[ " << from_state << "->" << to_state << v << "],";
+      is << "Labeled[ " << from_state << "->" << to_state << ",{" << v.substr(1)
+         << '}' << "],";
     }
     // drop last ,
     is.seekp(-1, std::ios_base::end);
