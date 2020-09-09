@@ -210,7 +210,8 @@ namespace cyy::computation {
 
   endmarked_DPDA::state_set_type endmarked_DPDA::get_accept_states() const {
     state_set_map_type epsilon_transitions;
-    state_set_type accept_states;
+    std::map<state_type, std::set<std::vector<stack_symbol_type>>>
+        accept_states_and_stacks;
 
     state_set_map_type epsilon_closures;
     // found states one step to finial states
@@ -223,41 +224,58 @@ namespace cyy::computation {
         if (!is_final_state(action.state)) {
           continue;
         }
-        accept_states.insert(from_state);
-        std::cout << "step one s is " << from_state << std::endl;
+        assert(!situation.has_pop());
+        accept_states_and_stacks[from_state].emplace();
       }
     }
 
-    // FIXME: check stack is empty
-    for (const auto &[from_state, transfers] : transition_function) {
-      for (const auto &[situation, action] : transfers) {
-        if (situation.use_input()) {
-          continue;
+    bool flag = true;
+    while (flag) {
+      flag = false;
+      for (const auto &[from_state, transfers] : transition_function) {
+        size_t prev_size = 0;
+        if (accept_states_and_stacks.contains(from_state)) {
+          prev_size = accept_states_and_stacks[from_state].size();
         }
-        epsilon_transitions[from_state].insert(action.state);
+        for (const auto &[situation, action] : transfers) {
+          if (situation.use_input() ||
+              !accept_states_and_stacks.contains(action.state)) {
+            continue;
+          }
+          auto const &next_stacks = accept_states_and_stacks[action.state];
+          assert(!next_stacks.empty());
+          if (action.has_push()) {
+            for (auto const &next_stack : next_stacks) {
+              if (next_stack.empty()) {
+                accept_states_and_stacks[from_state].emplace();
+              } else if (next_stack.back() == action.get_pushed_symbol()) {
+                auto cur_stack = next_stack;
+                cur_stack.pop_back();
+                accept_states_and_stacks[from_state].emplace(
+                    std::move(cur_stack));
+              }
+            }
+            continue;
+          }
+          assert(situation.has_pop());
+          for (auto const &next_stack : next_stacks) {
+            auto cur_stack = next_stack;
+            cur_stack.push_back(situation.get_poped_symbol());
+            accept_states_and_stacks[from_state].emplace(std::move(cur_stack));
+          }
+        }
+        if (accept_states_and_stacks.contains(from_state)) {
+          if (accept_states_and_stacks[from_state].size() != prev_size) {
+            flag = true;
+          }
+        }
       }
     }
-
-    while (true) {
-      bool flag = false;
-
-      for (auto const &[from_state, _] : epsilon_transitions) {
-        if (accept_states.contains(from_state)) {
-          continue;
-        }
-        if (has_intersection(accept_states,
-                             get_epsilon_closure(epsilon_closures, from_state,
-                                                 epsilon_transitions))) {
-          accept_states.insert(from_state);
-          flag = true;
-        }
+    state_set_type accept_states;
+    for (const auto &[state, stacks] : accept_states_and_stacks) {
+      if (stacks.contains({})) {
+        accept_states.insert(state);
       }
-      if (!flag) {
-        break;
-      }
-    }
-    for (auto s : accept_states) {
-      std::cout << "final s is " << s << std::endl;
     }
     return accept_states;
   }
