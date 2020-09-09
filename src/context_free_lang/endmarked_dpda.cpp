@@ -233,10 +233,6 @@ namespace cyy::computation {
     while (flag) {
       flag = false;
       for (const auto &[from_state, transfers] : transition_function) {
-        size_t prev_size = 0;
-        if (accept_states_and_stacks.contains(from_state)) {
-          prev_size = accept_states_and_stacks[from_state].size();
-        }
         for (const auto &[situation, action] : transfers) {
           if (situation.use_input() ||
               !accept_states_and_stacks.contains(action.state)) {
@@ -247,12 +243,17 @@ namespace cyy::computation {
           if (action.has_push()) {
             for (auto const &next_stack : next_stacks) {
               if (next_stack.empty()) {
-                accept_states_and_stacks[from_state].emplace();
+                if (accept_states_and_stacks[from_state].emplace().second) {
+                  flag = true;
+                }
               } else if (next_stack.back() == action.get_pushed_symbol()) {
                 auto cur_stack = next_stack;
                 cur_stack.pop_back();
-                accept_states_and_stacks[from_state].emplace(
-                    std::move(cur_stack));
+                if (accept_states_and_stacks[from_state]
+                        .emplace(std::move(cur_stack))
+                        .second) {
+                  flag = true;
+                }
               }
             }
             continue;
@@ -261,12 +262,11 @@ namespace cyy::computation {
           for (auto const &next_stack : next_stacks) {
             auto cur_stack = next_stack;
             cur_stack.push_back(situation.get_poped_symbol());
-            accept_states_and_stacks[from_state].emplace(std::move(cur_stack));
-          }
-        }
-        if (accept_states_and_stacks.contains(from_state)) {
-          if (accept_states_and_stacks[from_state].size() != prev_size) {
-            flag = true;
+            if (accept_states_and_stacks[from_state]
+                    .emplace(std::move(cur_stack))
+                    .second) {
+              flag = true;
+            }
           }
         }
       }
