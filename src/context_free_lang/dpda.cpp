@@ -234,7 +234,8 @@ namespace cyy::computation {
   std::pair<std::map<DPDA::state_type, std::set<DPDA::stack_symbol_type>>,
             std::map<DPDA::state_type, std::set<DPDA::stack_symbol_type>>>
   DPDA::get_looping_situations() const {
-    std::map<state_type, std::set<stack_symbol_type>> looping_situations;
+    std::map<state_type, std::set<std::pair<stack_symbol_type, bool>>>
+        looping_situations;
 
     state_set_map_type epsilon_transitions;
     for (const auto &[from_state, transfers] : transition_function) {
@@ -243,13 +244,15 @@ namespace cyy::computation {
           continue;
         }
         epsilon_transitions[from_state].insert(action.state);
+        auto can_reach_final = is_final_state(action.state);
 
         if (situation.has_pop()) {
-          looping_situations[from_state].emplace(situation.get_poped_symbol());
+          looping_situations[from_state].emplace(situation.get_poped_symbol(),
+                                                 can_reach_final);
           continue;
         }
         for (auto stack_symbol : *stack_alphabet) {
-          looping_situations[from_state].emplace(stack_symbol);
+          looping_situations[from_state].emplace(stack_symbol, can_reach_final);
         }
       }
     }
@@ -263,7 +266,6 @@ namespace cyy::computation {
         auto it2 = state_transition_function.find({});
         if (it2 != state_transition_function.end()) {
           auto const &action = it2->second;
-
           if (!new_looping_situations.contains(action.state)) {
             if (new_looping_situations.erase(looping_state)) {
               flag = true;
@@ -272,17 +274,44 @@ namespace cyy::computation {
           }
 
           if (!action.has_push()) {
-            auto prev_size = new_looping_situations[looping_state].size();
-            new_looping_situations[looping_state] =
-                new_looping_situations[action.state];
-            if (prev_size != new_looping_situations[looping_state].size()) {
+            if (new_looping_situations[looping_state] !=
+                new_looping_situations[action.state]) {
+              new_looping_situations[looping_state] =
+                  new_looping_situations[action.state];
               flag = true;
+            }
+            continue;
+          }
+
+          auto it3 = new_looping_situations[action.state].find(
+              {action.get_pushed_symbol(), false});
+          if (it3 == new_looping_situations[action.state].end()) {
+            it3 = new_looping_situations[action.state].find(
+                {action.get_pushed_symbol(), true});
+          }
+          if (it3 == new_looping_situations[action.state].end()) {
+            if (new_looping_situations.erase(looping_state)) {
+              flag = true;
+            }
+          } else {
+            // reach to final
+            if (it3->second) {
+              std::set<std::pair<stack_symbol_type, bool>> new_set;
+              for (auto tmp : new_looping_situations[looping_state]) {
+                if (!tmp.second) {
+                  tmp.second = true;
+                  flag = true;
+                }
+                new_set.emplace(std::move(tmp));
+              }
+              new_looping_situations[looping_state] = std::move(new_set);
             }
           }
           continue;
         }
 
-        for (auto stack_symbol : stack_symbol_set) {
+        for (auto stack_symbol_and_state : stack_symbol_set) {
+          auto [stack_symbol, can_reach_final] = stack_symbol_and_state;
           it2 = state_transition_function.find({{}, stack_symbol});
           if (it2 == state_transition_function.end()) {
             continue;
@@ -290,18 +319,33 @@ namespace cyy::computation {
           auto const &action = it2->second;
 
           if (!new_looping_situations.contains(action.state)) {
-            if (new_looping_situations[looping_state].erase(stack_symbol)) {
+            if (new_looping_situations[looping_state].erase(
+                    stack_symbol_and_state)) {
               flag = true;
-              continue;
             }
-          } else {
-            if (action.has_push()) {
-              if (!new_looping_situations[action.state].contains(
-                      action.get_pushed_symbol())) {
-                if (new_looping_situations[looping_state].erase(stack_symbol)) {
-                  flag = true;
-                }
-                continue;
+            continue;
+          }
+
+          if (action.has_push()) {
+
+            auto it3 = new_looping_situations[action.state].find(
+                {action.get_pushed_symbol(), false});
+            if (it3 == new_looping_situations[action.state].end()) {
+              it3 = new_looping_situations[action.state].find(
+                  {action.get_pushed_symbol(), true});
+            }
+
+            if (it3 == new_looping_situations[action.state].end()) {
+              if (new_looping_situations[looping_state].erase(
+                      stack_symbol_and_state)) {
+                flag = true;
+              }
+              continue;
+            } else if (!can_reach_final) {
+              if (it3->second) {
+                new_looping_situations[looping_state].emplace(stack_symbol,
+                                                              true);
+                flag = true;
               }
             }
           }
@@ -317,20 +361,17 @@ namespace cyy::computation {
       }
     }
 
-    for (auto &[_, stack_symbol_set] : looping_situations) {
-      assert(!stack_symbol_set.empty());
-    }
-
     // FIXME epsilon_transitions
-    decltype(looping_situations) acceptance_looping_situations;
-    decltype(looping_situations) rejection_looping_situations;
-    state_set_map_type epsilon_closures;
+    std::map<state_type, std::set<stack_symbol_type>>
+        acceptance_looping_situations, rejection_looping_situations;
     for (auto &[s, stack_symbol_set] : looping_situations) {
-      if (contain_final_state(
-              get_epsilon_closure(epsilon_closures, s, epsilon_transitions))) {
-        acceptance_looping_situations[s] = std::move(stack_symbol_set);
-      } else {
-        rejection_looping_situations[s] = std::move(stack_symbol_set);
+      assert(!stack_symbol_set.empty());
+      for (auto [stack_symbol, can_reach_final] : stack_symbol_set) {
+        if (can_reach_final) {
+          acceptance_looping_situations[s].emplace(stack_symbol);
+        } else {
+          rejection_looping_situations[s].emplace(stack_symbol);
+        }
       }
     }
     return {acceptance_looping_situations, rejection_looping_situations};
