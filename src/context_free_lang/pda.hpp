@@ -160,6 +160,8 @@ namespace cyy::computation {
     };
 
     struct configuration_type {
+      configuration_type(state_type state_, stack_node top_node_)
+          : state{state_}, top_node{std::move(top_node_)} {}
       state_type state{};
       stack_node top_node;
       bool operator==(const configuration_type &) const noexcept = default;

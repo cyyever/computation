@@ -18,7 +18,7 @@ namespace cyy::computation {
       : LR_1_grammar(alphabet_, start_symbol_, std::move(productions_)) {}
 
   DPDA canonical_LR_grammar::to_DPDA() const {
-    finite_automata dpda_finite_automata{{0}, alphabet, {0}, {}};
+    finite_automata dpda_finite_automata{{0}, alphabet, 0, {}};
 
     DK_1_DFA dk_1_dfa(*this);
     auto const &dfa = dk_1_dfa.get_dfa();

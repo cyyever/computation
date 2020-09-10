@@ -27,7 +27,7 @@ namespace cyy::computation {
     }
 
     bool contain(symbol_type s) const noexcept override {
-      return std::ranges::binary_search(symbols, s);
+      return ::ranges::binary_search(symbols, s);
     }
     size_t size() const noexcept override { return symbols.size(); }
 

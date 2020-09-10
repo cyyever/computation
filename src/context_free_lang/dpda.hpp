@@ -63,7 +63,7 @@ namespace cyy::computation {
       state_type state{};
       std::optional<stack_symbol_type> stack_symbol;
       bool operator==(const action_type &) const noexcept = default;
-      auto operator<=>(const action_type &) const noexcept = default;
+      /* auto operator<=>(const action_type &) const noexcept = default; */
       bool has_push() const { return stack_symbol.has_value(); }
       stack_symbol_type get_pushed_symbol() const {
         return stack_symbol.value();
@@ -83,9 +83,9 @@ namespace cyy::computation {
       }
 
       void pop_stack_and_action(state_type from_state, action_type action,
-                                const ALPHABET &stack_alphabet) {
+                                const ALPHABET &stack_alphabet_) {
         auto &transfers = operator[](from_state);
-        for (auto stack_symbol : stack_alphabet) {
+        for (auto stack_symbol : stack_alphabet_) {
           transfers[{{}, stack_symbol}] = action;
         }
       }
@@ -101,9 +101,9 @@ namespace cyy::computation {
         auto &new_transfers = operator[](new_state);
         new_transfers[{}] = std::move(action);
       }
-      void make_reject_state(state_type s, ALPHABET_ptr input_alphabet) {
+      void make_reject_state(state_type s, ALPHABET_ptr input_alphabet_) {
         auto &transfers = operator[](s);
-        for (auto a : *input_alphabet) {
+        for (auto a : *input_alphabet_) {
           transfers[{a}] = {s};
         }
       }

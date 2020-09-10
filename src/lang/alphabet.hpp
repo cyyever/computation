@@ -11,7 +11,8 @@
 #include <iterator>
 #include <limits>
 #include <memory>
-#include <ranges>
+#include <range/v3/all.hpp>
+/* #include <ranges> */
 #include <set>
 #include <string>
 #include <string_view>
@@ -74,10 +75,11 @@ namespace cyy::computation {
     ALPHABET(ALPHABET &&) noexcept = default;
     ALPHABET &operator=(ALPHABET &&) noexcept = default;
     virtual ~ALPHABET() = default;
+    bool operator==(const ALPHABET &rhs) const = default;
 
     auto get_view() const {
-      return std::views::iota(static_cast<size_t>(0), size()) |
-             std::views::transform(
+      return ::ranges::views::iota(static_cast<size_t>(0), size()) |
+             ::ranges::views::transform(
                  [this](auto idx) { return get_symbol(idx); });
     }
 
@@ -107,9 +109,9 @@ namespace cyy::computation {
 
     const std::string &get_name() const { return name; }
 
-    bool operator==(const ALPHABET &rhs) const = default;
     virtual bool support_ASCII_escape_sequence() const { return false; }
 
+    virtual symbol_type get_symbol(size_t index) const = 0;
     void set_MMA_draw_fun(
         std::function<std::string(const ALPHABET &, symbol_type)> fun) {
       MMA_draw_fun_ptr = std::make_shared<decltype(fun)>(fun);
@@ -134,7 +136,6 @@ namespace cyy::computation {
     virtual std::string __to_string(symbol_type symbol) const {
       return {'\'', static_cast<char>(symbol), '\''};
     }
-    virtual symbol_type get_symbol(size_t index) const = 0;
 
     symbol_type add_max_symbol(size_t inc) const {
       const symbol_type max_symbol = get_max_symbol();
@@ -169,8 +170,8 @@ namespace cyy::computation {
 
   inline auto endmarked_symbol_string(symbol_string_view str) {
     auto size = str.size() + 1;
-    return std::views::iota(static_cast<size_t>(0), size) |
-           std::views::transform([str, size](auto idx) {
+    return ::ranges::views::iota(static_cast<size_t>(0), size) |
+           ::ranges::views::transform([str, size](auto idx) {
              if (idx + 1 == size) {
                return ALPHABET::endmarker;
              }

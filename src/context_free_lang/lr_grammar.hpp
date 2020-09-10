@@ -20,7 +20,7 @@ namespace cyy::computation {
     using CFG::CFG;
     using state_type = finite_automata::state_type;
 
-    virtual ~LR_grammar() = default;
+    ~LR_grammar() override = default;
 
     parse_node_ptr get_parse_tree(symbol_string_view view) const;
 

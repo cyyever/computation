@@ -31,10 +31,10 @@ namespace cyy::computation {
     }
     size_t size() const noexcept override { return symbol_map.size(); }
 
-    std::string MMA_draw() const {
+    std::string MMA_draw_set() const{
       std::string cmd = "{";
       for (auto const &[s, _] : symbol_map) {
-        cmd += ALPHABET::MMA_draw(s);
+        cmd +=MMA_draw(s);
         cmd.push_back(',');
       }
       cmd.back() = '}';

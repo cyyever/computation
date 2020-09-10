@@ -7,8 +7,12 @@
  */
 #pragma once
 
-template <typename T, std::ranges::input_range U>
-requires std::same_as<T, std::ranges::range_value_t<U>>
+#include <concepts/concepts.hpp>
+#include <range/v3/all.hpp>
+#include <unordered_map>
+
+template <typename T, ::ranges::input_range U>
+requires ::concepts::same_as<T, ::ranges::range_value_t<U>>
 
     auto topological_sort(std::unordered_map<T, U> graph) {
   std::unordered_map<T, size_t> degrees;

@@ -69,7 +69,7 @@ namespace cyy::computation {
     bool has_production(const CFG_production &production) const;
 
     nonterminal_set_type get_heads() const;
-    auto get_head_view() const { return productions | std::views::keys; }
+    auto get_head_view() const { return productions | ::ranges::views::keys; }
 
     ALPHABET_ptr get_terminal_alphabet() const;
     std::shared_ptr<map_alphabet> get_nonterminal_alphabet() const;

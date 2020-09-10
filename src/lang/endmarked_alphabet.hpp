@@ -50,8 +50,7 @@ namespace cyy::computation {
       if (index + 1 == size()) {
         return ALPHABET::endmarker;
       }
-      auto it = alphabet->begin();
-      return *(it + index);
+      return alphabet->get_symbol(index);
     }
 
   private:

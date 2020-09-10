@@ -70,13 +70,13 @@ namespace cyy::computation {
       return false;
     }
 
-    return std::ranges::all_of(
+    return ::ranges::all_of(
         final_states, [&rhs](auto s) { return rhs.final_states.contains(s); });
   }
 
   DFA DFA::minimize() const {
     state_set_type non_final_states;
-    std::ranges::set_difference(
+    ::ranges::set_difference(
         get_state_set(), final_states,
         std::insert_iterator(non_final_states, non_final_states.begin()));
 
@@ -108,7 +108,7 @@ namespace cyy::computation {
           bool in_new_group = true;
           for (auto &sub_group : sub_groups) {
             bool in_group =
-                std::ranges::all_of(alphabet->get_view(), [&](auto const a) {
+                ::ranges::all_of(alphabet->get_view(), [&](auto const a) {
                   return state_location[go(*(sub_group.begin()), a).value()] ==
                          state_location[go(state, a).value()];
                 });
@@ -222,9 +222,9 @@ namespace cyy::computation {
 
   DFA DFA::complement() const {
     state_set_type new_final_states;
-    std::ranges::set_difference(
+    ::ranges::set_difference(
         get_state_set(), final_states,
-        std::inserter(new_final_states, new_final_states.begin()));
+        ::ranges::inserter(new_final_states, new_final_states.begin()));
     return {get_state_set(), alphabet->get_name(), get_start_state(),
             transition_function, new_final_states};
   }

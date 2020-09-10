@@ -1,7 +1,8 @@
 
-#include "automata.hpp"
-#include "../util.hpp"
 #include <sstream>
+
+#include "../util.hpp"
+#include "automata.hpp"
 namespace cyy::computation {
 
   finite_automata::state_set_type &finite_automata::get_epsilon_closure(
@@ -47,9 +48,8 @@ namespace cyy::computation {
         state_set_type diff;
         auto &prev_epsilon_closure = epsilon_closures[prev_state];
         auto &unstable_epsilon_closure = epsilon_closures[sorted_state];
-        std::ranges::set_difference(unstable_epsilon_closure,
-                                    prev_epsilon_closure,
-                                    std::inserter(diff, diff.begin()));
+        ::ranges::set_difference(unstable_epsilon_closure, prev_epsilon_closure,
+                                 ::ranges::inserter(diff, diff.begin()));
 
         if (!diff.empty()) {
           prev_epsilon_closure.merge(std::move(diff));
@@ -66,9 +66,8 @@ namespace cyy::computation {
         state_set_type diff;
         auto &prev_epsilon_closure = epsilon_closures[prev_state];
         auto &unstable_epsilon_closure = epsilon_closures[unstable_state];
-        std::ranges::set_difference(unstable_epsilon_closure,
-                                    prev_epsilon_closure,
-                                    std::inserter(diff, diff.begin()));
+        ::ranges::set_difference(unstable_epsilon_closure, prev_epsilon_closure,
+                                 ::ranges::inserter(diff, diff.begin()));
 
         if (!diff.empty()) {
           prev_epsilon_closure.merge(std::move(diff));
@@ -91,7 +90,7 @@ namespace cyy::computation {
     auto it2 = state_set.begin();
     while (it != states.end() && it2 != state_set.end()) {
       if (*it == *it2) {
-        bitset.set(std::distance(states.begin(), it));
+        bitset.set(static_cast<size_t>(std::distance(states.begin(), it)));
         it++;
         it2++;
         continue;
@@ -121,7 +120,8 @@ namespace cyy::computation {
   bool
   finite_automata::state_bitset_contains(const state_bitset_type &state_bitset,
                                          state_type state) const {
-    return state_bitset.test(std::distance(states.begin(), states.find(state)));
+    return state_bitset.test(
+        static_cast<size_t>(std::distance(states.begin(), states.find(state))));
   }
 
   std::string finite_automata::MMA_draw() const {

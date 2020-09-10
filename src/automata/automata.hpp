@@ -9,7 +9,7 @@
 
 #include <boost/dynamic_bitset.hpp>
 #include <memory>
-#include <ranges>
+#include <range/v3/all.hpp>
 #include <set>
 #include <string>
 #include <string_view>
@@ -64,7 +64,7 @@ namespace cyy::computation {
       return finite_automata(std::move(*this));
     }
 
-    auto const get_states() const noexcept { return std::views::all(states); }
+    auto get_states() const noexcept { return ::ranges::views::all(states); }
     auto const &get_state_set() const noexcept { return states; }
     auto const &get_alphabet() const noexcept { return *alphabet; }
     auto const &get_alphabet_ptr() const noexcept { return alphabet; }
@@ -82,11 +82,11 @@ namespace cyy::computation {
     }
 
     bool includes(const state_set_type &T) const {
-      return std::ranges::includes(states, T);
+      return ::ranges::includes(states, T);
     }
 
     void replace_final_states(state_type s) {
-      change_final_states(std::initializer_list{s});
+      change_final_states(std::initializer_list<state_type>{s});
     }
 
     state_type add_new_state() {
@@ -99,7 +99,7 @@ namespace cyy::computation {
     void add_new_states(state_set_type state_set) {
       states.merge(std::move(state_set));
     }
-    template <std::ranges::range U> void add_new_states(U state_set) {
+    template <::ranges::range U> void add_new_states(U state_set) {
       for (auto s : state_set) {
         add_new_state(s);
       }
@@ -120,8 +120,7 @@ namespace cyy::computation {
 
     void clear_final_states() { final_states.clear(); }
 
-    template <std::ranges::range U>
-    void change_final_states(U new_final_states) {
+    template <::ranges::range U> void change_final_states(U new_final_states) {
       clear_final_states();
       add_final_states(new_final_states);
     }
@@ -130,7 +129,7 @@ namespace cyy::computation {
       check_state(s);
       final_states.insert(s);
     }
-    template <std::ranges::range U> void add_final_states(U new_final_states) {
+    template <::ranges::range U> void add_final_states(U new_final_states) {
       for (auto s : new_final_states) {
         add_final_state(s);
       }

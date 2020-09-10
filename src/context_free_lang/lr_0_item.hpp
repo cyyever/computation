@@ -8,7 +8,6 @@
 #pragma once
 
 #include <memory>
-#include <ranges>
 #include <unordered_set>
 
 #include "cfg.hpp"
@@ -43,9 +42,6 @@ namespace cyy::computation {
         throw exception::invalid_operation("move completed item");
       }
       dot_pos++;
-    }
-    [[deprecated]] auto prefix() const {
-      return grammar_symbol_const_span_type(get_body()).subspan(dot_pos);
     }
     auto const &get_grammar_symbal() const {
       if (completed()) {
@@ -87,12 +83,12 @@ namespace cyy::computation {
     auto const &get_kernel_items() const { return kernel_items; }
     auto const &get_nonkernel_items() const { return nonkernel_items; }
     auto get_completed_items() const {
-      return kernel_items |
-             std::views::filter([](auto const &p) { return p.completed(); });
+      return kernel_items | ::ranges::views::filter(
+                                [](auto const &p) { return p.completed(); });
     }
     bool has_completed_items() const {
-      return std::ranges::any_of(kernel_items,
-                                 [](auto const &p) { return p.completed(); });
+      return ::ranges::any_of(kernel_items,
+                              [](auto const &p) { return p.completed(); });
     }
 
     std::unordered_set<LR_0_item> expand_nonkernel_items(const CFG &cfg) const;

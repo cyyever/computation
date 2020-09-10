@@ -1,5 +1,4 @@
 #include <iostream>
-#include <ranges>
 
 #include "dcfg.hpp"
 #include "lang/number_set_alphabet.hpp"
@@ -42,7 +41,7 @@ namespace cyy::computation {
     return true;
   }
   DPDA DCFG::to_DPDA() const {
-    finite_automata dpda_finite_automata{{0}, alphabet, {0}, {}};
+    finite_automata dpda_finite_automata{{0}, alphabet, 0, {}};
 
     auto const &dfa = dk_dfa_ptr->get_dfa();
     std::set<symbol_type> state_symbol_set;
@@ -96,7 +95,7 @@ namespace cyy::computation {
               dpda_finite_automata);
         } else {
           auto from_state = reduction_state;
-          state_type to_state;
+          state_type to_state{};
           // pop body states from stack
           for (size_t i = 0; i < body.size(); i++) {
             to_state = dpda_finite_automata.add_new_state();

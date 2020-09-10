@@ -17,7 +17,7 @@ namespace cyy::computation {
     auto follow_sets = follow();
     for (const auto &[head, bodies] : get_productions()) {
       for (auto const &body : bodies) {
-        auto const [first_set, epsilon_in_first] = first({body});
+        auto const [first_set, epsilon_in_first] = first(body);
 
         if (epsilon_in_first) {
           auto it = follow_sets.find(head);

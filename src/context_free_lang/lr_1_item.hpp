@@ -75,12 +75,12 @@ namespace cyy::computation {
     }
 
     bool has_completed_items() const {
-      return std::ranges::any_of(kernel_items,
-                                 [](auto const &p) { return p.completed(); });
+      return ::ranges::any_of(kernel_items,
+                              [](auto const &p) { return p.completed(); });
     }
     auto get_completed_items() const {
-      return kernel_items |
-             std::views::filter([](auto const &p) { return p.completed(); });
+      return kernel_items | ::ranges::views::filter(
+                                [](auto const &p) { return p.completed(); });
     }
     void add_nonkernel_item(CFG::nonterminal_type head,
                             CFG::terminal_set_type lookahead_symbols = {}) {

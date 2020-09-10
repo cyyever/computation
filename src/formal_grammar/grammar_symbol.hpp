@@ -7,7 +7,8 @@
 
 #pragma once
 
-#include <ranges>
+/* #include <ranges> */
+#include <range/v3/all.hpp>
 #include <span>
 #include <string>
 #include <string_view>
@@ -15,8 +16,8 @@
 #include <variant>
 #include <vector>
 
-#include "../hash.hpp"
-#include "../lang/alphabet.hpp"
+#include "hash.hpp"
+#include "lang/alphabet.hpp"
 
 namespace cyy::computation {
   class grammar_symbol_type : public std::variant<symbol_type, std::string> {
@@ -72,17 +73,18 @@ namespace cyy::computation {
     using std::vector<grammar_symbol_type>::vector;
     auto get_terminal_view() const -> auto {
       return *this |
-             std::views::filter([](auto g) { return g.is_terminal(); }) |
-             std::views::transform([](auto g) { return g.get_terminal(); });
+             ::ranges::views::filter([](auto g) { return g.is_terminal(); }) |
+             ::ranges::views::transform([](auto g) { return g.get_terminal(); });
     }
     auto get_nonterminal_view() const -> auto {
       return *this |
-             std::views::filter([](auto g) { return g.is_nonterminal(); }) |
-             std::views::transform(
+             ::ranges::views::filter([](auto g) { return g.is_nonterminal(); }) |
+             ::ranges::views::transform(
                  [](auto g) { return *g.get_nonterminal_ptr(); });
     }
   };
-  using grammar_symbol_const_span_type = std::span<const grammar_symbol_type>;
+  /* using grammar_symbol_const_span_type =::ranges::span<const grammar_symbol_type>; */
+  using grammar_symbol_const_span_type =std::span<const grammar_symbol_type>;
 } // namespace cyy::computation
 
 namespace std {

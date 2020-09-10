@@ -340,9 +340,9 @@ namespace cyy::computation {
     // mark reading states
     transition_function_type new_transitions;
     for (auto &[from_state, transfers] : complement_dpda.transition_function) {
-      bool has_input_epsilon = std::ranges::any_of(
+      bool has_input_epsilon = ::ranges::any_of(
           transfers, [](auto const p) { return !p.first.use_input(); });
-      bool has_input = std::ranges::any_of(
+      bool has_input = ::ranges::any_of(
           transfers, [](auto const p) { return p.first.use_input(); });
       if (!has_input_epsilon) {
         reading_states.insert(from_state);
@@ -385,15 +385,15 @@ namespace cyy::computation {
 
 #ifndef NDEBUG
     for (auto const s : reading_states) {
-      assert(std::ranges::all_of(
-          complement_dpda.transition_function[s],
-          [](auto const p) { return p.first.use_input(); }));
+      assert(
+          ::ranges::all_of(complement_dpda.transition_function[s],
+                           [](auto const p) { return p.first.use_input(); }));
     }
 #endif
     state_set_type new_final_states;
-    std::ranges::set_difference(
+    ::ranges::set_difference(
         reading_states, complement_dpda.final_states,
-        std::inserter(new_final_states, new_final_states.begin()));
+        ::ranges::inserter(new_final_states, new_final_states.begin()));
     complement_dpda.final_states = std::move(new_final_states);
 
 #ifndef NDEBUG
