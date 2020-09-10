@@ -34,11 +34,9 @@ namespace cyy::computation {
     using action_table_type =
         std::unordered_map<std::pair<state_type, terminal_type>,
                            std::variant<state_type, CFG_production, bool>>;
-    mutable action_table_type action_table;
     using goto_table_type =
         std::unordered_map<std::pair<state_type, grammar_symbol_type>,
                            state_type>;
-    mutable goto_table_type goto_table;
 
   private:
     virtual void construct_parsing_table() const = 0;

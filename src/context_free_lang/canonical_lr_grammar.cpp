@@ -24,7 +24,8 @@ namespace cyy::computation {
     auto const &dfa = dk_1_dfa.get_dfa();
     std::set<symbol_type> state_symbol_set;
     for (auto const s : dfa.get_states()) {
-      state_symbol_set.insert(s);
+      assert(s <= std::numeric_limits<symbol_type>::max());
+      state_symbol_set.insert(static_cast<symbol_type>(s));
     }
     auto dk_state_set_alphabet =
         std::make_shared<number_set_alphabet>(state_symbol_set, "dk_state_set");

@@ -26,18 +26,18 @@ namespace cyy::computation {
     }
     return node;
   }
-  std::string CFG::parse_node::MMA_draw(const ALPHABET &alphabet) const {
-    auto [vertex_cmd, edge_cmd, _] = MMA_draw_edge(alphabet, 0);
+  std::string CFG::parse_node::MMA_draw(const ALPHABET &alphabet_) const {
+    auto [vertex_cmd, edge_cmd, _] = MMA_draw_edge(alphabet_, 0);
     std::string cmd =
         "TreeGraph[{" + edge_cmd + "},VertexLabels ->{" + vertex_cmd +
         "},VertexStyle -> {0->Orange},EdgeStyle->Thin,ImageSize->Large]";
     return cmd;
   }
   std::tuple<std::string, std::string, size_t>
-  CFG::parse_node::MMA_draw_edge(const ALPHABET &alphabet,
+  CFG::parse_node::MMA_draw_edge(const ALPHABET &alphabet_,
                                  size_t vertex_id) const {
     auto vertex_cmd = std::to_string(vertex_id) + "->" +
-                      grammar_symbol_type(grammar_symbol).MMA_draw(alphabet);
+                      grammar_symbol_type(grammar_symbol).MMA_draw(alphabet_);
     if (children.empty()) {
       if (grammar_symbol.is_terminal()) {
         return {vertex_cmd, "", vertex_id};
@@ -58,7 +58,7 @@ namespace cyy::computation {
           std::to_string(vertex_id) + "->" + std::to_string(last_vertex_id + 1);
       std::string sub_vertex_cmd, sub_edge_cmd;
       std::tie(sub_vertex_cmd, sub_edge_cmd, last_vertex_id) =
-          children[i]->MMA_draw_edge(alphabet, last_vertex_id + 1);
+          children[i]->MMA_draw_edge(alphabet_, last_vertex_id + 1);
       vertex_cmd += "," + sub_vertex_cmd;
       if (!sub_edge_cmd.empty()) {
         edge_cmd += "," + sub_edge_cmd;

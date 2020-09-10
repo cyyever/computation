@@ -12,7 +12,8 @@ namespace cyy::computation {
     assert(!completed());
     auto [first_set, epsilon_in_first] =
         cfg.first(grammar_symbol_const_span_type(
-            get_body().begin() + get_dot_pos() + 1, get_body().end()
+            get_body().begin() + static_cast<ssize_t>(get_dot_pos()) + 1,
+            get_body().end()
 
                 ));
     if (epsilon_in_first) {

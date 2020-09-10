@@ -40,11 +40,9 @@ namespace cyy::computation {
     symbol_type get_symbol(size_t index) const noexcept override {
       auto alphabet1_size = alphabet1->size();
       if (index < alphabet1_size) {
-        auto it1 = alphabet1->begin();
-        return *(it1 + index);
+        return alphabet1->get_symbol(index);
       }
-      auto it2 = alphabet2->begin();
-      return *(it2 + (index - alphabet1_size));
+      return alphabet2->get_symbol(index-alphabet1_size);
     }
     bool support_ASCII_escape_sequence() const override {
       return alphabet1->support_ASCII_escape_sequence() || alphabet2->support_ASCII_escape_sequence();

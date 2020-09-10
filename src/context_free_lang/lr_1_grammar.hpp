@@ -29,5 +29,9 @@ namespace cyy::computation {
   private:
     bool DK_1_test(const collection_type &collection) const;
     void construct_parsing_table() const override;
+
+  private:
+    mutable action_table_type action_table;
+    mutable goto_table_type goto_table;
   };
 } // namespace cyy::computation
