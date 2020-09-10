@@ -236,31 +236,23 @@ namespace cyy::computation {
   DPDA::get_looping_situations() const {
     std::map<state_type, std::set<stack_symbol_type>> looping_situations;
 
-    for (auto state : get_states()) {
-      auto &looping_situations_of_state = looping_situations[state];
-      for (auto stack_symbol : *stack_alphabet) {
-        looping_situations_of_state.insert(stack_symbol);
-      }
-    }
-
     state_set_map_type epsilon_transitions;
     for (const auto &[from_state, transfers] : transition_function) {
       for (const auto &[situation, action] : transfers) {
         if (situation.use_input()) {
-          if (!situation.has_pop()) {
-            looping_situations.erase(from_state);
-            break;
-          }
-          looping_situations[from_state].erase(situation.get_poped_symbol());
-        } else {
-          epsilon_transitions[from_state].insert(action.state);
+          continue;
+        }
+        epsilon_transitions[from_state].insert(action.state);
+
+        if (situation.has_pop()) {
+          looping_situations[from_state].emplace(situation.get_poped_symbol());
+          continue;
+        }
+        for (auto stack_symbol : *stack_alphabet) {
+          looping_situations[from_state].emplace(stack_symbol);
         }
       }
     }
-    std::erase_if(looping_situations, [](const auto &item) {
-      auto const &[_, value] = item;
-      return value.empty();
-    });
 
     while (true) {
       bool flag = false;
