@@ -161,11 +161,10 @@ namespace cyy::computation {
   class ALPHABET_ptr : public std::shared_ptr<ALPHABET> {
   public:
     using std::shared_ptr<ALPHABET>::shared_ptr;
-    // TODO remove it
     ALPHABET_ptr(const std::shared_ptr<ALPHABET> &ptr) : shared_ptr(ptr) {}
-    ALPHABET_ptr(std::string_view strv) : shared_ptr(ALPHABET::get(strv)) {}
-    ALPHABET_ptr(const char *str) : shared_ptr(ALPHABET::get(str)) {}
-    ALPHABET_ptr(const std::string &str) : shared_ptr(ALPHABET::get(str)) {}
+    ALPHABET_ptr(const char *str) : ALPHABET_ptr(ALPHABET::get(str)) {}
+    ALPHABET_ptr(std::string_view strv) : ALPHABET_ptr(ALPHABET::get(strv)) {}
+    ALPHABET_ptr(const std::string &str) : ALPHABET_ptr(str.c_str()) {}
   };
 
   inline auto endmarked_symbol_string(symbol_string_view str) {

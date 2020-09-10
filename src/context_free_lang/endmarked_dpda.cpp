@@ -72,22 +72,29 @@ namespace cyy::computation {
         const_endmarked_dpda.stack_alphabet, stack_alphabet_of_state_set);
 
     auto dpda_finite_automata = const_endmarked_dpda.get_finite_automata();
+    assert(std::dynamic_pointer_cast<endmarked_alphabet>(
+        dpda_finite_automata.get_alphabet_ptr()));
     dpda_finite_automata.set_alphabet(
         std::dynamic_pointer_cast<endmarked_alphabet>(
             dpda_finite_automata.get_alphabet_ptr())
             ->original_alphabet());
-    auto new_start_state = dpda_finite_automata.add_new_state();
     transition_function_type dpda_transition_function;
+
+    // Initialization
+    auto new_start_state = dpda_finite_automata.add_new_state();
     auto accept_states_in_empty_stack =
         const_endmarked_dpda.get_accept_states();
+    auto old_start_state = dpda_finite_automata.get_start_state();
+    dpda_finite_automata.clear_final_states();
+
     dpda_transition_function[new_start_state][{}] = {
-        dpda_finite_automata.get_start_state(),
+        old_start_state,
         stack_alphabet_of_state_set->get_min_symbol() +
             const_endmarked_dpda.get_bitset(accept_states_in_empty_stack)
                 .to_ulong()};
-    // FIXME:: check empty input string
+
     dpda_finite_automata.change_start_state(new_start_state);
-    dpda_finite_automata.clear_final_states();
+
     std::unordered_map<state_type, state_type> pop_temporary_states;
     for (auto const &[from_state, dpda_transfers] :
          const_endmarked_dpda.transition_function) {
@@ -103,15 +110,17 @@ namespace cyy::computation {
           auto pop_temporary_state = pop_temporary_states[from_state];
           dpda_transition_function.pop_stack_and_action(
               from_state, {pop_temporary_state}, *new_stack_alphabet);
-          dpda_transition_function[pop_temporary_state][std::move(situation)] =
-              std::move(action);
+
+          dpda_transition_function.pop_stack_and_action(
+              pop_temporary_state, action, *new_stack_alphabet);
+
           continue;
         }
-        // push
-        if (!action.has_push()) {
+        if (situation.use_input()) {
           continue;
         }
 
+        // push
         assert(!situation.use_input());
         assert(!situation.has_pop());
         for (auto old_stack_symbol : *new_stack_alphabet) {
@@ -154,7 +163,6 @@ namespace cyy::computation {
       }
     }
 
-    std::unordered_map<state_type, state_type> parallel_states;
     for (const auto &[from_state, dpda_transfers] :
          const_endmarked_dpda.transition_function) {
       for (auto const &[situation, action] : dpda_transfers) {
@@ -163,19 +171,36 @@ namespace cyy::computation {
         }
         assert(!action.has_push());
         assert(!situation.has_pop());
-        if (!parallel_states.contains(action.state)) {
-          auto parallel_state = dpda_finite_automata.add_new_state();
-          parallel_states[action.state] = parallel_state;
-          dpda_transition_function[parallel_state] =
-              dpda_transition_function[action.state];
-          dpda_finite_automata.add_final_state(parallel_state);
+        for (auto stack_symbol : *new_stack_alphabet) {
+          dpda_transition_function[from_state]
+                                  [{situation.input_symbol, stack_symbol}] = {
+                                      action.state, stack_symbol};
         }
-        auto parallel_state = parallel_states[action.state];
+      }
+    }
+
+    std::unordered_map<state_type, state_type> parallel_states;
+    auto add_parallel_state = [&](state_type s) {
+      if (!parallel_states.contains(s)) {
+        auto parallel_state = dpda_finite_automata.add_new_state();
+        parallel_states[s] = parallel_state;
+        dpda_transition_function[parallel_state] = dpda_transition_function[s];
+        dpda_finite_automata.add_final_state(parallel_state);
+      }
+      return parallel_states[s];
+    };
+
+    for (const auto &[from_state, dpda_transfers] :
+         const_endmarked_dpda.transition_function) {
+      for (auto const &[situation, action] : dpda_transfers) {
+        if (!situation.use_input()) {
+          continue;
+        }
+        assert(!action.has_push());
+        assert(!situation.has_pop());
+        auto parallel_state = add_parallel_state(action.state);
         for (auto stack_symbol : *new_stack_alphabet) {
           if (!stack_alphabet_of_state_set->contain(stack_symbol)) {
-            dpda_transition_function[from_state]
-                                    [{situation.input_symbol, stack_symbol}] = {
-                                        action.state, stack_symbol};
             continue;
           }
           if (const_endmarked_dpda.state_bitset_contains(
@@ -187,12 +212,18 @@ namespace cyy::computation {
             dpda_transition_function[from_state]
                                     [{situation.input_symbol, stack_symbol}] = {
                                         parallel_state, stack_symbol};
-          } else {
-            dpda_transition_function[from_state]
-                                    [{situation.input_symbol, stack_symbol}] = {
-                                        action.state, stack_symbol};
           }
         }
+      }
+    }
+    if (const_endmarked_dpda.state_bitset_contains(
+            const_endmarked_dpda.get_bitset(accept_states_in_empty_stack),
+            old_start_state)) {
+      auto final_old_start_state = add_parallel_state(old_start_state);
+
+      for (auto &[situation, action] :
+           dpda_transition_function[new_start_state]) {
+        action.state = final_old_start_state;
       }
     }
     for (auto [_, parallel_state] : parallel_states) {
@@ -203,7 +234,6 @@ namespace cyy::computation {
         }
       }
     }
-
     return DPDA(dpda_finite_automata, new_stack_alphabet,
                 dpda_transition_function);
   }

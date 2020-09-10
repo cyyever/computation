@@ -238,7 +238,6 @@ namespace cyy::computation {
     }
 
     state_set_map_type epsilon_transitions;
-
     for (const auto &[from_state, transfers] : transition_function) {
       for (const auto &[situation, action] : transfers) {
         if (situation.use_input()) {
@@ -246,7 +245,7 @@ namespace cyy::computation {
             looping_situations.erase(from_state);
             break;
           }
-          looping_situations[from_state].erase(situation.stack_symbol.value());
+          looping_situations[from_state].erase(situation.get_poped_symbol());
         } else {
           epsilon_transitions[from_state].insert(action.state);
         }
@@ -404,7 +403,7 @@ namespace cyy::computation {
   }
 
   void DPDA::check_transition_fuction() const {
-#ifdef NDEBUG
+#ifndef NDEBUG
     for (auto state : get_states()) {
       auto it = transition_function.find(state);
       if (it == transition_function.end()) {
@@ -419,18 +418,19 @@ namespace cyy::computation {
           cnt += state_transition_function.count({input_symbol});
           cnt += state_transition_function.count({{}, stack_symbol});
           cnt += state_transition_function.count({input_symbol, stack_symbol});
+
           if (cnt == 0) {
             throw exception::no_DPDA(
                 std::string("the combinations of the state ") +
-                std::to_string(state) + " and symbols " +
-                alphabet->to_string(input_symbol) + " " +
+                std::to_string(state) + " and input symbol " +
+                alphabet->to_string(input_symbol) + " and stack symbol " +
                 stack_alphabet->to_string(stack_symbol) + " lead to no branch");
           }
           if (cnt > 1) {
             throw exception::no_DPDA(
                 std::string("the combinations of the state ") +
-                std::to_string(state) + " and symbols " +
-                alphabet->to_string(input_symbol) + " " +
+                std::to_string(state) + " and input symbol " +
+                alphabet->to_string(input_symbol) + " and stack symbol " +
                 stack_alphabet->to_string(stack_symbol) +
                 " lead to multiple branches");
           }

@@ -137,6 +137,36 @@ TEST_CASE("endmarked DPDA") {
           CHECK(!reverted_dpda.recognize(str));
         }
       }
+      finite_automata empty_finite_automate(
+          {0, 1, 2}, ALPHABET::get("0_set", true), 0, {1});
+      endmarked_DPDA empty_dpda(empty_finite_automate, "0_set",
+                                {{0,
+                                  {
+                                      {{U'0'}, {2}},
+                                      {{ALPHABET::endmarker}, {1}},
+                                  }},
+                                 {1,
+                                  {
+                                      {{U'0'}, {2}},
+                                      {{ALPHABET::endmarker}, {2}},
+                                  }},
+                                 {2,
+                                  {
+                                      {{}, {2}},
+                                  }}});
+      empty_dpda.normalize_transitions();
+      reverted_dpda = empty_dpda.to_DPDA();
+      SUBCASE("recognize") {
+        for (auto str : {U""}) {
+          CHECK(reverted_dpda.recognize(str));
+        }
+      }
+
+      SUBCASE("can't recognize") {
+        for (auto str : {U"0", U"00"}) {
+          /* CHECK(!reverted_dpda.recognize(str)); */
+        }
+      }
     }
   }
 }
