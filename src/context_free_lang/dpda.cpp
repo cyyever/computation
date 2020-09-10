@@ -212,6 +212,12 @@ namespace cyy::computation {
       }
     }
     for (auto const &[state, stack_symbols] : rejection_looping_situations) {
+      if (transition_function[state].contains({})) {
+        assert(stack_symbols.size() == stack_alphabet->size());
+        transition_function[state][{}] = {new_reject_state};
+        continue;
+      }
+
       for (auto const stack_symbol : stack_symbols) {
         transition_function[state][{{}, stack_symbol}] = {new_reject_state};
       }
@@ -259,43 +265,52 @@ namespace cyy::computation {
     while (true) {
       bool flag = false;
       auto new_looping_situations = looping_situations;
-      for (auto &[from_state, stack_symbol_set] : looping_situations) {
-        auto it = transition_function.find(from_state);
+      for (auto &[looping_state, stack_symbol_set] : looping_situations) {
+        auto it = transition_function.find(looping_state);
         auto const &state_transition_function = it->second;
+        auto it2 = state_transition_function.find({});
+        if (it2 != state_transition_function.end()) {
+          auto const &action = it2->second;
+
+          if (!new_looping_situations.contains(action.state)) {
+            if (new_looping_situations.erase(looping_state)) {
+              flag = true;
+            }
+            continue;
+          }
+
+          if (!action.has_push()) {
+            auto prev_size = new_looping_situations[looping_state].size();
+            new_looping_situations[looping_state] =
+                new_looping_situations[action.state];
+            if (prev_size != new_looping_situations[looping_state].size()) {
+              flag = true;
+            }
+          }
+          continue;
+        }
+
         for (auto stack_symbol : stack_symbol_set) {
-          action_type action;
-          auto it2 = state_transition_function.find({{}, stack_symbol});
-          if (it2 != state_transition_function.end()) {
-            action = it2->second;
-            if (!action.has_push()) {
-              if (new_looping_situations[from_state].erase(stack_symbol)) {
-                flag = true;
-              }
+          it2 = state_transition_function.find({{}, stack_symbol});
+          if (it2 == state_transition_function.end()) {
+            continue;
+          }
+          auto const &action = it2->second;
+
+          if (!new_looping_situations.contains(action.state)) {
+            if (new_looping_situations[looping_state].erase(stack_symbol)) {
+              flag = true;
               continue;
             }
           } else {
-            it2 = state_transition_function.find({});
-            assert(it2 != state_transition_function.end());
-            action = it2->second;
-
-            if (!action.has_push()) {
-              auto prev_size = new_looping_situations[from_state].size();
-              new_looping_situations[from_state] =
-                  new_looping_situations[action.state];
-              if (prev_size != new_looping_situations[from_state].size()) {
-                flag = true;
+            if (action.has_push()) {
+              if (!new_looping_situations[action.state].contains(
+                      action.get_pushed_symbol())) {
+                if (new_looping_situations[looping_state].erase(stack_symbol)) {
+                  flag = true;
+                }
                 continue;
               }
-            }
-          }
-          if (action.has_push()) {
-            if (!new_looping_situations.contains(action.state) ||
-                !new_looping_situations[action.state].contains(
-                    action.stack_symbol.value())) {
-              if (new_looping_situations[from_state].erase(stack_symbol)) {
-                flag = true;
-              }
-              continue;
             }
           }
         }
@@ -314,6 +329,7 @@ namespace cyy::computation {
       assert(!stack_symbol_set.empty());
     }
 
+    // FIXME epsilon_transitions
     decltype(looping_situations) acceptance_looping_situations;
     decltype(looping_situations) rejection_looping_situations;
     state_set_map_type epsilon_closures;

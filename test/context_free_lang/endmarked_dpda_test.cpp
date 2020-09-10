@@ -156,6 +156,7 @@ TEST_CASE("endmarked DPDA") {
                                   }}});
       empty_dpda.normalize_transitions();
       reverted_dpda = empty_dpda.to_DPDA();
+      reverted_dpda.normalize();
       SUBCASE("recognize") {
         for (auto str : {U""}) {
           CHECK(reverted_dpda.recognize(str));
@@ -164,7 +165,7 @@ TEST_CASE("endmarked DPDA") {
 
       SUBCASE("can't recognize") {
         for (auto str : {U"0", U"00"}) {
-          /* CHECK(!reverted_dpda.recognize(str)); */
+          CHECK(!reverted_dpda.recognize(str));
         }
       }
     }
