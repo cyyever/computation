@@ -83,7 +83,6 @@ namespace cyy::computation {
                  [](auto g) { return *g.get_nonterminal_ptr(); });
     }
   };
-  /* using grammar_symbol_const_span_type =::ranges::span<const grammar_symbol_type>; */
   using grammar_symbol_const_span_type =std::span<const grammar_symbol_type>;
 } // namespace cyy::computation
 
