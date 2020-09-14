@@ -5,6 +5,7 @@
  * \date 2018-04-21
  */
 
+#include  <cstddef>
 #include "lr_1_item.hpp"
 
 namespace cyy::computation {
@@ -12,7 +13,7 @@ namespace cyy::computation {
     assert(!completed());
     auto [first_set, epsilon_in_first] =
         cfg.first(grammar_symbol_const_span_type(
-            get_body().begin() + static_cast<ssize_t>(get_dot_pos()) + 1,
+            get_body().begin() + static_cast<ptrdiff_t>(get_dot_pos()) + 1,
             get_body().end()
 
                 ));

@@ -63,7 +63,7 @@ namespace cyy::computation {
       state_type state{};
       std::optional<stack_symbol_type> stack_symbol;
       bool operator==(const action_type &) const noexcept = default;
-      /* auto operator<=>(const action_type &) const noexcept = default; */
+      auto operator<=>(const action_type &) const noexcept = default;
       bool has_push() const { return stack_symbol.has_value(); }
       stack_symbol_type get_pushed_symbol() const {
         return stack_symbol.value();

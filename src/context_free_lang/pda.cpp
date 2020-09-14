@@ -7,6 +7,7 @@
 
 #include <cassert>
 #include <iterator>
+#include <sstream>
 #include <vector>
 
 #include "pda.hpp"

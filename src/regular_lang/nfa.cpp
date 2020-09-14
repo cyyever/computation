@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <cassert>
 #include <iterator>
+#include <sstream>
 #include <vector>
 
 #include "../util.hpp"
