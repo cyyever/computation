@@ -19,8 +19,8 @@ namespace cyy::computation {
 
   DPDA canonical_LR_grammar::to_DPDA() const {
     finite_automata dpda_finite_automata{{0}, alphabet, 0, {}};
-
     DK_1_DFA dk_1_dfa(*this);
+
     auto const &dfa = dk_1_dfa.get_dfa();
     std::set<symbol_type> state_symbol_set;
     for (auto const s : dfa.get_states()) {
@@ -52,8 +52,9 @@ namespace cyy::computation {
       }
       // reduce
       auto dk_final_state = dk_state;
-      auto const &item =
-          *(dk_1_dfa.get_LR_1_item_set(dk_state).get_completed_items().begin());
+      auto const &item = *(dk_1_dfa.get_LR_1_item_set(dk_state)
+                               .get_completed_items()
+                               .begin());
       auto const &head = item.get_head();
       auto const &body = item.get_body();
 
@@ -69,11 +70,11 @@ namespace cyy::computation {
         if (body.empty()) {
           transition_function.check_stack_and_action(
               reduction_state, {{}, dk_final_state},
-              {reduction_state, goto_table[{dk_final_state, head}]},
+              {looping_state, goto_table[{dk_final_state, head}]},
               dpda_finite_automata);
         } else {
           auto from_state = reduction_state;
-          state_type to_state;
+          state_type to_state{};
           // pop body states from stack
           for (size_t i = 0; i < body.size(); i++) {
             to_state = dpda_finite_automata.add_new_state();
@@ -88,8 +89,10 @@ namespace cyy::computation {
           }
 
           for (auto const prev_dk_state : state_symbol_set) {
-            transition_function[from_state][{{}, prev_dk_state}] = {
-                reduction_state, goto_table[{prev_dk_state, head}]};
+            transition_function.check_stack_and_action(
+                to_state, {{}, prev_dk_state},
+                {looping_state, goto_table[{prev_dk_state, head}]},
+                dpda_finite_automata);
           }
         }
       }
