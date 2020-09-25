@@ -52,6 +52,8 @@ namespace cyy::computation {
       }
       // reduce
       auto dk_final_state = dk_state;
+      auto completed_items =
+          dk_1_dfa.get_LR_1_item_set(dk_state).get_completed_items();
       auto const &item =
           *(dk_1_dfa.get_LR_1_item_set(dk_state).get_completed_items().begin());
       auto const &head = item.get_head();
