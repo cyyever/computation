@@ -52,18 +52,18 @@ namespace cyy::computation {
       }
       // reduce
       auto dk_final_state = dk_state;
-      auto const &item = *(dk_1_dfa.get_LR_1_item_set(dk_state)
-                               .get_completed_items()
-                               .begin());
+      auto const &item =
+          *(dk_1_dfa.get_LR_1_item_set(dk_state).get_completed_items().begin());
       auto const &head = item.get_head();
       auto const &body = item.get_body();
 
-      auto reduction_states = std::vector{accept_state, looping_state};
+      auto reduction_states = std::vector{accept_state};
       if (head == get_start_symbol()) {
         transition_function.check_stack_and_action(
             looping_state, {{}, dk_final_state}, {accept_state},
             dpda_finite_automata);
-        reduction_states.pop_back();
+      } else {
+        reduction_states.emplace_back(looping_state);
       }
 
       for (auto reduction_state : reduction_states) {

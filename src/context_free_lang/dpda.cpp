@@ -7,8 +7,8 @@
 
 #include <cassert>
 #include <memory>
-#include <stdexcept>
 #include <sstream>
+#include <stdexcept>
 #include <unordered_map>
 
 #include "dpda.hpp"

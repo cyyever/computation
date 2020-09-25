@@ -43,7 +43,7 @@ namespace cyy::computation {
   DPDA DCFG::to_DPDA() const {
     finite_automata dpda_finite_automata{{0}, alphabet, 0, {}};
 
-    auto const &dfa =dk_dfa_ptr->get_dfa();
+    auto const &dfa = dk_dfa_ptr->get_dfa();
     std::set<symbol_type> state_symbol_set;
     for (auto const s : dfa.get_states()) {
       assert(s <= std::numeric_limits<symbol_type>::max());
@@ -74,9 +74,11 @@ namespace cyy::computation {
       }
       // reduce
       auto dk_final_state = dk_state;
-      auto const &item = *(dk_dfa_ptr->get_LR_0_item_set(dk_state)
-                               .get_completed_items()
-                               .begin());
+      auto completed_items =
+          dk_dfa_ptr->get_LR_0_item_set(dk_state).get_completed_items();
+      /* assert(std::ranges::size(completed_items) == 1); */
+
+      auto const &item = *(completed_items.begin());
       auto const &head = item.get_head();
       auto const &body = item.get_body();
 

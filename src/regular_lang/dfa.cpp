@@ -7,10 +7,10 @@
 
 #include <algorithm>
 #include <iostream>
-#include <sstream>
 #include <iterator>
 #include <memory>
 #include <set>
+#include <sstream>
 #include <vector>
 
 #include "dfa.hpp"
