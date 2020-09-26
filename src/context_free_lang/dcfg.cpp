@@ -82,27 +82,21 @@ namespace cyy::computation {
       auto const &head = item.get_head();
       auto const &body = item.get_body();
 
-      auto reduction_states = std::vector{accept_state};
-      if (head == get_start_symbol()) {
-        transition_function.check_stack_and_action(
-            looping_state, {{}, dk_final_state}, {accept_state},
-            dpda_finite_automata);
-      } else {
-        reduction_states.emplace_back(looping_state);
-      }
-
-      for (auto reduction_state : reduction_states) {
+      for (auto from_state : {looping_state, accept_state}) {
         if (body.empty()) {
+          auto destination_state = looping_state;
+          if (dk_final_state == dfa.get_start_state()) {
+            destination_state = accept_state;
+          }
           transition_function.check_stack_and_action(
-              reduction_state, {{}, dk_final_state},
-              {looping_state, goto_table[{dk_final_state, head}]},
+              from_state, {{}, dk_final_state},
+              {destination_state, goto_table[{dk_final_state, head}]},
               dpda_finite_automata);
         } else {
-          auto from_state = reduction_state;
-          state_type to_state{};
           // pop body states from stack
           for (size_t i = 0; i < body.size(); i++) {
-            to_state = dpda_finite_automata.add_new_state();
+            auto to_state = dpda_finite_automata.add_new_state();
+
             if (i == 0) {
               transition_function[from_state][{{}, dk_final_state}] = {
                   to_state};
@@ -114,9 +108,13 @@ namespace cyy::computation {
           }
 
           for (auto const prev_dk_state : state_symbol_set) {
+            auto destination_state = looping_state;
+            if (prev_dk_state == dfa.get_start_state()) {
+              destination_state = accept_state;
+            }
             transition_function.check_stack_and_action(
-                to_state, {{}, prev_dk_state},
-                {looping_state, goto_table[{prev_dk_state, head}]},
+                from_state, {{}, prev_dk_state},
+                {destination_state, goto_table[{prev_dk_state, head}]},
                 dpda_finite_automata);
           }
         }

@@ -37,6 +37,9 @@ namespace cyy::computation {
     auto &get_lookahead_symbols() && { return lookahead_symbols; }
 
     void add_lookahead_symbol(CFG::terminal_type lookahead_symbol);
+    bool contain_lookahead_symbol(CFG::terminal_type lookahead_symbol) const {
+      return lookahead_symbols.contains(lookahead_symbol);
+    }
     void add_lookahead_symbols(CFG::terminal_set_type lookahead_symbols_);
     std::string MMA_draw(const CFG &cfg) const;
 
