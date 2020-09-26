@@ -4,10 +4,13 @@
  * \author cyy
  * \date 2018-03-04
  */
+#include <memory>
 
 #include "canonical_lr_grammar.hpp"
 #include "dk_1.hpp"
+#include "endmarked_dpda.hpp"
 #include "exception.hpp"
+#include "lang/endmarked_alphabet.hpp"
 #include "lang/number_set_alphabet.hpp"
 
 namespace cyy::computation {
@@ -16,9 +19,9 @@ namespace cyy::computation {
                                              production_set_type productions_)
 
       : LR_1_grammar(alphabet_, start_symbol_, std::move(productions_)) {}
-
   DPDA canonical_LR_grammar::to_DPDA() const {
-    finite_automata dpda_finite_automata{{0}, alphabet, 0, {}};
+    auto dpda_alphabet = std::make_shared<endmarked_alphabet>(alphabet);
+    finite_automata dpda_finite_automata{{0}, dpda_alphabet, 0, {}};
     DK_1_DFA dk_1_dfa(*this);
 
     auto const &dfa = dk_1_dfa.get_dfa();
@@ -35,54 +38,60 @@ namespace cyy::computation {
     transition_function[dpda_finite_automata.get_start_state()][{}] = {
         looping_state, dfa.get_start_state()};
 
-    auto accept_state = dpda_finite_automata.add_new_state();
     auto goto_table = dk_1_dfa.get_goto_table();
+    std::unordered_map<symbol_type, state_type> lookahead_states;
+
+    for (auto const input_symbol : *dpda_alphabet) {
+      lookahead_states[input_symbol] = dpda_finite_automata.add_new_state();
+    }
+
     for (auto const dk_state : state_symbol_set) {
-      // shift
-      if (!dfa.is_final_state(dk_state)) {
-        for (auto const input_symbol : *alphabet) {
-          for (auto from_state : {looping_state, accept_state}) {
-            transition_function.check_stack_and_action(
-                from_state, {input_symbol, dk_state},
-                {looping_state, goto_table[{dk_state, input_symbol}]},
-                dpda_finite_automata);
-          }
+      auto const &lr_1_item_set = dk_1_dfa.get_LR_1_item_set(dk_state);
+      for (auto const input_symbol : *dpda_alphabet) {
+        auto completed_item_ptr =
+            lr_1_item_set.get_completed_item(input_symbol);
+        DPDA::action_type action;
+        if (!completed_item_ptr) {
+          // shift
+          action = {looping_state, goto_table[{dk_state, input_symbol}]};
+        } else {
+          // move to lookahead state
+          auto lookahead_state = lookahead_states[input_symbol];
+          action = {lookahead_state};
         }
-        continue;
-      }
-      // reduce
-      auto dk_final_state = dk_state;
-      auto completed_items =
-          dk_1_dfa.get_LR_1_item_set(dk_state).get_completed_items();
-      auto const &item =
-          *(dk_1_dfa.get_LR_1_item_set(dk_state).get_completed_items().begin());
-      auto const &head = item.get_head();
-      auto const &body = item.get_body();
-
-      auto reduction_states = std::vector{accept_state};
-      if (head == get_start_symbol()) {
         transition_function.check_stack_and_action(
-            looping_state, {{}, dk_final_state}, {accept_state},
+            looping_state, {input_symbol, dk_state}, action,
             dpda_finite_automata);
-      } else {
-        reduction_states.emplace_back(looping_state);
       }
+    }
 
-      for (auto reduction_state : reduction_states) {
+    for (auto &[lookahead_symbol, from_state] : lookahead_states) {
+      for (auto const dk_state : state_symbol_set) {
+        auto const &lr_1_item_set = dk_1_dfa.get_LR_1_item_set(dk_state);
+        auto completed_item_ptr =
+            lr_1_item_set.get_completed_item(lookahead_symbol);
+        if (!completed_item_ptr) {
+          // shift
+          DPDA::action_type action = {looping_state,
+                                      goto_table[{dk_state, lookahead_symbol}]};
+          transition_function.check_stack_and_action(
+              from_state, {{}, dk_state}, action, dpda_finite_automata);
+          continue;
+        }
+        auto const &head = completed_item_ptr->get_head();
+        auto const &body = completed_item_ptr->get_body();
         if (body.empty()) {
           transition_function.check_stack_and_action(
-              reduction_state, {{}, dk_final_state},
-              {looping_state, goto_table[{dk_final_state, head}]},
-              dpda_finite_automata);
+              from_state, {{}, dk_state},
+              {from_state, goto_table[{dk_state, head}]}, dpda_finite_automata);
         } else {
-          auto from_state = reduction_state;
-          state_type to_state{};
           // pop body states from stack
+          auto destination_state = from_state;
           for (size_t i = 0; i < body.size(); i++) {
-            to_state = dpda_finite_automata.add_new_state();
+            auto to_state = dpda_finite_automata.add_new_state();
+
             if (i == 0) {
-              transition_function[from_state][{{}, dk_final_state}] = {
-                  to_state};
+              transition_function[from_state][{{}, dk_state}] = {to_state};
             } else {
               transition_function.pop_stack_and_action(from_state, {to_state},
                                                        *dk_state_set_alphabet);
@@ -92,16 +101,17 @@ namespace cyy::computation {
 
           for (auto const prev_dk_state : state_symbol_set) {
             transition_function.check_stack_and_action(
-                to_state, {{}, prev_dk_state},
-                {looping_state, goto_table[{prev_dk_state, head}]},
+                from_state, {{}, prev_dk_state},
+                {destination_state, goto_table[{prev_dk_state, head}]},
                 dpda_finite_automata);
           }
         }
       }
     }
-    dpda_finite_automata.replace_final_states(accept_state);
-    return DPDA(dpda_finite_automata, dk_state_set_alphabet,
-                transition_function);
+
+    /* dpda_finite_automata.replace_final_states(accept_state); */
+    return endmarked_DPDA(dpda_finite_automata, dk_state_set_alphabet,
+                          transition_function);
   }
 
   std::pair<canonical_LR_grammar::collection_type,
