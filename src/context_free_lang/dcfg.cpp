@@ -1,6 +1,7 @@
+#include "dcfg.hpp"
+
 #include <iostream>
 
-#include "dcfg.hpp"
 #include "lang/number_set_alphabet.hpp"
 namespace cyy::computation {
   DCFG::DCFG(ALPHABET_ptr alphabet_, nonterminal_type start_symbol_,
@@ -85,7 +86,8 @@ namespace cyy::computation {
       for (auto from_state : {looping_state, accept_state}) {
         if (body.empty()) {
           auto destination_state = looping_state;
-          if (dk_final_state == dfa.get_start_state()) {
+          if (dk_final_state == dfa.get_start_state() &&
+              head == get_start_symbol()) {
             destination_state = accept_state;
           }
           transition_function.check_stack_and_action(
@@ -109,7 +111,8 @@ namespace cyy::computation {
 
           for (auto const prev_dk_state : state_symbol_set) {
             auto destination_state = looping_state;
-            if (prev_dk_state == dfa.get_start_state()) {
+            if (prev_dk_state == dfa.get_start_state() &&
+                head == get_start_symbol()) {
               destination_state = accept_state;
             }
             transition_function.check_stack_and_action(

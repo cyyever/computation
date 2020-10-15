@@ -7,11 +7,12 @@ NamespaceIndentation: All
 SortIncludes: true
 IncludeBlocks: Regroup
 IncludeCategories:
-  - Regex:           '<[[:alnum:].]+>'
-    Priority:        0
-  - Regex:           '<[[:alnum:].]+\/.*>'
+  - Regex:           '<windows.h>'
+    Priority:        -1
+  - Regex:           '<[[:alnum:]._]+>'
+    Priority:        1
+  - Regex:           '<[[:alnum:]._]+\/.*>'
     Priority:        2
   - Regex:           '.*'
     Priority:        3
-    SortPriority:    4
 ...
