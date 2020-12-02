@@ -6,6 +6,7 @@
  */
 
 #include "common_tokens.hpp"
+
 #include "ascii.hpp"
 
 namespace cyy::computation {

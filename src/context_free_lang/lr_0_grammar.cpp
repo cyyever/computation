@@ -3,11 +3,12 @@
  *
  */
 
+#include "lr_0_grammar.hpp"
+
 #include <iostream>
 #include <sstream>
 
 #include "../exception.hpp"
-#include "lr_0_grammar.hpp"
 
 namespace cyy::computation {
   void LR_0_grammar::construct_parsing_table() const {

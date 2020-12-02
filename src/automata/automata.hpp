@@ -7,13 +7,14 @@
 
 #pragma once
 
-#include <boost/dynamic_bitset.hpp>
 #include <memory>
-#include <range/v3/all.hpp>
 #include <set>
 #include <string>
 #include <string_view>
 #include <unordered_map>
+
+#include <boost/dynamic_bitset.hpp>
+#include <range/v3/all.hpp>
 
 #include "../hash.hpp"
 #include "../lang/alphabet.hpp"

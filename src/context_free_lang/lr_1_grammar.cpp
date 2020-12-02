@@ -3,11 +3,12 @@
  *
  */
 
+#include "lr_1_grammar.hpp"
+
 #include <iostream>
 #include <sstream>
 
 #include "../exception.hpp"
-#include "lr_1_grammar.hpp"
 
 namespace cyy::computation {
   bool LR_1_grammar::DK_1_test(const collection_type &collection) const {

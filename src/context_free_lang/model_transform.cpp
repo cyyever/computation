@@ -5,12 +5,13 @@
  * \date 2018-03-04
  */
 
+#include "model_transform.hpp"
+
 #include <unordered_map>
 #include <vector>
 
 #include "automata/automata.hpp"
 #include "cfg_production.hpp"
-#include "model_transform.hpp"
 
 namespace cyy::computation {
 

@@ -5,13 +5,14 @@
  * \date 2018-03-04
  */
 
+#include "cfg.hpp"
+
 #include <algorithm>
 #include <cassert>
 #include <iostream>
 #include <unordered_map>
 #include <utility>
 
-#include "cfg.hpp"
 #include "lang/sub_alphabet.hpp"
 #include "lang/union_alphabet.hpp"
 

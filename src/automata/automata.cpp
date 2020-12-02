@@ -1,8 +1,9 @@
 
+#include "automata.hpp"
+
 #include <sstream>
 
 #include "../util.hpp"
-#include "automata.hpp"
 namespace cyy::computation {
 
   finite_automata::state_set_type &finite_automata::get_epsilon_closure(

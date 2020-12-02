@@ -4,10 +4,10 @@
  * \brief
  */
 
+#include "cnf.hpp"
+
 #include <cassert>
 #include <vector>
-
-#include "cnf.hpp"
 
 namespace cyy::computation {
   bool CNF::valid() const {

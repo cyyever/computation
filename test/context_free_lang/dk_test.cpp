@@ -1,8 +1,9 @@
 /*!
  * \file dk_test.cpp
  */
-#include <doctest/doctest.h>
 #include <iostream>
+
+#include <doctest/doctest.h>
 
 #include "../../src/context_free_lang/dk.hpp"
 #include "../../src/lang/alphabet.hpp"

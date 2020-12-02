@@ -3,6 +3,7 @@
  */
 
 #include "lr_0_item.hpp"
+
 #include <iostream>
 
 namespace cyy::computation {

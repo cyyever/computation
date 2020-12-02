@@ -5,13 +5,14 @@
  * \date 2018-03-03
  */
 
+#include "dpda.hpp"
+
 #include <cassert>
 #include <memory>
 #include <sstream>
 #include <stdexcept>
 #include <unordered_map>
 
-#include "dpda.hpp"
 #include "lang/endmarked_alphabet.hpp"
 #include "lang/union_alphabet.hpp"
 

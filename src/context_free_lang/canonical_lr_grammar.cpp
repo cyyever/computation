@@ -4,9 +4,10 @@
  * \author cyy
  * \date 2018-03-04
  */
+#include "canonical_lr_grammar.hpp"
+
 #include <memory>
 
-#include "canonical_lr_grammar.hpp"
 #include "dk_1.hpp"
 #include "endmarked_dpda.hpp"
 #include "exception.hpp"

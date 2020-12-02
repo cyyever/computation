@@ -40,6 +40,7 @@ namespace cyy::computation {
     bool contain_lookahead_symbol(CFG::terminal_type lookahead_symbol) const {
       return lookahead_symbols.contains(lookahead_symbol);
     }
+
     void add_lookahead_symbols(CFG::terminal_set_type lookahead_symbols_);
     std::string MMA_draw(const CFG &cfg) const;
 
@@ -92,6 +93,8 @@ namespace cyy::computation {
     }
     std::unordered_set<LR_1_item> expand_nonkernel_items(const CFG &cfg) const;
 
+    const LR_1_item *
+    get_completed_item(CFG::terminal_type lookahead_symbol) const;
     std::string MMA_draw(const CFG &cfg) const;
 
   private:

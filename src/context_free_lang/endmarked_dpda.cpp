@@ -3,11 +3,13 @@
  */
 
 #include "endmarked_dpda.hpp"
+
+#include <algorithm>
+#include <memory>
+
 #include "lang/endmarked_alphabet.hpp"
 #include "lang/range_alphabet.hpp"
 #include "lang/union_alphabet.hpp"
-#include <algorithm>
-#include <memory>
 
 namespace cyy::computation {
 

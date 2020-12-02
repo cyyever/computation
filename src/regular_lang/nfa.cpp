@@ -5,6 +5,8 @@
  * \date 2018-03-03
  */
 
+#include "nfa.hpp"
+
 #include <algorithm>
 #include <cassert>
 #include <iterator>
@@ -12,7 +14,6 @@
 #include <vector>
 
 #include "../util.hpp"
-#include "nfa.hpp"
 
 namespace cyy::computation {
 

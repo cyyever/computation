@@ -6,6 +6,7 @@
  */
 
 #include "gnfa.hpp"
+
 #include <memory>
 
 namespace cyy::computation {

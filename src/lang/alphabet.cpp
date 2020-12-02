@@ -5,11 +5,12 @@
  * \date 2018-03-03
  */
 
+#include "alphabet.hpp"
+
 #include <limits>
 #include <string_view>
 
 #include "../exception.hpp"
-#include "alphabet.hpp"
 #include "ascii.hpp"
 #include "common_tokens.hpp"
 #include "endmarked_alphabet.hpp"

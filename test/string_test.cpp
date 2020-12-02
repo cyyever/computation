@@ -9,8 +9,9 @@
 #pragma warning(disable : ALL_CPPCORECHECK_WARNINGS)
 #endif
 
-#include "../src/string.hpp"
 #include <doctest/doctest.h>
+
+#include "../src/string.hpp"
 
 using namespace cyy::computation;
 TEST_CASE("KMP") {

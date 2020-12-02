@@ -6,6 +6,7 @@
  */
 
 #include "lr_1_item.hpp"
+
 #include <cstddef>
 
 namespace cyy::computation {
@@ -88,6 +89,15 @@ namespace cyy::computation {
       }
     }
     return item_set;
+  }
+  const LR_1_item *new_LR_1_item_set::get_completed_item(
+      CFG::terminal_type lookahead_symbol) const {
+    for (auto const &completed_item : get_completed_items()) {
+      if (completed_item.contain_lookahead_symbol(lookahead_symbol)) {
+        return &completed_item;
+      }
+    }
+    return nullptr;
   }
 
   /*

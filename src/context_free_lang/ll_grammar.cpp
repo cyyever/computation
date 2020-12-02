@@ -5,11 +5,12 @@
  * \date 2018-03-04
  */
 
+#include "ll_grammar.hpp"
+
 #include <cassert>
 #include <iostream>
 
 #include "../exception.hpp"
-#include "ll_grammar.hpp"
 
 namespace cyy::computation {
 

@@ -5,12 +5,12 @@
  * \date 2018-03-03
  */
 
+#include "pda.hpp"
+
 #include <cassert>
 #include <iterator>
 #include <sstream>
 #include <vector>
-
-#include "pda.hpp"
 
 namespace cyy::computation {
   bool PDA::recognize(symbol_string_view view) const {

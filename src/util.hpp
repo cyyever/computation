@@ -7,9 +7,10 @@
  */
 #pragma once
 
+#include <unordered_map>
+
 #include <concepts/concepts.hpp>
 #include <range/v3/all.hpp>
-#include <unordered_map>
 
 template <typename T, ::ranges::input_range U>
 requires ::concepts::same_as<T, ::ranges::range_value_t<U>>

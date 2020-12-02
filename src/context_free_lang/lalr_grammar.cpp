@@ -6,6 +6,7 @@
  */
 
 #include "lalr_grammar.hpp"
+
 #include "../exception.hpp"
 #include "slr_grammar.hpp"
 

@@ -3,8 +3,9 @@
  *
  * \brief
  */
-#include <doctest/doctest.h>
 #include <iostream>
+
+#include <doctest/doctest.h>
 
 #include "../../src/context_free_lang/dk_1.hpp"
 #include "../../src/lang/alphabet.hpp"

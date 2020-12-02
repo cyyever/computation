@@ -7,8 +7,9 @@
 #include <CppCoreCheck\Warnings.h>
 #pragma warning(disable : ALL_CPPCORECHECK_WARNINGS)
 #endif
-#include <doctest/doctest.h>
 #include <iostream>
+
+#include <doctest/doctest.h>
 
 #include "../../src/context_free_lang/slr_grammar.hpp"
 #include "../../src/lang/common_tokens.hpp"
