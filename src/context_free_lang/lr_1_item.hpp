@@ -105,47 +105,6 @@ namespace cyy::computation {
 
 } // namespace cyy::computation
 
-/*
-namespace cyy::computation {
-  class LR_1_item_set {
-  public:
-    auto const &get_kernel_items() const { return kernel_items; }
-    auto const &get_nonkernel_items() const { return nonkernel_items; }
-    auto get_completed_items() const {
-      return get_kernel_items() | std::views::filter([](auto const &p) {
-               return p.first.completed();
-             });
-    }
-    void add_kernel_item(const CFG &cfg, const LR_0_item &kernel_item,
-                         CFG::terminal_set_type lookahead_set);
-
-    bool operator==(const LR_1_item_set &rhs) const = default;
-    bool empty() const noexcept {
-      return kernel_items.empty() && nonkernel_items.empty();
-    }
-
-    std::unordered_map<grammar_symbol_type, LR_1_item_set>
-    go(const CFG &cfg) const;
-
-    bool has_completed_items() const {
-      return std::ranges::any_of(
-          kernel_items, [](auto const &p) { return p.first.completed(); });
-    }
-    std::string MMA_draw(const ALPHABET &alphabet) const;
-
-  private:
-    void add_nonkernel_item(const CFG &cfg, grammar_symbol_const_span_type view,
-                            const CFG::terminal_set_type &lookahead_set);
-
-  private:
-    std::unordered_map<LR_0_item, CFG::terminal_set_type> kernel_items;
-    std::unordered_map<CFG::nonterminal_type, CFG::terminal_set_type>
-        nonkernel_items;
-  };
-
-} // namespace cyy::computation
-*/
-
 /* namespace std { */
 /*   template <> struct hash<cyy::computation::new_LR_1_item_set> { */
 /*     size_t operator()(const cyy::computation::new_LR_1_item_set &x) const {
