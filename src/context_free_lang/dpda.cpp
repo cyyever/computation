@@ -233,8 +233,8 @@ namespace cyy::computation {
 #endif
   }
 
-  std::pair<std::map<DPDA::state_type, std::set<DPDA::stack_symbol_type>>,
-            std::map<DPDA::state_type, std::set<DPDA::stack_symbol_type>>>
+  std::pair<std::map<DPDA::state_type, symbol_set_type>,
+            std::map<DPDA::state_type, symbol_set_type>>
   DPDA::get_looping_situations() const {
     std::map<state_type, std::set<std::pair<stack_symbol_type, bool>>>
         looping_situations;
@@ -364,7 +364,7 @@ namespace cyy::computation {
     }
 
     // FIXME epsilon_transitions
-    std::map<state_type, std::set<stack_symbol_type>>
+    std::map<state_type, symbol_set_type>
         acceptance_looping_situations, rejection_looping_situations;
     for (auto &[s, stack_symbol_set] : looping_situations) {
       assert(!stack_symbol_set.empty());
