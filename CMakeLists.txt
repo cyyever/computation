@@ -14,10 +14,7 @@ add_library(MyComputationLib ${SOURCE})
 target_link_libraries(MyComputationLib PUBLIC Boost::headers)
 target_link_libraries(MyComputationLib PUBLIC range-v3)
 
-if(CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
-  find_package(libcxx REQUIRED)
-  target_link_libraries(MyComputationLib PUBLIC libcxx::libcxx)
-elseif(MSVC)
+if(MSVC)
   find_package(MicrosoftSTL REQUIRED)
   target_link_libraries(MyComputationLib PUBLIC Microsoft::STL)
 endif()
@@ -27,7 +24,7 @@ target_include_directories(
                           $<INSTALL_INTERFACE:include/cyy/computation>)
 
 # test
-  add_subdirectory(test)
+add_subdirectory(test)
 
 option(BUILD_FUZZING "Build fuzzing" OFF)
 if(BUILD_FUZZING)
