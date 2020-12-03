@@ -18,8 +18,7 @@ namespace cyy::computation {
 
   class set_alphabet : public ALPHABET {
   public:
-    set_alphabet(const std::set<symbol_type> &symbol_set,
-                 std::string_view name_)
+    set_alphabet(const symbol_set_type &symbol_set, std::string_view name_)
         : ALPHABET(name_), symbols(symbol_set.begin(), symbol_set.end()) {
       if (symbols.empty()) {
         throw exception::empty_alphabet("symbol set is empty");

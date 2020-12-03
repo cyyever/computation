@@ -56,17 +56,16 @@ namespace cyy::computation {
     factory.emplace(alphabet->get_name(), alphabet);
     alphabet = std::make_shared<printable_ASCII>();
     factory.emplace(alphabet->get_name(), alphabet);
-    alphabet = std::make_shared<set_alphabet>(std::set<symbol_type>{'a', 'b'},
-                                              "ab_set");
+    alphabet =
+        std::make_shared<set_alphabet>(symbol_set_type{'a', 'b'}, "ab_set");
     factory.emplace(alphabet->get_name(), alphabet);
-    alphabet = std::make_shared<set_alphabet>(std::set<symbol_type>{'(', ')'},
+    alphabet = std::make_shared<set_alphabet>(symbol_set_type{'(', ')'},
                                               "parentheses");
     factory.emplace(alphabet->get_name(), alphabet);
-    alphabet = std::make_shared<set_alphabet>(std::set<symbol_type>{'0', '1'},
-                                              "01_set");
-    factory.emplace(alphabet->get_name(), alphabet);
     alphabet =
-        std::make_shared<set_alphabet>(std::set<symbol_type>{'0'}, "0_set");
+        std::make_shared<set_alphabet>(symbol_set_type{'0', '1'}, "01_set");
+    factory.emplace(alphabet->get_name(), alphabet);
+    alphabet = std::make_shared<set_alphabet>(symbol_set_type{'0'}, "0_set");
     factory.emplace(alphabet->get_name(), alphabet);
   }
   std::string ALPHABET::MMA_draw(symbol_type symbol) const {

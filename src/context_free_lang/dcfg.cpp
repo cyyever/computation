@@ -45,7 +45,7 @@ namespace cyy::computation {
     finite_automata dpda_finite_automata{{0}, alphabet, 0, {}};
 
     auto const &dfa = dk_dfa_ptr->get_dfa();
-    std::set<symbol_type> state_symbol_set;
+    symbol_set_type state_symbol_set;
     for (auto const s : dfa.get_states()) {
       assert(s <= std::numeric_limits<symbol_type>::max());
       state_symbol_set.insert(static_cast<symbol_type>(s));

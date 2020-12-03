@@ -364,8 +364,8 @@ namespace cyy::computation {
     }
 
     // FIXME epsilon_transitions
-    std::map<state_type, symbol_set_type>
-        acceptance_looping_situations, rejection_looping_situations;
+    std::map<state_type, symbol_set_type> acceptance_looping_situations,
+        rejection_looping_situations;
     for (auto &[s, stack_symbol_set] : looping_situations) {
       assert(!stack_symbol_set.empty());
       for (auto [stack_symbol, can_reach_final] : stack_symbol_set) {

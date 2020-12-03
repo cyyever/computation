@@ -150,8 +150,8 @@ namespace cyy::computation {
     }
 #endif
   }
-  std::set<PDA::stack_symbol_type> PDA::get_in_use_stack_symbols() const {
-    std::set<PDA::stack_symbol_type> res;
+  symbol_set_type PDA::get_in_use_stack_symbols() const {
+    symbol_set_type res;
     for (auto const &[k, v] : transition_function) {
       auto const &top_symbol = k.stack_symbol;
       if (top_symbol.has_value()) {

@@ -13,7 +13,7 @@ namespace cyy::computation {
   class sub_alphabet final : public set_alphabet {
   public:
     sub_alphabet(ALPHABET_ptr parent_alphabet_,
-                 const std::set<symbol_type> &symbol_set,
+                 const symbol_set_type &symbol_set,
                  std::string_view name_ = "")
         : set_alphabet(symbol_set, std::string("sub_alphabet_of_") +
                                        parent_alphabet_->get_name()),
