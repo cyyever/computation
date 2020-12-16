@@ -1,1 +1,1 @@
-# code of computation theory
+This library contains implementations of algorithms and mathematical models of [Introduction to the Theory of Computation](https://www.amazon.sg/Introduction-Theory-Computation-Michael-Sipser/dp/113318779X) and [Compilers: Principles, Techniques, and Tools](https://www.amazon.com/Compilers-Principles-Techniques-Tools-2nd/dp/0321486811)
