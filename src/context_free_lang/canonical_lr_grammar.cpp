@@ -19,13 +19,12 @@ namespace cyy::computation {
                                              nonterminal_type start_symbol_,
                                              production_set_type productions_)
 
-      : LR_1_grammar(alphabet_, start_symbol_, std::move(productions_)) {}
+      : LR_1_grammar(alphabet_, start_symbol_, std::move(productions_)),dk_1_dfa_opt(DK_1_DFA(*this)) {}
   DPDA canonical_LR_grammar::to_DPDA() const {
     auto dpda_alphabet = std::make_shared<endmarked_alphabet>(alphabet);
     finite_automata dpda_finite_automata{{0}, dpda_alphabet, 0, {}};
-    DK_1_DFA dk_1_dfa(*this);
 
-    auto const &dfa = dk_1_dfa.get_dfa();
+    auto const &dfa = dk_1_dfa_opt->get_dfa();
     symbol_set_type state_symbol_set;
     for (auto const s : dfa.get_states()) {
       assert(s <= std::numeric_limits<symbol_type>::max());
@@ -39,7 +38,7 @@ namespace cyy::computation {
     transition_function[dpda_finite_automata.get_start_state()][{}] = {
         looping_state, dfa.get_start_state()};
 
-    auto goto_table = dk_1_dfa.get_goto_table();
+    auto goto_table = dk_1_dfa_opt->get_goto_table();
     std::unordered_map<symbol_type, state_type> lookahead_states;
 
     for (auto const input_symbol : *dpda_alphabet) {
@@ -47,7 +46,7 @@ namespace cyy::computation {
     }
 
     for (auto const dk_state : state_symbol_set) {
-      auto const &lr_1_item_set = dk_1_dfa.get_LR_1_item_set(dk_state);
+      auto const &lr_1_item_set = dk_1_dfa_opt->get_LR_1_item_set(dk_state);
       for (auto const input_symbol : *dpda_alphabet) {
         auto completed_item_ptr =
             lr_1_item_set.get_completed_item(input_symbol);
@@ -68,7 +67,7 @@ namespace cyy::computation {
 
     for (auto &[lookahead_symbol, from_state] : lookahead_states) {
       for (auto const dk_state : state_symbol_set) {
-        auto const &lr_1_item_set = dk_1_dfa.get_LR_1_item_set(dk_state);
+        auto const &lr_1_item_set = dk_1_dfa_opt->get_LR_1_item_set(dk_state);
         auto completed_item_ptr =
             lr_1_item_set.get_completed_item(lookahead_symbol);
         if (!completed_item_ptr) {
@@ -118,9 +117,8 @@ namespace cyy::computation {
   std::pair<canonical_LR_grammar::collection_type,
             canonical_LR_grammar::goto_table_type>
   canonical_LR_grammar::get_collection() const {
-    DK_1_DFA dk_1_dfa(*this);
-    auto const &collection = dk_1_dfa.get_LR_1_item_set_collection();
-    auto goto_table = dk_1_dfa.get_goto_table();
+    auto const &collection = dk_1_dfa_opt->get_LR_1_item_set_collection();
+    auto goto_table = dk_1_dfa_opt->get_goto_table();
     return {collection, goto_table};
   }
 

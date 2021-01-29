@@ -6,6 +6,7 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 
 #include "dk.hpp"
 #include "dpda.hpp"
@@ -20,13 +21,13 @@ namespace cyy::computation {
          production_set_type productions_);
 
     DPDA to_DPDA() const;
-    const DK_DFA &get_dk() const { return *dk_dfa_ptr; }
+    const DK_DFA &get_dk() const { return *dk_dfa_opt; }
 
   private:
     bool DK_test() const;
     std::pair<collection_type, goto_table_type> get_collection() const override;
 
   private:
-    std::shared_ptr<DK_DFA> dk_dfa_ptr;
+    std::optional<DK_DFA> dk_dfa_opt;
   };
 } // namespace cyy::computation

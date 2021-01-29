@@ -50,15 +50,19 @@ TEST_CASE("canonical_LR(1) parse") {
 
     canonical_LR_grammar grammar("common_tokens", "E", productions);
 
-    auto parse_tree = grammar.get_parse_tree(symbol_string{});
+    auto parse_tree = grammar.get_parse_tree(U"");
     REQUIRE(parse_tree);
     CHECK(parse_tree->children.size() == 0);
 
-    parse_tree = grammar.get_parse_tree(symbol_string{U'a'});
+    parse_tree = grammar.get_parse_tree(U"a");
     REQUIRE(parse_tree);
     CHECK(parse_tree->children.size() == 2);
-    parse_tree = grammar.get_parse_tree(symbol_string{U'a', U'a'});
+    parse_tree = grammar.get_parse_tree(U"aa");
     REQUIRE(parse_tree);
     CHECK(parse_tree->children.size() == 2);
+    /* auto dpda=grammar.to_DPDA(); */
+    /* REQUIRE(dpda.recognize({})); */
+    /* REQUIRE(dpda.recognize(symbol_string{U'a'})); */
+    /* REQUIRE(dpda.recognize(symbol_string{U'a',U'a'})); */
   }
 }

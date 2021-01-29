@@ -6,6 +6,7 @@
  */
 
 #pragma once
+#include <optional>
 #include "dk_1.hpp"
 #include "lr_1_grammar.hpp"
 
@@ -19,5 +20,8 @@ namespace cyy::computation {
 
     std::pair<collection_type, goto_table_type> get_collection() const override;
     DPDA to_DPDA() const;
+
+  private:
+    std::optional<DK_1_DFA> dk_1_dfa_opt;
   };
 } // namespace cyy::computation

@@ -8,14 +8,14 @@ namespace cyy::computation {
              production_set_type productions_)
 
       : LR_0_grammar(alphabet_, start_symbol_, std::move(productions_)),
-        dk_dfa_ptr(std::make_shared<DK_DFA>(*this)) {
+        dk_dfa_opt(std::make_optional<DK_DFA>(*this)) {
     if (!DK_test()) {
       throw exception::no_DCFG("DK test failed");
     }
   }
 
   bool DCFG::DK_test() const {
-    for (auto &[_, item_set] : dk_dfa_ptr->get_LR_0_item_set_collection()) {
+    for (auto &[_, item_set] : dk_dfa_opt->get_LR_0_item_set_collection()) {
       if (!item_set.has_completed_items()) {
         continue;
       }
@@ -44,7 +44,7 @@ namespace cyy::computation {
   DPDA DCFG::to_DPDA() const {
     finite_automata dpda_finite_automata{{0}, alphabet, 0, {}};
 
-    auto const &dfa = dk_dfa_ptr->get_dfa();
+    auto const &dfa = dk_dfa_opt->get_dfa();
     symbol_set_type state_symbol_set;
     for (auto const s : dfa.get_states()) {
       assert(s <= std::numeric_limits<symbol_type>::max());
@@ -59,7 +59,7 @@ namespace cyy::computation {
         looping_state, dfa.get_start_state()};
 
     auto accept_state = dpda_finite_automata.add_new_state();
-    auto goto_table = dk_dfa_ptr->get_goto_table();
+    auto goto_table = dk_dfa_opt->get_goto_table();
     for (auto const dk_state : state_symbol_set) {
       // shift
       if (!dfa.is_final_state(dk_state)) {
@@ -76,7 +76,7 @@ namespace cyy::computation {
       // reduce
       auto dk_final_state = dk_state;
       auto completed_items =
-          dk_dfa_ptr->get_LR_0_item_set(dk_state).get_completed_items();
+          dk_dfa_opt->get_LR_0_item_set(dk_state).get_completed_items();
       /* assert(std::ranges::size(completed_items) == 1); */
 
       auto const &item = *(completed_items.begin());
@@ -129,7 +129,7 @@ namespace cyy::computation {
   }
   std::pair<DCFG::collection_type, DCFG::goto_table_type>
   DCFG::get_collection() const {
-    return {dk_dfa_ptr->get_LR_0_item_set_collection(),
-            dk_dfa_ptr->get_goto_table()};
+    return {dk_dfa_opt->get_LR_0_item_set_collection(),
+            dk_dfa_opt->get_goto_table()};
   }
 } // namespace cyy::computation
