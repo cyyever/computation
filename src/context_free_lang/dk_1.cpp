@@ -27,10 +27,11 @@ namespace cyy::computation {
       return it->second;
     };
 
-    auto init_follows = cfg.get_terminals();
-    if (!init_follows.contains(ALPHABET::endmarker)) {
-      init_follows = {ALPHABET::endmarker};
-    }
+    CFG::terminal_set_type init_follows = {ALPHABET::endmarker};
+    /* auto init_follows = cfg.get_terminals(); */
+    /* if (!init_follows.contains(ALPHABET::endmarker)) { */
+    /*   init_follows = {ALPHABET::endmarker}; */
+    /* } */
     std::unordered_map<CFG::nonterminal_type, state_set_type> head_states;
 
     // begin from start symbol
@@ -109,6 +110,18 @@ namespace cyy::computation {
     }
     return it->second;
   }
+
+  DK_1_DFA::state_type DK_1_DFA::get_reject_state() const {
+    std::optional<state_type> reject_state;
+    for (auto const &[state, item_set] : collection) {
+      if (item_set.empty()) {
+        reject_state = state;
+        break;
+      }
+    }
+    return reject_state.value();
+  }
+
   std::string DK_1_DFA::MMA_draw(const CFG &cfg) const {
     std::string cmd = "TableForm[{";
     for (auto const &[state, set] : collection) {

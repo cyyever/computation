@@ -48,7 +48,7 @@ TEST_CASE("canonical_LR(1) parse") {
         {},
     };
 
-    canonical_LR_grammar grammar("common_tokens", "E", productions);
+    canonical_LR_grammar grammar("ab_set", "E", productions);
 
     auto parse_tree = grammar.get_parse_tree(U"");
     REQUIRE(parse_tree);
@@ -60,9 +60,13 @@ TEST_CASE("canonical_LR(1) parse") {
     parse_tree = grammar.get_parse_tree(U"aa");
     REQUIRE(parse_tree);
     CHECK(parse_tree->children.size() == 2);
-    /* auto dpda=grammar.to_DPDA(); */
-    /* REQUIRE(dpda.recognize({})); */
-    /* REQUIRE(dpda.recognize(symbol_string{U'a'})); */
-    /* REQUIRE(dpda.recognize(symbol_string{U'a',U'a'})); */
+    auto dpda = grammar.to_DPDA();
+    std::u32string endmarked_str;
+    for (auto str : {U"", U"a", U"aa"}) {
+      endmarked_str = str;
+      endmarked_str.push_back(ALPHABET::endmarker);
+
+      REQUIRE(dpda.recognize(endmarked_str));
+    }
   }
 }

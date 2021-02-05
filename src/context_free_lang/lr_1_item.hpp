@@ -86,6 +86,7 @@ namespace cyy::computation {
       return kernel_items | ::ranges::views::filter(
                                 [](auto const &p) { return p.completed(); });
     }
+
     void add_nonkernel_item(CFG::nonterminal_type head,
                             CFG::terminal_set_type lookahead_symbols = {}) {
       nonkernel_items.try_emplace(std::move(head),

@@ -24,6 +24,7 @@ namespace cyy::computation {
 
     const new_LR_1_item_set &get_LR_1_item_set(state_type state) const;
     const auto &get_LR_1_item_set_collection() const { return collection; }
+    state_type get_reject_state() const;
     std::string MMA_draw(const CFG &cfg) const;
 
   private:
