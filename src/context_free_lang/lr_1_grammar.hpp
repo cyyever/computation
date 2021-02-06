@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include "dcfg.hpp"
 #include "dk_1.hpp"
 #include "lr_1_item.hpp"
 #include "lr_grammar.hpp"

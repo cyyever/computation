@@ -8,6 +8,7 @@
 #pragma once
 
 #include "dk_1.hpp"
+#include "dpda.hpp"
 #include "lr_1_grammar.hpp"
 
 namespace cyy::computation {
