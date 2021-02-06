@@ -6,7 +6,6 @@
  */
 
 #pragma once
-#include <optional>
 
 #include "dk_1.hpp"
 #include "lr_1_grammar.hpp"

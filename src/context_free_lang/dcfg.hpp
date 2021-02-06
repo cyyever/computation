@@ -14,7 +14,7 @@
 
 namespace cyy::computation {
 
-  class DCFG : public LR_0_grammar {
+  class DCFG final : public LR_0_grammar {
 
   public:
     DCFG(ALPHABET_ptr alphabet_, nonterminal_type start_symbol_,

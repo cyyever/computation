@@ -26,11 +26,7 @@ namespace cyy::computation {
 
     DK_1_DFA dk_1_dfa(*this);
     auto const &dfa = dk_1_dfa.get_dfa();
-    symbol_set_type state_symbol_set;
-    for (auto const s : dfa.get_states()) {
-      assert(s <= std::numeric_limits<symbol_type>::max());
-      state_symbol_set.insert(static_cast<symbol_type>(s));
-    }
+    auto state_symbol_set = dfa.get_state_symbol_set();
     auto dk_state_set_alphabet =
         std::make_shared<number_set_alphabet>(state_symbol_set, "dk_state_set");
 
@@ -72,45 +68,34 @@ namespace cyy::computation {
 
         auto const &head = completed_item_ptr->get_head();
         auto const &body = completed_item_ptr->get_body();
-        if (body.empty()) {
-          auto destination_state = reduce_state;
+        // pop body states from stack
+        auto from_state = reduce_state;
+        for (size_t i = 0; i < body.size(); i++) {
+          auto to_state = dpda_finite_automata.add_new_state();
 
-          if (dk_state == dfa.get_start_state() && head == get_start_symbol() &&
+          if (i == 0) {
+            transition_function[from_state][{{}, dk_state}] = {to_state};
+          } else {
+            transition_function.pop_stack_and_action(from_state, {to_state},
+                                                     *dk_state_set_alphabet);
+          }
+          from_state = to_state;
+        }
+
+        for (auto const prev_dk_state : state_symbol_set) {
+          if (body.empty() && prev_dk_state != dk_state) {
+            continue;
+          }
+          auto destination_state = reduce_state;
+          if (prev_dk_state == dfa.get_start_state() &&
+              head == get_start_symbol() &&
               input_symbol == ALPHABET::endmarker) {
             destination_state = accept_state;
           }
-
           transition_function.check_stack_and_action(
-              reduce_state, {{}, dk_state},
-              {destination_state, goto_table[{dk_state, head}]},
+              from_state, {{}, prev_dk_state},
+              {destination_state, goto_table[{prev_dk_state, head}]},
               dpda_finite_automata);
-        } else {
-          // pop body states from stack
-          auto from_state = reduce_state;
-          for (size_t i = 0; i < body.size(); i++) {
-            auto to_state = dpda_finite_automata.add_new_state();
-
-            if (i == 0) {
-              transition_function[from_state][{{}, dk_state}] = {to_state};
-            } else {
-              transition_function.pop_stack_and_action(from_state, {to_state},
-                                                       *dk_state_set_alphabet);
-            }
-            from_state = to_state;
-          }
-
-          for (auto const prev_dk_state : state_symbol_set) {
-            auto destination_state = reduce_state;
-            if (prev_dk_state == dfa.get_start_state() &&
-                head == get_start_symbol() &&
-                input_symbol == ALPHABET::endmarker) {
-              destination_state = accept_state;
-            }
-            transition_function.check_stack_and_action(
-                from_state, {{}, prev_dk_state},
-                {destination_state, goto_table[{prev_dk_state, head}]},
-                dpda_finite_automata);
-          }
         }
       }
     }

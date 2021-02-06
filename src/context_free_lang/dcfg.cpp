@@ -45,11 +45,7 @@ namespace cyy::computation {
     finite_automata dpda_finite_automata{{0}, alphabet, 0, {}};
 
     auto const &dfa = dk_dfa_opt->get_dfa();
-    symbol_set_type state_symbol_set;
-    for (auto const s : dfa.get_states()) {
-      assert(s <= std::numeric_limits<symbol_type>::max());
-      state_symbol_set.insert(static_cast<symbol_type>(s));
-    }
+    auto state_symbol_set = dfa.get_state_symbol_set();
     auto dk_state_set_alphabet =
         std::make_shared<number_set_alphabet>(state_symbol_set, "dk_state_set");
 
@@ -59,7 +55,7 @@ namespace cyy::computation {
         looping_state, dfa.get_start_state()};
 
     auto accept_state = dpda_finite_automata.add_new_state();
-    auto goto_table = dk_dfa_opt->get_goto_table();
+    auto goto_table = get_goto_table();
     for (auto const dk_state : state_symbol_set) {
       // shift
       if (!dfa.is_final_state(dk_state)) {

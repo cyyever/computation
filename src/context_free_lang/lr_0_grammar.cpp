@@ -1,6 +1,5 @@
 /*!
  * \file lr_1_grammar.cpp
- *
  */
 
 #include "lr_0_grammar.hpp"
@@ -89,5 +88,12 @@ namespace cyy::computation {
     }
     std::cerr << "parsing ended at state" << stack.back() << std::endl;
     return false;
+  }
+
+  const LR_0_grammar::goto_table_type &LR_0_grammar::get_goto_table() const {
+    if (goto_table.empty()) {
+      goto_table = get_collection().second;
+    }
+    return goto_table;
   }
 } // namespace cyy::computation

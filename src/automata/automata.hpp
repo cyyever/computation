@@ -18,6 +18,7 @@
 
 #include "../hash.hpp"
 #include "../lang/alphabet.hpp"
+#include "../lang/symbol.hpp"
 
 namespace cyy::computation {
 
@@ -66,6 +67,8 @@ namespace cyy::computation {
     }
 
     auto get_states() const noexcept { return ::ranges::views::all(states); }
+    symbol_set_type get_state_symbol_set() const;
+
     auto const &get_state_set() const noexcept { return states; }
     auto const &get_alphabet() const noexcept { return *alphabet; }
     auto const &get_alphabet_ptr() const noexcept { return alphabet; }

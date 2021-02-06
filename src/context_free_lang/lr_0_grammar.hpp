@@ -28,11 +28,13 @@ namespace cyy::computation {
         const override;
 
   protected:
-    using reduction_table_type = std::unordered_map<state_type, CFG_production>;
-    mutable reduction_table_type reduction_table;
-    mutable goto_table_type goto_table;
+    const goto_table_type &get_goto_table() const;
 
   private:
     void construct_parsing_table() const override;
+
+  private:
+    mutable std::unordered_map<state_type, CFG_production> reduction_table;
+    mutable goto_table_type goto_table;
   };
 } // namespace cyy::computation
