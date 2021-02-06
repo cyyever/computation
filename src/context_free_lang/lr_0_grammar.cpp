@@ -15,21 +15,19 @@ namespace cyy::computation {
     collection_type collection;
     std::tie(collection, goto_table) = get_collection();
 
+    reduction_table.clear();
     for (auto const &[state, set] : collection) {
       for (const auto &item : set.get_completed_items()) {
         // conflict
-        auto it = action_table.find(state);
-        if (it != action_table.end()) {
+        auto it = reduction_table.find(state);
+        if (it != reduction_table.end()) {
           std::ostringstream os;
           os << "state " << state << " with production ";
           it->second.print(os, get_alphabet());
           os << " conflict with " << item.get_head();
           throw cyy::computation::exception::no_LR_grammar(os.str());
         }
-        action_table.emplace(state, item.get_production());
-        if (item.get_head() == get_start_symbol()) {
-          final_states.insert(state);
-        }
+        reduction_table.emplace(state, item.get_production());
       }
     }
   }
@@ -39,7 +37,7 @@ namespace cyy::computation {
                       const std::function<void(terminal_type)> &shift_callback,
                       const std::function<void(const CFG_production &)>
                           &reduction_callback) const {
-    if (action_table.empty() || goto_table.empty()) {
+    if (reduction_table.empty() || goto_table.empty()) {
       construct_parsing_table();
     }
 
@@ -47,21 +45,24 @@ namespace cyy::computation {
 
     auto endmarked_view = endmarked_symbol_string(view);
     bool parsing_succ = false;
-    for (auto terminal_it = endmarked_view.begin();
-         terminal_it < endmarked_view.end();) {
+    auto terminal_it = endmarked_view.begin();
+    while (terminal_it < endmarked_view.end()) {
       auto terminal = *terminal_it;
-      auto it = action_table.find(stack.back());
+      auto it = reduction_table.find(stack.back());
       // reduce
-      if (it != action_table.end()) {
+      if (it != reduction_table.end()) {
         auto const &production = it->second;
         auto const &head = production.get_head();
         reduction_callback(production);
 
-        if (terminal == ALPHABET::endmarker &&
-            final_states.contains(stack.back())) {
-          parsing_succ = true;
-        }
         stack.resize(stack.size() - production.get_body().size());
+        if (stack.size() == 1) {
+          assert(stack[0] == 0);
+          if (terminal == ALPHABET::endmarker) {
+            parsing_succ = true;
+            break;
+          }
+        }
         auto it2 = goto_table.find({stack.back(), head});
         if (it2 == goto_table.end()) {
           break;

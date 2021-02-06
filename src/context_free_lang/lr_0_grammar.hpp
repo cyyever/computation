@@ -29,9 +29,8 @@ namespace cyy::computation {
 
   protected:
     using reduction_table_type = std::unordered_map<state_type, CFG_production>;
-    mutable reduction_table_type action_table;
+    mutable reduction_table_type reduction_table;
     mutable goto_table_type goto_table;
-    mutable std::unordered_set<state_type> final_states;
 
   private:
     void construct_parsing_table() const override;

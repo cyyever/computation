@@ -84,42 +84,32 @@ namespace cyy::computation {
       auto const &body = item.get_body();
 
       for (auto from_state : {looping_state, accept_state}) {
-        if (body.empty()) {
+        // pop body states from stack
+        for (size_t i = 0; i < body.size(); i++) {
+          auto to_state = dpda_finite_automata.add_new_state();
+
+          if (i == 0) {
+            transition_function[from_state][{{}, dk_final_state}] = {to_state};
+          } else {
+            transition_function.pop_stack_and_action(from_state, {to_state},
+                                                     *dk_state_set_alphabet);
+          }
+          from_state = to_state;
+        }
+
+        for (auto const prev_dk_state : state_symbol_set) {
+          if (body.empty() && prev_dk_state != dk_final_state) {
+            continue;
+          }
           auto destination_state = looping_state;
-          if (dk_final_state == dfa.get_start_state() &&
+          if (prev_dk_state == dfa.get_start_state() &&
               head == get_start_symbol()) {
             destination_state = accept_state;
           }
           transition_function.check_stack_and_action(
-              from_state, {{}, dk_final_state},
-              {destination_state, goto_table[{dk_final_state, head}]},
+              from_state, {{}, prev_dk_state},
+              {destination_state, goto_table[{prev_dk_state, head}]},
               dpda_finite_automata);
-        } else {
-          // pop body states from stack
-          for (size_t i = 0; i < body.size(); i++) {
-            auto to_state = dpda_finite_automata.add_new_state();
-
-            if (i == 0) {
-              transition_function[from_state][{{}, dk_final_state}] = {
-                  to_state};
-            } else {
-              transition_function.pop_stack_and_action(from_state, {to_state},
-                                                       *dk_state_set_alphabet);
-            }
-            from_state = to_state;
-          }
-
-          for (auto const prev_dk_state : state_symbol_set) {
-            auto destination_state = looping_state;
-            if (prev_dk_state == dfa.get_start_state() &&
-                head == get_start_symbol()) {
-              destination_state = accept_state;
-            }
-            transition_function.check_stack_and_action(
-                from_state, {{}, prev_dk_state},
-                {destination_state, goto_table[{prev_dk_state, head}]},
-                dpda_finite_automata);
-          }
         }
       }
     }
