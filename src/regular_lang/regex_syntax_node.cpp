@@ -9,13 +9,21 @@
 
 namespace cyy::computation {
 
-  NFA regex::basic_node::to_NFA(std::string_view alphabet_name,
+  NFA regex::basic_node::to_NFA(const ALPHABET_ptr &alphabet,
                                 NFA::state_type start_state) const {
     return {{start_state, start_state + 1},
-            alphabet_name,
+            alphabet,
             start_state,
             {{{start_state, symbol}, {start_state + 1}}},
             {start_state + 1}};
+  }
+  CFG regex::basic_node::to_CFG(
+      const ALPHABET_ptr &alphabet,
+      const CFG::nonterminal_type &start_symbol) const {
+    CFG::production_set_type productions;
+    productions[start_symbol] = {{CFG::terminal_type(symbol)}};
+
+    return CFG(alphabet, start_symbol, std::move(productions));
   }
 
   void regex::basic_node::assign_position(
@@ -31,14 +39,22 @@ namespace cyy::computation {
   std::set<uint64_t> regex::basic_node::first_pos() const { return {position}; }
   std::set<uint64_t> regex::basic_node::last_pos() const { return first_pos(); }
 
-  NFA regex::epsilon_node::to_NFA(std::string_view alphabet_name,
+  NFA regex::epsilon_node::to_NFA(const ALPHABET_ptr &alphabet,
                                   NFA::state_type start_state) const {
     return {{start_state, start_state + 1},
-            alphabet_name,
+            alphabet,
             start_state,
             {},
             {start_state + 1},
             {{start_state, {start_state + 1}}}};
+  }
+  CFG regex::epsilon_node::to_CFG(
+      const ALPHABET_ptr &alphabet,
+      const CFG::nonterminal_type &start_symbol) const {
+    CFG::production_set_type productions;
+    productions[start_symbol] = {{}};
+
+    return CFG(alphabet, start_symbol, std::move(productions));
   }
 
   void regex::epsilon_node::assign_position(
@@ -48,7 +64,13 @@ namespace cyy::computation {
   std::set<uint64_t> regex::epsilon_node::first_pos() const { return {}; }
   std::set<uint64_t> regex::epsilon_node::last_pos() const { return {}; }
 
-  NFA regex::empty_set_node::to_NFA(std::string_view, NFA::state_type) const {
+  NFA regex::empty_set_node::to_NFA(const ALPHABET_ptr &,
+                                    NFA::state_type) const {
+    throw std::logic_error("unsupported");
+  }
+  CFG regex::empty_set_node::to_CFG(
+      const ALPHABET_ptr &alphabet,
+      const CFG::nonterminal_type &start_symbol) const {
     throw std::logic_error("unsupported");
   }
 
@@ -76,14 +98,14 @@ namespace cyy::computation {
     return false;
   }
 
-  NFA regex::union_node::to_NFA(std::string_view alphabet_name,
+  NFA regex::union_node::to_NFA(const ALPHABET_ptr &alphabet,
                                 NFA::state_type start_state) const {
-    auto left_NFA = left_node->to_NFA(alphabet_name, start_state + 1);
+    auto left_NFA = left_node->to_NFA(alphabet, start_state + 1);
     auto left_final_states = left_NFA.get_final_states();
     auto const &left_start_state = left_NFA.get_start_state();
 
     auto right_NFA =
-        right_node->to_NFA(alphabet_name, *(left_final_states.begin()) + 1);
+        right_node->to_NFA(alphabet, *(left_final_states.begin()) + 1);
     auto const &right_final_states = right_NFA.get_final_states();
     auto final_state = (*right_final_states.begin()) + 1;
     auto right_start_state = right_NFA.get_start_state();
@@ -100,6 +122,25 @@ namespace cyy::computation {
     }
     left_NFA.replace_final_states(final_state);
     return left_NFA;
+  }
+
+  CFG regex::union_node::to_CFG(
+      const ALPHABET_ptr &alphabet,
+      const CFG::nonterminal_type &start_symbol) const {
+
+    auto left_cfg = left_node->to_CFG(alphabet, start_symbol);
+    auto right_start_symbol = left_cfg.get_new_head(start_symbol);
+    auto right_cfg = right_node->to_CFG(alphabet, right_start_symbol);
+    CFG::production_set_type productions;
+    auto parent_start_symbol = right_cfg.get_new_head(right_cfg.get_start_symbol());
+    productions[parent_start_symbol] = {
+        {left_cfg.get_start_symbol() },
+          {right_cfg.get_start_symbol() }
+
+    };
+    productions.merge(std::move(left_cfg).get_productions());
+    productions.merge(std::move(right_cfg).get_productions());
+    return CFG(alphabet, parent_start_symbol, std::move(productions));
   }
 
   void regex::union_node::assign_position(
@@ -144,19 +185,39 @@ namespace cyy::computation {
     return std::make_shared<regex::union_node>(new_left_node, new_right_node);
   }
 
-  NFA regex::concat_node::to_NFA(std::string_view alphabet_name,
+  NFA regex::concat_node::to_NFA(const ALPHABET_ptr &alphabet,
                                  NFA::state_type start_state) const {
 
-    auto left_NFA = left_node->to_NFA(alphabet_name, start_state);
+    auto left_NFA = left_node->to_NFA(alphabet, start_state);
     const auto &left_final_states = left_NFA.get_final_states();
 
     auto right_NFA_start_state = *(left_final_states.begin());
-    auto right_NFA = right_node->to_NFA(alphabet_name, right_NFA_start_state);
+    auto right_NFA = right_node->to_NFA(alphabet, right_NFA_start_state);
     auto right_final_states = right_NFA.get_final_states();
     left_NFA.add_sub_NFA(std::move(right_NFA));
     left_NFA.change_final_states(right_final_states);
 
     return left_NFA;
+  }
+  CFG regex::concat_node::to_CFG(
+      const ALPHABET_ptr &alphabet,
+      const CFG::nonterminal_type &start_symbol) const {
+
+    auto left_cfg = left_node->to_CFG(alphabet, start_symbol);
+    auto right_start_symbol = left_cfg.get_new_head(start_symbol);
+    auto right_cfg = right_node->to_CFG(alphabet, right_start_symbol);
+    CFG::production_set_type productions;
+    auto parent_start_symbol = right_cfg.get_new_head(right_cfg.get_start_symbol());
+    productions[parent_start_symbol] = {
+
+        {left_cfg.get_start_symbol(), right_cfg.get_start_symbol()
+
+        }
+
+    };
+    productions.merge(std::move(left_cfg).get_productions());
+    productions.merge(std::move(right_cfg).get_productions());
+    return CFG(alphabet, parent_start_symbol, std::move(productions));
   }
 
   void regex::concat_node::assign_position(
@@ -229,14 +290,14 @@ namespace cyy::computation {
     return std::make_shared<regex::concat_node>(new_left_node, new_right_node);
   }
 
-  NFA regex::kleene_closure_node::to_NFA(std::string_view alphabet_name,
+  NFA regex::kleene_closure_node::to_NFA(const ALPHABET_ptr &alphabet,
                                          NFA::state_type start_state) const {
     const auto inner_start_state = start_state + 1;
-    auto inner_NFA = inner_node->to_NFA(alphabet_name, inner_start_state);
+    auto inner_NFA = inner_node->to_NFA(alphabet, inner_start_state);
     auto inner_final_states = inner_NFA.get_final_states();
     auto final_state = (*inner_final_states.begin()) + 1;
 
-    NFA nfa({start_state, final_state}, alphabet_name, start_state, {}, {});
+    NFA nfa({start_state, final_state}, alphabet, start_state, {}, {});
     nfa.add_sub_NFA(std::move(inner_NFA));
     nfa.add_epsilon_transition(start_state, {inner_start_state});
     nfa.add_epsilon_transition(start_state, {final_state});
@@ -249,6 +310,21 @@ namespace cyy::computation {
     nfa.replace_final_states(final_state);
     return nfa;
   }
+
+
+  CFG regex::kleene_closure_node::to_CFG(
+      const ALPHABET_ptr &alphabet,
+      const CFG::nonterminal_type &start_symbol) const {
+    auto inner_cfg=inner_node->to_CFG(alphabet,start_symbol);
+    auto parent_start_symbol = inner_cfg.get_new_head(inner_cfg.get_start_symbol());
+    CFG::production_set_type productions;
+    productions[parent_start_symbol] = {
+        {inner_cfg.get_start_symbol(), start_symbol},
+        {}
+    };
+    return CFG(alphabet, parent_start_symbol, std::move(productions));
+  }
+
 
   void regex::kleene_closure_node::assign_position(
       std::map<uint64_t, symbol_type> &position_to_symbol) {

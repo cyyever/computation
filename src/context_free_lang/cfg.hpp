@@ -78,7 +78,8 @@ namespace cyy::computation {
     auto const &get_alphabet() const noexcept { return *alphabet; }
     auto get_alphabet_ptr() const noexcept { return alphabet; }
 
-    auto const &get_productions() const noexcept { return productions; }
+    auto const &get_productions()  const & noexcept { return productions; }
+    auto & get_productions() && noexcept { return productions; }
     const std::vector<CFG_production::body_type> &
     get_bodies(const nonterminal_type &head) const;
 
@@ -113,14 +114,14 @@ namespace cyy::computation {
     bool contains(const grammar_symbol_type &grammar_symbol) const;
     std::string MMA_draw() const;
 
-  protected:
-    void normalize_start_symbol();
     nonterminal_type get_new_head(nonterminal_type advise_head) const {
       do {
         advise_head.push_back('\'');
       } while (productions.contains(advise_head));
       return advise_head;
     }
+  protected:
+    void normalize_start_symbol();
 
     static nonterminal_type get_new_head(nonterminal_type advise_head,
                                          const nonterminal_set_type &heads) {

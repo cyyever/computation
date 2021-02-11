@@ -27,6 +27,7 @@ TEST_CASE("parse regex and to NFA") {
             {1});
 
     CHECK(nfa == reg.to_NFA());
+    reg.to_CFG();
   }
 
   SUBCASE("union") {
@@ -46,6 +47,7 @@ TEST_CASE("parse regex and to NFA") {
             });
 
     CHECK(nfa == reg.to_NFA());
+    reg.to_CFG();
   }
 
   SUBCASE("kleene_closure_node") {
@@ -67,6 +69,7 @@ TEST_CASE("parse regex and to NFA") {
             });
 
     CHECK(nfa == reg.to_NFA());
+    reg.to_CFG();
   }
 
   SUBCASE("all together") {
