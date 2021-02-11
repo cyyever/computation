@@ -47,6 +47,10 @@ namespace cyy::computation::exception {
   public:
     using invalid_argument::invalid_argument;
   };
+  class no_turing_machine : public std::invalid_argument {
+  public:
+    using invalid_argument::invalid_argument;
+  };
 
   class no_DFA : public std::invalid_argument {
   public:

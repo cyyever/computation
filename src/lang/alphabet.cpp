@@ -8,6 +8,7 @@
 #include "alphabet.hpp"
 
 #include <limits>
+#include <ranges>
 #include <string_view>
 
 #include "../exception.hpp"
@@ -17,6 +18,20 @@
 #include "set_alphabet.hpp"
 
 namespace cyy::computation {
+  symbol_type ALPHABET::get_max_symbol() const {
+    if (contain(endmarker)) {
+      return get_symbol(size() - 2);
+    }
+    return get_symbol(size() - 1);
+  }
+  bool ALPHABET::contain(const ALPHABET &subset) const {
+    for (auto s : subset) {
+      if (!contain(s)) {
+        return false;
+      }
+    }
+    return true;
+  }
 
   std::shared_ptr<ALPHABET> ALPHABET::get(std::string_view name,
                                           bool endmarked) {

@@ -88,12 +88,8 @@ namespace cyy::computation {
     iterator end() const noexcept { return iterator(this, size()); }
 
     symbol_type get_min_symbol() const { return get_symbol(0); }
-    symbol_type get_max_symbol() const {
-      if (contain(endmarker)) {
-        return get_symbol(size() - 2);
-      }
-      return get_symbol(size() - 1);
-    }
+    symbol_type get_max_symbol() const;
+    bool contain(const ALPHABET &subset) const;
 
     virtual bool contain(symbol_type s) const = 0;
     virtual size_t size() const = 0;
@@ -101,10 +97,12 @@ namespace cyy::computation {
       if (symbol == endmarker) {
         return "$";
       }
+      if (symbol == blank_symbol) {
+        return "blank";
+      }
       if (contain(symbol)) {
         return __to_string(symbol);
       }
-
       return "(unknown symbol)";
     }
 
@@ -124,6 +122,8 @@ namespace cyy::computation {
     static void set(const std::shared_ptr<ALPHABET> &alphabet);
     static constexpr symbol_type endmarker =
         std::numeric_limits<symbol_type>::max() - 1;
+    static constexpr symbol_type blank_symbol =
+        std::numeric_limits<symbol_type>::max() - 2;
 
   protected:
     void set_name(std::string_view name_) {
@@ -138,15 +138,6 @@ namespace cyy::computation {
       return {'\'', static_cast<char>(symbol), '\''};
     }
 
-    symbol_type add_max_symbol(size_t inc) const {
-      const symbol_type max_symbol = get_max_symbol();
-      const symbol_type new_symbol = max_symbol + static_cast<symbol_type>(inc);
-
-      if (new_symbol <= max_symbol) {
-        throw cyy::computation::exception::symbol_overflow("");
-      }
-      return new_symbol;
-    }
     static void register_factory();
 
   private:
