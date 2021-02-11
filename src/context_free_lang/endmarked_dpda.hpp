@@ -12,10 +12,10 @@ namespace cyy::computation {
 
   class endmarked_DPDA : public DPDA {
   public:
-    endmarked_DPDA(finite_automata finite_automata_,
+    endmarked_DPDA(finite_automaton finite_automaton_,
                    ALPHABET_ptr stack_alphabet_,
                    transition_function_type transition_function_)
-        : DPDA(std::move(finite_automata_), stack_alphabet_,
+        : DPDA(std::move(finite_automaton_), stack_alphabet_,
                std::move(transition_function_)) {
       if (!alphabet->contain(ALPHABET::endmarker)) {
         throw exception::no_endmarked_DPDA(

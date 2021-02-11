@@ -43,7 +43,7 @@ namespace cyy::computation::exception {
     using invalid_argument::invalid_argument;
   };
 
-  class no_finite_automata : public std::invalid_argument {
+  class no_finite_automaton : public std::invalid_argument {
   public:
     using invalid_argument::invalid_argument;
   };
@@ -53,7 +53,7 @@ namespace cyy::computation::exception {
     using invalid_argument::invalid_argument;
   };
 
-  class unexisted_finite_automata_state : public std::invalid_argument {
+  class unexisted_finite_automaton_state : public std::invalid_argument {
   public:
     using invalid_argument::invalid_argument;
   };

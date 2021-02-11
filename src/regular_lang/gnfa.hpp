@@ -18,7 +18,7 @@
 
 namespace cyy::computation {
 
-  class GNFA final : public finite_automata {
+  class GNFA final : public finite_automaton {
   public:
     using transition_function_type =
         std::unordered_map<std::pair<state_type, state_type>,

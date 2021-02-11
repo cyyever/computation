@@ -14,8 +14,8 @@
 
 using namespace cyy::computation;
 TEST_CASE("endmarked DPDA") {
-  finite_automata dpda_automata({0, 1, 2}, "01_set", 0, {1});
-  DPDA dpda(dpda_automata, "01_set",
+  finite_automaton dpda_automaton({0, 1, 2}, "01_set", 0, {1});
+  DPDA dpda(dpda_automaton, "01_set",
             {{0,
               {
                   {{U'0'}, {1, U'0'}},
@@ -137,7 +137,7 @@ TEST_CASE("endmarked DPDA") {
           CHECK(!reverted_dpda.recognize(str));
         }
       }
-      finite_automata empty_finite_automate(
+      finite_automaton empty_finite_automate(
           {0, 1, 2}, ALPHABET::get("0_set", true), 0, {1});
       endmarked_DPDA empty_dpda(empty_finite_automate, "0_set",
                                 {{0,

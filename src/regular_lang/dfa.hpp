@@ -11,19 +11,19 @@
 #include <string>
 #include <unordered_map>
 
-#include "../automata/automata.hpp"
+#include "../automaton/automaton.hpp"
 #include "../hash.hpp"
 
 namespace cyy::computation {
 
-  class DFA final : public finite_automata {
+  class DFA final : public finite_automaton {
   public:
     using transition_function_type =
         std::unordered_map<situation_type, state_type>;
     DFA(state_set_type states_, ALPHABET_ptr alphabet_, state_type start_state_,
         transition_function_type transition_function_,
         state_set_type final_states_)
-        : finite_automata(std::move(states_), alphabet_, start_state_,
+        : finite_automaton(std::move(states_), alphabet_, start_state_,
                           std::move(final_states_)),
           transition_function(std::move(transition_function_)) {
       if (transition_function.size() !=

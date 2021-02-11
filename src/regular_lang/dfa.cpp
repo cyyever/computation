@@ -189,35 +189,39 @@ namespace cyy::computation {
     }
     std::unordered_map<std::pair<state_type, state_type>, state_type>
         state_products;
+    auto state_set_product=get_state_set_product(rhs.get_state_set());
     state_set_type result_states;
     state_set_type result_final_states;
     state_type result_start_state{};
     transition_function_type result_transition_function;
-    state_type next_state = 0;
-    for (auto s1 : get_state_set()) {
-      for (auto s2 : rhs.get_state_set()) {
-        state_products.try_emplace({s1, s2}, next_state);
-        result_states.insert(next_state);
+    for(auto const &[state_pair,result_state]:state_set_product) {
+      auto const &[s1,s2]=state_pair;
+        result_states.insert(result_state);
         if (s1 == get_start_state() && s2 == rhs.get_start_state()) {
-          result_start_state = next_state;
+          result_start_state = result_state;
         }
         if (is_final_state(s1) && rhs.is_final_state(s2)) {
-          result_final_states.insert(next_state);
+          result_final_states.insert( result_state);
+        }
+        for (auto a : *alphabet) {
+          auto it =state_set_product.find(
+              {go(s1, a).value(), rhs.go(s2, a).value()}
+
+              );
+          result_transition_function[{result_state, a}] = it->second;
         }
 
-        next_state++;
-      }
     }
+    /* for (auto s1 : get_state_set()) { */
+    /*   for (auto s2 : rhs.get_state_set()) { */
+    /*     state_products.try_emplace({s1, s2}, next_state); */
 
-    for (auto const &[product, result_state] : state_products) {
-      for (auto a : *alphabet) {
-        auto it = state_products.find(
-            {go(product.first, a).value(), rhs.go(product.second, a).value()}
+    /*     next_state++; */
+    /*   } */
+    /* } */
 
-        );
-        result_transition_function[{result_state, a}] = it->second;
-      }
-    }
+    /* for (auto const &[product, result_state] : state_products) { */
+    /* } */
     return {result_states, alphabet->get_name(), result_start_state,
             result_transition_function, result_final_states};
   }
@@ -252,7 +256,7 @@ namespace cyy::computation {
 
     // drop last ,
     is.seekp(-1, std::ios_base::end);
-    is << "}," << finite_automata::MMA_draw() << ']';
+    is << "}," << finite_automaton::MMA_draw() << ']';
     return is.str();
   }
 } // namespace cyy::computation

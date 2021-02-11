@@ -14,7 +14,7 @@
 
 namespace cyy::computation {
 
-  class NFA final : public finite_automata {
+  class NFA final : public finite_automaton {
   public:
     using transition_function_type =
         std::unordered_map<situation_type, state_set_type>;
@@ -23,19 +23,19 @@ namespace cyy::computation {
         transition_function_type transition_function_,
         state_set_type final_states_,
         epsilon_transition_function_type epsilon_transition_function_ = {})
-        : finite_automata(std::move(states_), alphabet_, start_state_,
+        : finite_automaton(std::move(states_), alphabet_, start_state_,
                           std::move(final_states_)),
           transition_function(std::move(transition_function_)),
           epsilon_transition_function(std::move(epsilon_transition_function_)) {
     }
-    NFA(finite_automata automata, transition_function_type transition_function_,
+    NFA(finite_automaton automaton, transition_function_type transition_function_,
         epsilon_transition_function_type epsilon_transition_function_ = {})
-        : finite_automata(std::move(automata)),
+        : finite_automaton(std::move(automaton)),
           transition_function(std::move(transition_function_)),
           epsilon_transition_function(std::move(epsilon_transition_function_)) {
     }
 
-    explicit NFA(DFA dfa) : NFA(std::move(dfa).get_finite_automata(), {}) {
+    explicit NFA(DFA dfa) : NFA(std::move(dfa).get_finite_automaton(), {}) {
       for (auto &[situation, next_state] :
            std::move(dfa.get_transition_function())) {
         transition_function[std::move(situation)] = {next_state};
@@ -43,7 +43,7 @@ namespace cyy::computation {
     }
 
     bool operator==(const NFA &rhs) const {
-      return finite_automata::operator==(rhs) &&
+      return finite_automaton::operator==(rhs) &&
              transition_function == rhs.transition_function &&
              epsilon_transition_function == rhs.epsilon_transition_function;
     }
@@ -78,13 +78,13 @@ namespace cyy::computation {
 
     void add_transition(situation_type situation, state_set_type end_states) {
       if (!has_state(situation.state)) {
-        throw exception::unexisted_finite_automata_state(
+        throw exception::unexisted_finite_automaton_state(
             std::to_string(situation.state));
       }
       if (!includes(end_states)) {
         for (auto const &state : end_states) {
           if (!has_state(state)) {
-            throw exception::unexisted_finite_automata_state(
+            throw exception::unexisted_finite_automaton_state(
                 std::to_string(state));
           }
         }
@@ -95,13 +95,13 @@ namespace cyy::computation {
     void add_epsilon_transition(state_type from_state,
                                 state_set_type end_states) {
       if (!has_state(from_state)) {
-        throw exception::unexisted_finite_automata_state(
+        throw exception::unexisted_finite_automaton_state(
             std::to_string(from_state));
       }
       if (!includes(end_states)) {
         for (auto const &state : end_states) {
           if (!has_state(state)) {
-            throw exception::unexisted_finite_automata_state(
+            throw exception::unexisted_finite_automaton_state(
                 std::to_string(state));
           }
         }

@@ -10,7 +10,7 @@
 #include <memory>
 
 namespace cyy::computation {
-  GNFA::GNFA(DFA dfa) : finite_automata(std::move(dfa).get_finite_automata()) {
+  GNFA::GNFA(DFA dfa) : finite_automaton(std::move(dfa).get_finite_automaton()) {
     for (auto const &[config, next_state] : dfa.get_transition_function()) {
       auto node = std::make_shared<regex::basic_node>(config.input_symbol);
       auto &regex_syntax_node = transition_function[{config.state, next_state}];
@@ -54,7 +54,7 @@ namespace cyy::computation {
 
   GNFA GNFA::remove_state(state_type removed_state) const {
     GNFA new_gnfg(*this);
-    new_gnfg.finite_automata::remove_state(removed_state);
+    new_gnfg.finite_automaton::remove_state(removed_state);
     new_gnfg.transition_function.clear();
 
     for (auto from_state : get_states()) {

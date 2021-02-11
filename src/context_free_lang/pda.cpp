@@ -203,7 +203,7 @@ namespace cyy::computation {
     }
     // drop last ,
     is.seekp(-1, std::ios_base::end);
-    is << "}," << finite_automata::MMA_draw() << ']';
+    is << "}," << finite_automaton::MMA_draw() << ']';
     return is.str();
   }
 } // namespace cyy::computation

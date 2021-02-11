@@ -10,7 +10,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "automata/automata.hpp"
+#include "automaton/automaton.hpp"
 #include "cfg_production.hpp"
 
 namespace cyy::computation {
@@ -18,7 +18,7 @@ namespace cyy::computation {
   CFG NFA_to_CFG(const NFA &nfa) {
     CFG::production_set_type productions;
 
-    auto const state_to_nonterminal = [](finite_automata::state_type state) {
+    auto const state_to_nonterminal = [](finite_automaton::state_type state) {
       return std::string("S") + std::to_string(state);
     };
 
@@ -67,10 +67,10 @@ namespace cyy::computation {
     PDA::state_type loop_state = 1;
     PDA::state_type final_state = 2;
     std::set<PDA::state_type> states{start_state, loop_state, final_state};
-    finite_automata dpda_automata(states, cfg.get_alphabet_ptr(), start_state,
+    finite_automaton dpda_automaton(states, cfg.get_alphabet_ptr(), start_state,
                                   {final_state});
     PDA::transition_function_type transition_function;
-    auto push_body = [&dpda_automata, &get_stack_symbol, &transition_function](
+    auto push_body = [&dpda_automaton, &get_stack_symbol, &transition_function](
                          PDA::state_type from_state, PDA::state_type to_state,
                          const std::optional<CFG::nonterminal_type> &head,
                          const CFG_production::body_type &body) {
@@ -80,7 +80,7 @@ namespace cyy::computation {
         if (body.size() <= 1) {
           new_state = to_state;
         } else {
-          new_state = dpda_automata.add_new_state();
+          new_state = dpda_automaton.add_new_state();
         }
         std::optional<PDA::stack_symbol_type> new_top;
         if (it != body.rend()) {
@@ -98,7 +98,7 @@ namespace cyy::computation {
         if (it + 1 == body.rend()) {
           new_state = to_state;
         } else {
-          new_state = dpda_automata.add_new_state();
+          new_state = dpda_automaton.add_new_state();
         }
 
         transition_function[{old_state}].emplace(new_state,
@@ -121,7 +121,7 @@ namespace cyy::computation {
     }
     transition_function[{loop_state, {}, get_stack_symbol(ALPHABET::endmarker)}]
         .emplace(final_state, std::optional<PDA::stack_symbol_type>{});
-    return PDA(std::move(dpda_automata), cfg.get_full_alphabet(),
+    return PDA(std::move(dpda_automaton), cfg.get_full_alphabet(),
                std::move(transition_function));
   }
 

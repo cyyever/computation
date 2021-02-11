@@ -42,7 +42,7 @@ namespace cyy::computation {
     return true;
   }
   DPDA DCFG::to_DPDA() const {
-    finite_automata dpda_finite_automata{{0}, alphabet, 0, {}};
+    finite_automaton dpda_finite_automaton{{0}, alphabet, 0, {}};
 
     auto const &dfa = dk_dfa_opt->get_dfa();
     auto state_symbol_set = dfa.get_state_symbol_set();
@@ -50,11 +50,11 @@ namespace cyy::computation {
         std::make_shared<number_set_alphabet>(state_symbol_set, "dk_state_set");
 
     DPDA::transition_function_type transition_function;
-    auto looping_state = dpda_finite_automata.add_new_state();
-    transition_function[dpda_finite_automata.get_start_state()][{}] = {
+    auto looping_state = dpda_finite_automaton.add_new_state();
+    transition_function[dpda_finite_automaton.get_start_state()][{}] = {
         looping_state, dfa.get_start_state()};
 
-    auto accept_state = dpda_finite_automata.add_new_state();
+    auto accept_state = dpda_finite_automaton.add_new_state();
     auto goto_table = get_goto_table();
     for (auto const dk_state : state_symbol_set) {
       // shift
@@ -64,7 +64,7 @@ namespace cyy::computation {
             transition_function.check_stack_and_action(
                 from_state, {input_symbol, dk_state},
                 {looping_state, goto_table[{dk_state, input_symbol}]},
-                dpda_finite_automata);
+                dpda_finite_automaton);
           }
         }
         continue;
@@ -82,7 +82,7 @@ namespace cyy::computation {
       for (auto from_state : {looping_state, accept_state}) {
         // pop body states from stack
         for (size_t i = 0; i < body.size(); i++) {
-          auto to_state = dpda_finite_automata.add_new_state();
+          auto to_state = dpda_finite_automaton.add_new_state();
 
           if (i == 0) {
             transition_function[from_state][{{}, dk_final_state}] = {to_state};
@@ -105,12 +105,12 @@ namespace cyy::computation {
           transition_function.check_stack_and_action(
               from_state, {{}, prev_dk_state},
               {destination_state, goto_table[{prev_dk_state, head}]},
-              dpda_finite_automata);
+              dpda_finite_automaton);
         }
       }
     }
-    dpda_finite_automata.replace_final_states(accept_state);
-    return DPDA(dpda_finite_automata, dk_state_set_alphabet,
+    dpda_finite_automaton.replace_final_states(accept_state);
+    return DPDA(dpda_finite_automaton, dk_state_set_alphabet,
                 transition_function);
   }
   std::pair<DCFG::collection_type, DCFG::goto_table_type>
