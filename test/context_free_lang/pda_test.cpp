@@ -10,6 +10,7 @@
 #include "../../src/context_free_lang/pda.hpp"
 #include "../../src/lang/alphabet.hpp"
 #include "../../src/lang/set_alphabet.hpp"
+#include "../../src/regular_lang/regex.hpp"
 
 using namespace cyy::computation;
 TEST_CASE("recognize PDA") {
@@ -67,4 +68,14 @@ TEST_CASE("recognize PDA") {
     SUBCASE("1001") { CHECK(cnf.parse(U"1001")); }
   }
   SUBCASE("draw") { std::cout << pda.MMA_draw() << std::endl; }
+  SUBCASE("intersect") {
+
+    symbol_string expr = U"1001";
+    regex reg("01_set", expr);
+    auto reg_dfa=reg.to_NFA().to_DFA();
+    auto result_pda=pda.intersect(reg_dfa);
+    CHECK(pda.recognize(U"1001"));
+    CHECK(reg_dfa.recognize(U"1001"));
+    CHECK(result_pda.recognize(U"1001"));
+  }
 }

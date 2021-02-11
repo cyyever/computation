@@ -187,8 +187,6 @@ namespace cyy::computation {
       throw exception::unmatched_alphabets(alphabet->get_name() + " and " +
                                            rhs.alphabet->get_name());
     }
-    std::unordered_map<std::pair<state_type, state_type>, state_type>
-        state_products;
     auto state_set_product=get_state_set_product(rhs.get_state_set());
     state_set_type result_states;
     state_set_type result_final_states;
@@ -204,24 +202,11 @@ namespace cyy::computation {
           result_final_states.insert( result_state);
         }
         for (auto a : *alphabet) {
-          auto it =state_set_product.find(
-              {go(s1, a).value(), rhs.go(s2, a).value()}
-
-              );
+          auto it =state_set_product.find( {go(s1, a).value(), rhs.go(s2, a).value()});
           result_transition_function[{result_state, a}] = it->second;
         }
 
     }
-    /* for (auto s1 : get_state_set()) { */
-    /*   for (auto s2 : rhs.get_state_set()) { */
-    /*     state_products.try_emplace({s1, s2}, next_state); */
-
-    /*     next_state++; */
-    /*   } */
-    /* } */
-
-    /* for (auto const &[product, result_state] : state_products) { */
-    /* } */
     return {result_states, alphabet->get_name(), result_start_state,
             result_transition_function, result_final_states};
   }

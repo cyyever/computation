@@ -24,11 +24,12 @@ namespace cyy::computation {
         state_set_type final_states_,
         epsilon_transition_function_type epsilon_transition_function_ = {})
         : finite_automaton(std::move(states_), alphabet_, start_state_,
-                          std::move(final_states_)),
+                           std::move(final_states_)),
           transition_function(std::move(transition_function_)),
           epsilon_transition_function(std::move(epsilon_transition_function_)) {
     }
-    NFA(finite_automaton automaton, transition_function_type transition_function_,
+    NFA(finite_automaton automaton,
+        transition_function_type transition_function_,
         epsilon_transition_function_type epsilon_transition_function_ = {})
         : finite_automaton(std::move(automaton)),
           transition_function(std::move(transition_function_)),

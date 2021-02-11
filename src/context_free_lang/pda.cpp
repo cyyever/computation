@@ -206,4 +206,53 @@ namespace cyy::computation {
     is << "}," << finite_automaton::MMA_draw() << ']';
     return is.str();
   }
+
+  PDA PDA::intersect(const DFA &rhs) const {
+    if (alphabet != rhs.get_alphabet_ptr()) {
+      throw exception::unmatched_alphabets(alphabet->get_name() + " and " +
+                                           rhs.get_alphabet().get_name());
+    }
+    auto state_set_product = get_state_set_product(rhs.get_state_set());
+    state_set_type result_states;
+    state_set_type result_final_states;
+    state_type result_start_state{};
+    for (auto const &[state_pair, result_state] : state_set_product) {
+      auto const &[s1, s2] = state_pair;
+      result_states.insert(result_state);
+      if (s1 == get_start_state() && s2 == rhs.get_start_state()) {
+        result_start_state = result_state;
+      }
+      if (is_final_state(s1) && rhs.is_final_state(s2)) {
+        result_final_states.insert(result_state);
+      }
+    }
+
+    transition_function_type result_transition_function;
+    for (auto const &[situation, action_set] : transition_function) {
+      for (auto const s2 : rhs.get_states()) {
+        assert(state_set_product.contains({situation.state, s2}));
+        auto from_state = state_set_product[{situation.state, s2}];
+        auto result_situation = situation;
+        result_situation.state = from_state;
+        for (auto const &action : action_set) {
+          auto next_pda_state = action.state;
+          state_type next_dfa_state = s2;
+          if (situation.use_input()) {
+            auto input_symbol = situation.get_input();
+            next_dfa_state = rhs.go(s2, input_symbol).value();
+          }
+          assert(state_set_product.contains({next_pda_state, next_dfa_state}));
+          auto to_state = state_set_product[{next_pda_state, next_dfa_state}];
+          auto result_action = action;
+          result_action.state = to_state;
+          result_transition_function[result_situation].emplace(
+              std::move(result_action));
+        }
+      }
+    }
+
+    return {finite_automaton(result_states, alphabet, result_start_state,
+                             result_final_states),
+            stack_alphabet, result_transition_function};
+  }
 } // namespace cyy::computation

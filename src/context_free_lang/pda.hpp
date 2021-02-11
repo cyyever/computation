@@ -15,6 +15,7 @@
 #include <unordered_set>
 
 #include "../automaton/automaton.hpp"
+#include "../regular_lang/dfa.hpp"
 #include "../exception.hpp"
 #include "../hash.hpp"
 
@@ -91,6 +92,7 @@ namespace cyy::computation {
     void prepare_CFG_conversion();
 
     std::string MMA_draw() const;
+    PDA intersect(const DFA &rhs) const;
 
   private:
     struct stack_node final {
