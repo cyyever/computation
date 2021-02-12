@@ -10,10 +10,10 @@ namespace cyy::computation {
   Turing_machine::Turing_machine(finite_automaton finite_automaton_,
                                  state_type reject_state_,
                                  ALPHABET_ptr tape_alphabet_,
-transition_function_type transition_function_
-                                 )
+                                 transition_function_type transition_function_)
       : finite_automaton(std::move(finite_automaton_)),
-        reject_state(reject_state_),transition_function(std::move(transition_function_)) {
+        reject_state(reject_state_),
+        transition_function(std::move(transition_function_)) {
     if (get_final_states().size() != 1) {
       throw exception::no_turing_machine("must have a accept state");
     }
@@ -32,6 +32,47 @@ transition_function_type transition_function_
     }
     tape_alphabet =
         std::make_shared<alphabet_with_blank_symbol>(tape_alphabet_);
-
   }
+  bool Turing_machine::recognize(symbol_string_view view) const {
+    tape_type tape;
+    tape.reserve(view.size());
+    for (auto s : view) {
+      tape.push_back(s);
+    }
+    configuration_type configuration(get_start_state(), std::move(tape));
+    while (true) {
+      if (configuration.state == accept_state) {
+        break;
+      }
+      if (configuration.state == reject_state) {
+        return false;
+      }
+      configuration.go(transition_function);
+    }
+    return true;
+  }
+
+  void Turing_machine::configuration_type::go(
+      const Turing_machine::transition_function_type &transition_function) {
+    auto tape_symbol = ALPHABET::blank_symbol;
+    if (head_location < tape.size()) {
+      tape_symbol = tape[head_location];
+    }
+    auto it = transition_function.find({state, tape_symbol});
+    assert(it != transition_function.end());
+    auto const &[next_state, new_tape_symbol, direction] = it->second;
+    state = next_state;
+    if (head_location >= tape.size()) {
+      tape.resize(head_location + 1, ALPHABET::blank_symbol);
+    }
+    tape[head_location] = new_tape_symbol;
+    if (direction == head_direction::right) {
+      head_location += 1;
+    } else {
+      if (head_location > 0) {
+        head_location -= 1;
+      }
+    }
+  }
+
 } // namespace cyy::computation

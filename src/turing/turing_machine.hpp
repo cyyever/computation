@@ -25,6 +25,7 @@ namespace cyy::computation {
   public:
     enum class head_direction : int { left = 0, right };
     using tape_symbol_type = symbol_type;
+     using tape_type= std::vector<tape_symbol_type>;
     struct situation_type {
       situation_type(state_type state_, tape_symbol_type tape_symbol_)
           : state(state_), tape_symbol{tape_symbol_} {}
@@ -32,10 +33,11 @@ namespace cyy::computation {
       state_type state;
       tape_symbol_type tape_symbol;
     };
-    struct  action_type{
-       action_type(state_type state_, tape_symbol_type tape_symbol_,head_direction direction_)
-          : state(state_), tape_symbol{tape_symbol_},direction(direction_) {}
-      bool operator==(const  action_type&) const noexcept = default;
+    struct action_type {
+      action_type(state_type state_, tape_symbol_type tape_symbol_,
+                  head_direction direction_)
+          : state(state_), tape_symbol{tape_symbol_}, direction(direction_) {}
+      bool operator==(const action_type &) const noexcept = default;
       state_type state;
       tape_symbol_type tape_symbol;
       head_direction direction;
@@ -45,27 +47,39 @@ namespace cyy::computation {
       std::size_t operator()(const situation_type &x) const noexcept {
         size_t seed = 0;
         boost::hash_combine(seed, std::hash<state_type>()(x.state));
-        boost::hash_combine(
-            seed, std::hash<tape_symbol_type>()(x.tape_symbol));
+        boost::hash_combine(seed, std::hash<tape_symbol_type>()(x.tape_symbol));
         return seed;
       }
     };
 
-
     using transition_function_type =
-        std::unordered_map<situation_type, std::set<action_type>,
+        std::unordered_map<situation_type, action_type,
                            situation_hash_type>;
 
     Turing_machine(finite_automaton finite_automaton_, state_type reject_state_,
-                   ALPHABET_ptr tape_alphabet_,transition_function_type transition_function_);
+                   ALPHABET_ptr tape_alphabet_,
+                   transition_function_type transition_function_);
 
     bool operator==(const Turing_machine &rhs) const noexcept = default;
 
     auto const &get_transition_function() const noexcept {
       return transition_function;
     }
+    bool recognize(symbol_string_view view) const;
 
   private:
+    struct configuration_type {
+      configuration_type(state_type state_, std::vector<tape_symbol_type> tape_)
+          : state{state_}, tape{std::move(tape_)} {}
+
+      void go(const Turing_machine::transition_function_type &transition_function );
+
+      state_type state{};
+        tape_type tape;
+      size_t head_location{0};
+      bool operator==(const configuration_type &) const noexcept = default;
+    };
+
     state_type accept_state{};
     state_type reject_state{};
     ALPHABET_ptr tape_alphabet;
