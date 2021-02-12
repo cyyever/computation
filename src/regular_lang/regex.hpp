@@ -26,7 +26,8 @@ namespace cyy::computation {
       virtual ~syntax_node() = default;
       virtual NFA to_NFA(const ALPHABET_ptr &alphabet,
                          NFA::state_type start_state) const = 0;
-      virtual CFG to_CFG(const ALPHABET_ptr &alphabet, const CFG::nonterminal_type &start_symbol) const = 0;
+      virtual CFG to_CFG(const ALPHABET_ptr &alphabet,
+                         const CFG::nonterminal_type &start_symbol) const = 0;
       virtual bool is_empty_set_node() const = 0;
       virtual bool is_epsilon_node() const = 0;
       virtual bool nullable() const = 0;
@@ -44,7 +45,8 @@ namespace cyy::computation {
       explicit empty_set_node() = default;
       NFA to_NFA(const ALPHABET_ptr &alphabet,
                  NFA::state_type start_state) const override;
-      CFG to_CFG(const ALPHABET_ptr &alphabet, const CFG::nonterminal_type &start_symbol) const override;
+      CFG to_CFG(const ALPHABET_ptr &alphabet,
+                 const CFG::nonterminal_type &start_symbol) const override;
       bool is_empty_set_node() const override { return true; }
       bool is_epsilon_node() const override { return false; }
       bool nullable() const noexcept override { return true; }
@@ -64,7 +66,8 @@ namespace cyy::computation {
       explicit epsilon_node() = default;
       NFA to_NFA(const ALPHABET_ptr &alphabet,
                  NFA::state_type start_state) const override;
-      CFG to_CFG(const ALPHABET_ptr &alphabet, const CFG::nonterminal_type &start_symbol) const override;
+      CFG to_CFG(const ALPHABET_ptr &alphabet,
+                 const CFG::nonterminal_type &start_symbol) const override;
       bool nullable() const noexcept override { return true; }
       bool is_empty_set_node() const override { return false; }
       bool is_epsilon_node() const override { return true; }
@@ -84,7 +87,8 @@ namespace cyy::computation {
       explicit basic_node(symbol_type symbol_) noexcept : symbol(symbol_) {}
       NFA to_NFA(const ALPHABET_ptr &alphabet,
                  NFA::state_type start_state) const override;
-      CFG to_CFG(const ALPHABET_ptr &alphabet, const CFG::nonterminal_type &start_symbol) const override;
+      CFG to_CFG(const ALPHABET_ptr &alphabet,
+                 const CFG::nonterminal_type &start_symbol) const override;
       bool is_empty_set_node() const override { return false; }
       bool is_epsilon_node() const override { return false; }
       bool nullable() const noexcept override { return false; }
@@ -116,7 +120,8 @@ namespace cyy::computation {
       }
       NFA to_NFA(const ALPHABET_ptr &alphabet,
                  NFA::state_type start_state) const override;
-      CFG to_CFG(const ALPHABET_ptr &alphabet, const CFG::nonterminal_type &start_symbol) const override;
+      CFG to_CFG(const ALPHABET_ptr &alphabet,
+                 const CFG::nonterminal_type &start_symbol) const override;
       bool nullable() const override {
         return left_node->nullable() || right_node->nullable();
       }
@@ -168,7 +173,8 @@ namespace cyy::computation {
       }
       NFA to_NFA(const ALPHABET_ptr &alphabet,
                  NFA::state_type start_state) const override;
-      CFG to_CFG(const ALPHABET_ptr &alphabet, const CFG::nonterminal_type &start_symbol) const override;
+      CFG to_CFG(const ALPHABET_ptr &alphabet,
+                 const CFG::nonterminal_type &start_symbol) const override;
       bool nullable() const override {
         return left_node->nullable() && right_node->nullable();
       }
@@ -199,7 +205,8 @@ namespace cyy::computation {
       }
       NFA to_NFA(const ALPHABET_ptr &alphabet,
                  NFA::state_type start_state) const override;
-      CFG to_CFG(const ALPHABET_ptr &alphabet, const CFG::nonterminal_type &start_symbol) const override;
+      CFG to_CFG(const ALPHABET_ptr &alphabet,
+                 const CFG::nonterminal_type &start_symbol) const override;
       bool nullable() const noexcept override { return true; }
       void assign_position(
           std::map<uint64_t, symbol_type> &position_to_symbol) override;
@@ -232,12 +239,8 @@ namespace cyy::computation {
           std::shared_ptr<regex::syntax_node> syntax_tree_)
         : alphabet(alphabet_), syntax_tree(syntax_tree_) {}
 
-    NFA to_NFA() const {
-      return syntax_tree->to_NFA(alphabet->get_name(),0);
-    }
-    CFG to_CFG() const {
-      return syntax_tree->to_CFG(alphabet,"S");
-    }
+    NFA to_NFA() const { return syntax_tree->to_NFA(alphabet->get_name(), 0); }
+    CFG to_CFG() const { return syntax_tree->to_CFG(alphabet, "S"); }
     auto get_syntax_tree() const -> const auto & { return syntax_tree; }
 
     //基于McNaughton-Yamada算法

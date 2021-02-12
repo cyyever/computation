@@ -68,7 +68,7 @@ namespace cyy::computation {
     PDA::state_type final_state = 2;
     std::set<PDA::state_type> states{start_state, loop_state, final_state};
     finite_automaton dpda_automaton(states, cfg.get_alphabet_ptr(), start_state,
-                                  {final_state});
+                                    {final_state});
     PDA::transition_function_type transition_function;
     auto push_body = [&dpda_automaton, &get_stack_symbol, &transition_function](
                          PDA::state_type from_state, PDA::state_type to_state,

@@ -6,13 +6,13 @@
  * \date 2019-02-12
  */
 #include "helper.hpp"
+
 #include "../src/lang/alphabet.hpp"
 
 using namespace cyy::computation;
-std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
-fuzzing_CFG_productions(const uint8_t *Data, size_t Size) {
-  std::map<CFG::nonterminal_type, std::vector<CFG_production::body_type>>
-      productions;
+CFG::production_set_type fuzzing_CFG_productions(const uint8_t *Data,
+                                                 size_t Size) {
+  CFG::production_set_type productions;
 
   size_t i = 0;
   while (i < Size) {

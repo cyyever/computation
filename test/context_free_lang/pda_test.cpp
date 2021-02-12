@@ -72,8 +72,8 @@ TEST_CASE("recognize PDA") {
 
     symbol_string expr = U"1001";
     regex reg("01_set", expr);
-    auto reg_dfa=reg.to_NFA().to_DFA();
-    auto result_pda=pda.intersect(reg_dfa);
+    auto reg_dfa = reg.to_NFA().to_DFA();
+    auto result_pda = pda.intersect(reg_dfa);
     CHECK(pda.recognize(U"1001"));
     CHECK(reg_dfa.recognize(U"1001"));
     CHECK(result_pda.recognize(U"1001"));

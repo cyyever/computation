@@ -78,8 +78,8 @@ namespace cyy::computation {
     auto const &get_alphabet() const noexcept { return *alphabet; }
     auto get_alphabet_ptr() const noexcept { return alphabet; }
 
-    auto const &get_productions()  const & noexcept { return productions; }
-    auto & get_productions() && noexcept { return productions; }
+    auto const &get_productions() const &noexcept { return productions; }
+    auto &get_productions() &&noexcept { return productions; }
     const std::vector<CFG_production::body_type> &
     get_bodies(const nonterminal_type &head) const;
 
@@ -120,6 +120,7 @@ namespace cyy::computation {
       } while (productions.contains(advise_head));
       return advise_head;
     }
+
   protected:
     void normalize_start_symbol();
 

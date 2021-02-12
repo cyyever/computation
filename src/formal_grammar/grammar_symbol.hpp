@@ -7,8 +7,6 @@
 
 #pragma once
 
-/* #include <ranges> */
-#include <range/v3/all.hpp>
 #include <span>
 #include <string>
 #include <string_view>

@@ -28,7 +28,8 @@ namespace cyy::computation {
     using state_set_type = std::set<state_type>;
     using state_bitset_type = boost::dynamic_bitset<>;
     using state_set_map_type = std::unordered_map<state_type, state_set_type>;
-    using state_set_product_type = std::unordered_map<std::pair<state_type, state_type>, state_type>        ;
+    using state_set_product_type =
+        std::unordered_map<std::pair<state_type, state_type>, state_type>;
     using input_symbol_type = symbol_type;
     using stack_symbol_type = symbol_type;
     struct situation_type {
@@ -63,8 +64,9 @@ namespace cyy::computation {
 
     const finite_automaton &get_finite_automaton() const & { return *this; }
 
-    finite_automaton get_finite_automaton() && {
-      return finite_automaton(std::move(*this));
+    finite_automaton &get_finite_automaton() && {
+      return *this;
+      /* return finite_automaton(std::move(*this)); */
     }
 
     auto get_states() const noexcept { return ::ranges::views::all(states); }
@@ -140,7 +142,7 @@ namespace cyy::computation {
       }
     }
 
-      state_set_product_type
+    state_set_product_type
     get_state_set_product(const state_set_type &another_state_set) const;
 
   protected:

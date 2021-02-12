@@ -15,9 +15,9 @@
 #include <unordered_set>
 
 #include "../automaton/automaton.hpp"
-#include "../regular_lang/dfa.hpp"
 #include "../exception.hpp"
 #include "../hash.hpp"
+#include "../regular_lang/dfa.hpp"
 
 namespace cyy::computation {
 

@@ -132,10 +132,10 @@ namespace cyy::computation {
     auto right_start_symbol = left_cfg.get_new_head(start_symbol);
     auto right_cfg = right_node->to_CFG(alphabet, right_start_symbol);
     CFG::production_set_type productions;
-    auto parent_start_symbol = right_cfg.get_new_head(right_cfg.get_start_symbol());
-    productions[parent_start_symbol] = {
-        {left_cfg.get_start_symbol() },
-          {right_cfg.get_start_symbol() }
+    auto parent_start_symbol =
+        right_cfg.get_new_head(right_cfg.get_start_symbol());
+    productions[parent_start_symbol] = {{left_cfg.get_start_symbol()},
+                                        {right_cfg.get_start_symbol()}
 
     };
     productions.merge(std::move(left_cfg).get_productions());
@@ -207,7 +207,8 @@ namespace cyy::computation {
     auto right_start_symbol = left_cfg.get_new_head(start_symbol);
     auto right_cfg = right_node->to_CFG(alphabet, right_start_symbol);
     CFG::production_set_type productions;
-    auto parent_start_symbol = right_cfg.get_new_head(right_cfg.get_start_symbol());
+    auto parent_start_symbol =
+        right_cfg.get_new_head(right_cfg.get_start_symbol());
     productions[parent_start_symbol] = {
 
         {left_cfg.get_start_symbol(), right_cfg.get_start_symbol()
@@ -311,20 +312,17 @@ namespace cyy::computation {
     return nfa;
   }
 
-
   CFG regex::kleene_closure_node::to_CFG(
       const ALPHABET_ptr &alphabet,
       const CFG::nonterminal_type &start_symbol) const {
-    auto inner_cfg=inner_node->to_CFG(alphabet,start_symbol);
-    auto parent_start_symbol = inner_cfg.get_new_head(inner_cfg.get_start_symbol());
+    auto inner_cfg = inner_node->to_CFG(alphabet, start_symbol);
+    auto parent_start_symbol =
+        inner_cfg.get_new_head(inner_cfg.get_start_symbol());
     CFG::production_set_type productions;
     productions[parent_start_symbol] = {
-        {inner_cfg.get_start_symbol(), start_symbol},
-        {}
-    };
+        {inner_cfg.get_start_symbol(), start_symbol}, {}};
     return CFG(alphabet, parent_start_symbol, std::move(productions));
   }
-
 
   void regex::kleene_closure_node::assign_position(
       std::map<uint64_t, symbol_type> &position_to_symbol) {

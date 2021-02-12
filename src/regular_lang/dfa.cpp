@@ -187,25 +187,25 @@ namespace cyy::computation {
       throw exception::unmatched_alphabets(alphabet->get_name() + " and " +
                                            rhs.alphabet->get_name());
     }
-    auto state_set_product=get_state_set_product(rhs.get_state_set());
+    auto state_set_product = get_state_set_product(rhs.get_state_set());
     state_set_type result_states;
     state_set_type result_final_states;
     state_type result_start_state{};
     transition_function_type result_transition_function;
-    for(auto const &[state_pair,result_state]:state_set_product) {
-      auto const &[s1,s2]=state_pair;
-        result_states.insert(result_state);
-        if (s1 == get_start_state() && s2 == rhs.get_start_state()) {
-          result_start_state = result_state;
-        }
-        if (is_final_state(s1) && rhs.is_final_state(s2)) {
-          result_final_states.insert( result_state);
-        }
-        for (auto a : *alphabet) {
-          auto it =state_set_product.find( {go(s1, a).value(), rhs.go(s2, a).value()});
-          result_transition_function[{result_state, a}] = it->second;
-        }
-
+    for (auto const &[state_pair, result_state] : state_set_product) {
+      auto const &[s1, s2] = state_pair;
+      result_states.insert(result_state);
+      if (s1 == get_start_state() && s2 == rhs.get_start_state()) {
+        result_start_state = result_state;
+      }
+      if (is_final_state(s1) && rhs.is_final_state(s2)) {
+        result_final_states.insert(result_state);
+      }
+      for (auto a : *alphabet) {
+        auto it =
+            state_set_product.find({go(s1, a).value(), rhs.go(s2, a).value()});
+        result_transition_function[{result_state, a}] = it->second;
+      }
     }
     return {result_states, alphabet->get_name(), result_start_state,
             result_transition_function, result_final_states};

@@ -25,7 +25,7 @@ namespace cyy::computation {
   public:
     enum class head_direction : int { left = 0, right };
     using tape_symbol_type = symbol_type;
-     using tape_type= std::vector<tape_symbol_type>;
+    using tape_type = std::vector<tape_symbol_type>;
     struct situation_type {
       situation_type(state_type state_, tape_symbol_type tape_symbol_)
           : state(state_), tape_symbol{tape_symbol_} {}
@@ -53,8 +53,7 @@ namespace cyy::computation {
     };
 
     using transition_function_type =
-        std::unordered_map<situation_type, action_type,
-                           situation_hash_type>;
+        std::unordered_map<situation_type, action_type, situation_hash_type>;
 
     Turing_machine(finite_automaton finite_automaton_, state_type reject_state_,
                    ALPHABET_ptr tape_alphabet_,
@@ -72,10 +71,11 @@ namespace cyy::computation {
       configuration_type(state_type state_, std::vector<tape_symbol_type> tape_)
           : state{state_}, tape{std::move(tape_)} {}
 
-      void go(const Turing_machine::transition_function_type &transition_function );
+      void
+      go(const Turing_machine::transition_function_type &transition_function);
 
       state_type state{};
-        tape_type tape;
+      tape_type tape;
       size_t head_location{0};
       bool operator==(const configuration_type &) const noexcept = default;
     };

@@ -24,7 +24,7 @@ namespace cyy::computation {
         transition_function_type transition_function_,
         state_set_type final_states_)
         : finite_automaton(std::move(states_), alphabet_, start_state_,
-                          std::move(final_states_)),
+                           std::move(final_states_)),
           transition_function(std::move(transition_function_)) {
       if (transition_function.size() !=
           alphabet->size() * get_states().size()) {

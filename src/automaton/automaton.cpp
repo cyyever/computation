@@ -165,16 +165,16 @@ namespace cyy::computation {
   }
 
   finite_automaton::state_set_product_type
-    finite_automaton::get_state_set_product(
-        const state_set_type &another_state_set) const {
-      state_set_product_type product;
-      state_type next_state=0;
-      for (auto s1 : get_state_set()) {
-        for (auto s2 :another_state_set) {
-          product.try_emplace({s1, s2}, next_state);
-          next_state++;
-        }
+  finite_automaton::get_state_set_product(
+      const state_set_type &another_state_set) const {
+    state_set_product_type product;
+    state_type next_state = 0;
+    for (auto s1 : get_state_set()) {
+      for (auto s2 : another_state_set) {
+        product.try_emplace({s1, s2}, next_state);
+        next_state++;
       }
-      return product;
     }
+    return product;
+  }
 } // namespace cyy::computation
