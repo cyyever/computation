@@ -64,24 +64,23 @@ namespace cyy::computation {
     if (!factory.empty()) {
       return;
     }
-    std::shared_ptr<ALPHABET> alphabet;
-    alphabet = std::make_shared<common_tokens>();
-    factory.emplace(alphabet->get_name(), alphabet);
-    alphabet = std::make_shared<ASCII>();
-    factory.emplace(alphabet->get_name(), alphabet);
-    alphabet = std::make_shared<printable_ASCII>();
-    factory.emplace(alphabet->get_name(), alphabet);
-    alphabet =
-        std::make_shared<set_alphabet>(symbol_set_type{'a', 'b'}, "ab_set");
-    factory.emplace(alphabet->get_name(), alphabet);
-    alphabet = std::make_shared<set_alphabet>(symbol_set_type{'(', ')'},
-                                              "parentheses");
-    factory.emplace(alphabet->get_name(), alphabet);
-    alphabet =
-        std::make_shared<set_alphabet>(symbol_set_type{'0', '1'}, "01_set");
-    factory.emplace(alphabet->get_name(), alphabet);
-    alphabet = std::make_shared<set_alphabet>(symbol_set_type{'0'}, "0_set");
-    factory.emplace(alphabet->get_name(), alphabet);
+
+    for (auto alphabet : std::initializer_list<ALPHABET_ptr>{
+             std::make_shared<common_tokens>(), std::make_shared<ASCII>(),
+             std::make_shared<printable_ASCII>(),
+             std::make_shared<set_alphabet>(symbol_set_type{'a', 'b'},
+                                            "ab_set"),
+             std::make_shared<set_alphabet>(symbol_set_type{'(', ')'},
+                                            "parentheses"),
+
+             std::make_shared<set_alphabet>(symbol_set_type{'0', '1'},
+                                            "01_set"),
+             std::make_shared<set_alphabet>(symbol_set_type{'0', '1', '#'},
+                                            "01#_set"),
+             std::make_shared<set_alphabet>(symbol_set_type{'0', '1', '#', 'x'},
+                                            "01x#_set")}) {
+      factory.emplace(alphabet->get_name(), alphabet);
+    }
   }
   std::string ALPHABET::MMA_draw(symbol_type symbol) const {
     if (MMA_draw_fun_ptr) {
