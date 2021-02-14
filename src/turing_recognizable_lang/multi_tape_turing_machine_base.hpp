@@ -23,9 +23,8 @@ namespace cyy::computation {
     struct situation_type {
       situation_type(state_type state_, tape_symbol_column_type tape_symbols_)
           : state(state_), tape_symbols{tape_symbols_} {}
-      template <class U>
-      explicit(tape_number == 1)
-          situation_type(state_type state_, tape_symbol_type tape_symbol)
+      template <typename = std::enable_if_t<tape_number == 1>>
+      situation_type(state_type state_, tape_symbol_type tape_symbol)
           : state(state_) {
         tape_symbols[0] = tape_symbol;
       }
@@ -44,12 +43,25 @@ namespace cyy::computation {
     };
     struct action_type {
       action_type(state_type state_, tape_symbol_column_type tape_symbols_,
-                  direction_column_type directions_
-
-                  )
+                  direction_column_type directions_)
           : state(state_), tape_symbols{tape_symbols_},
             directions(directions_) {}
+
+      template <typename = std::enable_if_t<tape_number == 1>>
+      action_type(state_type state_, tape_symbol_type tape_symbol,
+                  head_direction direction)
+          : state(state_) {
+        tape_symbols[0] = tape_symbol;
+        directions[0] = direction;
+      }
+
       bool operator==(const action_type &) const noexcept = default;
+
+      template <typename = std::enable_if_t<tape_number == 1>>
+      head_direction get_direction() const {
+        return directions[0];
+      }
+
       state_type state;
       tape_symbol_column_type tape_symbols;
       direction_column_type directions;
@@ -88,6 +100,11 @@ namespace cyy::computation {
           tape_symbol = tape[head_location];
         }
         return tape_symbol;
+      }
+
+      template <typename = std::enable_if_t<tape_number == 1>>
+      tape_symbol_type get_tape_symbol() const {
+        return get_tape_symbol(0);
       }
       void set_tape_symbol(tape_symbol_type tape_symbol, size_t tape_idx) {
         auto &tape = tapes[tape_idx];

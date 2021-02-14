@@ -20,7 +20,7 @@ namespace cyy::computation {
         throw exception::no_turing_machine(
             "accept state and reject state don't need transition");
       }
-      if (action.direction == head_direction::stay_put) {
+      if (action.get_direction() == head_direction::stay_put) {
         throw exception::no_turing_machine(
             "nondeterministic Turing machines don't support stay_put");
       }
@@ -46,19 +46,13 @@ namespace cyy::computation {
   }
 
   void Turing_machine::go(configuration_type &configuration) const {
-    auto tape_symbol = configuration.get_tape_symbol();
-    auto next_state = reject_state;
-    auto next_tape_symbol = tape_symbol;
-    auto direction = head_direction::right;
-    auto it = transition_function.find({configuration.state, tape_symbol});
+    auto it = transition_function.find(configuration.get_situation());
     if (it != transition_function.end()) {
-      next_state = it->second.state;
-      next_tape_symbol = it->second.tape_symbol;
-      direction = it->second.direction;
+      configuration.go(it->second);
+    } else {
+      configuration.go({reject_state, configuration.get_tape_symbol(),
+                        head_direction::right});
     }
-    configuration.state = next_state;
-    configuration.set_tape_symbol(next_tape_symbol);
-    configuration.move_head(direction);
   }
 
 } // namespace cyy::computation
