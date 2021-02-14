@@ -5,6 +5,7 @@
  */
 
 #include "turing_machine.hpp"
+
 #include "exception.hpp"
 namespace cyy::computation {
 

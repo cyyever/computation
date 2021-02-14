@@ -213,9 +213,9 @@ namespace cyy::computation {
 
   DFA DFA::complement() const {
     state_set_type new_final_states;
-    ::ranges::set_difference(
+    std::ranges::set_difference(
         get_state_set(), final_states,
-        ::ranges::inserter(new_final_states, new_final_states.begin()));
+        std::inserter(new_final_states, new_final_states.begin()));
     return {get_state_set(), alphabet->get_name(), get_start_state(),
             transition_function, new_final_states};
   }

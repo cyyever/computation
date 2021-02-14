@@ -441,9 +441,9 @@ namespace cyy::computation {
     }
 #endif
     state_set_type new_final_states;
-    ::ranges::set_difference(
+    std::ranges::set_difference(
         reading_states, complement_dpda.final_states,
-        ::ranges::inserter(new_final_states, new_final_states.begin()));
+        std::inserter(new_final_states, new_final_states.begin()));
     complement_dpda.final_states = std::move(new_final_states);
 
 #ifndef NDEBUG

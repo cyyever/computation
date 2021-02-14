@@ -73,6 +73,7 @@ namespace cyy::computation {
              std::make_shared<set_alphabet>(symbol_set_type{'(', ')'},
                                             "parentheses"),
 
+             std::make_shared<set_alphabet>(symbol_set_type{'0'}, "0_set"),
              std::make_shared<set_alphabet>(symbol_set_type{'0', '1'},
                                             "01_set"),
              std::make_shared<set_alphabet>(symbol_set_type{'0', '1', '#'},

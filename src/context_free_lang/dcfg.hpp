@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include <memory>
 #include <optional>
 
 #include "dk.hpp"

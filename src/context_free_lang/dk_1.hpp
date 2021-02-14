@@ -2,7 +2,6 @@
  * \file dk.hpp
  */
 #pragma once
-#include <memory>
 
 #include "dk_base.hpp"
 #include "lr_1_item.hpp"

@@ -4,8 +4,6 @@
 
 #include "dk_1.hpp"
 
-#include <iostream>
-
 #include "regular_lang/nfa.hpp"
 
 namespace cyy::computation {
@@ -28,10 +26,6 @@ namespace cyy::computation {
     };
 
     CFG::terminal_set_type init_follows = {ALPHABET::endmarker};
-    /* auto init_follows = cfg.get_terminals(); */
-    /* if (!init_follows.contains(ALPHABET::endmarker)) { */
-    /*   init_follows = {ALPHABET::endmarker}; */
-    /* } */
     std::unordered_map<CFG::nonterminal_type, state_set_type> head_states;
 
     // begin from start symbol

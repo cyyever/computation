@@ -10,6 +10,7 @@
 #include <functional>
 #include <utility>
 
+#include "automaton/automaton.hpp"
 #include "cfg.hpp"
 
 namespace cyy::computation {

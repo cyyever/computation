@@ -5,13 +5,9 @@
 
 #pragma once
 
-#include <string_view>
 #include <unordered_map>
 #include <unordered_set>
 
-#include "exception.hpp"
-#include "hash.hpp"
-#include "lang/alphabet_with_blank_symbol.hpp"
 #include "single_tape_turing_machine.hpp"
 
 namespace cyy::computation {

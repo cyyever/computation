@@ -7,7 +7,6 @@
 
 #include <cassert>
 #include <optional>
-#include <unordered_map>
 #include <utility>
 
 #include "../exception.hpp"

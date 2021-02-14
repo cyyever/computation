@@ -3,11 +3,9 @@
  *
  * \brief 测试dfa
  */
-#include <ranges>
 
 #include <doctest/doctest.h>
 
-#include "lang/number_set_alphabet.hpp"
 #include "turing_recognizable_lang/turing_machine.hpp"
 
 using namespace cyy::computation;

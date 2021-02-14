@@ -7,9 +7,7 @@
 
 #pragma once
 
-#include <map>
 #include <memory>
-#include <set>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -19,7 +17,6 @@
 #include "formal_grammar/grammar_symbol.hpp"
 #include "lang/alphabet.hpp"
 #include "lang/map_alphabet.hpp"
-#include "regular_lang/dfa.hpp"
 
 namespace cyy::computation {
 
