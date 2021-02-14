@@ -23,7 +23,7 @@ namespace cyy::computation {
         if (body.empty()) {
           continue;
         }
-        if (!::ranges::any_of(body.get_nonterminal_view(),
+        if (!std::ranges::any_of(body.get_nonterminal_view(),
                               [&nullable_nonterminals](auto const &g) {
                                 return nullable_nonterminals.contains(g);
                               })) {
@@ -76,7 +76,7 @@ namespace cyy::computation {
       has_new_nullable_nonterminals = false;
       for (auto &[head, bodies] : productions) {
         for (auto const &body : bodies) {
-          if (::ranges::all_of(body, [&](auto const &symbol) {
+          if (std::ranges::all_of(body, [&](auto const &symbol) {
                 return symbol.is_nonterminal() &&
                        nullable_nonterminals.contains(
                            *symbol.get_nonterminal_ptr());

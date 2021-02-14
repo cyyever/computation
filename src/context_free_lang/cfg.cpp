@@ -100,7 +100,7 @@ namespace cyy::computation {
   bool CFG::has_production(const CFG_production &production) const {
     auto it = productions.find(production.get_head());
     return it != productions.end() &&
-           ::ranges::find(it->second, production.get_body()) !=
+           std::ranges::find(it->second, production.get_body()) !=
                it->second.end();
   }
 
@@ -158,7 +158,7 @@ namespace cyy::computation {
       has_new_production = false;
       for (auto &[head, bodies] : productions) {
         for (size_t i = 0; i < bodies.size();) {
-          if (::ranges::all_of(bodies[i], [&in_use_heads](auto const &symbol) {
+          if (std::ranges::all_of(bodies[i], [&in_use_heads](auto const &symbol) {
                 return symbol.is_terminal() ||
                        in_use_heads.contains(*symbol.get_nonterminal_ptr());
               })) {
@@ -184,7 +184,7 @@ namespace cyy::computation {
       flag = false;
       for (auto &[head, bodies] : productions) {
         for (const auto &body : bodies) {
-          if (::ranges::any_of(body, [&non_empty_heads](auto const &symbol) {
+          if (std::ranges::any_of(body, [&non_empty_heads](auto const &symbol) {
                 return symbol.is_terminal() ||
                        non_empty_heads.contains(*symbol.get_nonterminal_ptr());
               })) {
@@ -542,7 +542,7 @@ namespace cyy::computation {
         return true;
       }
       for (auto const &body : bodies) {
-        if (::ranges::find(body, grammar_symbol) != body.end()) {
+        if (std::ranges::find(body, grammar_symbol) != body.end()) {
           return true;
         }
       }

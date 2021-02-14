@@ -33,7 +33,7 @@ namespace cyy::computation {
         next_state = reject_state_opt.value();
       }
 
-      bool has_input_epsilon = ::ranges::any_of(
+      bool has_input_epsilon = std::ranges::any_of(
           transfers, [](auto const &p) { return !p.first.input_symbol; });
       if (!has_input_epsilon) {
         transfers[{ALPHABET::endmarker}] = {next_state};
@@ -322,9 +322,9 @@ namespace cyy::computation {
     transition_function_type new_transitions;
     for (auto &[from_state, transfers] : transition_function) {
       transition_function_type::mapped_type new_transfers;
-      bool has_input_epsilon = ::ranges::any_of(
+      bool has_input_epsilon = std::ranges::any_of(
           transfers, [](auto const &p) { return !p.first.use_input(); });
-      bool has_stack_epsilon = ::ranges::any_of(
+      bool has_stack_epsilon = std::ranges::any_of(
           transfers, [](auto const &p) { return !p.first.has_pop(); });
       std::map<stack_symbol_type, state_type> parallel_stack_states;
       std::map<input_symbol_type, state_type> parallel_input_states;

@@ -79,7 +79,7 @@ namespace cyy::computation {
     }
 
     bool has_completed_items() const {
-      return ::ranges::any_of(kernel_items,
+      return std::ranges::any_of(kernel_items,
                               [](auto const &p) { return p.completed(); });
     }
     auto get_completed_items() const {
