@@ -7,6 +7,7 @@
 
 #include <string_view>
 #include <unordered_map>
+#include <unordered_set>
 
 #include "exception.hpp"
 #include "hash.hpp"
@@ -14,10 +15,12 @@
 #include "single_tape_turing_machine.hpp"
 
 namespace cyy::computation {
-  class Turing_machine final : public single_tape_Turing_machine {
+  class NTM final : public single_tape_Turing_machine {
   public:
+    using action_set_type = std::unordered_set<action_type, action_hash_type>;
     using __transition_function_type =
-        std::unordered_map<situation_type, action_type, situation_hash_type>;
+        std::unordered_map<situation_type, action_set_type,
+                           situation_hash_type>;
 
     class transition_function_type : public __transition_function_type {
     public:
@@ -26,17 +29,15 @@ namespace cyy::computation {
                                       symbol_type old_tape_symbol,
                                       state_type to_state,
                                       symbol_type new_tape_symbol) {
-        try_emplace(
-            situation_type{from_state, old_tape_symbol},
-            action_type{to_state, new_tape_symbol, head_direction::left});
+        operator[](situation_type{from_state, old_tape_symbol})
+            .emplace(to_state, new_tape_symbol, head_direction::left);
       }
       void add_moving_right_transition(state_type from_state,
                                        symbol_type old_tape_symbol,
                                        state_type to_state,
                                        symbol_type new_tape_symbol) {
-        try_emplace(
-            situation_type{from_state, old_tape_symbol},
-            action_type{to_state, new_tape_symbol, head_direction::right});
+        operator[](situation_type{from_state, old_tape_symbol})
+            .emplace(to_state, new_tape_symbol, head_direction::right);
       }
       void add_moving_left_transitions(state_type looping_state,
                                        const symbol_set_type &tape_symbols) {
@@ -67,17 +68,17 @@ namespace cyy::computation {
                                   state_type to_state,
                                   head_direction direction) {
         for (auto const tape_symbol : tape_symbols) {
-          try_emplace(situation_type{from_state, tape_symbol},
-                      action_type{to_state, tape_symbol, direction});
+          operator[]({from_state, tape_symbol})
+              .emplace(to_state, tape_symbol, direction);
         }
       }
     };
 
-    Turing_machine(finite_automaton finite_automaton_, state_type reject_state_,
-                   ALPHABET_ptr tape_alphabet_,
-                   transition_function_type transition_function_);
+    NTM(finite_automaton finite_automaton_, state_type reject_state_,
+        ALPHABET_ptr tape_alphabet_,
+        transition_function_type transition_function_);
 
-    bool operator==(const Turing_machine &rhs) const noexcept = default;
+    bool operator==(const NTM &rhs) const noexcept = default;
 
     auto const &get_transition_function() const noexcept {
       return transition_function;
@@ -85,7 +86,9 @@ namespace cyy::computation {
     bool recognize(symbol_string_view view) const override;
 
   private:
-    void go(configuration_type &configuration) const;
+    using configuration_set_type =
+        std::unordered_set<configuration_type, configuration_hash_type>;
+    void go(configuration_set_type &configuration_set) const;
 
   private:
     transition_function_type transition_function;
