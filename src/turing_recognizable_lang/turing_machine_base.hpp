@@ -29,6 +29,9 @@ namespace cyy::computation {
     virtual bool recognize(symbol_string_view view) const = 0;
 
   protected:
+    static tape_type create_tape(symbol_string_view view);
+
+  protected:
     state_type accept_state{};
     state_type reject_state{};
     ALPHABET_ptr tape_alphabet;

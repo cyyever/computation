@@ -5,13 +5,8 @@
 
 #pragma once
 
-#include <string_view>
 #include <unordered_map>
 
-#include "exception.hpp"
-#include "hash.hpp"
-#include "lang/alphabet_with_blank_symbol.hpp"
-#include "multi_tape_turing_machine.hpp"
 #include "single_tape_turing_machine.hpp"
 
 namespace cyy::computation {
@@ -84,9 +79,6 @@ namespace cyy::computation {
       return transition_function;
     }
     bool recognize(symbol_string_view view) const override;
-
-  private:
-    void go(configuration_type &configuration) const;
 
   private:
     transition_function_type transition_function;

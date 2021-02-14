@@ -14,14 +14,15 @@ namespace cyy::computation {
                                            ALPHABET_ptr tape_alphabet_)
       : finite_automaton(std::move(finite_automaton_)),
         reject_state(reject_state_) {
-    if (get_final_states().size() != 1) {
-      throw exception::no_turing_machine("must have a single accept state");
-    }
-    accept_state = *get_final_states().begin();
     if (!has_state(reject_state)) {
       throw exception::no_turing_machine(
           "the reject state is not a valid state");
     }
+
+    if (get_final_states().size() != 1) {
+      throw exception::no_turing_machine("must have a single accept state");
+    }
+    accept_state = *get_final_states().begin();
 
     if (get_alphabet().contain(ALPHABET::blank_symbol)) {
       throw exception::invalid_alphabet(
@@ -33,6 +34,15 @@ namespace cyy::computation {
     }
     tape_alphabet =
         std::make_shared<alphabet_with_blank_symbol>(tape_alphabet_);
+  }
+  Turing_machine_base::tape_type
+  Turing_machine_base::create_tape(symbol_string_view view) {
+    tape_type tape;
+    tape.reserve(view.size());
+    for (auto s : view) {
+      tape.push_back(s);
+    }
+    return tape;
   }
 
 } // namespace cyy::computation

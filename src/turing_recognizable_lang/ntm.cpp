@@ -28,13 +28,8 @@ namespace cyy::computation {
     }
   }
   bool NTM::recognize(symbol_string_view view) const {
-    tape_type tape;
-    tape.reserve(view.size());
-    for (auto s : view) {
-      tape.push_back(s);
-    }
     configuration_set_type configuration_set{
-        configuration_type(get_start_state(), std::move(tape))};
+        configuration_type(get_start_state(), create_tape(view))};
     while (true) {
       if (std::ranges::any_of(configuration_set,
                               [=, this](auto const &configuration) {
