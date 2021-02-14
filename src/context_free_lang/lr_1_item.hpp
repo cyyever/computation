@@ -83,7 +83,7 @@ namespace cyy::computation {
                               [](auto const &p) { return p.completed(); });
     }
     auto get_completed_items() const {
-      return kernel_items | ::ranges::views::filter(
+      return kernel_items | std::ranges::views::filter(
                                 [](auto const &p) { return p.completed(); });
     }
 

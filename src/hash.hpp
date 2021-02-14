@@ -11,7 +11,7 @@
 #include <boost/functional/hash.hpp>
 #include <boost/container_hash/hash.hpp>
 #include <concepts/concepts.hpp>
-#include <range/v3/range.hpp>
+#include <ranges>
 
 namespace std {
   template <class T1, class T2> struct hash<std::pair<T1, T2>> {
@@ -24,8 +24,8 @@ namespace std {
     ->::concepts::convertible_to<std::size_t>;
   };
 
-  template <::ranges::input_range T>
-  requires Hashable<::ranges::range_value_t<T>> struct hash<T> {
+  template <std::ranges::input_range T>
+  requires Hashable<std::ranges::range_value_t<T>> struct hash<T> {
     std::size_t operator()(const T &x) const noexcept {
       return boost::hash_range(std::begin(x), std::end(x));
     }

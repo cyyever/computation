@@ -65,10 +65,9 @@ namespace cyy::computation {
 
     finite_automaton &get_finite_automaton() && {
       return *this;
-      /* return finite_automaton(std::move(*this)); */
     }
 
-    auto get_states() const noexcept { return ::ranges::views::all(states); }
+    auto get_states() const noexcept { return std::ranges::views::all(states); }
     symbol_set_type get_state_symbol_set() const;
 
     auto const &get_state_set() const noexcept { return states; }
@@ -88,7 +87,7 @@ namespace cyy::computation {
     }
 
     bool includes(const state_set_type &T) const {
-      return ::ranges::includes(states, T);
+      return std::ranges::includes(states, T);
     }
 
     void replace_final_states(state_type s) {
@@ -105,7 +104,7 @@ namespace cyy::computation {
     void add_new_states(state_set_type state_set) {
       states.merge(std::move(state_set));
     }
-    template <::ranges::range U> void add_new_states(U state_set) {
+    template <std::ranges::range U> void add_new_states(U state_set) {
       for (auto s : state_set) {
         add_new_state(s);
       }
@@ -126,7 +125,7 @@ namespace cyy::computation {
 
     void clear_final_states() { final_states.clear(); }
 
-    template <::ranges::range U> void change_final_states(U new_final_states) {
+    template <std::ranges::range U> void change_final_states(U new_final_states) {
       clear_final_states();
       add_final_states(new_final_states);
     }
@@ -135,7 +134,7 @@ namespace cyy::computation {
       check_state(s);
       final_states.insert(s);
     }
-    template <::ranges::range U> void add_final_states(U new_final_states) {
+    template <std::ranges::range U> void add_final_states(U new_final_states) {
       for (auto s : new_final_states) {
         add_final_state(s);
       }

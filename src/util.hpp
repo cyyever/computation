@@ -10,10 +10,10 @@
 #include <unordered_map>
 
 #include <concepts/concepts.hpp>
-#include <range/v3/all.hpp>
+#include <ranges>
 
-template <typename T, ::ranges::input_range U>
-requires ::concepts::same_as<T, ::ranges::range_value_t<U>>
+template <typename T, std::ranges::input_range U>
+requires ::concepts::same_as<T, std::ranges::range_value_t<U>>
 
     auto topological_sort(std::unordered_map<T, U> graph) {
   std::unordered_map<T, size_t> degrees;

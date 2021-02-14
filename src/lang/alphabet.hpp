@@ -79,8 +79,8 @@ namespace cyy::computation {
     bool operator==(const ALPHABET &rhs) const = default;
 
     auto get_view() const {
-      return ::ranges::views::iota(static_cast<size_t>(0), size()) |
-             ::ranges::views::transform(
+      return std::ranges::views::iota(static_cast<size_t>(0), size()) |
+             std::ranges::views::transform(
                  [this](auto idx) { return get_symbol(idx); });
     }
 
@@ -161,8 +161,8 @@ namespace cyy::computation {
 
   inline auto endmarked_symbol_string(symbol_string_view str) {
     auto size = str.size() + 1;
-    return ::ranges::views::iota(static_cast<size_t>(0), size) |
-           ::ranges::views::transform([str, size](auto idx) {
+    return std::ranges::views::iota(static_cast<size_t>(0), size) |
+           std::ranges::views::transform([str, size](auto idx) {
              if (idx + 1 == size) {
                return ALPHABET::endmarker;
              }
