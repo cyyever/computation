@@ -23,6 +23,12 @@ namespace cyy::computation {
     struct situation_type {
       situation_type(state_type state_, tape_symbol_column_type tape_symbols_)
           : state(state_), tape_symbols{tape_symbols_} {}
+      template <class U>
+      explicit(tape_number == 1)
+          situation_type(state_type state_, tape_symbol_type tape_symbol)
+          : state(state_) {
+        tape_symbols[0] = tape_symbol;
+      }
       bool operator==(const situation_type &) const noexcept = default;
       state_type state;
       tape_symbol_column_type tape_symbols;
