@@ -5,13 +5,12 @@
 
 #pragma once
 
-#include <functional>
+#include <concepts>
+#include <ranges>
 #include <utility>
 
-#include <boost/functional/hash.hpp>
 #include <boost/container_hash/hash.hpp>
-#include <concepts/concepts.hpp>
-#include <ranges>
+#include <boost/functional/hash.hpp>
 
 namespace std {
   template <class T1, class T2> struct hash<std::pair<T1, T2>> {
@@ -21,7 +20,7 @@ namespace std {
   };
   template <typename T> concept Hashable = requires(T a) {
     { std::hash<T>{}(a) }
-    ->::concepts::convertible_to<std::size_t>;
+    ->std::convertible_to<std::size_t>;
   };
 
   template <std::ranges::input_range T>

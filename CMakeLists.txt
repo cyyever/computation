@@ -12,7 +12,6 @@ find_package(range-v3 REQUIRED)
 add_library(MyComputationLib ${SOURCE})
 
 target_link_libraries(MyComputationLib PUBLIC Boost::headers)
-target_link_libraries(MyComputationLib PUBLIC range-v3)
 
 if(MSVC)
   find_package(MicrosoftSTL REQUIRED)

@@ -6,7 +6,6 @@
 #pragma once
 
 #include "exception.hpp"
-#include "hash.hpp"
 #include "multi_tape_turing_machine_base.hpp"
 
 namespace cyy::computation {
