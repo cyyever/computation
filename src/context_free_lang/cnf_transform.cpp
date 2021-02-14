@@ -6,6 +6,7 @@
  */
 
 #include <cassert>
+#include <algorithm>
 
 #include "cfg.hpp"
 
