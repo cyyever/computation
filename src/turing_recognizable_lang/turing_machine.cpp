@@ -15,10 +15,14 @@ namespace cyy::computation {
                                    tape_alphabet_),
         transition_function(std::move(transition_function_)) {
 
-    for (auto const &[situation, _] : transition_function) {
+    for (auto const &[situation, action] : transition_function) {
       if (situation.state == accept_state || situation.state == reject_state) {
         throw exception::no_turing_machine(
             "accept state and reject state don't need transition");
+      }
+      if (action.direction == head_direction::stay_put) {
+        throw exception::no_turing_machine(
+            "nondeterministic Turing machines don't support stay_put");
       }
     }
   }

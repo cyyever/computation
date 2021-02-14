@@ -21,13 +21,10 @@ namespace std {
   };
   template <typename T> concept Hashable = requires(T a) {
     { std::hash<T>{}(a) }
-    /* ->std::convertible_to<std::size_t>; */
     ->::concepts::convertible_to<std::size_t>;
   };
 
-  /* template <std::ranges::input_range T> */
   template <::ranges::input_range T>
-  /* requires Hashable<std::ranges::range_value_t<T>> struct hash<T> { */
   requires Hashable<::ranges::range_value_t<T>> struct hash<T> {
     std::size_t operator()(const T &x) const noexcept {
       return boost::hash_range(std::begin(x), std::end(x));

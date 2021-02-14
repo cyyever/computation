@@ -41,7 +41,7 @@ namespace cyy::computation {
         size_t seed = 0;
         boost::hash_combine(seed, std::hash<state_type>()(x.state));
         boost::hash_combine(seed, std::hash<tape_symbol_type>()(x.tape_symbol));
-        /* boost::hash_combine(seed, std::hash<head_direction>()(x.direction)); */
+        boost::hash_combine(seed, std::hash<head_direction>()(x.direction));
         return seed;
       }
     };
