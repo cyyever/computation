@@ -9,12 +9,9 @@
 
 #include <functional>
 #include <iterator>
-#include <limits>
 #include <memory>
 
-#include <range/v3/all.hpp>
-/* #include <ranges> */
-#include <set>
+#include <ranges>
 #include <string>
 #include <string_view>
 #include <unordered_map>
