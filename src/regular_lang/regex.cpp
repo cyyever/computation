@@ -68,7 +68,6 @@ namespace cyy::computation {
       }
     }
 
-    return {DFA_states, alphabet->get_name(), 0, DFA_transition_function,
-            DFA_final_states};
+    return {DFA_states, alphabet, 0, DFA_transition_function, DFA_final_states};
   }
 } // namespace cyy::computation

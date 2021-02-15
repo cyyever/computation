@@ -156,7 +156,7 @@ namespace cyy::computation {
         minimize_DFA_transition_function[{i, a}] = state_location[next_state];
       }
     }
-    return {minimize_DFA_states, alphabet->get_name(), minimize_DFA_start_state,
+    return {minimize_DFA_states, alphabet, minimize_DFA_start_state,
             minimize_DFA_transition_function, minimize_DFA_final_states};
   }
   void DFA::mark_live_states() const {
@@ -207,7 +207,7 @@ namespace cyy::computation {
         result_transition_function[{result_state, a}] = it->second;
       }
     }
-    return {result_states, alphabet->get_name(), result_start_state,
+    return {result_states, alphabet, result_start_state,
             result_transition_function, result_final_states};
   }
 
@@ -216,7 +216,7 @@ namespace cyy::computation {
     std::ranges::set_difference(
         get_state_set(), final_states,
         std::inserter(new_final_states, new_final_states.begin()));
-    return {get_state_set(), alphabet->get_name(), get_start_state(),
+    return {get_state_set(), alphabet, get_start_state(),
             transition_function, new_final_states};
   }
   std::string DFA::MMA_draw() const {
