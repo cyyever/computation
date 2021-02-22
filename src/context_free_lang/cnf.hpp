@@ -10,25 +10,26 @@
 
 #include "../exception.hpp"
 #include "cfg.hpp"
+#include "lang/alphabet.hpp"
 
 namespace cyy::computation {
 
   class CNF final : public CFG {
   public:
-    CNF(const std::string &alphabet_name, nonterminal_type start_symbol_,
+    CNF(const ALPHABET_ptr &alphabet_, nonterminal_type start_symbol_,
         production_set_type productions_)
-        : CFG(alphabet_name, start_symbol_, productions_) {
+        : CFG(alphabet_, start_symbol_, productions_) {
       if (!valid()) {
         throw exception::no_CNF("");
       }
     }
 
-    CNF(const CFG &cfg) : CFG(cfg) {
+    explicit CNF(const CFG &cfg) : CFG(cfg) {
       if (!valid()) {
         throw exception::no_CNF("");
       }
     }
-    CNF(CFG &&cfg) : CFG(cfg) {
+    explicit CNF(CFG &&cfg) : CFG(cfg) {
       if (!valid()) {
         throw exception::no_CNF("");
       }
