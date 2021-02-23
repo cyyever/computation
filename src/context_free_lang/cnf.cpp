@@ -6,7 +6,6 @@
 
 #include "cnf.hpp"
 
-#include <cassert>
 #include <vector>
 
 namespace cyy::computation {
