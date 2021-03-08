@@ -13,10 +13,10 @@ add_library(MyComputationLib ${SOURCE})
 
 target_link_libraries(MyComputationLib PUBLIC Boost::headers)
 
-if(MSVC)
-  find_package(MicrosoftSTL REQUIRED)
-  target_link_libraries(MyComputationLib PUBLIC Microsoft::STL)
-endif()
+# if(MSVC)
+#   find_package(MicrosoftSTL REQUIRED)
+#   target_link_libraries(MyComputationLib PUBLIC Microsoft::STL)
+# endif()
 
 target_include_directories(
   MyComputationLib PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
