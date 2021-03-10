@@ -26,7 +26,6 @@ namespace cyy::computation {
     };
 
     CFG::terminal_set_type init_follows = {ALPHABET::endmarker};
-    std::unordered_map<CFG::nonterminal_type, state_set_type> head_states;
 
     // begin from start symbol
     auto const &start_symbol = cfg.get_start_symbol();
