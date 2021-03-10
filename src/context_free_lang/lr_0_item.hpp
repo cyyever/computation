@@ -62,10 +62,10 @@ namespace cyy::computation {
 namespace std {
   template <> struct hash<cyy::computation::LR_0_item> {
     size_t operator()(const cyy::computation::LR_0_item &x) const noexcept {
-      return ::std::hash<std::string>()(x.get_head()) ^
-             ::std::hash<cyy::computation::CFG_production::body_type>()(
-                 x.get_body()) ^
-             ::std::hash<size_t>()(x.get_dot_pos());
+      std::size_t seed = 0;
+      boost::hash_combine(seed, x.get_head());
+      boost::hash_combine(seed, x.get_dot_pos());
+      return seed;
     }
   };
 } // namespace std
@@ -78,6 +78,10 @@ namespace cyy::computation {
         return;
       }
       kernel_items.emplace(std::move(item));
+    }
+
+    void add_nonkernel_item(const CFG_production::head_type &head) {
+      nonkernel_items.insert(head);
     }
 
     auto const &get_kernel_items() const { return kernel_items; }
@@ -104,3 +108,13 @@ namespace cyy::computation {
     std::unordered_set<CFG_production::head_type> nonkernel_items;
   };
 } // namespace cyy::computation
+namespace std {
+  template <> struct hash<cyy::computation::LR_0_item_set> {
+    size_t operator()(const cyy::computation::LR_0_item_set &x) const noexcept {
+      std::size_t seed = 0;
+      boost::hash_combine(seed, x.get_kernel_items().size());
+      boost::hash_combine(seed, x.get_nonkernel_items().size());
+      return seed;
+    }
+  };
+} // namespace std

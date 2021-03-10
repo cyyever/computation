@@ -15,9 +15,7 @@ namespace cyy::computation {
     auto [first_set, epsilon_in_first] =
         cfg.first(grammar_symbol_const_span_type(
             get_body().begin() + static_cast<ptrdiff_t>(get_dot_pos()) + 1,
-            get_body().end()
-
-                ));
+            get_body().end()));
     if (epsilon_in_first) {
       first_set.merge(CFG::terminal_set_type(lookahead_symbols));
     }
@@ -41,17 +39,6 @@ namespace cyy::computation {
     cmd.back() = '}';
     cmd += ",Right]";
     return cmd;
-  }
-
-  LR_1_item_set::LR_1_item_set(const LR_0_item_set &set) {
-    for (auto lr_0_item : set.get_kernel_items()) {
-      kernel_items.emplace(std::move(lr_0_item));
-    }
-
-    for (auto nonkernel_item : set.get_nonkernel_items()) {
-      nonkernel_items.try_emplace(std::move(nonkernel_item),
-                                  CFG::terminal_set_type{});
-    }
   }
 
   std::string LR_1_item_set::MMA_draw(const CFG &cfg) const {

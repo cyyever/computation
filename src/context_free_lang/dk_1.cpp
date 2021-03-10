@@ -29,16 +29,11 @@ namespace cyy::computation {
     std::unordered_map<CFG::nonterminal_type, state_set_type> head_states;
 
     // begin from start symbol
-    for (auto const &[head, bodies] : cfg.get_productions()) {
-      if (head != cfg.get_start_symbol()) {
-        continue;
-      }
-      for (auto const &body : bodies) {
-        LR_1_item init_item(LR_0_item{head, body}, init_follows);
-        auto state = item_to_nfa_state(init_item);
-        nfa.add_epsilon_transition(nfa.get_start_state(), {state});
-        head_states[head].insert(state);
-      }
+    auto const &start_symbol = cfg.get_start_symbol();
+    for (auto const &body : cfg.get_productions().find(start_symbol)->second) {
+      LR_1_item init_item(LR_0_item{start_symbol, body}, init_follows);
+      auto state = item_to_nfa_state(init_item);
+      nfa.add_epsilon_transition(nfa.get_start_state(), {state});
     }
 
     for (state_type cur_state = 1; cur_state <= nfa.get_max_state();
@@ -46,37 +41,24 @@ namespace cyy::computation {
       auto it = NFA_state_to_item_map.find(cur_state);
       assert(it != NFA_state_to_item_map.end());
       auto const &cur_item = it->second;
+      assert(!cur_item.get_lookahead_symbols().empty());
       if (cur_item.completed()) {
         nfa.add_final_state(cur_state);
         continue;
       }
 
-      assert(!cur_item.get_lookahead_symbols().empty());
-
-      auto grammar_symbol = cur_item.get_grammar_symbal();
       symbol_type symbol;
+      auto grammar_symbol = cur_item.get_grammar_symbal();
       if (grammar_symbol.is_terminal()) {
         symbol = grammar_symbol.get_terminal();
       } else {
-        auto follow_set = cur_item.follow_of_dot(cfg);
         auto const &head = grammar_symbol.get_nonterminal();
-
-        if (!head_states.contains(head)) {
-          for (auto const &body : cfg.get_bodies(head)) {
-            LR_1_item init_item(LR_0_item{head, body});
-            auto state = item_to_nfa_state(init_item);
-            head_states[head].insert(state);
-          }
-        }
-
-        for (auto head_state : head_states[head]) {
-          it = NFA_state_to_item_map.find(head_state);
-          assert(it != NFA_state_to_item_map.end());
-          it->second.add_lookahead_symbols(follow_set);
-        }
-        nfa.add_epsilon_transition(cur_state,
-                                   state_set_type(head_states[head]));
         symbol = alphabet_of_nonterminals->get_symbol(head);
+        auto follow_set = cur_item.follow_of_dot(cfg);
+        for (auto const &body : cfg.get_bodies(head)) {
+          LR_1_item item(LR_0_item{head, body}, follow_set);
+          nfa.add_epsilon_transition(cur_state, {item_to_nfa_state(item)});
+        }
       }
       auto next_item = cur_item;
       next_item.go();

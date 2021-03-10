@@ -60,9 +60,6 @@ namespace std {
 namespace cyy::computation {
   class LR_1_item_set {
   public:
-    LR_1_item_set() = default;
-    LR_1_item_set(const LR_0_item_set &set);
-
     bool operator==(const LR_1_item_set &rhs) const = default;
     void add_item(LR_1_item item) {
       if (item.get_dot_pos() == 0 && !item.completed()) {
@@ -97,6 +94,23 @@ namespace cyy::computation {
     const LR_1_item *
     get_completed_item(CFG::terminal_type lookahead_symbol) const;
     std::string MMA_draw(const CFG &cfg) const;
+
+    void merge_lookahead_symbols(LR_1_item_set &item_set) {
+      kernel_items.merge(item_set.kernel_items);
+      for (auto &[head, lookahead_symbols] : item_set.nonkernel_items) {
+        nonkernel_items[head].merge(lookahead_symbols);
+      }
+    }
+    LR_0_item_set get_lr_0_item_set() const {
+      LR_0_item_set item_set;
+      for (auto const &item : kernel_items) {
+        item_set.add_item(item);
+      }
+      for (auto const &[head, _] : nonkernel_items) {
+        item_set.add_nonkernel_item(head);
+      }
+      return item_set;
+    }
 
   private:
     std::unordered_set<LR_1_item> kernel_items;

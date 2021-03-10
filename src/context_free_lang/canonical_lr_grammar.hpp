@@ -12,7 +12,7 @@
 
 namespace cyy::computation {
 
-  class canonical_LR_grammar final : public LR_1_grammar {
+  class canonical_LR_grammar : public LR_1_grammar {
 
   public:
     canonical_LR_grammar(ALPHABET_ptr alphabet_, nonterminal_type start_symbol_,

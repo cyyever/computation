@@ -129,7 +129,11 @@ namespace cyy::computation {
 
       if (std::holds_alternative<state_type>(it->second)) {
         // shift
+        /* std::cerr << "shift for state " << stack.back() << " and terminal "
+         */
+        /*           << alphabet->to_string(terminal); */
         stack.push_back(std::get<state_type>(it->second));
+        /* std::cerr << " to state " << stack.back() << std::endl; */
         shift_callback(terminal);
         terminal_it++;
         continue;

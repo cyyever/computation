@@ -420,6 +420,9 @@ namespace cyy::computation {
 
   std::pair<CFG::terminal_set_type, bool>
   CFG::first(const grammar_symbol_const_span_type &alpha) const {
+    if (alpha.empty()) {
+      return {{}, true};
+    }
 
     first();
     terminal_set_type view_first_set;
