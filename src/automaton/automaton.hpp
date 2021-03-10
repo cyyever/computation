@@ -151,7 +151,7 @@ namespace cyy::computation {
       final_states.erase(s);
     }
 
-    std::string [[nodiscard]] MMA_draw() const;
+    [[nodiscard]] std::string MMA_draw() const;
 
   protected:
     state_bitset_type get_bitset(const state_set_type &state_set) const;

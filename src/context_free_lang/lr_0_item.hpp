@@ -33,6 +33,10 @@ namespace cyy::computation {
       return dot_pos == rhs.dot_pos && (production_ptr == rhs.production_ptr ||
                                         *production_ptr == *rhs.production_ptr);
     }
+    auto operator<=>(const LR_0_item &rhs) const {
+      return std::tie(dot_pos, *production_ptr) <=>
+             std::tie(rhs.dot_pos, *rhs.production_ptr);
+    }
     auto const &get_head() const noexcept { return production_ptr->get_head(); }
     auto const &get_body() const noexcept { return production_ptr->get_body(); }
     size_t get_dot_pos() const { return dot_pos; }
@@ -49,7 +53,7 @@ namespace cyy::computation {
       }
       return get_body()[dot_pos];
     }
-    std::string [[nodiscard]] MMA_draw(const CFG &cfg) const;
+    [[nodiscard]] std::string MMA_draw(const CFG &cfg) const;
 
     const CFG_production &get_production() const { return *production_ptr; }
 
@@ -101,7 +105,7 @@ namespace cyy::computation {
     bool empty() const noexcept {
       return kernel_items.empty() && nonkernel_items.empty();
     }
-    std::string [[nodiscard]] MMA_draw(const CFG &cfg) const;
+    [[nodiscard]] std::string MMA_draw(const CFG &cfg) const;
 
   private:
     std::unordered_set<LR_0_item> kernel_items;

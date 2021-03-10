@@ -125,7 +125,7 @@ namespace cyy::computation {
     DPDA complement() const;
     auto const &get_transition_function() const { return transition_function; }
 
-    std::string [[nodiscard]] MMA_draw() const;
+    [[nodiscard]] std::string MMA_draw() const;
 
   protected:
     struct configuration_type {
