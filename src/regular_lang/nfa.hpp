@@ -9,8 +9,10 @@
 
 #include <unordered_map>
 
-#include "../hash.hpp"
+#include <boost/bimap.hpp>
+
 #include "dfa.hpp"
+#include "hash.hpp"
 
 namespace cyy::computation {
 
@@ -113,7 +115,7 @@ namespace cyy::computation {
     bool recognize(symbol_string_view view) const;
 
     // use subset construction
-    std::pair<DFA, std::unordered_map<state_type, state_set_type>>
+    std::pair<DFA, boost::bimap<state_set_type, state_type>>
     to_DFA_with_mapping() const;
     DFA to_DFA() const;
 

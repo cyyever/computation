@@ -65,7 +65,7 @@ namespace cyy::computation {
     }
 
     auto [dfa, dfa_to_nfa_state_map] = nfa.to_DFA_with_mapping();
-    for (auto const &[dfa_state, nfa_state_set] : dfa_to_nfa_state_map) {
+    for (auto const &[nfa_state_set, dfa_state] : dfa_to_nfa_state_map) {
       auto &item_set = collection[dfa_state];
       for (auto const &nfa_state : nfa_state_set) {
         auto it = NFA_state_to_item_map.find(nfa_state);

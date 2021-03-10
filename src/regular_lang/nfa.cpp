@@ -13,8 +13,6 @@
 #include <sstream>
 #include <vector>
 
-#include <boost/bimap.hpp>
-
 #include "../util.hpp"
 
 namespace cyy::computation {
@@ -49,7 +47,7 @@ namespace cyy::computation {
     return contain_final_state(s);
   }
 
-  std::pair<DFA, std::unordered_map<DFA::state_type, NFA::state_set_type>>
+  std::pair<DFA, boost::bimap<NFA::state_set_type, DFA::state_type>>
   NFA::to_DFA_with_mapping() const {
     DFA::transition_function_type DFA_transition_function;
     boost::bimap<state_set_type, state_type> nfa_and_dfa_states;
@@ -76,18 +74,16 @@ namespace cyy::computation {
 
     state_set_type DFA_states;
     state_set_type DFA_final_states;
-    std::unordered_map<state_type, state_set_type> state_map;
     for (auto const &[subset, DFA_state] : nfa_and_dfa_states) {
       DFA_states.insert(DFA_state);
       if (contain_final_state(subset)) {
         DFA_final_states.insert(DFA_state);
       }
-      state_map.emplace(DFA_state, subset);
     }
 
     return {
         {DFA_states, alphabet, 0, DFA_transition_function, DFA_final_states},
-        state_map};
+        nfa_and_dfa_states};
   }
 
   DFA NFA::to_DFA() const { return to_DFA_with_mapping().first; }
