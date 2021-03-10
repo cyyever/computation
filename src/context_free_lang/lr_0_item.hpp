@@ -88,7 +88,7 @@ namespace cyy::computation {
     }
     bool has_completed_items() const {
       return std::ranges::any_of(kernel_items,
-                              [](auto const &p) { return p.completed(); });
+                                 [](auto const &p) { return p.completed(); });
     }
 
     std::unordered_set<LR_0_item> expand_nonkernel_items(const CFG &cfg) const;

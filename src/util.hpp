@@ -7,10 +7,9 @@
  */
 #pragma once
 
-#include <unordered_map>
-
 #include <concepts>
 #include <ranges>
+#include <unordered_map>
 
 template <typename T, std::ranges::input_range U>
 requires std::same_as<T, std::ranges::range_value_t<U>>

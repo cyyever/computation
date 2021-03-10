@@ -435,9 +435,9 @@ namespace cyy::computation {
 
 #ifndef NDEBUG
     for (auto const s : reading_states) {
-      assert(
-          std::ranges::all_of(complement_dpda.transition_function[s],
-                           [](auto const p) { return p.first.use_input(); }));
+      assert(std::ranges::all_of(
+          complement_dpda.transition_function[s],
+          [](auto const p) { return p.first.use_input(); }));
     }
 #endif
     state_set_type new_final_states;

@@ -96,7 +96,7 @@ namespace cyy::computation {
     dfa_ptr = std::make_shared<DFA>(std::move(dfa));
   }
 
-  const new_LR_1_item_set &DK_1_DFA::get_LR_1_item_set(state_type state) const {
+  const LR_1_item_set &DK_1_DFA::get_LR_1_item_set(state_type state) const {
     assert(collection.contains(state));
     auto it = collection.find(state);
     if (it == collection.end()) {

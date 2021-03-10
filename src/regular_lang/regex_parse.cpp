@@ -171,8 +171,8 @@ namespace cyy::computation {
         symbol_set, alphabet->get_name() + "_regex");
     ALPHABET::set(regex_alphabet);
 
-    regex_grammar = std::make_shared<LL_grammar>(regex_alphabet,
-                                                 "rexpr", productions);
+    regex_grammar =
+        std::make_shared<LL_grammar>(regex_alphabet, "rexpr", productions);
     return *regex_grammar;
   }
 

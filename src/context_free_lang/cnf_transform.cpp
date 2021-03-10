@@ -5,8 +5,8 @@
  * \date 2018-03-04
  */
 
-#include <cassert>
 #include <algorithm>
+#include <cassert>
 
 #include "cfg.hpp"
 
@@ -25,9 +25,9 @@ namespace cyy::computation {
           continue;
         }
         if (!std::ranges::any_of(body.get_nonterminal_view(),
-                              [&nullable_nonterminals](auto const &g) {
-                                return nullable_nonterminals.contains(g);
-                              })) {
+                                 [&nullable_nonterminals](auto const &g) {
+                                   return nullable_nonterminals.contains(g);
+                                 })) {
           continue;
         }
         std::vector<CFG_production::body_type> tmp;

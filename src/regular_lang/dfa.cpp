@@ -216,8 +216,8 @@ namespace cyy::computation {
     std::ranges::set_difference(
         get_state_set(), final_states,
         std::inserter(new_final_states, new_final_states.begin()));
-    return {get_state_set(), alphabet, get_start_state(),
-            transition_function, new_final_states};
+    return {get_state_set(), alphabet, get_start_state(), transition_function,
+            new_final_states};
   }
   std::string DFA::MMA_draw() const {
     std::unordered_map<std::pair<state_type, state_type>, std::set<symbol_type>>

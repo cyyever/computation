@@ -6,8 +6,8 @@
 
 #include "cnf.hpp"
 
-#include <vector>
 #include <algorithm>
+#include <vector>
 
 namespace cyy::computation {
   bool CNF::valid() const {
@@ -28,7 +28,7 @@ namespace cyy::computation {
           }
         }
         if (body_size == 2) {
-          if (std::ranges::any_of(body , [*this](auto const &g) {
+          if (std::ranges::any_of(body, [*this](auto const &g) {
                 return g.is_terminal() || g == get_start_symbol();
               })) {
             return false;

@@ -158,10 +158,11 @@ namespace cyy::computation {
       has_new_production = false;
       for (auto &[head, bodies] : productions) {
         for (size_t i = 0; i < bodies.size();) {
-          if (std::ranges::all_of(bodies[i], [&in_use_heads](auto const &symbol) {
-                return symbol.is_terminal() ||
-                       in_use_heads.contains(*symbol.get_nonterminal_ptr());
-              })) {
+          if (std::ranges::all_of(
+                  bodies[i], [&in_use_heads](auto const &symbol) {
+                    return symbol.is_terminal() ||
+                           in_use_heads.contains(*symbol.get_nonterminal_ptr());
+                  })) {
             in_use_heads.insert(head);
             new_productions[head].emplace_back(std::move(bodies[i]));
             has_new_production = true;

@@ -58,12 +58,12 @@ namespace std {
   };
 } // namespace std
 namespace cyy::computation {
-  class new_LR_1_item_set {
+  class LR_1_item_set {
   public:
-    new_LR_1_item_set() = default;
-    new_LR_1_item_set(const LR_0_item_set &set);
+    LR_1_item_set() = default;
+    LR_1_item_set(const LR_0_item_set &set);
 
-    bool operator==(const new_LR_1_item_set &rhs) const = default;
+    bool operator==(const LR_1_item_set &rhs) const = default;
     void add_item(LR_1_item item) {
       if (item.get_dot_pos() == 0 && !item.completed()) {
         nonkernel_items[item.get_head()].merge(
@@ -80,7 +80,7 @@ namespace cyy::computation {
 
     bool has_completed_items() const {
       return std::ranges::any_of(kernel_items,
-                              [](auto const &p) { return p.completed(); });
+                                 [](auto const &p) { return p.completed(); });
     }
     auto get_completed_items() const {
       return kernel_items | std::ranges::views::filter(
@@ -107,8 +107,8 @@ namespace cyy::computation {
 } // namespace cyy::computation
 
 /* namespace std { */
-/*   template <> struct hash<cyy::computation::new_LR_1_item_set> { */
-/*     size_t operator()(const cyy::computation::new_LR_1_item_set &x) const {
+/*   template <> struct hash<cyy::computation::LR_1_item_set> { */
+/*     size_t operator()(const cyy::computation::LR_1_item_set &x) const {
  */
 /*       return 0; */
 /*       /1* auto hash_value = *1/ */

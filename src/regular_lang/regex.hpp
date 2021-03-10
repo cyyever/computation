@@ -239,7 +239,9 @@ namespace cyy::computation {
           std::shared_ptr<regex::syntax_node> syntax_tree_)
         : alphabet(alphabet_), syntax_tree(syntax_tree_) {}
 
-    NFA to_NFA(NFA::state_type start_state=0) const { return syntax_tree->to_NFA(alphabet, start_state); }
+    NFA to_NFA(NFA::state_type start_state = 0) const {
+      return syntax_tree->to_NFA(alphabet, start_state);
+    }
     CFG to_CFG() const { return syntax_tree->to_CFG(alphabet, "S"); }
     auto get_syntax_tree() const -> const auto & { return syntax_tree; }
 

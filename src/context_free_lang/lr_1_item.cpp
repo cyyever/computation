@@ -43,7 +43,7 @@ namespace cyy::computation {
     return cmd;
   }
 
-  new_LR_1_item_set::new_LR_1_item_set(const LR_0_item_set &set) {
+  LR_1_item_set::LR_1_item_set(const LR_0_item_set &set) {
     for (auto lr_0_item : set.get_kernel_items()) {
       kernel_items.emplace(std::move(lr_0_item));
     }
@@ -54,7 +54,7 @@ namespace cyy::computation {
     }
   }
 
-  std::string new_LR_1_item_set::MMA_draw(const CFG &cfg) const {
+  std::string LR_1_item_set::MMA_draw(const CFG &cfg) const {
     std::string cmd = "Framed[TableForm[{";
     for (auto const &item : kernel_items) {
       cmd += item.MMA_draw(cfg);
@@ -77,7 +77,7 @@ namespace cyy::computation {
   }
 
   std::unordered_set<LR_1_item>
-  new_LR_1_item_set::expand_nonkernel_items(const CFG &cfg) const {
+  LR_1_item_set::expand_nonkernel_items(const CFG &cfg) const {
     std::unordered_set<LR_1_item> item_set;
     for (auto const &[head, lookahead_symbols] : nonkernel_items) {
       auto const &bodies = cfg.get_bodies(head);
@@ -90,8 +90,8 @@ namespace cyy::computation {
     }
     return item_set;
   }
-  const LR_1_item *new_LR_1_item_set::get_completed_item(
-      CFG::terminal_type lookahead_symbol) const {
+  const LR_1_item *
+  LR_1_item_set::get_completed_item(CFG::terminal_type lookahead_symbol) const {
     for (auto const &completed_item : get_completed_items()) {
       if (completed_item.contain_lookahead_symbol(lookahead_symbol)) {
         return &completed_item;

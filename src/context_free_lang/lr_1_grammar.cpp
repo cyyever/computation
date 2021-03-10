@@ -32,7 +32,7 @@ namespace cyy::computation {
            it++) {
         for (auto it2 = it + 1; it2 != completed_items.end(); it2++) {
           if (std::ranges::includes(it->get_lookahead_symbols(),
-                                 it2->get_lookahead_symbols())) {
+                                    it2->get_lookahead_symbols())) {
             return false;
           }
         }

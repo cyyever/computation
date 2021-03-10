@@ -18,7 +18,7 @@ namespace cyy::computation {
     auto follow_sets = follow();
     for (auto const &[state, lr_0_item_set] :
          dk.get_LR_0_item_set_collection()) {
-      new_LR_1_item_set set;
+      LR_1_item_set set;
       for (auto const &lr_0_item : lr_0_item_set.get_kernel_items()) {
         LR_1_item lr_1_item(lr_0_item);
         if (lr_0_item.completed()) {

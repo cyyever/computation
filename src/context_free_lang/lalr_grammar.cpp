@@ -7,8 +7,7 @@
 
 #include "lalr_grammar.hpp"
 
-#include "../exception.hpp"
-#include "slr_grammar.hpp"
+#include "exception.hpp"
 
 namespace cyy::computation {
   LALR_grammar::lookahead_map_type

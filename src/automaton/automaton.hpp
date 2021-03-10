@@ -63,9 +63,7 @@ namespace cyy::computation {
 
     const finite_automaton &get_finite_automaton() const & { return *this; }
 
-    finite_automaton &get_finite_automaton() && {
-      return *this;
-    }
+    finite_automaton &get_finite_automaton() && { return *this; }
 
     auto get_states() const noexcept { return std::ranges::views::all(states); }
     symbol_set_type get_state_symbol_set() const;
@@ -125,7 +123,8 @@ namespace cyy::computation {
 
     void clear_final_states() { final_states.clear(); }
 
-    template <std::ranges::range U> void change_final_states(U new_final_states) {
+    template <std::ranges::range U>
+    void change_final_states(U new_final_states) {
       clear_final_states();
       add_final_states(new_final_states);
     }
