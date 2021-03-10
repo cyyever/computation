@@ -117,7 +117,7 @@ namespace cyy::computation {
     to_DFA_with_mapping() const;
     DFA to_DFA() const;
 
-    std::string MMA_draw() const;
+    std::string [[nodiscard]] MMA_draw() const;
 
   private:
     state_set_type go(const state_set_type &T, symbol_type a) const;

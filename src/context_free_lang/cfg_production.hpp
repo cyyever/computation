@@ -43,7 +43,7 @@ namespace cyy::computation {
     auto const &get_head() const { return head; }
     auto const &get_body() const { return body; }
 
-    std::string MMA_draw(
+    std::string [[nodiscard]] MMA_draw(
         const ALPHABET &alphabet, bool emphasize_head = false,
         std::function<std::string(size_t)> pos_callback = [](size_t) {
           return "";

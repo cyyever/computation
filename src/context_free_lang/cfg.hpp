@@ -38,7 +38,7 @@ namespace cyy::computation {
       explicit parse_node(grammar_symbol_type grammar_symbol_)
           : grammar_symbol(std::move(grammar_symbol_)) {}
 
-      std::string MMA_draw(const ALPHABET &alphabet) const;
+      std::string [[nodiscard]] MMA_draw(const ALPHABET &alphabet) const;
       static parse_node_ptr
       make_parse_node(nonterminal_type head,
                       CFG_production::body_span_type body);
@@ -111,7 +111,7 @@ namespace cyy::computation {
     void remove_head(nonterminal_type head);
 
     bool contains(const grammar_symbol_type &grammar_symbol) const;
-    std::string MMA_draw() const;
+    std::string [[nodiscard]] MMA_draw() const;
 
     nonterminal_type get_new_head(nonterminal_type advise_head) const {
       do {

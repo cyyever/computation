@@ -49,7 +49,7 @@ namespace cyy::computation {
       }
       return get_body()[dot_pos];
     }
-    std::string MMA_draw(const CFG &cfg) const;
+    std::string [[nodiscard]] MMA_draw(const CFG &cfg) const;
 
     const CFG_production &get_production() const { return *production_ptr; }
 
@@ -101,7 +101,7 @@ namespace cyy::computation {
     bool empty() const noexcept {
       return kernel_items.empty() && nonkernel_items.empty();
     }
-    std::string MMA_draw(const CFG &cfg) const;
+    std::string [[nodiscard]] MMA_draw(const CFG &cfg) const;
 
   private:
     std::unordered_set<LR_0_item> kernel_items;
