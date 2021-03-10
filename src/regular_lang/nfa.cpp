@@ -13,6 +13,8 @@
 #include <sstream>
 #include <vector>
 
+#include <boost/bimap.hpp>
+
 #include "../util.hpp"
 
 namespace cyy::computation {
@@ -50,29 +52,32 @@ namespace cyy::computation {
   std::pair<DFA, std::unordered_map<DFA::state_type, NFA::state_set_type>>
   NFA::to_DFA_with_mapping() const {
     DFA::transition_function_type DFA_transition_function;
-    std::unordered_map<state_set_type, state_type> subsets{
+    boost::bimap<state_set_type, state_type> nfa_and_dfa_states;
+    nfa_and_dfa_states.insert(
         {get_epsilon_closure(epsilon_closures, get_start_state(),
                              epsilon_transition_function),
-         0}};
+         0});
+
     state_type next_state = 1;
-    std::vector iteraters{subsets.begin()};
-    for (size_t i = 0; i < iteraters.size(); i++) {
+    std::vector iteraters{nfa_and_dfa_states.begin()};
+    for (state_type dfa_state = 0; dfa_state < next_state; dfa_state++) {
+      auto const &[subset, state] = *iteraters[dfa_state];
       for (auto a : *alphabet) {
-        auto const &[subset, state] = *iteraters[i];
         auto res = go(subset, a);
-        auto [it, has_emplaced] = subsets.emplace(std::move(res), next_state);
+        auto [it, has_emplaced] =
+            nfa_and_dfa_states.insert({std::move(res), next_state});
         if (has_emplaced) {
           iteraters.emplace_back(it);
           next_state++;
         }
-        DFA_transition_function[{state, a}] = it->second;
+        DFA_transition_function[{dfa_state, a}] = it->right;
       }
     }
 
     state_set_type DFA_states;
     state_set_type DFA_final_states;
     std::unordered_map<state_type, state_set_type> state_map;
-    for (auto const &[subset, DFA_state] : subsets) {
+    for (auto const &[subset, DFA_state] : nfa_and_dfa_states) {
       DFA_states.insert(DFA_state);
       if (contain_final_state(subset)) {
         DFA_final_states.insert(DFA_state);
