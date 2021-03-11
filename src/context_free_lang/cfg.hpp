@@ -95,7 +95,7 @@ namespace cyy::computation {
     std::pair<terminal_set_type, bool>
     first(const grammar_symbol_const_span_type &alpha) const;
 
-    //! convert grammar to Chomsky normal form
+    //! Convert grammar to Chomsky normal form
     void to_CNF();
 
     void left_factoring();
@@ -149,8 +149,6 @@ namespace cyy::computation {
     nonterminal_type start_symbol;
     nonterminal_type old_start_symbol;
     production_set_type productions;
-
-  private:
     mutable std::unordered_map<nonterminal_type,
                                std::pair<terminal_set_type, bool>>
         first_sets;
