@@ -7,12 +7,11 @@
 
 #pragma once
 
-#include <memory>
+#include <algorithm>
 #include <unordered_set>
 
 #include "cfg.hpp"
 #include "cfg_production.hpp"
-#include "regular_lang/dfa.hpp"
 
 namespace cyy::computation {
   class LR_0_item {
