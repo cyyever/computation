@@ -8,7 +8,7 @@
 #pragma once
 
 #include <functional>
-#include <iosfwd>
+#include <iostream>
 
 #include "../formal_grammar/grammar_symbol.hpp"
 #include "../hash.hpp"

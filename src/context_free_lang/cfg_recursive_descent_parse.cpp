@@ -8,6 +8,7 @@
 #include <cassert>
 #include <optional>
 #include <utility>
+#include <algorithm>
 
 #include "../exception.hpp"
 #include "cfg.hpp"
