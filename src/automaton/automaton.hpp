@@ -15,15 +15,20 @@
 
 #include <boost/dynamic_bitset.hpp>
 
-#include "../hash.hpp"
-#include "../lang/alphabet.hpp"
-#include "../lang/symbol.hpp"
+#include "hash.hpp"
+#include "lang/alphabet.hpp"
+#include "lang/symbol.hpp"
 
 namespace cyy::computation {
 
   class finite_automaton {
   public:
     using state_type = uint64_t;
+    class state_set_type2:public boost::dynamic_bitset<> {
+      public:
+        using boost::dynamic_bitset<>::dynamic_bitset;
+        const bool has_intersection(const state_set_type2 &rhs) const ;
+    };
     using state_set_type = std::set<state_type>;
     using state_bitset_type = boost::dynamic_bitset<>;
     using state_set_map_type = std::unordered_map<state_type, state_set_type>;
@@ -151,7 +156,7 @@ namespace cyy::computation {
       final_states.erase(s);
     }
 
-    std::string [[nodiscard]] MMA_draw() const;
+    [[nodiscard]] std::string MMA_draw() const;
 
   protected:
     state_bitset_type get_bitset(const state_set_type &state_set) const;
