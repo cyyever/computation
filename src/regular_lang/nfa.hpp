@@ -121,8 +121,13 @@ namespace cyy::computation {
 
     [[nodiscard]] std::string MMA_draw() const;
 
-  private:
+    const state_set_type &get_start_set() const {
+      return get_epsilon_closure(get_start_state());
+    }
     state_set_type go(const state_set_type &T, symbol_type a) const;
+
+  private:
+    const state_set_type &get_epsilon_closure(state_type s) const;
 
   private:
     transition_function_type transition_function;

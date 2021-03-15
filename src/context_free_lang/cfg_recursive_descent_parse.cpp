@@ -5,10 +5,10 @@
  * \date 2018-03-04
  */
 
+#include <algorithm>
 #include <cassert>
 #include <optional>
 #include <utility>
-#include <algorithm>
 
 #include "../exception.hpp"
 #include "cfg.hpp"

@@ -15,9 +15,9 @@
 
 #include <boost/dynamic_bitset.hpp>
 
-#include "../hash.hpp"
-#include "../lang/alphabet.hpp"
-#include "../lang/symbol.hpp"
+#include "hash.hpp"
+#include "lang/alphabet.hpp"
+#include "lang/symbol.hpp"
 
 namespace cyy::computation {
 
@@ -79,9 +79,16 @@ namespace cyy::computation {
     bool contain_final_state(const state_set_type &T) const {
       return has_intersection(final_states, T);
     }
+    state_set_type final_state_intersection(const state_set_type &T) const {
+      state_set_type result;
+      std::ranges::set_intersection(
+          final_states, T, std::insert_iterator(result, result.begin()));
+      /* std::ranges::set_intersection(final_states,T,result); */
+      return result;
+    }
 
-    bool is_final_state(state_type final_state) const {
-      return final_states.contains(final_state);
+    bool is_final_state(state_type state) const {
+      return final_states.contains(state);
     }
 
     bool includes(const state_set_type &T) const {
@@ -93,7 +100,7 @@ namespace cyy::computation {
     }
 
     state_type add_new_state() {
-      auto new_state = *states.rbegin() + 1;
+      auto new_state = get_max_state() + 1;
       states.insert(new_state);
       return new_state;
     }
