@@ -8,7 +8,7 @@
 #pragma once
 
 #include <functional>
-#include <iosfwd>
+#include <iostream>
 
 #include "../formal_grammar/grammar_symbol.hpp"
 #include "../hash.hpp"
@@ -36,6 +36,9 @@ namespace cyy::computation {
     bool operator==(const CFG_production &rhs) const {
       return std::tie(head, body) == std::tie(rhs.head, rhs.body);
     }
+    auto operator<=>(const CFG_production &rhs) const {
+      return std::tie(head, body) <=> std::tie(rhs.head, rhs.body);
+    }
     bool is_epsilon() const;
 
     void print(std::ostream &os, const ALPHABET &alphabet) const;
@@ -43,7 +46,7 @@ namespace cyy::computation {
     auto const &get_head() const { return head; }
     auto const &get_body() const { return body; }
 
-    std::string [[nodiscard]] MMA_draw(
+    [[nodiscard]] std::string MMA_draw(
         const ALPHABET &alphabet, bool emphasize_head = false,
         std::function<std::string(size_t)> pos_callback = [](size_t) {
           return "";

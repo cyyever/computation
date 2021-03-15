@@ -42,7 +42,7 @@ namespace cyy::computation {
     }
 
     void add_lookahead_symbols(CFG::terminal_set_type lookahead_symbols_);
-    std::string [[nodiscard]] MMA_draw(const CFG &cfg) const;
+    [[nodiscard]] std::string MMA_draw(const CFG &cfg) const;
 
   private:
     CFG::terminal_set_type lookahead_symbols;
@@ -93,7 +93,7 @@ namespace cyy::computation {
 
     const LR_1_item *
     get_completed_item(CFG::terminal_type lookahead_symbol) const;
-    std::string [[nodiscard]] MMA_draw(const CFG &cfg) const;
+    [[nodiscard]] std::string MMA_draw(const CFG &cfg) const;
 
     void merge_lookahead_symbols(LR_1_item_set &item_set) {
       kernel_items.merge(item_set.kernel_items);

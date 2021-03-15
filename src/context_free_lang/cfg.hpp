@@ -38,7 +38,7 @@ namespace cyy::computation {
       explicit parse_node(grammar_symbol_type grammar_symbol_)
           : grammar_symbol(std::move(grammar_symbol_)) {}
 
-      std::string [[nodiscard]] MMA_draw(const ALPHABET &alphabet) const;
+      [[nodiscard]] std::string MMA_draw(const ALPHABET &alphabet) const;
       static parse_node_ptr
       make_parse_node(nonterminal_type head,
                       CFG_production::body_span_type body);
@@ -95,7 +95,7 @@ namespace cyy::computation {
     std::pair<terminal_set_type, bool>
     first(const grammar_symbol_const_span_type &alpha) const;
 
-    //! convert grammar to Chomsky normal form
+    //! Convert grammar to Chomsky normal form
     void to_CNF();
 
     void left_factoring();
@@ -111,7 +111,7 @@ namespace cyy::computation {
     void remove_head(nonterminal_type head);
 
     bool contains(const grammar_symbol_type &grammar_symbol) const;
-    std::string [[nodiscard]] MMA_draw() const;
+    [[nodiscard]] std::string MMA_draw() const;
 
     nonterminal_type get_new_head(nonterminal_type advise_head) const {
       do {
@@ -149,8 +149,6 @@ namespace cyy::computation {
     nonterminal_type start_symbol;
     nonterminal_type old_start_symbol;
     production_set_type productions;
-
-  private:
     mutable std::unordered_map<nonterminal_type,
                                std::pair<terminal_set_type, bool>>
         first_sets;

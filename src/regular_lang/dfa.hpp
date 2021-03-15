@@ -76,7 +76,7 @@ namespace cyy::computation {
     // get the intersection of two DFAs
     DFA intersect(const DFA &rhs) const;
     DFA complement() const;
-    std::string [[nodiscard]] MMA_draw() const;
+    [[nodiscard]] std::string MMA_draw() const;
 
   private:
     void mark_live_states() const;

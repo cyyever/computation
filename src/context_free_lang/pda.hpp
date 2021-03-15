@@ -91,7 +91,7 @@ namespace cyy::computation {
 
     void prepare_CFG_conversion();
 
-    std::string [[nodiscard]] MMA_draw() const;
+    [[nodiscard]] std::string MMA_draw() const;
     PDA intersect(const DFA &rhs) const;
 
   private:
