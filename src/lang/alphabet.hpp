@@ -10,6 +10,7 @@
 #include <functional>
 #include <iterator>
 #include <memory>
+#include <limits>
 #include <ranges>
 #include <string>
 #include <string_view>
