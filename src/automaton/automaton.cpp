@@ -6,6 +6,22 @@
 
 #include "../util.hpp"
 namespace cyy::computation {
+  bool finite_automaton::state_set_type::has_intersection(
+      const state_set_type &rhs) const {
+    auto it = begin();
+    auto it2 = rhs.begin();
+    while (it != end() && it2 != rhs.end()) {
+      if (*it == *it2) {
+        return true;
+      }
+      if (*it < *it2) {
+        it++;
+      } else {
+        it2++;
+      }
+    }
+    return false;
+  }
 
   finite_automaton::state_bitset_type
   finite_automaton::get_bitset(uint64_t bitset_value) const {
@@ -67,22 +83,6 @@ namespace cyy::computation {
     return is.str();
   }
 
-  bool finite_automaton::has_intersection(const state_set_type &a,
-                                          const state_set_type &b) {
-    auto it = a.begin();
-    auto it2 = b.begin();
-    while (it != a.end() && it2 != b.end()) {
-      if (*it == *it2) {
-        return true;
-      }
-      if (*it < *it2) {
-        it++;
-      } else {
-        it2++;
-      }
-    }
-    return false;
-  }
   symbol_set_type finite_automaton::get_state_symbol_set() const {
     symbol_set_type state_symbol_set;
     for (auto const s : states) {
@@ -97,7 +97,7 @@ namespace cyy::computation {
       const state_set_type &another_state_set) const {
     state_set_product_type product;
     state_type next_state = 0;
-    for (auto s1 : get_state_set()) {
+    for (auto s1 : get_states()) {
       for (auto s2 : another_state_set) {
         product.try_emplace({s1, s2}, next_state);
         next_state++;

@@ -24,8 +24,16 @@ namespace cyy::computation {
   class finite_automaton {
   public:
     using state_type = uint64_t;
-    using state_set_type = std::set<state_type>;
     using state_bitset_type = boost::dynamic_bitset<>;
+    class state_set_type : public std::set<state_type> {
+    public:
+      using std::set<state_type>::set;
+      bool operator==(const state_set_type &rhs) const = default;
+      bool has_intersection(const state_set_type &rhs) const;
+      bool includes(const state_set_type &rhs) const {
+        return std::ranges::includes(*this, rhs);
+      }
+    };
     using state_set_map_type = std::unordered_map<state_type, state_set_type>;
     using state_set_product_type =
         std::unordered_map<std::pair<state_type, state_type>, state_type>;
@@ -65,34 +73,28 @@ namespace cyy::computation {
 
     finite_automaton &get_finite_automaton() && { return *this; }
 
-    auto get_states() const noexcept { return std::ranges::views::all(states); }
     symbol_set_type get_state_symbol_set() const;
 
-    auto const &get_state_set() const noexcept { return states; }
+    auto const &get_states() const noexcept { return states; }
     auto const &get_alphabet() const noexcept { return *alphabet; }
     auto const &get_alphabet_ptr() const noexcept { return alphabet; }
     auto const &get_final_states() const noexcept { return final_states; }
     state_type get_start_state() const noexcept { return start_state; }
-    state_type get_max_state() const { return *states.rbegin(); }
 
     void set_alphabet(ALPHABET_ptr alphabet_) { alphabet = alphabet_; }
     bool contain_final_state(const state_set_type &T) const {
-      return has_intersection(final_states, T);
+      return final_states.has_intersection(T);
     }
     state_set_type final_state_intersection(const state_set_type &T) const {
       state_set_type result;
       std::ranges::set_intersection(
           final_states, T, std::insert_iterator(result, result.begin()));
-      /* std::ranges::set_intersection(final_states,T,result); */
       return result;
     }
 
+    state_type get_max_state() const { return *states.rbegin(); }
     bool is_final_state(state_type state) const {
       return final_states.contains(state);
-    }
-
-    bool includes(const state_set_type &T) const {
-      return std::ranges::includes(states, T);
     }
 
     void replace_final_states(state_type s) {
@@ -106,9 +108,6 @@ namespace cyy::computation {
     }
     bool add_new_state(state_type s) { return states.emplace(s).second; }
 
-    void add_new_states(state_set_type state_set) {
-      states.merge(std::move(state_set));
-    }
     template <std::ranges::range U> void add_new_states(U state_set) {
       for (auto s : state_set) {
         add_new_state(s);
@@ -140,6 +139,7 @@ namespace cyy::computation {
       check_state(s);
       final_states.insert(s);
     }
+
     template <std::ranges::range U> void add_final_states(U new_final_states) {
       for (auto s : new_final_states) {
         add_final_state(s);
@@ -169,12 +169,6 @@ namespace cyy::computation {
     bool state_bitset_contains(const state_bitset_type &state_bitset,
                                state_type state) const;
 
-    static bool has_intersection(const state_set_type &a,
-                                 const state_set_type &b);
-
-    static state_set_type &
-    get_epsilon_closure(state_set_map_type &epsilon_closures, state_type s,
-                        const state_set_map_type &epsilon_transition_function);
 
   protected:
     ALPHABET_ptr alphabet;

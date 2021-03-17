@@ -84,12 +84,10 @@ namespace cyy::computation {
         throw exception::unexisted_finite_automaton_state(
             std::to_string(situation.state));
       }
-      if (!includes(end_states)) {
-        for (auto const &state : end_states) {
-          if (!has_state(state)) {
-            throw exception::unexisted_finite_automaton_state(
-                std::to_string(state));
-          }
+      for (auto const &state : end_states) {
+        if (!has_state(state)) {
+          throw exception::unexisted_finite_automaton_state(
+              std::to_string(state));
         }
       }
       transition_function[situation].merge(end_states);
@@ -101,12 +99,10 @@ namespace cyy::computation {
         throw exception::unexisted_finite_automaton_state(
             std::to_string(from_state));
       }
-      if (!includes(end_states)) {
-        for (auto const &state : end_states) {
-          if (!has_state(state)) {
-            throw exception::unexisted_finite_automaton_state(
-                std::to_string(state));
-          }
+      for (auto const &state : end_states) {
+        if (!has_state(state)) {
+          throw exception::unexisted_finite_automaton_state(
+              std::to_string(state));
         }
       }
       epsilon_transition_function[from_state].merge(end_states);

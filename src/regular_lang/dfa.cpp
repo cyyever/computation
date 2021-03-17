@@ -23,7 +23,7 @@ namespace cyy::computation {
     if (alphabet != rhs.alphabet) {
       return false;
     }
-    if (get_state_set().size() != rhs.get_state_set().size()) {
+    if (get_states().size() != rhs.get_states().size()) {
       return false;
     }
     if (final_states.size() != rhs.final_states.size()) {
@@ -68,7 +68,7 @@ namespace cyy::computation {
         break;
       }
     }
-    if (state_map.size() != get_state_set().size()) {
+    if (state_map.size() != get_states().size()) {
       return false;
     }
 
@@ -79,7 +79,7 @@ namespace cyy::computation {
   DFA DFA::minimize() const {
     state_set_type non_final_states;
     std::ranges::set_difference(
-        get_state_set(), final_states,
+        get_states(), final_states,
         std::insert_iterator(non_final_states, non_final_states.begin()));
 
     std::vector<state_set_type> groups{non_final_states, final_states};
@@ -187,7 +187,7 @@ namespace cyy::computation {
       throw exception::unmatched_alphabets(alphabet->get_name() + " and " +
                                            rhs.alphabet->get_name());
     }
-    auto state_set_product = get_state_set_product(rhs.get_state_set());
+    auto state_set_product = get_state_set_product(rhs.get_states());
     state_set_type result_states;
     state_set_type result_final_states;
     state_type result_start_state{};
@@ -214,9 +214,9 @@ namespace cyy::computation {
   DFA DFA::complement() const {
     state_set_type new_final_states;
     std::ranges::set_difference(
-        get_state_set(), final_states,
+        get_states(), final_states,
         std::inserter(new_final_states, new_final_states.begin()));
-    return {get_state_set(), alphabet, get_start_state(), transition_function,
+    return {get_states(), alphabet, get_start_state(), transition_function,
             new_final_states};
   }
   std::string DFA::MMA_draw() const {
