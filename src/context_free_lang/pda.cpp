@@ -212,7 +212,7 @@ namespace cyy::computation {
       throw exception::unmatched_alphabets(alphabet->get_name() + " and " +
                                            rhs.get_alphabet().get_name());
     }
-    auto state_set_product = get_state_set_product(rhs.get_state_set());
+    auto state_set_product = get_state_set_product(rhs.get_states());
     state_set_type result_states;
     state_set_type result_final_states;
     state_type result_start_state{};
