@@ -142,7 +142,9 @@ namespace cyy::computation {
         break;
       }
     }
-    std::erase_if(productions, [&reachable_heads](const auto &production) {return !reachable_heads.contains(production.first);});
+    std::erase_if(productions, [&reachable_heads](const auto &production) {
+      return !reachable_heads.contains(production.first);
+    });
     // eliminate unused productions
     nonterminal_set_type in_use_heads;
     decltype(productions) new_productions;
@@ -200,7 +202,7 @@ namespace cyy::computation {
       productions.erase(head);
       for (auto &[_, bodies] : productions) {
         for (auto &body : bodies) {
-          body.erase(std::remove(body.begin(), body.end(), head), body.end());
+          std::erase(body, head);
         }
       }
     }
