@@ -142,8 +142,8 @@ namespace cyy::computation {
         break;
       }
     }
-    std::ranges::remove_if(productions,[&reachable_heads](const auto &production) {return !reachable_heads.contains(production->first);});
-
+    productions.erase_if( [&reachable_heads](const auto &production) {return !reachable_heads.contains(production->first);}
+        );
     // eliminate unused productions
     nonterminal_set_type in_use_heads;
     decltype(productions) new_productions;
