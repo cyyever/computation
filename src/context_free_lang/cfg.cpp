@@ -530,7 +530,7 @@ namespace cyy::computation {
         CFG_production::body_type{old_start_symbol});
     return;
   }
-  void CFG::remove_head(nonterminal_type head) {
+  void CFG::remove_head(const nonterminal_type &head) {
     productions.erase(head);
     if (head == start_symbol) {
       if (old_start_symbol.empty()) {
