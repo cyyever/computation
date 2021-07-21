@@ -24,7 +24,7 @@ namespace cyy::computation {
 
     for (auto const &[config, next_states] : nfa.get_transition_function()) {
       for (auto const &next_state : next_states) {
-        productions[state_to_nonterminal(config.state)].push_back(
+        productions[state_to_nonterminal(config.state)].insert(
             {config.input_symbol, state_to_nonterminal(next_state)});
       }
     }
@@ -32,13 +32,13 @@ namespace cyy::computation {
     for (auto const &[cur_state, next_states] :
          nfa.get_epsilon_transition_function()) {
       for (auto const &next_state : next_states) {
-        productions[state_to_nonterminal(cur_state)].push_back(
+        productions[state_to_nonterminal(cur_state)].insert(
             {state_to_nonterminal(next_state)});
       }
     }
 
     for (auto const &final_state : nfa.get_final_states()) {
-      productions[state_to_nonterminal(final_state)].emplace_back();
+      productions[state_to_nonterminal(final_state)].emplace();
     }
 
     return {nfa.get_alphabet().get_name(),
@@ -181,16 +181,15 @@ namespace cyy::computation {
             body.emplace_back(next_situation.get_input());
           }
           productions[get_nonterminal(prev_situation.state, next_to_state)]
-              .emplace_back(std::move(body));
+              .emplace(std::move(body));
         }
       }
     }
     for (auto const a : pda.get_states()) {
       for (auto const b : pda.get_states()) {
         for (auto const c : pda.get_states()) {
-          productions[get_nonterminal(a, c)].emplace_back(
-              CFG_production::body_type{get_nonterminal(a, b),
-                                        get_nonterminal(b, c)});
+          productions[get_nonterminal(a, c)].emplace(CFG_production::body_type{
+              get_nonterminal(a, b), get_nonterminal(b, c)});
         }
       }
     }
@@ -266,7 +265,7 @@ namespace cyy::computation {
             if (next_input.has_value()) {
               body.emplace_back(*next_input);
             }
-            productions[head].emplace_back(std::move(body));
+            productions[head].emplace(std::move(body));
           }
         }
       }

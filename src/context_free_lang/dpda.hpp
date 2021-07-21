@@ -43,12 +43,12 @@ namespace cyy::computation {
       std::size_t operator()(const situation_type &x) const noexcept {
         size_t seed = 0;
         if (x.input_symbol) {
-          boost::hash_combine(
-              seed, std::hash<input_symbol_type>()(*x.input_symbol));
+          boost::hash_combine(seed,
+                              std::hash<input_symbol_type>()(*x.input_symbol));
         }
         if (x.stack_symbol) {
-          boost::hash_combine(
-              seed, std::hash<stack_symbol_type>()(*x.stack_symbol));
+          boost::hash_combine(seed,
+                              std::hash<stack_symbol_type>()(*x.stack_symbol));
         }
         return seed;
       }
@@ -82,7 +82,8 @@ namespace cyy::computation {
         transfers.emplace(situation_type{}, std::move(action));
       }
 
-      void pop_stack_and_action(state_type from_state, const action_type &action,
+      void pop_stack_and_action(state_type from_state,
+                                const action_type &action,
                                 const ALPHABET &stack_alphabet_) {
         auto &transfers = operator[](from_state);
         for (auto stack_symbol : stack_alphabet_) {
@@ -91,7 +92,8 @@ namespace cyy::computation {
       }
 
       void check_stack_and_action(state_type from_state,
-                                  const situation_type &situation, action_type action,
+                                  const situation_type &situation,
+                                  action_type action,
                                   finite_automaton &automaton) {
         assert(situation.has_pop());
         auto &transfers = operator[](from_state);

@@ -135,7 +135,7 @@ namespace cyy::computation {
     productions["character-class"] = {
         {"character-class-element", "character-class'"}};
 
-    productions["character-class"].emplace_back(
+    productions["character-class"].emplace(
         CFG_production::body_type{'^', "character-class'"});
     productions["character-class'"] = {
         {'-', "character-class-element", "character-class'"},
@@ -149,14 +149,14 @@ namespace cyy::computation {
     };
 
     for (auto a : *alphabet) {
-      productions["symbol"].emplace_back(CFG_production::body_type{a});
+      productions["symbol"].emplace(CFG_production::body_type{a});
 
       if (!operators.contains(a)) {
-        productions["rprimary"].emplace_back(CFG_production::body_type{a});
+        productions["rprimary"].emplace(CFG_production::body_type{a});
       }
 
       if (a != '\\' && a != ']' && a != '-' && a != '^') {
-        productions["character-class-element"].emplace_back(
+        productions["character-class-element"].emplace(
             CFG_production::body_type{a});
       }
     }

@@ -169,7 +169,6 @@ namespace cyy::computation {
     bool state_bitset_contains(const state_bitset_type &state_bitset,
                                state_type state) const;
 
-
   protected:
     ALPHABET_ptr alphabet;
 

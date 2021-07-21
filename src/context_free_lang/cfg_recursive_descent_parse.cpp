@@ -8,8 +8,8 @@
 #include <algorithm>
 #include <cassert>
 #include <optional>
-#include <utility>
 #include <stack>
+#include <utility>
 
 #include "../exception.hpp"
 #include "cfg.hpp"
@@ -56,7 +56,7 @@ namespace cyy::computation {
           return false;
         }
         assert(grammar_symbol.is_nonterminal());
-        cur_body_it_opt = *cur_body_it_opt + 1;
+        cur_body_it_opt = ++(*cur_body_it_opt);
         children.clear();
         if (cur_body_it_opt != end_body_it_opt) {
           set_children();

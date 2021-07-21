@@ -61,7 +61,7 @@ namespace cyy::computation {
     }
 
     if (nullable_nonterminals.contains(start_symbol)) {
-      productions[start_symbol].emplace_back();
+      productions[start_symbol].emplace();
     }
 
     normalize_productions();
@@ -100,20 +100,15 @@ namespace cyy::computation {
     while (flag) {
       flag = false;
       for (auto &[head, bodies] : productions) {
-        for (size_t i = 0; i < bodies.size();) {
-          if (bodies[i].size() != 1 || bodies[i][0].is_terminal()) {
-            i++;
-            continue;
+        CFG::modify_body_set(bodies, [&](auto &body) {
+          if (body.size() != 1 || body[0].is_terminal()) {
+            return true;
           }
-          auto derived_head = bodies[i][0].get_nonterminal();
+          auto derived_head = body[0].get_nonterminal();
           deleted_single_productions.emplace(head, derived_head);
-          if (i + 1 < bodies.size()) {
-            std::swap(bodies[i], *bodies.rbegin());
-          }
-          bodies.pop_back();
           flag = true;
           if (head == derived_head) {
-            continue;
+            return false;
           }
           for (auto const &derived_body : productions[derived_head]) {
             if (derived_body.size() == 1 && derived_body[0].is_nonterminal() &&
@@ -121,9 +116,10 @@ namespace cyy::computation {
                     {head, derived_body[0].get_nonterminal()})) {
               continue;
             }
-            bodies.push_back(derived_body);
+            bodies.emplace(derived_body);
           }
-        }
+          return false;
+        });
       }
     }
     normalize_productions();
@@ -153,32 +149,36 @@ namespace cyy::computation {
     while (true) {
       decltype(productions) new_productions;
       for (auto &[head, bodies] : productions) {
-        for (auto &body : bodies) {
-          if (body.size() <= 1) {
-            continue;
-          }
+        CFG::modify_body_set(bodies,
+                             [&](auto &body) {
+                               if (body.size() <= 1) {
+                                 return true;
+                               }
 
-          for (auto &symbol : body) {
-            if (!symbol.is_terminal()) {
-              continue;
-            }
-            auto s = symbol.get_terminal();
-            symbol = get_terminal_head(s);
-          }
+                               for (auto &symbol : body) {
+                                 if (!symbol.is_terminal()) {
+                                   continue;
+                                 }
+                                 auto s = symbol.get_terminal();
+                                 symbol = get_terminal_head(s);
+                               }
 
-          if (body.size() == 2) {
-            continue;
-          }
+                               if (body.size() == 2) {
+                                 return true;
+                               }
 
-          auto new_head = get_new_head(head, heads);
-          heads.insert(new_head);
+                               auto new_head = get_new_head(head, heads);
+                               heads.insert(new_head);
 
-          new_productions[new_head].emplace_back(
-              std::move_iterator(body.begin() + 1),
-              std::move_iterator(body.end()));
-          body.resize(1);
-          body.emplace_back(new_head);
-        }
+                               new_productions[new_head].emplace(
+                                   std::move_iterator(body.begin() + 1),
+                                   std::move_iterator(body.end()));
+                               body.resize(1);
+                               body.emplace_back(new_head);
+                               return true;
+                             }
+
+        );
       }
 
       if (!new_productions.empty()) {
@@ -188,7 +188,7 @@ namespace cyy::computation {
       }
     }
     for (auto const &[terminal, head] : terminal_to_nonterminal) {
-      productions[head].emplace_back(CFG_production::body_type{terminal});
+      productions[head].emplace(CFG_production::body_type{terminal});
     }
     normalize_productions();
   }

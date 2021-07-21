@@ -14,7 +14,7 @@
 template <typename T, std::ranges::input_range U>
 requires std::same_as<T, std::ranges::range_value_t<U>>
 
-    auto topological_sort(std::unordered_map<T, U> graph) {
+auto topological_sort(std::unordered_map<T, U> graph) {
   std::unordered_map<T, size_t> degrees;
   for (auto const &[from_node, to_nodes] : graph) {
     degrees.try_emplace(from_node, 0);

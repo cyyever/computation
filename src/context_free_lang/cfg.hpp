@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <functional>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -27,9 +28,9 @@ namespace cyy::computation {
     using nonterminal_type = grammar_symbol_type::nonterminal_type;
     using terminal_set_type = std::unordered_set<terminal_type>;
     using nonterminal_set_type = std::unordered_set<nonterminal_type>;
+    using production_body_set_type = std::set<CFG_production::body_type>;
     using production_set_type =
-        std::unordered_map<nonterminal_type,
-                           std::vector<CFG_production::body_type>>;
+        std::unordered_map<nonterminal_type, production_body_set_type>;
 
     struct parse_node;
     using parse_node_ptr = std::shared_ptr<parse_node>;
@@ -79,7 +80,7 @@ namespace cyy::computation {
 
     auto const &get_productions() const &noexcept { return productions; }
     auto &get_productions() &&noexcept { return productions; }
-    const std::vector<CFG_production::body_type> &
+    const std::set<CFG_production::body_type> &
     get_bodies(const nonterminal_type &head) const;
 
     terminal_set_type get_terminals() const;
@@ -119,6 +120,9 @@ namespace cyy::computation {
       } while (productions.contains(advise_head));
       return advise_head;
     }
+    static void
+    modify_body_set(production_body_set_type &body_set,
+                    std::function<bool(CFG_production::body_type &)> fun);
 
   protected:
     void normalize_start_symbol();
