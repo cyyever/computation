@@ -44,11 +44,11 @@ namespace cyy::computation {
         size_t seed = 0;
         if (x.input_symbol) {
           boost::hash_combine(
-              seed, std::hash<input_symbol_type>()(*x.input_symbol);
+              seed, std::hash<input_symbol_type>()(*x.input_symbol));
         }
         if (x.stack_symbol) {
           boost::hash_combine(
-              seed, std::hash<stack_symbol_type>()(*x.stack_symbol);
+              seed, std::hash<stack_symbol_type>()(*x.stack_symbol));
         }
         return seed;
       }
