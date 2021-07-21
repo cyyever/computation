@@ -47,8 +47,7 @@ namespace cyy::computation {
           for (auto &partial_body : tmp) {
             partial_body.emplace_back(s);
           }
-          tmp.insert(tmp.end(), std::move_iterator(split_tmp.begin()),
-                     std::move_iterator(split_tmp.end()));
+          std::ranges::move(split_tmp, std::back_inserter(tmp));
         }
         new_bodies.insert(std::move_iterator(tmp.begin()),
                           std::move_iterator(tmp.end()));
