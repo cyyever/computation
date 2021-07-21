@@ -48,11 +48,11 @@ namespace cyy::computation {
         boost::hash_combine(seed, std::hash<state_type>()(x.state));
         if (x.input_symbol) {
           boost::hash_combine(
-              seed, std::hash<input_symbol_type>()(x.input_symbol.value()));
+              seed, std::hash<input_symbol_type>()(*x.input_symbol));
         }
         if (x.stack_symbol) {
           boost::hash_combine(
-              seed, std::hash<stack_symbol_type>()(x.stack_symbol.value()));
+              seed, std::hash<stack_symbol_type>()(*x.stack_symbol));
         }
         return seed;
       }
