@@ -140,7 +140,7 @@ namespace cyy::computation {
                   std::make_shared<parse_node>(grammar_symbol));
             }
 
-            for (auto const &child : node->children | std::ranges::reverse) {
+            for (auto const &child : node->children | std::ranges::reverse_view ) {
               if (child->grammar_symbol.is_nonterminal()) {
                 stack.push_back(child);
               }
