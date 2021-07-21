@@ -241,11 +241,9 @@ namespace cyy::computation {
   }
 
   endmarked_DPDA::state_set_type endmarked_DPDA::get_accept_states() const {
-    state_set_map_type epsilon_transitions;
     std::map<state_type, std::set<std::vector<stack_symbol_type>>>
         accept_states_and_stacks;
 
-    state_set_map_type epsilon_closures;
     // found states one step to finial states
     for (const auto &[from_state, transfers] : transition_function) {
       for (const auto &[situation, action] : transfers) {

@@ -116,10 +116,10 @@ namespace cyy::computation {
       }
 
       void move_head(head_direction direction, size_t tape_idx) {
-        auto &head_location = head_locations[tape_idx];
         if (direction == head_direction::stay_put) {
           return;
         }
+        auto &head_location = head_locations[tape_idx];
         if (direction == head_direction::right) {
           head_location += 1;
         } else if (head_location > 0) {

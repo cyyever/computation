@@ -89,7 +89,7 @@ namespace cyy::computation {
             continue;
           }
 
-          std::vector<symbol_string_view> view_stack{view};
+          std::stack<symbol_string_view> view_stack{view};
           size_t i = 0;
           bool backtrack_succ = true;
           while (i < body.size()) {
