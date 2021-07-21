@@ -40,9 +40,9 @@ namespace cyy::computation {
           return false;
         }
         if (!children.empty()) {
-          for (auto it = children.rbegin(); it != children.rend(); it++) {
+          for (auto it = children.rbegin(); it != children.rend(); ++it) {
             if ((*it)->use_next_body()) {
-              for (auto it2 = children.rbegin(); it2 < it; it2++) {
+              for (auto it2 = children.rbegin(); it2 < it; ++it2) {
                 (*it2)->reset_iter();
               }
               return true;
