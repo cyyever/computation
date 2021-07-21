@@ -105,9 +105,8 @@ namespace cyy::computation {
   }
 
   void CFG::normalize_productions() {
-    std::erase_if(productions, [](const auto &bodyes) {
-      return bodyes.second.empty();
-    });
+    std::erase_if(productions,
+                  [](const auto &bodyes) { return bodyes.second.empty(); });
     first_sets.clear();
   }
 
@@ -260,26 +259,23 @@ namespace cyy::computation {
 
     for (size_t i = 0; i < old_heads.size(); i++) {
       for (size_t j = 0; j < i; j++) {
-        std::vector<CFG_production::body_type> new_bodies;
-        for (auto &body : productions[old_heads[i]]) {
+        auto &bodies = productions[old_heads[i]];
+        modify_body_set(bodies, [&](auto &body) {
           if (body.empty()) {
-            new_bodies.emplace_back(std::move(body));
-            continue;
+            return true;
           }
 
           if (body.front() != old_heads[j]) {
-            new_bodies.emplace_back(std::move(body));
-            continue;
+            return true;
           }
           // Ai -> Aj，替换
           for (const auto &head_j_body : productions[old_heads[j]]) {
             auto new_body = head_j_body;
             new_body.insert(new_body.end(), body.begin() + 1, body.end());
-            new_bodies.push_back(new_body);
+            bodies.emplace(std::move(new_body));
           }
-        }
-        productions[old_heads[i]] = {std::move_iterator(new_bodies.begin()),
-                                     std::move_iterator(new_bodies.end())};
+          return false;
+        });
       }
       eliminate_immediate_left_recursion(old_heads[i]);
     }
