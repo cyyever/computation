@@ -105,17 +105,9 @@ namespace cyy::computation {
   }
 
   void CFG::normalize_productions() {
-    decltype(productions) new_productions;
-    for (auto &[head, bodies] : productions) {
-      if (bodies.empty()) {
-        continue;
-      }
-      std::set<CFG_production::body_type> bodies_set(
-          std::move_iterator(bodies.begin()), std::move_iterator(bodies.end()));
-      new_productions[head] = {std::move_iterator(bodies_set.begin()),
-                               std::move_iterator(bodies_set.end())};
-    }
-    productions = std::move(new_productions);
+    std::erase_if(productions, [](const auto &bodyes) {
+      return bodyes.second.empty();
+    });
     first_sets.clear();
   }
 
