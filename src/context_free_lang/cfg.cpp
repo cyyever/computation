@@ -142,8 +142,7 @@ namespace cyy::computation {
         break;
       }
     }
-    productions.erase_if( [&reachable_heads](const auto &production) {return !reachable_heads.contains(production->first);}
-        );
+    std::erase_if(productions, [&reachable_heads](const auto &production) {return !reachable_heads.contains(production->first);});
     // eliminate unused productions
     nonterminal_set_type in_use_heads;
     decltype(productions) new_productions;
