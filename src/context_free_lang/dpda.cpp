@@ -25,7 +25,7 @@ namespace cyy::computation {
       auto const &symbol = view[i];
       auto configuration_opt = go(configuration, symbol);
       if (configuration_opt) {
-        configuration = std::move(configuration_opt.value());
+        configuration = std::move(*configuration_opt);
         i++;
         continue;
       }
@@ -38,7 +38,7 @@ namespace cyy::computation {
       if (!configuration_opt) {
         return false;
       }
-      configuration = std::move(configuration_opt.value());
+      configuration = std::move(*configuration_opt);
     }
     return true;
   }

@@ -55,7 +55,7 @@ namespace cyy::computation {
     };
 
     struct action_type {
-      action_type() {}
+      action_type() = default;
       action_type(state_type state_) : state(state_) {}
       action_type(state_type state_,
                   std::optional<stack_symbol_type> stack_symbol_)

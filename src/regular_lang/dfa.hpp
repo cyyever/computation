@@ -49,7 +49,7 @@ namespace cyy::computation {
         if (!opt_res) {
           return false;
         }
-        s = opt_res.value();
+        s = *opt_res;
       }
       return contain_final_state({s});
     }
