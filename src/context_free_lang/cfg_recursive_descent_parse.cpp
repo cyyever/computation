@@ -95,13 +95,13 @@ namespace cyy::computation {
           bool backtrack_succ = true;
           while (i < body.size()) {
             assert(view_stack.size() == i + 1);
-            auto cur_view = view_stack.back();
+            auto cur_view = view_stack.top();
             auto const &grammal_symbol = body[i];
             if (grammal_symbol.is_terminal()) {
               if (!cur_view.empty() &&
                   grammal_symbol.get_terminal() == cur_view[0]) {
                 cur_view.remove_prefix(1);
-                view_stack.push_back(cur_view);
+                view_stack.push(cur_view);
                 i++;
                 continue;
               }
@@ -109,7 +109,7 @@ namespace cyy::computation {
               auto [result, remain_view] =
                   children[i]->match_nonterminal(cur_view);
               if (result) {
-                view_stack.push_back(remain_view);
+                view_stack.push(remain_view);
                 i++;
                 continue;
               }
@@ -127,7 +127,7 @@ namespace cyy::computation {
               if (i == 0) {
                 break;
               }
-              view_stack.pop_back();
+              view_stack.pop();
               i--;
             }
             if (!backtrack_succ) {
@@ -136,7 +136,7 @@ namespace cyy::computation {
             }
           }
           if (backtrack_succ) {
-            return {true, view_stack.back()};
+            return {true, view_stack.top()};
           }
         }
         return {false, view};
