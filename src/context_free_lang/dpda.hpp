@@ -91,7 +91,7 @@ namespace cyy::computation {
       }
 
       void check_stack_and_action(state_type from_state,
-                                  situation_type situation, action_type action,
+                                  const situation_type &situation, action_type action,
                                   finite_automaton &automaton) {
         assert(situation.has_pop());
         auto &transfers = operator[](from_state);
