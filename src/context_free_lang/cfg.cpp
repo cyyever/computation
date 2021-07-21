@@ -142,7 +142,7 @@ namespace cyy::computation {
         break;
       }
     }
-    std::ranges::erase_if(productions,[&reachable_heads](const auto &production) {!reachable_heads.contains(production->first);});
+    std::ranges::remove_if(productions,[&reachable_heads](const auto &production) {!reachable_heads.contains(production->first);});
 
     // eliminate unused productions
     nonterminal_set_type in_use_heads;
