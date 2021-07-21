@@ -9,6 +9,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <ranges>
 
 #include "../exception.hpp"
 
@@ -139,9 +140,8 @@ namespace cyy::computation {
                   std::make_shared<parse_node>(grammar_symbol));
             }
 
-            for (auto rit = node->children.rbegin();
-                 rit != node->children.rend(); rit++) {
-              if ((*rit)->grammar_symbol.is_nonterminal()) {
+            for (auto const &child : node->children | std::ranges::reverse) {
+              if (child->grammar_symbol.is_nonterminal()) {
                 stack.push_back(*rit);
               }
             }
