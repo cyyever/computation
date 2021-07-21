@@ -142,7 +142,7 @@ namespace cyy::computation {
 
             for (auto const &child : node->children | std::ranges::reverse) {
               if (child->grammar_symbol.is_nonterminal()) {
-                stack.push_back(*rit);
+                stack.push_back(child);
               }
             }
             return;
