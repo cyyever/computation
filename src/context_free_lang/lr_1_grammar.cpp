@@ -29,7 +29,7 @@ namespace cyy::computation {
         uncompleted_items.emplace_back(item);
       }
       for (auto it = completed_items.begin(); it != completed_items.end();
-           it++) {
+           ++it) {
         for (auto it2 = it + 1; it2 != completed_items.end(); it2++) {
           if (std::ranges::includes(it->get_lookahead_symbols(),
                                     it2->get_lookahead_symbols())) {
@@ -123,7 +123,7 @@ namespace cyy::computation {
       }
 
       if (std::holds_alternative<bool>(it->second)) {
-        terminal_it++;
+        ++terminal_it;
         break;
       }
 
@@ -135,7 +135,7 @@ namespace cyy::computation {
         stack.push_back(std::get<state_type>(it->second));
         /* std::cerr << " to state " << stack.back() << std::endl; */
         shift_callback(terminal);
-        terminal_it++;
+        ++terminal_it;
         continue;
       }
 

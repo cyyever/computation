@@ -85,7 +85,7 @@ namespace cyy::computation {
         std::optional<PDA::stack_symbol_type> new_top;
         if (it != body.rend()) {
           new_top = get_stack_symbol(*it);
-          it++;
+          ++it;
         }
         transition_function[{from_state, {}, get_stack_symbol(*head)}].emplace(
             new_state, new_top);
@@ -94,7 +94,7 @@ namespace cyy::computation {
         old_state = from_state;
       }
 
-      for (; it != body.rend(); it++) {
+      for (; it != body.rend(); ++it) {
         if (it + 1 == body.rend()) {
           new_state = to_state;
         } else {

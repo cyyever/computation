@@ -15,9 +15,9 @@ namespace cyy::computation {
         return true;
       }
       if (*it < *it2) {
-        it++;
+        ++it;
       } else {
-        it2++;
+        ++it2;
       }
     }
     return false;
@@ -36,15 +36,15 @@ namespace cyy::computation {
     while (it != states.end() && it2 != state_set.end()) {
       if (*it == *it2) {
         bitset.set(static_cast<size_t>(std::distance(states.begin(), it)));
-        it++;
-        it2++;
+        ++it;
+        ++it2;
         continue;
       }
       if (*it < *it2) {
-        it++;
+        ++it;
         continue;
       }
-      it2++;
+      ++it2;
     }
     return bitset;
   }

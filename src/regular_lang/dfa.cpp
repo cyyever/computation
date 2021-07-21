@@ -104,8 +104,8 @@ namespace cyy::computation {
 
         auto it = group.begin();
         sub_groups.push_back({*it});
-        it++;
-        for (; it != group.end(); it++) {
+        ++it;
+        for (; it != group.end(); ++it) {
           auto state = *it;
           bool in_new_group = true;
           for (auto &sub_group : sub_groups) {

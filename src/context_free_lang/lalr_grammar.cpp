@@ -26,9 +26,9 @@ namespace cyy::computation {
       auto it = state_set.begin();
       auto min_state = *it;
       auto &item_set = collection[min_state];
-      it++;
+      ++it;
       state_map[min_state] = min_state;
-      for (; it != state_set.end(); it++) {
+      for (; it != state_set.end(); ++it) {
         item_set.merge_lookahead_symbols(collection[*it]);
         state_map[*it] = min_state;
       }
