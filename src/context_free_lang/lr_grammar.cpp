@@ -7,8 +7,6 @@
 
 #include "lr_grammar.hpp"
 
-#include <iostream>
-
 namespace cyy::computation {
 
   LR_grammar::parse_node_ptr

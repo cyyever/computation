@@ -4,7 +4,6 @@
  */
 #pragma once
 
-#include <iostream>
 #include <memory>
 
 #include "alphabet.hpp"

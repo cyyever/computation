@@ -8,10 +8,9 @@
 #pragma once
 
 #include <functional>
-#include <iostream>
 
-#include "../hash.hpp"
 #include "cfg.hpp"
+#include "hash.hpp"
 
 namespace cyy::computation {
 
