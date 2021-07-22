@@ -11,6 +11,8 @@
 #include <iostream>
 #include <ranges>
 
+#include <fmt/format.h>
+
 #include "../exception.hpp"
 
 namespace cyy::computation {
@@ -30,9 +32,9 @@ namespace cyy::computation {
                   std::pair{follow_terminal, head}, body);
               // not LL1
               if (!has_inserted) {
-                std::cerr << "follow terminal "
-                          << alphabet->to_string(follow_terminal);
-                std::cerr << " confliction for production:\n";
+                std::cerr << fmt::format(
+                    "follow terminal {} confliction for production:\n ",
+                    alphabet->to_string(follow_terminal));
                 CFG_production(it2->first.second, it2->second)
                     .print(std::cerr, *alphabet);
                 throw cyy::computation::exception::no_LL_grammar("");
@@ -45,9 +47,9 @@ namespace cyy::computation {
               parsing_table.try_emplace(std::pair{terminal, head}, body);
           // not LL1
           if (!has_inserted) {
-
-            std::cerr << "first terminal " << alphabet->to_string(terminal);
-            std::cerr << " confliction for production:\n";
+            std::cerr << fmt::format(
+                "first terminal {} confliction for production:\n",
+                alphabet->to_string(terminal));
             CFG_production(it->first.second, it->second)
                 .print(std::cerr, *alphabet);
             std::cerr << " and production:\n";
@@ -93,8 +95,8 @@ namespace cyy::computation {
         auto ptr = top_symbol.get_nonterminal_ptr();
         auto it = parsing_table.find({terminal, *ptr});
         if (it == parsing_table.end()) {
-          std::cerr << "no rule for parsing " << alphabet->to_string(terminal);
-          std::cerr << " for " << *ptr << std::endl;
+          std::cerr << fmt::format("no rule for parsing {} for {} \n",
+                                   alphabet->to_string(terminal), *ptr);
           return false;
         }
 
