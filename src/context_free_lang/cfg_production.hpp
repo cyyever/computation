@@ -41,6 +41,7 @@ namespace cyy::computation {
     }
     bool is_epsilon() const;
 
+    std::string to_string(const ALPHABET &alphabet) const;
     void print(std::ostream &os, const ALPHABET &alphabet) const;
 
     auto const &get_head() const { return head; }
@@ -53,7 +54,7 @@ namespace cyy::computation {
         }) const;
 
   private:
-    void print_body(std::ostream &os, const ALPHABET &alphabet) const;
+    std::string body_to_string(const ALPHABET &alphabet) const;
 
   private:
     grammar_symbol_type::nonterminal_type head;

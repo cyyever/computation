@@ -52,12 +52,11 @@ namespace cyy::computation {
     bool operator==(const nonterminal_type &t) const noexcept {
       return is_nonterminal() && *get_nonterminal_ptr() == t;
     }
-    void print(std::ostream &os, const ALPHABET &alphabet) const {
+    std::string to_string( const ALPHABET &alphabet) const {
       if (is_terminal()) {
-        os << alphabet.to_string(get_terminal());
-      } else {
-        os << *get_nonterminal_ptr();
-      }
+          return alphabet.to_string(get_terminal());
+      } 
+          return *get_nonterminal_ptr();
     }
     std::string MMA_draw(const ALPHABET &alphabet) const {
       if (is_terminal()) {

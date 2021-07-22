@@ -7,25 +7,29 @@
 
 #include "cfg_production.hpp"
 
+#include <fmt/format.h>
+
 namespace cyy::computation {
 
   bool CFG_production::is_epsilon() const { return body.empty(); }
 
-  void CFG_production::print(std::ostream &os, const ALPHABET &alphabet) const {
-    os << head << " -> ";
-    print_body(os, alphabet);
-    os << '\n';
+  std::string CFG_production::to_string(const ALPHABET &alphabet) const {
+    return fmt::format("{} -> {}\n", head, body_to_string(alphabet));
   }
-  void CFG_production::print_body(std::ostream &os,
-                                  const ALPHABET &alphabet) const {
+
+  void CFG_production::print(std::ostream &os, const ALPHABET &alphabet) const {
+    os << to_string(alphabet);
+  }
+  std::string CFG_production::body_to_string(const ALPHABET &alphabet) const {
     if (body.empty()) {
-      os << "'epsilon'";
-    } else {
-      for (const auto &grammal_symbol : body) {
-        grammal_symbol.print(os, alphabet);
-        os << ' ';
-      }
+      return "'epsilon'";
     }
+    std::stringstream ss;
+    for (const auto &grammal_symbol : body) {
+      ss << grammal_symbol.to_string(alphabet);
+      ss << ' ';
+    }
+    return ss.str();
   }
   std::string CFG_production::MMA_draw(
       const ALPHABET &alphabet, bool emphasize_head,

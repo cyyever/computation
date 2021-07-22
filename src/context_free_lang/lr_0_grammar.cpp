@@ -4,10 +4,9 @@
 
 #include "lr_0_grammar.hpp"
 
-#include <iostream>
-#include <sstream>
+#include <fmt/format.h>
 
-#include "../exception.hpp"
+#include "exception.hpp"
 
 namespace cyy::computation {
   void LR_0_grammar::construct_parsing_table() const {
@@ -20,11 +19,9 @@ namespace cyy::computation {
         // conflict
         auto it = reduction_table.find(state);
         if (it != reduction_table.end()) {
-          std::ostringstream os;
-          os << "state " << state << " with production ";
-          it->second.print(os, get_alphabet());
-          os << " conflict with " << item.get_head();
-          throw cyy::computation::exception::no_LR_grammar(os.str());
+          throw cyy::computation::exception::no_LR_grammar(fmt::format(
+              "state {} with production {} conflict with {}", state,
+              it->second.to_string(get_alphabet()), item.get_head()));
         }
         reduction_table.emplace(state, item.get_production());
       }

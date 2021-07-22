@@ -33,10 +33,10 @@ namespace cyy::computation {
               // not LL1
               if (!has_inserted) {
                 std::cerr << fmt::format(
-                    "follow terminal {} confliction for production:\n ",
-                    alphabet->to_string(follow_terminal));
-                CFG_production(it2->first.second, it2->second)
-                    .print(std::cerr, *alphabet);
+                    "follow terminal {} confliction for production:\n {}",
+                    alphabet->to_string(follow_terminal),
+                    CFG_production(it2->first.second, it2->second)
+                        .to_string(*alphabet));
                 throw cyy::computation::exception::no_LL_grammar("");
               }
             }
@@ -48,12 +48,12 @@ namespace cyy::computation {
           // not LL1
           if (!has_inserted) {
             std::cerr << fmt::format(
-                "first terminal {} confliction for production:\n",
-                alphabet->to_string(terminal));
-            CFG_production(it->first.second, it->second)
-                .print(std::cerr, *alphabet);
-            std::cerr << " and production:\n";
-            CFG_production(head, body).print(std::cerr, *alphabet);
+                "first terminal {} confliction for production:\n{}\n and "
+                "production:\n{}",
+                alphabet->to_string(terminal),
+                CFG_production(it->first.second, it->second)
+                    .to_string(*alphabet),
+                CFG_production(head, body).to_string(*alphabet));
             throw cyy::computation::exception::no_LL_grammar("");
           }
         }
@@ -85,9 +85,9 @@ namespace cyy::computation {
       if (top_symbol.is_terminal()) {
         auto s = top_symbol.get_terminal();
         if (terminal != s) {
-          std::cerr << "symbol does not match terminal:"
-                    << alphabet->to_string(terminal) << ' '
-                    << alphabet->to_string(s) << std::endl;
+          std::cerr << fmt::format("symbol does not match terminal:{} {}\n",
+                                   alphabet->to_string(terminal),
+                                   alphabet->to_string(s));
           return false;
         }
         terminal_it++;

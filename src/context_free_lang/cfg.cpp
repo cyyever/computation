@@ -58,7 +58,7 @@ namespace cyy::computation {
           continue;
         }
         for (auto const &body : bodies) {
-          CFG_production(head, body).print(os, *cfg.alphabet);
+          os << CFG_production(head, body).to_string(*cfg.alphabet);
         }
       }
     }
