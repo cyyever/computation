@@ -59,7 +59,7 @@ namespace cyy::computation {
     for (auto const dk_state : state_symbol_set) {
       // shift
       if (!dfa.is_final_state(dk_state)) {
-        for (auto const input_symbol : *alphabet) {
+        for (auto const input_symbol : alphabet->get_view()) {
           for (auto from_state : {looping_state, accept_state}) {
             transition_function.check_stack_and_action(
                 from_state, {input_symbol, dk_state},

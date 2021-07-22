@@ -8,7 +8,6 @@
 #pragma once
 
 #include <functional>
-#include <iterator>
 #include <limits>
 #include <memory>
 #include <ranges>
@@ -22,48 +21,6 @@
 namespace cyy::computation {
 
   class ALPHABET {
-
-  public:
-    class iterator final {
-    public:
-      using iterator_category = std::forward_iterator_tag;
-      using value_type = symbol_type;
-      using difference_type = ptrdiff_t;
-      using pointer = value_type *;
-      using reference = const value_type &;
-      iterator(const ALPHABET *ptr_, size_t index_)
-          : ptr(ptr_), index(index_) {}
-      iterator(const iterator &) = default;
-      iterator &operator=(const iterator &) = default;
-
-      iterator(iterator &&) noexcept = default;
-      iterator &operator=(iterator &&) noexcept = default;
-      ~iterator() = default;
-
-      bool operator==(const iterator &other) const = default;
-      iterator &operator++() {
-        ++index;
-        return *this;
-      }
-      iterator operator++(int) {
-        index++;
-        return *this;
-      }
-      iterator &operator+=(difference_type rhs) {
-        index = static_cast<size_t>(static_cast<difference_type>(index) + rhs);
-        return *this;
-      }
-      iterator operator+(difference_type rhs) {
-        iterator new_it(*this);
-        new_it += rhs;
-        return new_it;
-      }
-      value_type operator*() const { return ptr->get_symbol(index); }
-
-    private:
-      const ALPHABET *ptr;
-      size_t index;
-    };
 
   public:
     explicit ALPHABET(std::string_view name_) { set_name(name_); }
@@ -80,9 +37,6 @@ namespace cyy::computation {
              std::ranges::views::transform(
                  [this](auto idx) { return get_symbol(idx); });
     }
-
-    iterator begin() const noexcept { return iterator(this, 0); }
-    iterator end() const noexcept { return iterator(this, size()); }
 
     symbol_type get_min_symbol() const { return get_symbol(0); }
     symbol_type get_max_symbol() const;

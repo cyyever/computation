@@ -53,7 +53,7 @@ namespace cyy::computation {
     }
 
     alphabet = std::make_shared<endmarked_alphabet>(alphabet);
-    for (auto s : *alphabet) {
+    for (auto s : alphabet->get_view()) {
       transition_function[new_accept_state][{s}] = {reject_state_opt.value()};
     }
     replace_final_states(new_accept_state);
@@ -125,7 +125,7 @@ namespace cyy::computation {
         // push
         assert(!situation.use_input());
         assert(!situation.has_pop());
-        for (auto old_stack_symbol : *new_stack_alphabet) {
+        for (auto old_stack_symbol : new_stack_alphabet->get_view()) {
           auto new_state = dpda_finite_automaton.add_new_state();
           // check stack_symbol
           dpda_transition_function[from_state][{{}, old_stack_symbol}] = {
@@ -173,7 +173,7 @@ namespace cyy::computation {
         }
         assert(!action.has_push());
         assert(!situation.has_pop());
-        for (auto stack_symbol : *new_stack_alphabet) {
+        for (auto stack_symbol : new_stack_alphabet->get_view()) {
           dpda_transition_function[from_state]
                                   [{situation.input_symbol, stack_symbol}] = {
                                       action.state, stack_symbol};
@@ -201,7 +201,7 @@ namespace cyy::computation {
         assert(!action.has_push());
         assert(!situation.has_pop());
         auto parallel_state = add_parallel_state(action.state);
-        for (auto stack_symbol : *new_stack_alphabet) {
+        for (auto stack_symbol : new_stack_alphabet->get_view()) {
           if (!stack_alphabet_of_state_set->contain(stack_symbol)) {
             continue;
           }
@@ -409,7 +409,7 @@ namespace cyy::computation {
           new_transitions[next_state][{}] = std::move(action);
           continue;
         }
-        for (auto stack_symbol : *stack_alphabet) {
+        for (auto stack_symbol : stack_alphabet->get_view()) {
           new_transfers[std::move(situation)] = {next_state, stack_symbol};
           new_transitions[next_state][{{}, stack_symbol}] = std::move(action);
         }
@@ -449,14 +449,14 @@ namespace cyy::computation {
                                                  {state_of_clearing_stack});
     }
 
-    for (auto const used_stack_symbol : *stack_alphabet) {
+    for (auto const used_stack_symbol : stack_alphabet->get_view()) {
       transition_function[state_of_clearing_stack][{{}, used_stack_symbol}] = {
           state_of_clearing_stack};
     }
     auto new_accept_state = add_new_state();
     transition_function[state_of_clearing_stack][{{}, ALPHABET::endmarker}] = {
         new_accept_state};
-    for (auto s : *alphabet) {
+    for (auto s : alphabet->get_view()) {
       transition_function[new_accept_state][{s}] = {reject_state_opt.value()};
     }
     replace_final_states(new_accept_state);
@@ -483,7 +483,7 @@ namespace cyy::computation {
           new_transfers.emplace(
               situation, action_type{new_state, placeholder_stack_symbol});
           // pop
-          for (auto stack_symbol : *stack_alphabet) {
+          for (auto stack_symbol : stack_alphabet->get_view()) {
             new_transition[new_state][{{}, stack_symbol}] = std::move(action);
           }
           continue;

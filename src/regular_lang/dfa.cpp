@@ -151,7 +151,7 @@ namespace cyy::computation {
         }
       }
 
-      for (auto a : *alphabet) {
+      for (auto a : alphabet->get_view()) {
         auto next_state = go(*(groups[i].begin()), a).value();
         minimize_DFA_transition_function[{i, a}] = state_location[next_state];
       }
@@ -201,7 +201,7 @@ namespace cyy::computation {
       if (is_final_state(s1) && rhs.is_final_state(s2)) {
         result_final_states.insert(result_state);
       }
-      for (auto a : *alphabet) {
+      for (auto a : alphabet->get_view()) {
         auto it =
             state_set_product.find({go(s1, a).value(), rhs.go(s2, a).value()});
         result_transition_function[{result_state, a}] = it->second;

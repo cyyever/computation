@@ -56,7 +56,7 @@ namespace cyy::computation {
     std::vector iteraters{nfa_and_dfa_states.begin()};
     for (state_type dfa_state = 0; dfa_state < next_state; dfa_state++) {
       auto const &[subset, state] = *iteraters[dfa_state];
-      for (auto a : *alphabet) {
+      for (auto a : alphabet->get_view()) {
         auto res = go(subset, a);
         auto [it, has_emplaced] =
             nfa_and_dfa_states.insert({std::move(res), next_state});

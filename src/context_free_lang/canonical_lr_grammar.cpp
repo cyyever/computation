@@ -39,7 +39,7 @@ namespace cyy::computation {
     auto reject_dfa_state = dk_1_dfa.get_reject_state();
 
     std::unordered_map<symbol_type, state_type> reduce_states;
-    for (auto const input_symbol : *dpda_alphabet) {
+    for (auto const input_symbol : dpda_alphabet->get_view()) {
       auto reduce_state = dpda_finite_automaton.add_new_state();
       reduce_states[input_symbol] = reduce_state;
       transition_function[lookahead_state][{input_symbol}] = {reduce_state};
@@ -101,7 +101,7 @@ namespace cyy::computation {
     }
 
     dpda_finite_automaton.replace_final_states(accept_state);
-    for (auto const input_symbol : *dpda_alphabet) {
+    for (auto const input_symbol : dpda_alphabet->get_view()) {
       transition_function[accept_state][{input_symbol}] = {
           reduce_states[input_symbol]};
     }

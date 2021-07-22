@@ -25,7 +25,7 @@ namespace cyy::computation {
     return get_symbol(size() - 1);
   }
   bool ALPHABET::contain(const ALPHABET &subset) const {
-    for (auto s : subset) {
+    for (auto s : subset.get_view()) {
       if (!contain(s)) {
         return false;
       }

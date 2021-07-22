@@ -148,7 +148,7 @@ namespace cyy::computation {
         {'\\', "symbol"},
     };
 
-    for (auto a : *alphabet) {
+    for (auto a : alphabet->get_view()) {
       productions["symbol"].emplace(CFG_production::body_type{a});
 
       if (!operators.contains(a)) {
@@ -162,7 +162,7 @@ namespace cyy::computation {
     }
 
     std::set<symbol_type> symbol_set;
-    for (auto s : *alphabet) {
+    for (auto s : alphabet->get_view()) {
       symbol_set.insert(s);
     }
 
@@ -378,7 +378,7 @@ namespace cyy::computation {
 
     std::set<symbol_type> complemented_symbol_set;
 
-    for (auto a : *alphabet) {
+    for (auto a : alphabet->get_view()) {
       if (!symbol_set.contains(a)) {
         complemented_symbol_set.insert(a);
       }

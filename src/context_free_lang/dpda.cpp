@@ -198,7 +198,7 @@ namespace cyy::computation {
     }
 
     transition_function.make_reject_state(new_reject_state, alphabet);
-    for (auto a : *alphabet) {
+    for (auto a : alphabet->get_view()) {
       transition_function[new_accept_state][{a}] = {new_reject_state};
     }
 
@@ -253,7 +253,7 @@ namespace cyy::computation {
                                                  can_reach_final);
           continue;
         }
-        for (auto stack_symbol : *stack_alphabet) {
+        for (auto stack_symbol : stack_alphabet->get_view()) {
           looping_situations[from_state].emplace(stack_symbol, can_reach_final);
         }
       }
@@ -462,8 +462,8 @@ namespace cyy::computation {
                                  std::to_string(state));
       }
       auto const &state_transition_function = it->second;
-      for (auto input_symbol : *alphabet) {
-        for (auto stack_symbol : *stack_alphabet) {
+      for (auto input_symbol : alphabet->get_view()) {
+        for (auto stack_symbol : stack_alphabet->get_view()) {
           size_t cnt = 0;
           cnt += state_transition_function.count({});
           cnt += state_transition_function.count({input_symbol});

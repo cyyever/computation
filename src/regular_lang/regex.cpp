@@ -34,7 +34,7 @@ namespace cyy::computation {
       }
       flags[i] = true;
 
-      for (auto a : *alphabet) {
+      for (auto a : alphabet->get_view()) {
         std::set<uint64_t> follow_pos_set;
         for (auto const pos : position_sets[i]) {
           if (position_to_symbol[pos] == a) {

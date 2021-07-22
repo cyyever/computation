@@ -86,7 +86,7 @@ namespace cyy::computation {
                                 const action_type &action,
                                 const ALPHABET &stack_alphabet_) {
         auto &transfers = operator[](from_state);
-        for (auto stack_symbol : stack_alphabet_) {
+        for (auto stack_symbol : stack_alphabet_.get_view()) {
           transfers[{{}, stack_symbol}] = action;
         }
       }
@@ -105,7 +105,7 @@ namespace cyy::computation {
       }
       void make_reject_state(state_type s, ALPHABET_ptr input_alphabet_) {
         auto &transfers = operator[](s);
-        for (auto a : *input_alphabet_) {
+        for (auto a : input_alphabet_->get_view()) {
           transfers[{a}] = {s};
         }
       }
