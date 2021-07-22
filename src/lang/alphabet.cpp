@@ -53,13 +53,6 @@ namespace cyy::computation {
     factory[alphabet->get_name()] = alphabet;
   }
 
-  void print_symbol_string(std::ostream &os, const symbol_string &str,
-                           const ALPHABET &alphabet) {
-    for (auto const &c : str) {
-      os << alphabet.to_string(c);
-    }
-  }
-
   void ALPHABET::register_factory() {
     if (!factory.empty()) {
       return;

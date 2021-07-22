@@ -42,7 +42,6 @@ namespace cyy::computation {
     bool is_epsilon() const;
 
     std::string to_string(const ALPHABET &alphabet) const;
-    void print(std::ostream &os, const ALPHABET &alphabet) const;
 
     auto const &get_head() const { return head; }
     auto const &get_body() const { return body; }

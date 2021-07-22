@@ -17,9 +17,6 @@ namespace cyy::computation {
     return fmt::format("{} -> {}\n", head, body_to_string(alphabet));
   }
 
-  void CFG_production::print(std::ostream &os, const ALPHABET &alphabet) const {
-    os << to_string(alphabet);
-  }
   std::string CFG_production::body_to_string(const ALPHABET &alphabet) const {
     if (body.empty()) {
       return "'epsilon'";

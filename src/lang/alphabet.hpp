@@ -121,6 +121,4 @@ namespace cyy::computation {
            });
   }
 
-  void print_symbol_string(std::ostream &os, const symbol_string &str,
-                           const ALPHABET &alphabet);
 } // namespace cyy::computation
