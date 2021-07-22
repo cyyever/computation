@@ -19,7 +19,7 @@ namespace cyy::computation {
     }
 
     for (auto &[head, bodies] : productions) {
-      std::set<CFG_production::body_type> new_bodies;
+      production_body_set_type new_bodies;
       for (auto const &body : bodies) {
         if (body.empty()) {
           continue;
@@ -49,15 +49,10 @@ namespace cyy::computation {
           }
           std::ranges::move(split_tmp, std::back_inserter(tmp));
         }
-        new_bodies.insert(std::move_iterator(tmp.begin()),
-                          std::move_iterator(tmp.end()));
+        std::ranges::move(tmp, std::inserter(new_bodies, new_bodies.begin()));
       }
-      new_bodies.insert(std::move_iterator(bodies.begin()),
-                        std::move_iterator(bodies.end()));
-      std::erase_if(new_bodies, [](auto const &body) { return body.empty(); });
-
-      bodies = {std::move_iterator(new_bodies.begin()),
-                std::move_iterator(new_bodies.end())};
+      bodies.merge(std::move(new_bodies));
+      std::erase_if(bodies, [](auto const &body) { return body.empty(); });
     }
 
     if (nullable_nonterminals.contains(start_symbol)) {

@@ -226,35 +226,29 @@ namespace cyy::computation {
     auto const eliminate_immediate_left_recursion =
         [this](const nonterminal_type &head) {
           auto new_head = get_new_head(head);
-          std::vector<CFG_production::body_type> new_bodies;
-
           auto &bodies = productions[head];
-          std::vector<CFG_production::body_type> old_bodies{
-              std::move_iterator(bodies.begin()),
-              std::move_iterator(bodies.end())};
+          production_body_set_type new_bodies;
 
-          for (auto &body : old_bodies) {
-            if (body.empty()) {
-              continue;
-            }
-            if (body.front() == head) {
+          modify_body_set(bodies, [&](auto &body) {
+            if (!body.empty() && body.front() == head) {
               body.erase(body.begin());
               body.emplace_back(new_head);
-              new_bodies.emplace_back(std::move(body));
+              new_bodies.emplace(std::move(body));
               body.clear();
             }
-          }
+            return true;
+          });
 
-          if (!new_bodies.empty()) {
-            new_bodies.emplace_back();
-            productions[new_head] = {std::move_iterator(new_bodies.begin()),
-                                     std::move_iterator(new_bodies.end())};
-            for (auto &body : old_bodies) {
-              body.emplace_back(new_head);
-            }
+          if (new_bodies.empty()) {
+            return;
           }
-          bodies = {std::move_iterator(old_bodies.begin()),
-                    std::move_iterator(old_bodies.end())};
+          new_bodies.emplace();
+          productions[new_head] = std::move(new_bodies);
+
+          modify_body_set(bodies, [&](auto &body) {
+            body.emplace_back(new_head);
+            return true;
+          });
         };
 
     for (size_t i = 0; i < old_heads.size(); i++) {
@@ -292,8 +286,9 @@ namespace cyy::computation {
       if (old_bodies.size() < 2) {
         return {};
       }
-      std::vector<CFG_production::body_type> bodies{old_bodies.begin(),
-                                                    old_bodies.end()};
+      std::vector<CFG_production::body_type> bodies;
+      std::ranges::move(old_bodies, std::back_inserter(bodies));
+      old_bodies.clear();
       auto common_prefix = bodies.front();
       std::vector<size_t> indexes{0};
       for (size_t j = 1; j < bodies.size(); j++) {
@@ -329,12 +324,11 @@ namespace cyy::computation {
                      body.end());
           body.emplace_back(new_head);
         }
-        old_bodies = {std::move_iterator(bodies.begin()),
-                      std::move_iterator(bodies.end())};
+        std::ranges::move(bodies,
+                          std::inserter(old_bodies, old_bodies.begin()));
         return new_head;
       }
-      old_bodies = {std::move_iterator(bodies.begin()),
-                    std::move_iterator(bodies.end())};
+      std::ranges::move(bodies, std::inserter(old_bodies, old_bodies.begin()));
       return {};
     };
 

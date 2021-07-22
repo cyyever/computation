@@ -125,9 +125,7 @@ namespace cyy::computation {
             sub_groups.push_back({state});
           }
         }
-        new_groups.insert(new_groups.end(),
-                          std::move_iterator(sub_groups.begin()),
-                          std::move_iterator(sub_groups.end()));
+        std::ranges::move(sub_groups, std::back_inserter(new_groups));
       }
       if (!has_new_group) {
         break;
