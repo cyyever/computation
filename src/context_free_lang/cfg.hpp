@@ -80,7 +80,7 @@ namespace cyy::computation {
 
     auto const &get_productions() const &noexcept { return productions; }
     auto &get_productions() &&noexcept { return productions; }
-    const std::set<CFG_production::body_type> &
+    const production_body_set_type &
     get_bodies(const nonterminal_type &head) const;
 
     terminal_set_type get_terminals() const;

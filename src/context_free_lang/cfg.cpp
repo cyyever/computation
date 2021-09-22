@@ -561,7 +561,7 @@ namespace cyy::computation {
     cmd.push_back(']');
     return cmd;
   }
-  const std::set<CFG_production::body_type> &
+  const CFG::production_body_set_type &
   CFG::get_bodies(const nonterminal_type &head) const {
     auto it = productions.find(head);
     if (it == productions.end()) {
