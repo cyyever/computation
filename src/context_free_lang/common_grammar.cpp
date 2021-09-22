@@ -19,11 +19,9 @@ namespace cyy::computation {
     productions["T"] = {
         {"T", U'*', "F"},
         {"F"},
+        {'-', "F"},
     };
-    productions["F"] = {
-        {U'(', "E", U')'}, {id} // i for id
-    };
-
+    productions["F"] = {{U'(', "E", U')'}, {id}};
     grammar = std::make_shared<SLR_grammar>("common_tokens", "E", productions);
     return grammar;
   }
