@@ -4,13 +4,11 @@
 #include "lang/common_tokens.hpp"
 namespace cyy::computation {
 
-  std::shared_ptr<SLR_grammar> get_expression_grammar() {
-    static std::shared_ptr<SLR_grammar> grammar;
-    if (grammar) {
-      return grammar;
-    }
-
+  CFG::production_set_type get_expression_productions() {
     CFG::production_set_type productions;
+    if (!productions.empty()) {
+      return productions;
+    }
     auto id = static_cast<CFG::terminal_type>(common_token::id);
     productions["E"] = {
         {"E", U'+', "T"},
@@ -22,7 +20,11 @@ namespace cyy::computation {
         {'-', "F"},
     };
     productions["F"] = {{U'(', "E", U')'}, {id}};
-    grammar = std::make_shared<SLR_grammar>("common_tokens", "E", productions);
+    return productions;
+  }
+  std::shared_ptr<SLR_grammar> get_expression_grammar() {
+    static std::shared_ptr<SLR_grammar> grammar = std::make_shared<SLR_grammar>(
+        "common_tokens", "E", get_expression_productions());
     return grammar;
   }
 
