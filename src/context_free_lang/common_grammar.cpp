@@ -12,6 +12,7 @@ namespace cyy::computation {
     auto id = static_cast<CFG::terminal_type>(common_token::id);
     productions["E"] = {
         {"E", U'+', "T"},
+        {"E", U'-', "T"},
         {"T"},
     };
     productions["T"] = {

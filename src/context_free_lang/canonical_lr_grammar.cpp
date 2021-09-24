@@ -35,7 +35,7 @@ namespace cyy::computation {
     transition_function[dpda_finite_automaton.get_start_state()][{}] = {
         lookahead_state, dfa.get_start_state()};
 
-    auto goto_table = dk_1_dfa.get_goto_table();
+    auto dfa_goto_table = dk_1_dfa.get_goto_table();
     auto reject_dfa_state = dk_1_dfa.get_reject_state();
 
     std::unordered_map<symbol_type, state_type> reduce_states;
@@ -55,8 +55,8 @@ namespace cyy::computation {
             !completed_item_ptr->contain_lookahead_symbol(input_symbol)) {
 
           state_type to_dfa_state = reject_dfa_state;
-          auto it = goto_table.find({dk_state, input_symbol});
-          if (it != goto_table.end()) {
+          auto it = dfa_goto_table.find({dk_state, input_symbol});
+          if (it != dfa_goto_table.end()) {
             to_dfa_state = it->second;
           }
 
@@ -94,7 +94,7 @@ namespace cyy::computation {
           }
           transition_function.check_stack_and_action(
               from_state, {{}, prev_dk_state},
-              {destination_state, goto_table[{prev_dk_state, head}]},
+              {destination_state, dfa_goto_table[{prev_dk_state, head}]},
               dpda_finite_automaton);
         }
       }
@@ -113,9 +113,7 @@ namespace cyy::computation {
             canonical_LR_grammar::goto_table_type>
   canonical_LR_grammar::get_collection() const {
     DK_1_DFA dk_1_dfa(*this);
-    auto const &collection = dk_1_dfa.get_LR_1_item_set_collection();
-    auto goto_table = dk_1_dfa.get_goto_table();
-    return {collection, goto_table};
+    return {dk_1_dfa.get_LR_1_item_set_collection(), dk_1_dfa.get_goto_table()};
   }
 
 } // namespace cyy::computation
