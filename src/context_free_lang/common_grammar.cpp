@@ -17,6 +17,7 @@ namespace cyy::computation {
     };
     productions["T"] = {
         {"T", U'*', "F"},
+        {"T", U'/', "F"},
         {"F"},
         {'-', "F"},
     };
