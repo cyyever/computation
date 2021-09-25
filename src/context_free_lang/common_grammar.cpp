@@ -10,6 +10,11 @@ namespace cyy::computation {
       return productions;
     }
     auto id = static_cast<CFG::terminal_type>(common_token::id);
+    productions["L"] = {
+        {"L", U'&', U'&', "E"},
+        {"L", U'|', U'|', "E"},
+        {"E"},
+    };
     productions["E"] = {
         {"E", U'+', "T"},
         {"E", U'-', "T"},
