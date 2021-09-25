@@ -21,11 +21,7 @@ namespace cyy::computation {
         {"T"},
     };
     productions["T"] = {
-        {"T", U'*', "F"},
-        {"T", U'/', "F"},
-        {"F"},
-        {'-', "F"},
-        {'!', "F"},
+        {"T", U'*', "F"}, {"T", U'/', "F"}, {"F"}, {'-', "F"}, {'!', "F"},
     };
     productions["F"] = {{U'(', "E", U')'}, {id}};
     return productions;
