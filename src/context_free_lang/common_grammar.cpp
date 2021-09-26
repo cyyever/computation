@@ -10,9 +10,9 @@ namespace cyy::computation {
       return productions;
     }
     auto id = static_cast<CFG::terminal_type>(common_token::id);
-    productions["L"] = {
-        {"L", U'&', U'&', "E"},
-        {"L", U'|', U'|', "E"},
+    productions["Logical"] = {
+        {"Logical", U'&', U'&', "E"},
+        {"Logical", U'|', U'|', "E"},
         {"E"},
     };
     productions["E"] = {
@@ -23,7 +23,8 @@ namespace cyy::computation {
     productions["T"] = {
         {"T", U'*', "F"}, {"T", U'/', "F"}, {"F"}, {'-', "F"}, {'!', "F"},
     };
-    productions["F"] = {{U'(', "E", U')'}, {id}};
+    productions["F"] = {{U'(', "E", U')'}, {id}, {"Array"}};
+    productions["Array"] = {{id, '[', "E", ']'}, {"Array", '[', "E", ']'}};
     return productions;
   }
   std::shared_ptr<SLR_grammar> get_expression_grammar() {
