@@ -10,6 +10,7 @@ namespace cyy::computation {
       return productions;
     }
     auto id = static_cast<CFG::terminal_type>(common_token::id);
+    auto number = static_cast<CFG::terminal_type>(common_token::number);
     productions["Logical"] = {
         {"Logical", U'&', U'&', "E"},
         {"Logical", U'|', U'|', "E"},
@@ -23,7 +24,7 @@ namespace cyy::computation {
     productions["T"] = {
         {"T", U'*', "F"}, {"T", U'/', "F"}, {"F"}, {'-', "F"}, {'!', "F"},
     };
-    productions["F"] = {{U'(', "E", U')'}, {id}, {"Array"}};
+    productions["F"] = {{U'(', "E", U')'}, {id}, {"Array"}, {number}};
     productions["Array"] = {{id, '[', "E", ']'}, {"Array", '[', "E", ']'}};
     return productions;
   }
