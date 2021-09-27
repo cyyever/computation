@@ -24,8 +24,8 @@ namespace cyy::computation {
     productions["T"] = {
         {"T", U'*', "F"}, {"T", U'/', "F"}, {"F"}, {'-', "F"}, {'!', "F"},
     };
-    productions["F"] = {{U'(', "E", U')'}, {id}, {"Array"}, {number}};
-    productions["Array"] = {{id, '[', "E", ']'}, {"Array", '[', "E", ']'}};
+    productions["F"] = {{U'(', "E", U')'}, {id}, {"array"}, {number}};
+    productions["array"] = {{id, '[', "E", ']'}, {"array", '[', "E", ']'}};
     return productions;
   }
   std::shared_ptr<SLR_grammar> get_expression_grammar() {
