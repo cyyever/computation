@@ -8,10 +8,12 @@ file(GLOB_RECURSE SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src/**/*.cpp)
 
 find_package(Boost REQUIRED)
 find_package(fmt REQUIRED)
+find_package(range-v3 REQUIRED)
 
 add_library(MyComputationLib ${SOURCE})
 
 target_link_libraries(MyComputationLib PUBLIC Boost::headers)
+target_link_libraries(MyComputationLib PUBLIC range-v3::range-v3)
 target_link_libraries(MyComputationLib PRIVATE fmt::fmt)
 
 target_include_directories(
