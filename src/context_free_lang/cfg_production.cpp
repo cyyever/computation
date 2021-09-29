@@ -21,12 +21,12 @@ namespace cyy::computation {
     if (body.empty()) {
       return "'epsilon'";
     }
-    std::stringstream ss;
+    std::string str;
     for (const auto &grammal_symbol : body) {
-      ss << grammal_symbol.to_string(alphabet);
-      ss << ' ';
+      str+= grammal_symbol.to_string(alphabet);
+      str.push_back(' ');
     }
-    return ss.str();
+    return str;
   }
   std::string CFG_production::MMA_draw(
       const ALPHABET &alphabet, bool emphasize_head,
