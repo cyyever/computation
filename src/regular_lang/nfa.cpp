@@ -148,7 +148,7 @@ namespace cyy::computation {
         auto &unstable_epsilon_closure = epsilon_closures[sorted_state];
         std::ranges::set_difference(unstable_epsilon_closure,
                                     prev_epsilon_closure,
-                                    std ::inserter(diff, diff.begin()));
+                                    std::inserter(diff, diff.begin()));
 
         if (!diff.empty()) {
           prev_epsilon_closure.merge(std::move(diff));
