@@ -4,11 +4,10 @@
  * \brief 测试cfg
  */
 #include <doctest/doctest.h>
-#define private public
 
-#include "../../src/context_free_lang/cfg.hpp"
-#include "../../src/context_free_lang/model_transform.hpp"
-#include "../../src/lang/common_tokens.hpp"
+#include "context_free_lang/cfg.hpp"
+#include "context_free_lang/model_transform.hpp"
+#include "lang/common_tokens.hpp"
 
 using namespace cyy::computation;
 TEST_CASE("eliminate_useless_symbols") {

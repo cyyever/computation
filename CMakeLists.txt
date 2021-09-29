@@ -20,10 +20,6 @@ target_include_directories(
   MyComputationLib PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
                           $<INSTALL_INTERFACE:include/cyy/computation>)
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-  add_compile_definitions(private=public)
-endif()
-
 # test
 add_subdirectory(test)
 
