@@ -158,7 +158,6 @@ TEST_CASE("endmarked DPDA") {
                                   {
                                       {{}, {2}},
                                   }}});
-      empty_dpda.normalize_transitions();
       reverted_dpda = empty_dpda.to_DPDA();
       reverted_dpda.normalize();
       SUBCASE("recognize") {
