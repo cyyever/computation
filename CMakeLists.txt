@@ -12,6 +12,11 @@ find_package(range-v3 REQUIRED)
 
 add_library(MyComputationLib ${SOURCE})
 
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  find_package(libcxx REQUIRED)
+  target_link_libraries(MyComputationLib PRIVATE libcxx::libcxx)
+endif()
+
 target_link_libraries(MyComputationLib PUBLIC Boost::headers)
 target_link_libraries(MyComputationLib PUBLIC range-v3::range-v3)
 target_link_libraries(MyComputationLib PRIVATE fmt::fmt)
