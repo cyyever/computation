@@ -9,11 +9,11 @@
 
 #include <algorithm>
 #include <cassert>
-#include <iterator>
 #include <sstream>
 #include <vector>
 
-#include "../util.hpp"
+#include <cyy/algorithm/graph/algorithm.hpp>
+#include <cyy/algorithm/graph/graph.hpp>
 
 namespace cyy::computation {
 
@@ -112,69 +112,29 @@ namespace cyy::computation {
       return it->second;
     }
 
-    std::unordered_map<state_type, state_set_type> dependency;
-    state_set_type unstable_states{s};
-    std::vector<state_type> stack{s};
-    for (size_t i = 0; i < stack.size(); i++) {
-      auto unstable_state = stack[i];
-      auto it2 = epsilon_transition_function.find(unstable_state);
-      if (it2 == epsilon_transition_function.end()) {
-        continue;
-      }
-
-      for (auto next_state : it2->second) {
-        auto it3 = epsilon_closures.find(next_state);
-        if (it3 != epsilon_closures.end()) {
-          epsilon_closures[unstable_state].merge(state_set_type(it3->second));
-        } else {
-          if (unstable_states.insert(next_state).second) {
-            stack.push_back(next_state);
-          }
-          dependency[next_state].insert(unstable_state);
-        }
-      }
+    if (!epsilon_transition_function.contains(s)) {
+      epsilon_closures[s].insert(s);
+      return epsilon_closures[s];
     }
 
-    for (auto unstable_state : unstable_states) {
-      epsilon_closures[unstable_state].insert(unstable_state);
-    }
-
-    auto [sorted_states, remain_dependency] = topological_sort(dependency);
-
-    for (auto sorted_state : sorted_states) {
-      for (auto prev_state : dependency[sorted_state]) {
-        state_set_type diff;
-        auto &prev_epsilon_closure = epsilon_closures[prev_state];
-        auto &unstable_epsilon_closure = epsilon_closures[sorted_state];
-        std::ranges::set_difference(unstable_epsilon_closure,
-                                    prev_epsilon_closure,
-                                    std::inserter(diff, diff.begin()));
-
-        if (!diff.empty()) {
-          prev_epsilon_closure.merge(std::move(diff));
-        }
-      }
-      unstable_states.erase(sorted_state);
-    }
-
-    while (!unstable_states.empty()) {
-      auto it2 = unstable_states.begin();
-      auto unstable_state = *it2;
-      unstable_states.erase(it2);
-      for (auto prev_state : remain_dependency[unstable_state]) {
-        state_set_type diff;
-        auto &prev_epsilon_closure = epsilon_closures[prev_state];
-        auto &unstable_epsilon_closure = epsilon_closures[unstable_state];
-        std::ranges::set_difference(unstable_epsilon_closure,
-                                    prev_epsilon_closure,
-                                    std::inserter(diff, diff.begin()));
-
-        if (!diff.empty()) {
-          prev_epsilon_closure.merge(std::move(diff));
-          unstable_states.insert(prev_state);
-        }
+    cyy::algorithm::directed_graph<state_type> epsilon_graph;
+    for (auto &[from_state, to_state_set] : epsilon_transition_function) {
+      for (auto to_state : to_state_set) {
+        epsilon_graph.add_edge({from_state, to_state});
       }
     }
+    auto s_index = epsilon_graph.get_vertex_index(s);
+    cyy::algorithm::recursive_depth_first_search<state_type>(
+        epsilon_graph, s_index, [this, &epsilon_graph](auto u, auto v) {
+          auto u_vertex = epsilon_graph.get_vertex(u);
+          auto v_vertex = epsilon_graph.get_vertex(v);
+          auto &closure = epsilon_closures[u_vertex];
+          auto &v_closure = epsilon_closures[v_vertex];
+          closure.insert(u_vertex);
+          v_closure.insert(v_vertex);
+          closure.merge(state_set_type(epsilon_closures[v_vertex]));
+        });
+
     return epsilon_closures[s];
   }
 
