@@ -108,6 +108,7 @@ namespace cyy::computation {
       }
       epsilon_transition_function[from_state].merge(end_states);
       epsilon_closures.clear();
+      epsilon_closure_refresh.clear();
     }
 
     bool recognize(symbol_string_view view) const;
@@ -131,6 +132,7 @@ namespace cyy::computation {
     transition_function_type transition_function;
     epsilon_transition_function_type epsilon_transition_function;
     mutable state_set_map_type epsilon_closures;
+    mutable state_set_type epsilon_closure_refresh;
   };
 
 } // namespace cyy::computation
