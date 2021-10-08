@@ -109,7 +109,7 @@ TEST_CASE("endmarked DPDA") {
     }
 
     SUBCASE("to DPDA") {
-      #if !defined(_MSC_VER)
+#if !defined(_MSC_VER)
       SUBCASE("normalize_functions") {
         endmarked_dpda.normalize_transitions();
         SUBCASE("recognize") {

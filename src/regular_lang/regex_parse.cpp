@@ -62,6 +62,7 @@ namespace cyy::computation {
   } // namespace
 
   /*
+     rexpr -> epsilon
      rexpr -> rterm rexpr'
      rexpr' -> '|' rterm rexpr'
      rexpr' -> epsilon
@@ -110,7 +111,7 @@ namespace cyy::computation {
                                            '?', '[', ']', '.',  '^', '-'};
 
     CFG::production_set_type productions;
-    productions["rexpr"] = {{"rterm", "rexpr'"}};
+    productions["rexpr"] = {{"rterm", "rexpr'"}, {}};
     productions["rexpr'"] = {{'|', "rterm", "rexpr'"}, {}};
     productions["rterm"] = {
         {"rfactor", "rterm'"},
@@ -276,6 +277,7 @@ namespace cyy::computation {
             node_stack.emplace_back(
                 std::make_shared<regex::basic_node>(symbol));
           }
+          return;
         }
 
         // rprimary -> '[' character-class ']'
@@ -300,6 +302,7 @@ namespace cyy::computation {
             node_stack.push_back(make_character_class(class_content));
             return;
           }
+          return;
         }
       }
       if (head == "closure-operator" && finish_production) {
@@ -344,6 +347,14 @@ namespace cyy::computation {
           node_stack.pop_back();
           node_stack.emplace_back(
               std::make_shared<regex::union_node>(left_node, right_node));
+        }
+      }
+
+      if (head == "rexpr") {
+        // rexpr-> epsilon
+        if (pos == 0 && body.empty()) {
+          node_stack.emplace_back(std::make_shared<regex::epsilon_node>());
+          return;
         }
       }
     });

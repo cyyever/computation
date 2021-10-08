@@ -16,7 +16,18 @@ using namespace cyy::computation;
 
 TEST_CASE("parse regex and to NFA") {
 
-  SUBCASE("basic case") {
+  SUBCASE("empty string") {
+    symbol_string expr = U"";
+    regex reg("ab_set", expr);
+    NFA nfa({0, 1}, "ab_set", 0,
+            {
+                {{0, 'a'}, {1}},
+            },
+            {0});
+    reg.to_CFG();
+  }
+
+  SUBCASE("one symbol") {
     symbol_string expr = U"a";
     regex reg("ab_set", expr);
 

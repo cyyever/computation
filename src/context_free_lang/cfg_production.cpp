@@ -23,7 +23,7 @@ namespace cyy::computation {
     }
     std::string str;
     for (const auto &grammal_symbol : body) {
-      str+= grammal_symbol.to_string(alphabet);
+      str += grammal_symbol.to_string(alphabet);
       str.push_back(' ');
     }
     return str;
