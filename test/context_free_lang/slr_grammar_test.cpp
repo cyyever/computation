@@ -15,7 +15,6 @@ TEST_CASE("SLR(1) parse") {
   SUBCASE("parse expression grammar") {
     auto id = static_cast<CFG::terminal_type>(common_token::id);
     auto grammar = get_expression_grammar();
-
     auto parse_tree =
         grammar->get_parse_tree(symbol_string{id, U'+', id, U'*', id});
     REQUIRE(parse_tree);

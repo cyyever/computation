@@ -3,15 +3,11 @@
  *
  * \brief 测试cfg
  */
-#if __has_include(<CppCoreCheck\Warnings.h>)
-#include <CppCoreCheck\Warnings.h>
-#pragma warning(disable : ALL_CPPCORECHECK_WARNINGS)
-#endif
 #include <doctest/doctest.h>
 
-#include "../../src/context_free_lang/ll_grammar.hpp"
-#include "../../src/context_free_lang/model_transform.hpp"
-#include "../../src/regular_lang/nfa.hpp"
+#include "context_free_lang/ll_grammar.hpp"
+#include "context_free_lang/model_transform.hpp"
+#include "regular_lang/nfa.hpp"
 
 using namespace cyy::computation;
 TEST_CASE("recognize NFA") {
@@ -34,7 +30,6 @@ TEST_CASE("recognize NFA") {
   SUBCASE("bb") { CHECK(nfa.recognize(U"bb")); }
   SUBCASE("ab") { CHECK(!nfa.recognize(U"ab")); }
 }
-
 TEST_CASE("NFA to DFA") {
   NFA nfa({0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, "ab_set", 0,
           {
