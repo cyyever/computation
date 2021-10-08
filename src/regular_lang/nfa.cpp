@@ -35,7 +35,6 @@ namespace cyy::computation {
     return res;
   }
   bool NFA::recognize(symbol_string_view view) const {
-    epsilon_closures.clear();
     auto s = get_epsilon_closure(get_start_state());
     for (auto const &symbol : view) {
       s = go(s, symbol);
@@ -107,12 +106,12 @@ namespace cyy::computation {
   }
 
   const NFA::state_set_type &NFA::get_epsilon_closure(state_type s) const {
-    auto it = epsilon_closures.find(s);
-    if (it != epsilon_closures.end()) {
-      return it->second;
+    if (epsilon_closure_refresh.contains(s)) {
+      return epsilon_closures[s];
     }
 
     if (!epsilon_transition_function.contains(s)) {
+      epsilon_closure_refresh.insert(s);
       epsilon_closures[s].insert(s);
       return epsilon_closures[s];
     }
@@ -124,16 +123,29 @@ namespace cyy::computation {
       }
     }
     auto s_index = epsilon_graph.get_vertex_index(s);
+    bool has_cycle = false;
+    state_set_type connect_component;
     cyy::algorithm::recursive_depth_first_search<state_type>(
-        epsilon_graph, s_index, [this, &epsilon_graph](auto u, auto v) {
+        epsilon_graph, s_index,
+        [this, &epsilon_graph, &has_cycle, &connect_component](auto u, auto v) {
           auto u_vertex = epsilon_graph.get_vertex(u);
+          connect_component.insert(u_vertex);
           auto v_vertex = epsilon_graph.get_vertex(v);
+          if (connect_component.contains(v_vertex)) {
+            has_cycle = true;
+          } else {
+            connect_component.insert(v_vertex);
+          }
           auto &closure = epsilon_closures[u_vertex];
           auto &v_closure = epsilon_closures[v_vertex];
           closure.insert(u_vertex);
           v_closure.insert(v_vertex);
           closure.merge(state_set_type(epsilon_closures[v_vertex]));
         });
+    if (!has_cycle) {
+      epsilon_closure_refresh.merge(connect_component);
+    }
+    epsilon_closure_refresh.insert(s);
 
     return epsilon_closures[s];
   }
