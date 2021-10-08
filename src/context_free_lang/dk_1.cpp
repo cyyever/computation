@@ -8,7 +8,6 @@
 
 namespace cyy::computation {
   DK_1_DFA::DK_1_DFA(const CFG &cfg) : DK_DFA_base(cfg) {
-    using state_set_type = NFA::state_set_type;
 
     std::unordered_map<LR_1_item, state_type> item_to_nfa_state_map;
     std::unordered_map<state_type, LR_1_item> NFA_state_to_item_map;

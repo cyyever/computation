@@ -107,6 +107,7 @@ namespace cyy::computation {
         }
       }
       epsilon_transition_function[from_state].merge(end_states);
+      epsilon_closures.clear();
     }
 
     bool recognize(symbol_string_view view) const;
