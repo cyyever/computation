@@ -16,7 +16,6 @@
 
 #include "../automaton/automaton.hpp"
 #include "../exception.hpp"
-#include "../hash.hpp"
 #include "../regular_lang/dfa.hpp"
 
 namespace cyy::computation {

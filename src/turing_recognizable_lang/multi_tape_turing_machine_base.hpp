@@ -8,7 +8,6 @@
 #include <array>
 
 #include "exception.hpp"
-#include "hash.hpp"
 #include "turing_machine_base.hpp"
 
 namespace cyy::computation {

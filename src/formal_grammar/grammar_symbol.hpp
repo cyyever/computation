@@ -15,7 +15,7 @@
 #include <iostream>
 #include <vector>
 
-#include "hash.hpp"
+#include <cyy/algorithm/hash.hpp>
 #include "lang/alphabet.hpp"
 
 namespace cyy::computation {

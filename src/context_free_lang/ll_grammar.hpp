@@ -10,7 +10,6 @@
 #include <functional>
 
 #include "cfg.hpp"
-#include "hash.hpp"
 
 namespace cyy::computation {
 

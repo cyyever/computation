@@ -12,7 +12,6 @@
 #include <boost/bimap.hpp>
 
 #include "dfa.hpp"
-#include "hash.hpp"
 
 namespace cyy::computation {
 

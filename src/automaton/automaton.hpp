@@ -14,8 +14,9 @@
 #include <unordered_map>
 
 #include <boost/dynamic_bitset.hpp>
+#include <cyy/algorithm/hash.hpp>
 
-#include "hash.hpp"
+
 #include "lang/alphabet.hpp"
 #include "lang/symbol.hpp"
 

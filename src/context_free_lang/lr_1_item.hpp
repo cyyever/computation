@@ -12,7 +12,6 @@
 #include <unordered_map>
 
 #include "cfg.hpp"
-#include "hash.hpp"
 #include "lr_0_item.hpp"
 
 namespace cyy::computation {
@@ -120,16 +119,3 @@ namespace cyy::computation {
 
 } // namespace cyy::computation
 
-/* namespace std { */
-/*   template <> struct hash<cyy::computation::LR_1_item_set> { */
-/*     size_t operator()(const cyy::computation::LR_1_item_set &x) const {
- */
-/*       return 0; */
-/*       /1* auto hash_value = *1/ */
-/*       /1*     ::std::hash<std::unordered_set<cyy::computation::LR_1_item>>()(
- * *1/ */
-/*       /1*         x.get_kernel_items()); *1/ */
-/*       /1* return hash_value; *1/ */
-/*     } */
-/*   }; */
-/* } // namespace std *1/ */

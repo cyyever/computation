@@ -12,7 +12,6 @@
 #include <unordered_map>
 
 #include "../automaton/automaton.hpp"
-#include "../hash.hpp"
 
 namespace cyy::computation {
 
