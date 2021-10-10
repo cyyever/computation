@@ -118,4 +118,3 @@ namespace cyy::computation {
   };
 
 } // namespace cyy::computation
-

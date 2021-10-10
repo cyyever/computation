@@ -16,7 +16,6 @@
 #include <boost/dynamic_bitset.hpp>
 #include <cyy/algorithm/hash.hpp>
 
-
 #include "lang/alphabet.hpp"
 #include "lang/symbol.hpp"
 

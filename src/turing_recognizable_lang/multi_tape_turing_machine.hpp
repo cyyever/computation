@@ -17,10 +17,10 @@ namespace cyy::computation {
         typename multi_tape_Turing_machine_base<tape_number>::situation_type;
     using action_type =
         typename multi_tape_Turing_machine_base<tape_number>::action_type;
-    using  configuration_type=
-        typename multi_tape_Turing_machine_base<tape_number>::configuration_type;
-    using tape_type = typename multi_tape_Turing_machine_base<
-        tape_number>::tape_type;
+    using configuration_type = typename multi_tape_Turing_machine_base<
+        tape_number>::configuration_type;
+    using tape_type =
+        typename multi_tape_Turing_machine_base<tape_number>::tape_type;
     using __transition_function_type =
         std::unordered_map<situation_type, action_type, tape_type>;
 
@@ -33,8 +33,8 @@ namespace cyy::computation {
                               Turing_machine_base::state_type reject_state_,
                               ALPHABET_ptr tape_alphabet_,
                               transition_function_type transition_function_)
-        : multi_tape_Turing_machine_base<tape_number>(std::move(finite_automaton_),
-                                         reject_state_, tape_alphabet_),
+        : multi_tape_Turing_machine_base<tape_number>(
+              std::move(finite_automaton_), reject_state_, tape_alphabet_),
           transition_function(std::move(transition_function_))
 
     {
@@ -56,7 +56,8 @@ namespace cyy::computation {
       for (auto s : view) {
         tape.push_back(s);
       }
-      configuration_type configuration(this->get_start_state(), std::move(tape));
+      configuration_type configuration(this->get_start_state(),
+                                       std::move(tape));
       while (true) {
         if (configuration.state == this->accept_state) {
           break;

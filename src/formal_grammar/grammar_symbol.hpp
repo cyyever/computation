@@ -7,15 +7,16 @@
 
 #pragma once
 
+#include <iostream>
 #include <span>
 #include <string>
 #include <string_view>
 #include <utility>
 #include <variant>
-#include <iostream>
 #include <vector>
 
 #include <cyy/algorithm/hash.hpp>
+
 #include "lang/alphabet.hpp"
 
 namespace cyy::computation {
@@ -52,17 +53,17 @@ namespace cyy::computation {
     bool operator==(const nonterminal_type &t) const noexcept {
       return is_nonterminal() && *get_nonterminal_ptr() == t;
     }
-    std::string to_string( const ALPHABET &alphabet) const {
+    std::string to_string(const ALPHABET &alphabet) const {
       if (is_terminal()) {
-          return alphabet.to_string(get_terminal());
-      } 
-          return *get_nonterminal_ptr();
+        return alphabet.to_string(get_terminal());
+      }
+      return *get_nonterminal_ptr();
     }
     std::string MMA_draw(const ALPHABET &alphabet) const {
       if (is_terminal()) {
         return alphabet.MMA_draw(get_terminal());
       }
-      return std::string("Style[\"")+get_nonterminal()+"\", Bold, Italic]";
+      return std::string("Style[\"") + get_nonterminal() + "\", Bold, Italic]";
     }
   };
 
@@ -70,18 +71,21 @@ namespace cyy::computation {
   public:
     using std::vector<grammar_symbol_type>::vector;
     auto get_terminal_view() const -> auto {
-      return *this |
-             std::ranges::views::filter([](auto g) { return g.is_terminal(); }) |
-             std::ranges::views::transform([](auto g) { return g.get_terminal(); });
+      return *this | std::ranges::views::filter([](auto g) {
+        return g.is_terminal();
+      }) | std::ranges::views::transform([](auto g) {
+        return g.get_terminal();
+      });
     }
     auto get_nonterminal_view() const -> auto {
-      return *this |
-             std::ranges::views::filter([](auto g) { return g.is_nonterminal(); }) |
-             std::ranges::views::transform(
-                 [](auto g) { return *g.get_nonterminal_ptr(); });
+      return *this | std::ranges::views::filter([](auto g) {
+        return g.is_nonterminal();
+      }) | std::ranges::views::transform([](auto g) {
+        return *g.get_nonterminal_ptr();
+      });
     }
   };
-  using grammar_symbol_const_span_type =std::span<const grammar_symbol_type>;
+  using grammar_symbol_const_span_type = std::span<const grammar_symbol_type>;
 } // namespace cyy::computation
 
 namespace std {

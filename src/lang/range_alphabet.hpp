@@ -4,7 +4,6 @@
  */
 #pragma once
 
-
 #include "alphabet.hpp"
 
 namespace cyy::computation {

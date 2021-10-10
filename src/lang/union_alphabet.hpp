@@ -12,15 +12,15 @@ namespace cyy::computation {
 
   class union_alphabet : public ALPHABET {
   public:
-    union_alphabet(ALPHABET_ptr alphabet1_,
-                   ALPHABET_ptr alphabet2_,
+    union_alphabet(ALPHABET_ptr alphabet1_, ALPHABET_ptr alphabet2_,
                    std::string_view name_ = "")
         : ALPHABET("placeholder"), alphabet1{alphabet1_}, alphabet2{
                                                               alphabet2_} {
       auto alphabet1_max = alphabet1->get_max_symbol();
       auto alphabet2_min = alphabet2->get_min_symbol();
-      if(alphabet1_max>=alphabet2_min ) {
-        throw cyy::computation::exception::invalid_alphabet("alphabet1 is not less thant alphabet2");
+      if (alphabet1_max >= alphabet2_min) {
+        throw cyy::computation::exception::invalid_alphabet(
+            "alphabet1 is not less thant alphabet2");
       }
 
       if (name_.empty()) {
@@ -41,10 +41,11 @@ namespace cyy::computation {
       if (index < alphabet1_size) {
         return alphabet1->get_symbol(index);
       }
-      return alphabet2->get_symbol(index-alphabet1_size);
+      return alphabet2->get_symbol(index - alphabet1_size);
     }
     bool support_ASCII_escape_sequence() const override {
-      return alphabet1->support_ASCII_escape_sequence() || alphabet2->support_ASCII_escape_sequence();
+      return alphabet1->support_ASCII_escape_sequence() ||
+             alphabet2->support_ASCII_escape_sequence();
     }
 
     std::string MMA_draw(symbol_type symbol) const override {
@@ -52,8 +53,8 @@ namespace cyy::computation {
         return alphabet1->MMA_draw(symbol);
       }
       return alphabet2->MMA_draw(symbol);
-
     }
+
   private:
     std::string __to_string(symbol_type symbol) const override {
       if (alphabet1->contain(symbol)) {
