@@ -4,8 +4,8 @@
 #pragma once
 #include <memory>
 
-#include "cfg.hpp"
 #include "alphabet/map_alphabet.hpp"
+#include "cfg.hpp"
 #include "regular_lang/dfa.hpp"
 
 namespace cyy::computation {
@@ -28,6 +28,6 @@ namespace cyy::computation {
 
   protected:
     std::shared_ptr<DFA> dfa_ptr;
-    std::shared_ptr<map_alphabet> alphabet_of_nonterminals;
+    std::shared_ptr<map_alphabet<std::string>> alphabet_of_nonterminals;
   };
 } // namespace cyy::computation

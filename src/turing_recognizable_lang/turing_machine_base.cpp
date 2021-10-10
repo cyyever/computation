@@ -6,7 +6,8 @@
 
 #include "turing_machine_base.hpp"
 
-#include "alphabet/alphabet_with_blank_symbol.hpp"
+#include <cyy/algorithm/alphabet/alphabet_with_blank_symbol.hpp>
+#include <cyy/algorithm/alphabet/exception.hpp>
 namespace cyy::computation {
 
   Turing_machine_base::Turing_machine_base(finite_automaton finite_automaton_,
@@ -25,11 +26,11 @@ namespace cyy::computation {
     accept_state = *get_final_states().begin();
 
     if (get_alphabet().contain(ALPHABET::blank_symbol)) {
-      throw exception::invalid_alphabet(
+      throw cyy::algorithm::exception::invalid_alphabet(
           "input alphabet must not contain the blank symbol");
     }
     if (!tape_alphabet_->contain(get_alphabet())) {
-      throw exception::invalid_alphabet(
+      throw cyy::algorithm::exception::invalid_alphabet(
           "tape alphabet must contain input alphabet");
     }
     tape_alphabet =

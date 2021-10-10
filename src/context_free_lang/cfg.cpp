@@ -13,10 +13,13 @@
 #include <unordered_map>
 #include <utility>
 
-#include "alphabet/sub_alphabet.hpp"
-#include "alphabet/union_alphabet.hpp"
+#include <cyy/algorithm/alphabet/sub_alphabet.hpp>
+#include <cyy/algorithm/alphabet/union_alphabet.hpp>
+
+#include "exception.hpp"
 
 namespace cyy::computation {
+  using namespace cyy::algorithm;
 
   CFG::CFG(ALPHABET_ptr alphabet_, nonterminal_type start_symbol_,
            production_set_type productions_)
@@ -580,7 +583,7 @@ namespace cyy::computation {
     return alphabet;
   }
 
-  std::shared_ptr<map_alphabet> CFG::get_nonterminal_alphabet() const {
+  std::shared_ptr<map_alphabet<std::string>> CFG::get_nonterminal_alphabet() const {
     auto max_symbol = get_alphabet().get_max_symbol();
     std::map<symbol_type, nonterminal_type> symbol_to_nonterminal;
     auto nonterminals = get_nonterminals();
@@ -589,11 +592,11 @@ namespace cyy::computation {
       symbol_to_nonterminal.emplace(max_symbol, std::move(nonterminal));
     }
 
-    auto nonterminal_alphabet_ptr = std::make_shared<map_alphabet>(
+    auto nonterminal_alphabet_ptr = std::make_shared<map_alphabet<std::string>>(
         symbol_to_nonterminal, "alphabet_of_nonterminals");
     nonterminal_alphabet_ptr->set_MMA_draw_fun(
         [](auto const &nonterminal_alphabet, auto symbol) {
-          return grammar_symbol_type(reinterpret_cast<const map_alphabet *>(
+          return grammar_symbol_type(reinterpret_cast<const map_alphabet<std::string> *>(
                                          &nonterminal_alphabet)
                                          ->get_data(symbol))
               .MMA_draw(nonterminal_alphabet);

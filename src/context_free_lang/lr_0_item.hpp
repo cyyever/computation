@@ -12,6 +12,7 @@
 
 #include "cfg.hpp"
 #include "cfg_production.hpp"
+#include "exception.hpp"
 
 namespace cyy::computation {
   class LR_0_item {

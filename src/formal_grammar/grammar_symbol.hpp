@@ -16,10 +16,11 @@
 #include <vector>
 
 #include <cyy/algorithm/hash.hpp>
+#include <cyy/algorithm/alphabet/alphabet.hpp>
 
-#include "alphabet/alphabet.hpp"
 
 namespace cyy::computation {
+  using namespace cyy::algorithm;
   class grammar_symbol_type : public std::variant<symbol_type, std::string> {
 
   public:

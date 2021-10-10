@@ -1,7 +1,6 @@
 /*!
  * \file exception.hpp
  *
- * \brief
  */
 
 #pragma once
@@ -9,32 +8,7 @@
 #include <stdexcept>
 
 namespace cyy::computation::exception {
-
-  class empty_alphabet_name : public std::invalid_argument {
-  public:
-    using invalid_argument::invalid_argument;
-  };
-  class empty_alphabet : public std::invalid_argument {
-  public:
-    using invalid_argument::invalid_argument;
-  };
-  class invalid_alphabet : public std::invalid_argument {
-  public:
-    using invalid_argument::invalid_argument;
-  };
-
-
-  class unexisted_alphabet : public std::invalid_argument {
-  public:
-    using invalid_argument::invalid_argument;
-  };
-
   class unmatched_alphabets : public std::invalid_argument {
-  public:
-    using invalid_argument::invalid_argument;
-  };
-
-  class empty_syntax_tree : public std::invalid_argument {
   public:
     using invalid_argument::invalid_argument;
   };
@@ -53,6 +27,10 @@ namespace cyy::computation::exception {
     using invalid_argument::invalid_argument;
   };
 
+  class empty_syntax_tree : public std::invalid_argument {
+  public:
+    using invalid_argument::invalid_argument;
+  };
   class unexisted_finite_automaton_state : public std::invalid_argument {
   public:
     using invalid_argument::invalid_argument;

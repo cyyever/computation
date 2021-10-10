@@ -14,10 +14,10 @@
 #include <unordered_set>
 #include <vector>
 
-#include "cfg_production.hpp"
-#include "formal_grammar/grammar_symbol.hpp"
 #include "alphabet/alphabet.hpp"
 #include "alphabet/map_alphabet.hpp"
+#include "cfg_production.hpp"
+#include "formal_grammar/grammar_symbol.hpp"
 
 namespace cyy::computation {
 
@@ -72,7 +72,7 @@ namespace cyy::computation {
     }
 
     ALPHABET_ptr get_terminal_alphabet() const;
-    std::shared_ptr<map_alphabet> get_nonterminal_alphabet() const;
+    std::shared_ptr<map_alphabet<std::string>> get_nonterminal_alphabet() const;
     ALPHABET_ptr get_full_alphabet() const;
 
     auto const &get_alphabet() const noexcept { return *alphabet; }

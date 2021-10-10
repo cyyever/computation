@@ -11,8 +11,9 @@
 #include <set>
 #include <string_view>
 
-#include "../context_free_lang/ll_grammar.hpp"
+#include "context_free_lang/ll_grammar.hpp"
 #include "dfa.hpp"
+#include "exception.hpp"
 #include "nfa.hpp"
 
 namespace cyy::computation {
