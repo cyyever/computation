@@ -5,7 +5,7 @@
 #include <memory>
 
 #include "cfg.hpp"
-#include "lang/map_alphabet.hpp"
+#include "alphabet/map_alphabet.hpp"
 #include "regular_lang/dfa.hpp"
 
 namespace cyy::computation {

@@ -7,7 +7,6 @@
 
 #include "cfg.hpp"
 #include "exception.hpp"
-#include "lang/alphabet.hpp"
 
 namespace cyy::computation {
 

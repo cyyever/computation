@@ -12,7 +12,7 @@
 #include "context_free_lang/dpda.hpp"
 #include "context_free_lang/endmarked_dpda.hpp"
 #include "context_free_lang/model_transform.hpp"
-#include "lang/alphabet.hpp"
+#include "alphabet/alphabet.hpp"
 
 using namespace cyy::computation;
 TEST_CASE("endmarked DPDA") {

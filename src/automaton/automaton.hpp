@@ -16,8 +16,8 @@
 #include <boost/dynamic_bitset.hpp>
 #include <cyy/algorithm/hash.hpp>
 
-#include "lang/alphabet.hpp"
-#include "lang/symbol.hpp"
+#include "alphabet/alphabet.hpp"
+#include "alphabet/symbol.hpp"
 
 namespace cyy::computation {
 

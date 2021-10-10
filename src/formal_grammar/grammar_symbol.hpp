@@ -17,7 +17,7 @@
 
 #include <cyy/algorithm/hash.hpp>
 
-#include "lang/alphabet.hpp"
+#include "alphabet/alphabet.hpp"
 
 namespace cyy::computation {
   class grammar_symbol_type : public std::variant<symbol_type, std::string> {

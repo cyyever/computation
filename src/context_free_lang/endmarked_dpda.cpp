@@ -7,9 +7,9 @@
 #include <algorithm>
 #include <memory>
 
-#include "lang/endmarked_alphabet.hpp"
-#include "lang/range_alphabet.hpp"
-#include "lang/union_alphabet.hpp"
+#include "alphabet/endmarked_alphabet.hpp"
+#include "alphabet/range_alphabet.hpp"
+#include "alphabet/union_alphabet.hpp"
 
 namespace cyy::computation {
 

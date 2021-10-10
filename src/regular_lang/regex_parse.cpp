@@ -7,10 +7,10 @@
 
 #include <cassert>
 
-#include "../context_free_lang/cfg_production.hpp"
-#include "../context_free_lang/ll_grammar.hpp"
-#include "../exception.hpp"
-#include "../lang/set_alphabet.hpp"
+#include "context_free_lang/cfg_production.hpp"
+#include "context_free_lang/ll_grammar.hpp"
+#include "exception.hpp"
+#include "alphabet/set_alphabet.hpp"
 #include "regex.hpp"
 
 namespace cyy::computation {

@@ -7,7 +7,7 @@
 
 #include "context_free_lang/cfg.hpp"
 #include "context_free_lang/model_transform.hpp"
-#include "lang/common_tokens.hpp"
+#include "alphabet/common_tokens.hpp"
 
 using namespace cyy::computation;
 TEST_CASE("eliminate_useless_symbols") {

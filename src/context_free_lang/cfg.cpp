@@ -13,8 +13,8 @@
 #include <unordered_map>
 #include <utility>
 
-#include "lang/sub_alphabet.hpp"
-#include "lang/union_alphabet.hpp"
+#include "alphabet/sub_alphabet.hpp"
+#include "alphabet/union_alphabet.hpp"
 
 namespace cyy::computation {
 

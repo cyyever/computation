@@ -5,12 +5,11 @@
  */
 #include <doctest/doctest.h>
 
-#include "../../src/context_free_lang/cnf.hpp"
-#include "../../src/context_free_lang/model_transform.hpp"
-#include "../../src/context_free_lang/pda.hpp"
-#include "../../src/lang/alphabet.hpp"
-#include "../../src/lang/set_alphabet.hpp"
-#include "../../src/regular_lang/regex.hpp"
+#include "context_free_lang/cnf.hpp"
+#include "context_free_lang/model_transform.hpp"
+#include "context_free_lang/pda.hpp"
+#include "alphabet/set_alphabet.hpp"
+#include "regular_lang/regex.hpp"
 
 using namespace cyy::computation;
 TEST_CASE("recognize PDA") {

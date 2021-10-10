@@ -16,8 +16,8 @@
 
 #include "cfg_production.hpp"
 #include "formal_grammar/grammar_symbol.hpp"
-#include "lang/alphabet.hpp"
-#include "lang/map_alphabet.hpp"
+#include "alphabet/alphabet.hpp"
+#include "alphabet/map_alphabet.hpp"
 
 namespace cyy::computation {
 

@@ -6,7 +6,7 @@
 
 #include "turing_machine_base.hpp"
 
-#include "lang/alphabet_with_blank_symbol.hpp"
+#include "alphabet/alphabet_with_blank_symbol.hpp"
 namespace cyy::computation {
 
   Turing_machine_base::Turing_machine_base(finite_automaton finite_automaton_,

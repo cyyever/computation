@@ -1,7 +1,7 @@
 
 #include "common_grammar.hpp"
 
-#include "lang/common_tokens.hpp"
+#include "alphabet/common_tokens.hpp"
 namespace cyy::computation {
 
   CFG::production_set_type get_expression_productions() {

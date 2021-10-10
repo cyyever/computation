@@ -13,8 +13,8 @@
 #include <stdexcept>
 #include <unordered_map>
 
-#include "lang/endmarked_alphabet.hpp"
-#include "lang/union_alphabet.hpp"
+#include "alphabet/endmarked_alphabet.hpp"
+#include "alphabet/union_alphabet.hpp"
 
 namespace cyy::computation {
   bool DPDA::recognize(symbol_string_view view) const {

@@ -10,8 +10,8 @@
 #include "dk_1.hpp"
 #include "endmarked_dpda.hpp"
 #include "exception.hpp"
-#include "lang/endmarked_alphabet.hpp"
-#include "lang/number_set_alphabet.hpp"
+#include "alphabet/endmarked_alphabet.hpp"
+#include "alphabet/number_set_alphabet.hpp"
 
 namespace cyy::computation {
   canonical_LR_grammar::canonical_LR_grammar(ALPHABET_ptr alphabet_,

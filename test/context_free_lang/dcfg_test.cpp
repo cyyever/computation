@@ -7,9 +7,9 @@
 
 #include <doctest/doctest.h>
 
-#include "../../src/context_free_lang/dcfg.hpp"
-#include "../../src/context_free_lang/dk.hpp"
-#include "../../src/lang/alphabet.hpp"
+#include "context_free_lang/dcfg.hpp"
+#include "context_free_lang/dk.hpp"
+#include "alphabet/alphabet.hpp"
 
 using namespace cyy::computation;
 TEST_CASE("DCFG") {

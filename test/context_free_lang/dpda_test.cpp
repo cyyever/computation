@@ -5,9 +5,9 @@
  */
 #include <doctest/doctest.h>
 
-#include "../../src/context_free_lang/dpda.hpp"
-#include "../../src/context_free_lang/endmarked_dpda.hpp"
-#include "../../src/lang/alphabet.hpp"
+#include "context_free_lang/dpda.hpp"
+#include "context_free_lang/endmarked_dpda.hpp"
+#include "alphabet/alphabet.hpp"
 
 using namespace cyy::computation;
 TEST_CASE("recognize DPDA") {

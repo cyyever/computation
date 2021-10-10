@@ -5,7 +5,6 @@
 #include <memory>
 
 #include "dk_base.hpp"
-#include "lang/map_alphabet.hpp"
 #include "lr_0_item.hpp"
 #include "regular_lang/dfa.hpp"
 
