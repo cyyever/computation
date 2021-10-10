@@ -21,7 +21,7 @@ endif()
 target_link_libraries(MyComputationLib PUBLIC Boost::headers)
 target_link_libraries(MyComputationLib PUBLIC range-v3::range-v3)
 target_link_libraries(MyComputationLib PRIVATE fmt::fmt)
-target_link_libraries(MyComputationLib PRIVATE MyAlgorithmLib)
+target_link_libraries(MyComputationLib PUBLIC MyAlgorithmLib)
 
 target_include_directories(
   MyComputationLib PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>

@@ -7,8 +7,8 @@
 
 #include <doctest/doctest.h>
 
-#include "context_free_lang/dk_1.hpp"
 #include "alphabet/alphabet.hpp"
+#include "context_free_lang/dk_1.hpp"
 
 using namespace cyy::computation;
 TEST_CASE("DK_1") {

@@ -5,10 +5,10 @@
  */
 #include <doctest/doctest.h>
 
+#include "alphabet/set_alphabet.hpp"
 #include "context_free_lang/cnf.hpp"
 #include "context_free_lang/model_transform.hpp"
 #include "context_free_lang/pda.hpp"
-#include "alphabet/set_alphabet.hpp"
 #include "regular_lang/regex.hpp"
 
 using namespace cyy::computation;

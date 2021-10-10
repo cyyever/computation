@@ -8,8 +8,8 @@
 #define private public
 #endif
 
-#include "context_free_lang/cnf.hpp"
 #include "alphabet/common_tokens.hpp"
+#include "context_free_lang/cnf.hpp"
 
 using namespace cyy::computation;
 

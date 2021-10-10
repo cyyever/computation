@@ -5,8 +5,8 @@
  */
 #include <doctest/doctest.h>
 
-#include "context_free_lang/lalr_grammar.hpp"
 #include "alphabet/common_tokens.hpp"
+#include "context_free_lang/lalr_grammar.hpp"
 
 using namespace cyy::computation;
 
