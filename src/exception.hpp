@@ -10,11 +10,6 @@
 
 namespace cyy::computation::exception {
 
-  class symbol_overflow : public std::invalid_argument {
-  public:
-    using invalid_argument::invalid_argument;
-  };
-
   class empty_alphabet_name : public std::invalid_argument {
   public:
     using invalid_argument::invalid_argument;
@@ -28,10 +23,6 @@ namespace cyy::computation::exception {
     using invalid_argument::invalid_argument;
   };
 
-  class empty_syntax_tree : public std::invalid_argument {
-  public:
-    using invalid_argument::invalid_argument;
-  };
 
   class unexisted_alphabet : public std::invalid_argument {
   public:
@@ -39,6 +30,11 @@ namespace cyy::computation::exception {
   };
 
   class unmatched_alphabets : public std::invalid_argument {
+  public:
+    using invalid_argument::invalid_argument;
+  };
+
+  class empty_syntax_tree : public std::invalid_argument {
   public:
     using invalid_argument::invalid_argument;
   };
