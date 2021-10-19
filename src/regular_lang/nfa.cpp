@@ -125,8 +125,8 @@ namespace cyy::computation {
     auto s_index = epsilon_graph.get_vertex_index(s);
     bool has_cycle = false;
     state_set_type connect_component;
-    cyy::algorithm::recursive_depth_first_search<state_type>(
-        epsilon_graph, s_index,
+      epsilon_graph.recursive_depth_first_search(
+        s_index,
         [this, &epsilon_graph, &has_cycle, &connect_component](auto u, auto v) {
           auto u_vertex = epsilon_graph.get_vertex(u);
           connect_component.insert(u_vertex);
