@@ -583,7 +583,8 @@ namespace cyy::computation {
     return alphabet;
   }
 
-  std::shared_ptr<map_alphabet<std::string>> CFG::get_nonterminal_alphabet() const {
+  std::shared_ptr<map_alphabet<std::string>>
+  CFG::get_nonterminal_alphabet() const {
     auto max_symbol = get_alphabet().get_max_symbol();
     std::map<symbol_type, nonterminal_type> symbol_to_nonterminal;
     auto nonterminals = get_nonterminals();
@@ -596,9 +597,10 @@ namespace cyy::computation {
         symbol_to_nonterminal, "alphabet_of_nonterminals");
     nonterminal_alphabet_ptr->set_MMA_draw_fun(
         [](auto const &nonterminal_alphabet, auto symbol) {
-          return grammar_symbol_type(reinterpret_cast<const map_alphabet<std::string> *>(
-                                         &nonterminal_alphabet)
-                                         ->get_data(symbol))
+          return grammar_symbol_type(
+                     reinterpret_cast<const map_alphabet<std::string> *>(
+                         &nonterminal_alphabet)
+                         ->get_data(symbol))
               .MMA_draw(nonterminal_alphabet);
         });
     return nonterminal_alphabet_ptr;

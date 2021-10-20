@@ -14,6 +14,7 @@
 #include <utility>
 #include <variant>
 #include <vector>
+#include <ranges>
 
 #include <cyy/algorithm/hash.hpp>
 #include <cyy/algorithm/alphabet/alphabet.hpp>
