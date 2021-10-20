@@ -32,10 +32,10 @@ namespace cyy::computation {
     GNFA &operator=(GNFA &&) noexcept = default;
     ~GNFA() = default;
 
-    std::shared_ptr<regex::syntax_node> to_regex() const;
+    std::shared_ptr<regex::syntax_node> to_regex();
 
   private:
-    GNFA remove_state(state_type removed_state) const;
+    void remove_state(state_type removed_state);
 
   private:
     transition_function_type transition_function;
