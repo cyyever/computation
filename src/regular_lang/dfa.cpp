@@ -83,55 +83,52 @@ namespace cyy::computation {
         std::insert_iterator(non_final_states, non_final_states.begin()));
 
     std::vector<state_set_type> groups{non_final_states, final_states};
-    std::unordered_map<state_type, size_t> state_location;
+    std::unordered_map<state_type, size_t> state_to_group_index;
+    bool has_new_group = true;
 
-    while (true) {
+    while (has_new_group) {
       for (size_t i = 0; i < groups.size(); i++) {
         for (auto state : groups[i]) {
-          state_location[state] = i;
+          state_to_group_index[state] = i;
         }
       }
 
-      bool has_new_group = false;
-      decltype(groups) new_groups;
-      for (auto const &group : groups) {
+      has_new_group = false;
+      for (auto it = groups.begin(); it != groups.end(); it++) {
+        auto const &group = *it;
         if (group.size() <= 1) {
-          new_groups.push_back(group);
           continue;
         }
 
-        decltype(groups) sub_groups;
-
-        auto it = group.begin();
-        sub_groups.push_back({*it});
-        ++it;
-        for (; it != group.end(); ++it) {
-          auto state = *it;
-          bool in_new_group = true;
-          for (auto &sub_group : sub_groups) {
-            bool in_group =
-                std::ranges::all_of(alphabet->get_view(), [&](auto const a) {
-                  return state_location[go(*(sub_group.begin()), a).value()] ==
-                         state_location[go(state, a).value()];
-                });
-            if (in_group) {
-              sub_group.insert(state);
-              in_new_group = false;
-              break;
+        // split group on input symbol
+        std::unordered_map<size_t, state_set_type> sub_groups;
+        for (auto a : alphabet->get_view()) {
+          sub_groups.clear();
+          for (auto s : group) {
+            auto next_state = go(s, a).value();
+            sub_groups[state_to_group_index[next_state]].insert(s);
+          }
+          if (sub_groups.size() > 1) {
+            has_new_group = true;
+            break;
+          }
+          assert(sub_groups.size() == 1);
+        }
+        if (has_new_group) {
+          bool flag = true;
+          for (auto &[_, sub_group] : sub_groups) {
+            if (flag) {
+              *it = std::move(sub_group);
+              flag = false;
+            } else {
+              groups.emplace_back(std::move(sub_group));
             }
           }
-          if (in_new_group) {
-            has_new_group = true;
-            sub_groups.push_back({state});
-          }
+          break;
         }
-        std::ranges::move(sub_groups, std::back_inserter(new_groups));
       }
-      if (!has_new_group) {
-        break;
-      }
-      groups = std::move(new_groups);
     }
+    std::cout << "size is " << groups.size() << std::endl;
     state_type minimize_DFA_start_state{};
     state_set_type minimize_DFA_states;
     state_set_type minimize_DFA_final_states;
@@ -151,7 +148,8 @@ namespace cyy::computation {
 
       for (auto a : alphabet->get_view()) {
         auto next_state = go(*(groups[i].begin()), a).value();
-        minimize_DFA_transition_function[{i, a}] = state_location[next_state];
+        minimize_DFA_transition_function[{i, a}] =
+            state_to_group_index[next_state];
       }
     }
     return {minimize_DFA_states, alphabet, minimize_DFA_start_state,

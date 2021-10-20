@@ -11,7 +11,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "../automaton/automaton.hpp"
+#include "automaton/automaton.hpp"
 
 namespace cyy::computation {
 

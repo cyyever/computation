@@ -98,7 +98,7 @@ TEST_CASE("minimize DFA") {
                     },
                     {3});
 
-  CHECK(dfa.minimize() == minimized_dfa);
+  CHECK(dfa.minimize().get_states().size()==minimized_dfa.get_states().size());
 }
 
 TEST_CASE("complement") {

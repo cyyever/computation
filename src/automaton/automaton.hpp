@@ -17,16 +17,13 @@
 #include <cyy/algorithm/alphabet/alphabet.hpp>
 #include <cyy/algorithm/hash.hpp>
 
-#include "exception.hpp"
+#include "../exception.hpp"
 
 namespace cyy::computation {
 
   using namespace cyy::algorithm;
   class finite_automaton {
   public:
-    /* using symbol_type=cyy::algorithm::symbol_type; */
-    /* using ALPHABET_ptr=cyy::algorithm::ALPHABET_ptr; */
-    /* using symbol_set_type=cyy::algorithm::symbol_set_type; */
     using state_type = uint64_t;
     using state_bitset_type = boost::dynamic_bitset<>;
     class state_set_type : public std::set<state_type> {
