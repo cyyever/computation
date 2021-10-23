@@ -11,6 +11,7 @@
 #include <set>
 #include <string>
 #include <string_view>
+#include <ranges>
 #include <unordered_map>
 
 #include <boost/dynamic_bitset.hpp>
