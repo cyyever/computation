@@ -140,6 +140,7 @@ namespace cyy::computation {
           closure.insert(u_vertex);
           v_closure.insert(v_vertex);
           closure.merge(state_set_type(epsilon_closures[v_vertex]));
+          return false;
         });
     if (!has_cycle) {
       epsilon_closure_refresh.merge(connect_component);
