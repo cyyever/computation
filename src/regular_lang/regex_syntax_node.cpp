@@ -69,8 +69,8 @@ namespace cyy::computation {
     throw std::logic_error("unsupported");
   }
   CFG regex::empty_set_node::to_CFG(
-      const ALPHABET_ptr &alphabet,
-      const CFG::nonterminal_type &start_symbol) const {
+      const ALPHABET_ptr &,
+      const CFG::nonterminal_type &) const {
     throw std::logic_error("unsupported");
   }
 

@@ -47,13 +47,14 @@ namespace cyy::computation {
         }
       }
     }
+    assert(transition_function.size() == 1);
     return transition_function.begin()->second;
   }
 
   void GNFA::remove_state(state_type removed_state) {
-    cyy::computation::finite_automaton::remove_state(removed_state);
     auto old_transition_function = transition_function;
 
+    cyy::computation::finite_automaton::remove_state(removed_state);
     for (auto from_state : get_states()) {
       if (is_final_state(from_state)) {
         continue;
@@ -95,6 +96,9 @@ namespace cyy::computation {
         }
         transition_function[{from_state, to_state}] = from_to_regex_expr;
       }
+      std::erase_if(transition_function,[removed_state](auto const &p) {
+          return p.first.first==removed_state || p.first.second==removed_state;
+          });
     }
     return;
   }
