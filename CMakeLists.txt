@@ -9,7 +9,7 @@ file(GLOB_RECURSE SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src/**/*.cpp)
 find_package(Boost REQUIRED)
 find_package(fmt REQUIRED)
 find_package(range-v3 REQUIRED)
-find_package(MyAlgorithmLib REQUIRED)
+find_package(CyyAlgorithmLib REQUIRED)
 
 add_library(MyComputationLib ${SOURCE})
 
@@ -21,7 +21,7 @@ endif()
 target_link_libraries(MyComputationLib PUBLIC Boost::headers)
 target_link_libraries(MyComputationLib PUBLIC range-v3::range-v3)
 target_link_libraries(MyComputationLib PRIVATE fmt::fmt)
-target_link_libraries(MyComputationLib PUBLIC MyAlgorithmLib)
+target_link_libraries(MyComputationLib PUBLIC CyyAlgorithmLib)
 
 target_include_directories(
   MyComputationLib PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
