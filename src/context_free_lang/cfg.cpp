@@ -77,11 +77,9 @@ namespace cyy::computation {
   }
   CFG::terminal_set_type CFG::get_terminals() const {
     terminal_set_type terminals;
-    for (auto const &[_, bodies] : productions) {
-      for (auto const &body : bodies) {
-        for (auto const s : body.get_terminal_view()) {
-          terminals.insert(s);
-        }
+    for (auto const &[head, body] : productions_view()) {
+      for (auto const s : body.get_terminal_view()) {
+        terminals.insert(s);
       }
     }
     return terminals;
