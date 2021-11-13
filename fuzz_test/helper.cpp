@@ -73,7 +73,7 @@ NFA fuzzing_NFA(const uint8_t *Data, size_t Size) {
     auto from_state = Data[i];
     i++;
 
-    std::set<NFA::state_type> to_states;
+    NFA::state_set_type to_states;
     if (i < Size) {
       auto state_num = Data[i];
       i++;
