@@ -4,7 +4,7 @@
 #pragma once
 #include <memory>
 
-#include "alphabet/map_alphabet.hpp"
+#include <cyy/algorithm/alphabet/map_alphabet.hpp>
 #include "cfg.hpp"
 #include "regular_lang/dfa.hpp"
 
