@@ -84,8 +84,8 @@ namespace cyy::computation {
     auto &get_productions() &&noexcept { return productions; }
 
     auto productions_view() const {
-      return ranges::view::for_each(productions, [](const auto &p) {
-        return ranges::view::for_each(p.second, [&p](auto const &t) {
+      return ranges::views::for_each(productions, [](const auto &p) {
+        return ranges::views::for_each(p.second, [&p](auto const &t) {
           return ranges::yield(
               std::pair<const CFG_production::head_type &,
                         const CFG_production::body_type &>(p.first, t));
