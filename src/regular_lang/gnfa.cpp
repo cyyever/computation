@@ -96,9 +96,10 @@ namespace cyy::computation {
         }
         transition_function[{from_state, to_state}] = from_to_regex_expr;
       }
-      std::erase_if(transition_function,[removed_state](auto const &p) {
-          return p.first.first==removed_state || p.first.second==removed_state;
-          });
+      std::erase_if(transition_function, [removed_state](auto const &p) {
+        return p.first.first == removed_state ||
+               p.first.second == removed_state;
+      });
     }
     return;
   }

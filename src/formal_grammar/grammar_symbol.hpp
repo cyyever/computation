@@ -8,17 +8,16 @@
 #pragma once
 
 #include <iostream>
+#include <ranges>
 #include <span>
 #include <string>
 #include <string_view>
 #include <utility>
 #include <variant>
 #include <vector>
-#include <ranges>
 
-#include <cyy/algorithm/hash.hpp>
 #include <cyy/algorithm/alphabet/alphabet.hpp>
-
+#include <cyy/algorithm/hash.hpp>
 
 namespace cyy::computation {
   using namespace cyy::algorithm;

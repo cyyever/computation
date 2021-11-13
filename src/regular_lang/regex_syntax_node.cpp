@@ -68,9 +68,8 @@ namespace cyy::computation {
                                     NFA::state_type) const {
     throw std::logic_error("unsupported");
   }
-  CFG regex::empty_set_node::to_CFG(
-      const ALPHABET_ptr &,
-      const CFG::nonterminal_type &) const {
+  CFG regex::empty_set_node::to_CFG(const ALPHABET_ptr &,
+                                    const CFG::nonterminal_type &) const {
     throw std::logic_error("unsupported");
   }
 

@@ -14,8 +14,9 @@
 #include <unordered_set>
 #include <vector>
 
-#include "alphabet/alphabet.hpp"
-#include "alphabet/map_alphabet.hpp"
+#include <cyy/algorithm/alphabet/alphabet.hpp>
+#include <cyy/algorithm/alphabet/map_alphabet.hpp>
+
 #include "cfg_production.hpp"
 #include "formal_grammar/grammar_symbol.hpp"
 
