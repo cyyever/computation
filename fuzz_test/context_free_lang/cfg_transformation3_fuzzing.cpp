@@ -7,7 +7,6 @@
  */
 
 #include "../../src/context_free_lang/model_transform.hpp"
-#include "../../src/lang/common_tokens.hpp"
 #include "../helper.hpp"
 
 using namespace cyy::computation;
