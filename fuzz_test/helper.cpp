@@ -7,8 +7,6 @@
  */
 #include "helper.hpp"
 
-#include "../src/lang/alphabet.hpp"
-
 using namespace cyy::computation;
 CFG::production_set_type fuzzing_CFG_productions(const uint8_t *Data,
                                                  size_t Size) {
@@ -35,19 +33,18 @@ CFG::production_set_type fuzzing_CFG_productions(const uint8_t *Data,
           }
         }
       }
-      productions[header].emplace_back(std::move(body));
+      productions[header].emplace(std::move(body));
     }
   }
   return productions;
 }
 
 NFA fuzzing_NFA(const uint8_t *Data, size_t Size) {
-
-  std::set<NFA::state_type> states;
+  NFA::state_set_type states;
   NFA::state_type start_state = 0;
   NFA::transition_function_type transition_function;
   NFA::epsilon_transition_function_type epsilon_transition_function;
-  std::set<NFA::state_type> final_states;
+    NFA::state_set_type final_states;
   auto alphabet = ALPHABET::get("common_tokens");
   size_t i = 0;
   if (i < Size) {
@@ -87,7 +84,7 @@ NFA fuzzing_NFA(const uint8_t *Data, size_t Size) {
     }
 
     if (i < Size) {
-      for (auto s : *alphabet) {
+      for (auto s : alphabet->get_view()) {
         if (s >= Data[i]) {
           transition_function.try_emplace({s, from_state}, to_states);
         }
@@ -99,7 +96,7 @@ NFA fuzzing_NFA(const uint8_t *Data, size_t Size) {
       i++;
     }
   }
-  return NFA(states, alphabet->get_name(), start_state, transition_function,
+  return NFA(states, alphabet, start_state, transition_function,
              final_states);
 }
 

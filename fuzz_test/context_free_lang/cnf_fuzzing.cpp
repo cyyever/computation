@@ -6,8 +6,7 @@
  * \date 2019-02-14
  */
 
-#include "../../src/context_free_lang/cnf.hpp"
-#include "../../src/lang/common_tokens.hpp"
+#include "context_free_lang/cnf.hpp"
 #include "../helper.hpp"
 
 using namespace cyy::computation;

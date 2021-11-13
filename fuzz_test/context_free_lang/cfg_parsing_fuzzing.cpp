@@ -6,8 +6,7 @@
  * \date 2019-02-14
  */
 
-#include "../../src/context_free_lang/lalr_grammar.hpp"
-#include "../../src/lang/common_tokens.hpp"
+#include "context_free_lang/lalr_grammar.hpp"
 #include "../helper.hpp"
 
 using namespace cyy::computation;
