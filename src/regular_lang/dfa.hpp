@@ -70,7 +70,7 @@ namespace cyy::computation {
       return get_live_states().contains(s);
     }
 
-    DFA minimize() const;
+    std::pair<DFA, std::vector<state_set_type>> minimize() const;
 
     // get the intersection of two DFAs
     DFA intersect(const DFA &rhs) const;

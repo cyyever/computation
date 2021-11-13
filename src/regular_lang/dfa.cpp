@@ -76,7 +76,7 @@ namespace cyy::computation {
         final_states, [&rhs](auto s) { return rhs.final_states.contains(s); });
   }
 
-  DFA DFA::minimize() const {
+  std::pair<DFA, std::vector<DFA::state_set_type>> DFA::minimize() const {
     state_set_type non_final_states;
     std::ranges::set_difference(
         get_states(), final_states,
@@ -128,7 +128,6 @@ namespace cyy::computation {
         }
       }
     }
-    std::cout << "size is " << groups.size() << std::endl;
     state_type minimize_DFA_start_state{};
     state_set_type minimize_DFA_states;
     state_set_type minimize_DFA_final_states;
@@ -152,8 +151,11 @@ namespace cyy::computation {
             state_to_group_index[next_state];
       }
     }
-    return {minimize_DFA_states, alphabet, minimize_DFA_start_state,
-            minimize_DFA_transition_function, minimize_DFA_final_states};
+    return {DFA{std::move(minimize_DFA_states), alphabet,
+                std::move(minimize_DFA_start_state),
+                std::move(minimize_DFA_transition_function),
+                std::move(minimize_DFA_final_states)},
+            std::move(groups)};
   }
   void DFA::mark_live_states() const {
     if (live_states_opt.has_value()) {

@@ -142,7 +142,7 @@ TEST_CASE("parse extended regex and to NFA") {
     regex reg("ab_set", expr);
 
     auto nfa = reg.to_NFA();
-    auto dfa = reg.to_DFA().minimize();
+    auto dfa = reg.to_DFA().minimize().first;
 
     for (auto const &test_string : {U"", U"a", U"aa"}) {
       CHECK(nfa.recognize(test_string));
@@ -155,7 +155,7 @@ TEST_CASE("parse extended regex and to NFA") {
     regex reg("ab_set", expr);
 
     auto nfa = reg.to_NFA();
-    auto dfa = reg.to_DFA().minimize();
+    auto dfa = reg.to_DFA().minimize().first;
 
     CHECK(!nfa.recognize(U""));
     CHECK(!dfa.recognize(U""));
@@ -170,7 +170,7 @@ TEST_CASE("parse extended regex and to NFA") {
     regex reg("ab_set", expr);
 
     auto nfa = reg.to_NFA();
-    auto dfa = reg.to_DFA().minimize();
+    auto dfa = reg.to_DFA().minimize().first;
 
     for (auto const &test_string : {U"", U"a"}) {
       CHECK(nfa.recognize(test_string));
@@ -185,7 +185,7 @@ TEST_CASE("parse extended regex and to NFA") {
     regex reg("printable-ASCII", expr);
 
     auto nfa = reg.to_NFA();
-    auto dfa = reg.to_DFA().minimize();
+    auto dfa = reg.to_DFA().minimize().first;
 
     CHECK(nfa.recognize(U"a"));
     CHECK(dfa.recognize(U"a"));
@@ -202,7 +202,7 @@ TEST_CASE("parse extended regex and to NFA") {
     regex reg("ab_set", expr);
 
     auto nfa = reg.to_NFA();
-    auto dfa = reg.to_DFA().minimize();
+    auto dfa = reg.to_DFA().minimize().first;
 
     CHECK(nfa.recognize(U"b"));
     CHECK(dfa.recognize(U"b"));
@@ -219,7 +219,7 @@ TEST_CASE("parse extended regex and to NFA") {
     regex reg("printable-ASCII", expr);
 
     auto nfa = reg.to_NFA();
-    auto dfa = reg.to_DFA().minimize();
+    auto dfa = reg.to_DFA().minimize().first;
 
     CHECK(nfa.recognize(U"-"));
     CHECK(dfa.recognize(U"-"));
@@ -233,7 +233,7 @@ TEST_CASE("parse extended regex and to NFA") {
     regex reg("printable-ASCII", expr);
 
     auto nfa = reg.to_NFA();
-    auto dfa = reg.to_DFA().minimize();
+    auto dfa = reg.to_DFA().minimize().first;
 
     CHECK(!nfa.recognize(U"-"));
     CHECK(!dfa.recognize(U"-"));
@@ -248,7 +248,7 @@ TEST_CASE("parse extended regex and to NFA") {
     regex reg("printable-ASCII", expr);
 
     auto nfa = reg.to_NFA();
-    auto dfa = reg.to_DFA().minimize();
+    auto dfa = reg.to_DFA().minimize().first;
 
     CHECK(nfa.recognize(U"a"));
     CHECK(dfa.recognize(U"a"));
@@ -266,7 +266,7 @@ TEST_CASE("parse extended regex and to NFA") {
     regex reg("ab_set", expr);
 
     auto nfa = reg.to_NFA();
-    auto dfa = reg.to_DFA().minimize();
+    auto dfa = reg.to_DFA().minimize().first;
 
     CHECK(nfa.recognize(U"a"));
     CHECK(dfa.recognize(U"a"));
@@ -281,7 +281,7 @@ TEST_CASE("parse extended regex and to NFA") {
     regex reg("printable-ASCII", expr);
 
     auto nfa = reg.to_NFA();
-    auto dfa = reg.to_DFA().minimize();
+    auto dfa = reg.to_DFA().minimize().first;
 
     CHECK(nfa.recognize(U"a"));
     CHECK(dfa.recognize(U"a"));
