@@ -76,13 +76,21 @@ namespace cyy::computation {
         final_states, [&rhs](auto s) { return rhs.final_states.contains(s); });
   }
 
-  std::pair<DFA, std::vector<DFA::state_set_type>> DFA::minimize() const {
-    state_set_type non_final_states;
-    std::ranges::set_difference(
-        get_states(), final_states,
-        std::insert_iterator(non_final_states, non_final_states.begin()));
+  std::pair<DFA, std::vector<DFA::state_set_type>>
+  DFA::minimize(std::vector<state_set_type> init_partition) const {
+    std::vector<state_set_type> groups = std::move(init_partition);
+    if (groups.empty()) {
+      groups = {get_non_final_states(), final_states};
+    } else {
+#ifndef NDEBUG
+      for (auto &g : init_partition) {
+        for (auto state : g) {
+          assert(has_state(state));
+        }
+      }
+#endif
+    }
 
-    std::vector<state_set_type> groups{non_final_states, final_states};
     std::unordered_map<state_type, size_t> state_to_group_index;
     bool has_new_group = true;
 

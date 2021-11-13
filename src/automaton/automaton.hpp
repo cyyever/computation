@@ -81,6 +81,13 @@ namespace cyy::computation {
     auto const &get_alphabet() const noexcept { return *alphabet; }
     auto const &get_alphabet_ptr() const noexcept { return alphabet; }
     auto const &get_final_states() const noexcept { return final_states; }
+    auto get_non_final_states() const {
+      state_set_type non_final_states;
+      std::ranges::set_difference(
+          states, final_states,
+          std::insert_iterator(non_final_states, non_final_states.begin()));
+      return non_final_states;
+    }
     state_type get_start_state() const noexcept { return start_state; }
 
     void set_alphabet(ALPHABET_ptr alphabet_) { alphabet = alphabet_; }
