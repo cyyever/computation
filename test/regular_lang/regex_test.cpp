@@ -3,14 +3,10 @@
  *
  * \brief 测试cfg
  */
-#if __has_include(<CppCoreCheck\Warnings.h>)
-#include <CppCoreCheck\Warnings.h>
-#pragma warning(disable : ALL_CPPCORECHECK_WARNINGS)
-#endif
 #include <doctest/doctest.h>
 
-#include "../../src/exception.hpp"
-#include "../../src/regular_lang/regex.hpp"
+#include "exception.hpp"
+#include "regular_lang/regex.hpp"
 
 using namespace cyy::computation;
 
