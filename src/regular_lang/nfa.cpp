@@ -118,7 +118,9 @@ namespace cyy::computation {
     cyy::algorithm::directed_graph<state_type> epsilon_graph;
     for (auto &[from_state, to_state_set] : epsilon_transition_function) {
       for (auto to_state : to_state_set) {
-        epsilon_graph.add_edge({from_state, to_state});
+        if (from_state != to_state) {
+          epsilon_graph.add_edge({from_state, to_state});
+        }
       }
     }
     auto s_index = epsilon_graph.get_vertex_index(s);
