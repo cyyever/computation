@@ -12,8 +12,7 @@
 namespace cyy::computation {
   std::pair<LALR_grammar::collection_type, LALR_grammar::goto_table_type>
   LALR_grammar::get_collection() const {
-    auto collection_pair = canonical_LR_grammar::get_collection();
-    auto &[collection, goto_table] = collection_pair;
+    auto [collection, old_goto_table] = canonical_LR_grammar::get_collection();
 
     std::unordered_map<LR_0_item_set, DFA::state_set_type> state_sets;
     for (auto const &[state, lr_1_item_set] : collection) {
@@ -37,7 +36,7 @@ namespace cyy::computation {
 
     goto_table_type new_goto_table;
 
-    for (auto [from_config, to_state] : goto_table) {
+    for (auto [from_config, to_state] : old_goto_table) {
       new_goto_table.try_emplace(
           {state_map[from_config.first], from_config.second},
           state_map[to_state]);
