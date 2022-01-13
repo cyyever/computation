@@ -3,8 +3,8 @@
  *
  * \brief 测试正則
  */
-#include "../../src/regular_lang/regex.hpp"
 #include "../helper.hpp"
+#include "regular_lang/regex.hpp"
 
 using namespace cyy::computation;
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size);
