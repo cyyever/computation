@@ -16,7 +16,6 @@
 
 #include <cyy/algorithm/alphabet/alphabet.hpp>
 #include <cyy/algorithm/alphabet/map_alphabet.hpp>
-#include <range/v3/all.hpp>
 
 #include "cfg_production.hpp"
 #include "formal_grammar/grammar_symbol.hpp"
@@ -84,13 +83,12 @@ namespace cyy::computation {
     auto &get_productions() &&noexcept { return productions; }
 
     auto productions_view() const {
-      return ranges::views::for_each(productions, [](const auto &p) {
-        return ranges::views::for_each(p.second, [&p](auto const &t) {
-          return ranges::yield(
-              std::pair<const CFG_production::head_type &,
-                        const CFG_production::body_type &>(p.first, t));
-        });
-      });
+      return std::views::join(std::views::transform(productions, [](const auto &p) {
+          return std::views::transform(p.second, [&p](auto const &t) {
+              return std::pair<const CFG_production::head_type &,
+              const CFG_production::body_type &>(p.first, t);
+              });
+          }));
     }
 
     const production_body_set_type &
