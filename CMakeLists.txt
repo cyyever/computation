@@ -11,7 +11,6 @@ find_package(fmt REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(Threads REQUIRED)
 find_package(CyyNaiveLib REQUIRED)
-find_package(range-v3 REQUIRED)
 find_package(CyyAlgorithmLib REQUIRED)
 
 add_library(MyComputationLib ${SOURCE})
