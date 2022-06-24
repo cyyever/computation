@@ -21,9 +21,8 @@
 
 namespace cyy::computation {
   using namespace cyy::algorithm;
-  class grammar_symbol_type : public std::variant<symbol_type, std::string> {
+  struct grammar_symbol_type : public std::variant<symbol_type, std::string> {
 
-  public:
     using terminal_type = symbol_type;
     using nonterminal_type = std::string;
     using std::variant<symbol_type, std::string>::variant;
@@ -68,8 +67,7 @@ namespace cyy::computation {
     }
   };
 
-  class grammar_symbol_string_type : public std::vector<grammar_symbol_type> {
-  public:
+  struct grammar_symbol_string_type : public std::vector<grammar_symbol_type> {
     using std::vector<grammar_symbol_type>::vector;
     auto get_terminal_view() const -> auto {
       return *this | std::ranges::views::filter([](auto g) {

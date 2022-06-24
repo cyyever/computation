@@ -7,14 +7,12 @@
 
 #pragma once
 
-#include <functional>
 #include <memory>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
 
-#include <cyy/algorithm/alphabet/alphabet.hpp>
 #include <cyy/algorithm/alphabet/map_alphabet.hpp>
 
 #include "cfg_production.hpp"
@@ -83,11 +81,12 @@ namespace cyy::computation {
     auto &get_productions() &&noexcept { return productions; }
 
     auto productions_view() const {
-      return std::views::join(std::views::transform(productions, [](const auto &p) {
-          return std::views::transform(p.second, [&p](auto const &t) {
+      return std::views::join(
+          std::views::transform(productions, [](const auto &p) {
+            return std::views::transform(p.second, [&p](auto const &t) {
               return std::pair<const CFG_production::head_type &,
-              const CFG_production::body_type &>(p.first, t);
-              });
+                               const CFG_production::body_type &>(p.first, t);
+            });
           }));
     }
 

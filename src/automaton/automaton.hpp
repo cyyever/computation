@@ -190,22 +190,3 @@ namespace cyy::computation {
   };
 
 } // namespace cyy::computation
-
-namespace std {
-  template <> struct hash<cyy::computation::finite_automaton::situation_type> {
-    std::size_t
-    operator()(const cyy::computation::finite_automaton::situation_type &x)
-        const noexcept {
-      size_t seed = 0;
-
-      boost::hash_combine(
-          seed,
-          std::hash<cyy::computation::finite_automaton::state_type>()(x.state));
-      boost::hash_combine(
-          seed,
-          std::hash<cyy::computation::finite_automaton::input_symbol_type>()(
-              x.input_symbol));
-      return seed;
-    }
-  };
-} // namespace std
