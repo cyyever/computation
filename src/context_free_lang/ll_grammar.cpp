@@ -11,9 +11,14 @@
 #include <iostream>
 #include <ranges>
 
+#ifdef __cpp_lib_format
+#include <format>
+#define fmt std
+#else
 #include <fmt/format.h>
+#endif
 
-#include "../exception.hpp"
+#include "exception.hpp"
 
 namespace cyy::computation {
 

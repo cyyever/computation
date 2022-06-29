@@ -4,7 +4,12 @@
 
 #include "lr_0_grammar.hpp"
 
+#ifdef __cpp_lib_format
+#include <format>
+#define fmt std
+#else
 #include <fmt/format.h>
+#endif
 
 #include "exception.hpp"
 

@@ -6,8 +6,12 @@
  */
 
 #include "cfg_production.hpp"
-
+#ifdef __cpp_lib_format
+#include <format>
+#define fmt std
+#else
 #include <fmt/format.h>
+#endif
 
 namespace cyy::computation {
 
