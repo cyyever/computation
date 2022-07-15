@@ -27,17 +27,17 @@ namespace cyy::computation {
   }
 
   void regex::basic_node::assign_position(
-      std::map<uint64_t, symbol_type> &position_to_symbol) {
+      std::unordered_map<uint64_t, symbol_type> &position_to_symbol) {
     if (position_to_symbol.empty()) {
       position = 1;
     } else {
-      position = position_to_symbol.rbegin()->first + 1;
+      position =  std::ranges::max(std::views::keys(position_to_symbol))+1;
     }
     position_to_symbol.insert({position, symbol});
   }
 
-  std::set<uint64_t> regex::basic_node::first_pos() const { return {position}; }
-  std::set<uint64_t> regex::basic_node::last_pos() const { return first_pos(); }
+  std::unordered_set<uint64_t> regex::basic_node::first_pos() const { return {position}; }
+  std::unordered_set<uint64_t> regex::basic_node::last_pos() const { return first_pos(); }
 
   NFA regex::epsilon_node::to_NFA(const ALPHABET_ptr &alphabet,
                                   NFA::state_type start_state) const {
@@ -58,11 +58,11 @@ namespace cyy::computation {
   }
 
   void regex::epsilon_node::assign_position(
-      std::map<uint64_t, symbol_type> &position_to_symbol
+      std::unordered_map<uint64_t, symbol_type> &position_to_symbol
       [[maybe_unused]]) noexcept {}
 
-  std::set<uint64_t> regex::epsilon_node::first_pos() const { return {}; }
-  std::set<uint64_t> regex::epsilon_node::last_pos() const { return {}; }
+  std::unordered_set<uint64_t> regex::epsilon_node::first_pos() const { return {}; }
+  std::unordered_set<uint64_t> regex::epsilon_node::last_pos() const { return {}; }
 
   NFA regex::empty_set_node::to_NFA(const ALPHABET_ptr &,
                                     NFA::state_type) const {
@@ -74,12 +74,12 @@ namespace cyy::computation {
   }
 
   void
-  regex::empty_set_node::assign_position(std::map<uint64_t, symbol_type> &) {
+  regex::empty_set_node::assign_position(std::unordered_map<uint64_t, symbol_type> &) {
     throw std::logic_error("unsupported");
   }
 
-  std::set<uint64_t> regex::empty_set_node::first_pos() const { return {}; }
-  std::set<uint64_t> regex::empty_set_node::last_pos() const { return {}; }
+  std::unordered_set<uint64_t> regex::empty_set_node::first_pos() const { return {}; }
+  std::unordered_set<uint64_t> regex::empty_set_node::last_pos() const { return {}; }
 
   bool regex::union_node::is_empty_set_node() const {
     return left_node->is_empty_set_node() && right_node->is_empty_set_node();
@@ -143,22 +143,22 @@ namespace cyy::computation {
   }
 
   void regex::union_node::assign_position(
-      std::map<uint64_t, symbol_type> &position_to_symbol) {
+      std::unordered_map<uint64_t, symbol_type> &position_to_symbol) {
     left_node->assign_position(position_to_symbol);
     right_node->assign_position(position_to_symbol);
   }
 
-  std::set<uint64_t> regex::union_node::first_pos() const {
+  std::unordered_set<uint64_t> regex::union_node::first_pos() const {
     auto tmp = left_node->first_pos();
     tmp.merge(right_node->first_pos());
     return tmp;
   }
-  std::set<uint64_t> regex::union_node::last_pos() const {
+  std::unordered_set<uint64_t> regex::union_node::last_pos() const {
     auto tmp = left_node->last_pos();
     tmp.merge(right_node->last_pos());
     return tmp;
   }
-  std::map<uint64_t, std::set<uint64_t>> regex::union_node::follow_pos() const {
+  std::unordered_map<uint64_t, std::unordered_set<uint64_t>> regex::union_node::follow_pos() const {
     auto res = left_node->follow_pos();
     res.merge(right_node->follow_pos());
     return res;
@@ -221,12 +221,12 @@ namespace cyy::computation {
   }
 
   void regex::concat_node::assign_position(
-      std::map<uint64_t, symbol_type> &position_to_symbol) {
+      std::unordered_map<uint64_t, symbol_type> &position_to_symbol) {
     left_node->assign_position(position_to_symbol);
     right_node->assign_position(position_to_symbol);
   }
 
-  std::set<uint64_t> regex::concat_node::first_pos() const {
+  std::unordered_set<uint64_t> regex::concat_node::first_pos() const {
     if (!left_node->nullable()) {
       return left_node->first_pos();
     }
@@ -235,7 +235,7 @@ namespace cyy::computation {
     return tmp;
   }
 
-  std::set<uint64_t> regex::concat_node::last_pos() const {
+  std::unordered_set<uint64_t> regex::concat_node::last_pos() const {
     if (!right_node->nullable()) {
       return right_node->last_pos();
     }
@@ -244,7 +244,7 @@ namespace cyy::computation {
     return tmp;
   }
 
-  std::map<uint64_t, std::set<uint64_t>>
+  std::unordered_map<uint64_t, std::unordered_set<uint64_t>>
   regex::concat_node::follow_pos() const {
     auto res = left_node->follow_pos();
     res.merge(right_node->follow_pos());
@@ -324,18 +324,18 @@ namespace cyy::computation {
   }
 
   void regex::kleene_closure_node::assign_position(
-      std::map<uint64_t, symbol_type> &position_to_symbol) {
+      std::unordered_map<uint64_t, symbol_type> &position_to_symbol) {
     inner_node->assign_position(position_to_symbol);
   }
 
-  std::set<uint64_t> regex::kleene_closure_node::first_pos() const {
+  std::unordered_set<uint64_t> regex::kleene_closure_node::first_pos() const {
     return inner_node->first_pos();
   }
-  std::set<uint64_t> regex::kleene_closure_node::last_pos() const {
+  std::unordered_set<uint64_t> regex::kleene_closure_node::last_pos() const {
     return inner_node->last_pos();
   }
 
-  std::map<uint64_t, std::set<uint64_t>>
+  std::unordered_map<uint64_t, std::unordered_set<uint64_t>>
   regex::kleene_closure_node::follow_pos() const {
     auto res = inner_node->follow_pos();
     auto tmp = inner_node->first_pos();

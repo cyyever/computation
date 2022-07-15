@@ -129,11 +129,11 @@ namespace cyy::computation {
     pda.prepare_CFG_conversion();
     using from_state_type = PDA::state_type;
     using to_state_type = PDA::state_type;
-    std::map<PDA::stack_symbol_type,
+    std::unordered_map<PDA::stack_symbol_type,
              std::vector<std::tuple<PDA::situation_type, to_state_type>>>
         push_stack_transitions;
 
-    std::map<PDA::stack_symbol_type,
+    std::unordered_map<PDA::stack_symbol_type,
              std::vector<std::tuple<PDA::situation_type, to_state_type>>>
         pop_stack_transitions;
 
@@ -205,13 +205,13 @@ namespace cyy::computation {
     using input_symbol_type = endmarked_DPDA::input_symbol_type;
     using stack_symbol_type = endmarked_DPDA::stack_symbol_type;
 
-    std::map<
+    std::unordered_map<
         stack_symbol_type,
         std::set<std::tuple<from_state_type, std::optional<input_symbol_type>,
                             to_state_type>>>
         push_stack_transitions;
 
-    std::map<
+    std::unordered_map<
         stack_symbol_type,
         std::set<std::tuple<from_state_type, std::optional<input_symbol_type>,
                             to_state_type>>>

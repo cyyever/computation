@@ -120,8 +120,8 @@ namespace cyy::computation {
     std::optional<configuration_type> go(configuration_type configuration,
                                          input_symbol_type a) const;
 
-    std::pair<std::map<state_type, symbol_set_type>,
-              std::map<state_type, symbol_set_type>>
+    std::pair<std::unordered_map<state_type, symbol_set_type>,
+              std::unordered_map<state_type, symbol_set_type>>
     get_looping_situations() const;
 
     void check_transition_fuction() const;

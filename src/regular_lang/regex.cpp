@@ -8,22 +8,23 @@
 #include "regex.hpp"
 
 #include <vector>
+#include <algorithm>
 
 namespace cyy::computation {
 
   DFA regex::to_DFA() const {
-    std::map<uint64_t, symbol_type> position_to_symbol;
+    std::unordered_map<uint64_t, symbol_type> position_to_symbol;
 
     auto syntax_tree_with_endmarker = std::make_shared<regex::concat_node>(
         syntax_tree, std::make_shared<regex::basic_node>(ALPHABET::endmarker));
 
     syntax_tree_with_endmarker->assign_position(position_to_symbol);
 
-    auto final_position = position_to_symbol.rbegin()->first;
+    auto final_position =  std::ranges::max(std::views::keys(position_to_symbol));
     auto follow_pos_table = syntax_tree_with_endmarker->follow_pos();
 
     std::vector<bool> flags{false};
-    std::vector<std::set<uint64_t>> position_sets{
+    std::vector<std::unordered_set<uint64_t>> position_sets{
         syntax_tree_with_endmarker->first_pos()};
     DFA::state_set_type DFA_states{0};
     DFA::transition_function_type DFA_transition_function;
@@ -35,7 +36,7 @@ namespace cyy::computation {
       flags[i] = true;
 
       for (auto a : alphabet->get_view()) {
-        std::set<uint64_t> follow_pos_set;
+        std::unordered_set<uint64_t> follow_pos_set;
         for (auto const pos : position_sets[i]) {
           if (position_to_symbol[pos] == a) {
             for (auto const follow_pos : follow_pos_table[pos]) {

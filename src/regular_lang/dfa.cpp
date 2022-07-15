@@ -226,7 +226,7 @@ namespace cyy::computation {
             new_final_states};
   }
   std::string DFA::MMA_draw() const {
-    std::unordered_map<std::pair<state_type, state_type>, std::set<symbol_type>>
+    std::unordered_map<std::pair<state_type, state_type>, symbol_set_type>
         edge_labels;
     for (auto const &[situation, my_next_state] : transition_function) {
       edge_labels[{situation.state, my_next_state}].emplace(

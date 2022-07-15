@@ -241,7 +241,7 @@ namespace cyy::computation {
   }
 
   endmarked_DPDA::state_set_type endmarked_DPDA::get_accept_states() const {
-    std::map<state_type, std::set<std::vector<stack_symbol_type>>>
+    std::unordered_map<state_type, std::set<std::vector<stack_symbol_type>>>
         accept_states_and_stacks;
 
     // found states one step to finial states
@@ -324,8 +324,8 @@ namespace cyy::computation {
           transfers, [](auto const &p) { return !p.first.use_input(); });
       bool has_stack_epsilon = std::ranges::any_of(
           transfers, [](auto const &p) { return !p.first.has_pop(); });
-      std::map<stack_symbol_type, state_type> parallel_stack_states;
-      std::map<input_symbol_type, state_type> parallel_input_states;
+      std::unordered_map<stack_symbol_type, state_type> parallel_stack_states;
+      std::unordered_map<input_symbol_type, state_type> parallel_input_states;
 
       for (auto &[situation, action] : transfers) {
         if (!situation.use_input()) {

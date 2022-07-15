@@ -54,7 +54,7 @@ namespace cyy::computation {
       const auto &get_content() const { return content; }
 
     private:
-      std::set<symbol_type> content;
+      symbol_set_type content;
       symbol_type last_symbol{};
       symbol_type range_begin{};
       bool in_range{false};
@@ -101,13 +101,13 @@ namespace cyy::computation {
   */
 
   const LL_grammar &regex::get_grammar() const {
-    static std::map<std::string, std::shared_ptr<LL_grammar>> factory;
+    static std::unordered_map<std::string, std::shared_ptr<LL_grammar>> factory;
     auto &regex_grammar = factory[alphabet->get_name()];
     if (regex_grammar) {
       return *regex_grammar;
     }
 
-    std::set<CFG::terminal_type> operators{'|', '*', '(', '\\', ')', '+',
+    symbol_set_type operators{'|', '*', '(', '\\', ')', '+',
                                            '?', '[', ']', '.',  '^', '-'};
 
     CFG::production_set_type productions;
@@ -162,12 +162,12 @@ namespace cyy::computation {
       }
     }
 
-    std::set<symbol_type> symbol_set;
+    symbol_set_type symbol_set;
     for (auto s : alphabet->get_view()) {
       symbol_set.insert(s);
     }
 
-    symbol_set.merge(std::set<symbol_type>(operators));
+    symbol_set.merge(symbol_set_type(operators));
     auto regex_alphabet = std::make_shared<set_alphabet>(
         symbol_set, alphabet->get_name() + "_regex");
     ALPHABET::set(regex_alphabet);
@@ -368,7 +368,7 @@ namespace cyy::computation {
   }
 
   std::shared_ptr<regex::syntax_node>
-  regex::make_character_class(const std::set<symbol_type> &symbol_set) const {
+  regex::make_character_class(const symbol_set_type &symbol_set) const {
     std::shared_ptr<regex::syntax_node> root{};
     for (auto const symbol : symbol_set) {
       if (!root) {
@@ -384,10 +384,10 @@ namespace cyy::computation {
   }
 
   std::shared_ptr<regex::syntax_node> regex::make_complemented_character_class(
-      const std::set<symbol_type> &symbol_set) const {
+      const symbol_set_type &symbol_set) const {
     std::shared_ptr<regex::syntax_node> root{};
 
-    std::set<symbol_type> complemented_symbol_set;
+    symbol_set_type complemented_symbol_set;
 
     for (auto a : alphabet->get_view()) {
       if (!symbol_set.contains(a)) {

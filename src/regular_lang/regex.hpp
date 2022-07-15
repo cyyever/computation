@@ -33,10 +33,10 @@ namespace cyy::computation {
       virtual bool is_epsilon_node() const = 0;
       virtual bool nullable() const = 0;
       virtual void
-      assign_position(std::map<uint64_t, symbol_type> &position_to_symbol) = 0;
-      virtual std::set<uint64_t> first_pos() const = 0;
-      virtual std::set<uint64_t> last_pos() const = 0;
-      virtual std::map<uint64_t, std::set<uint64_t>> follow_pos() const = 0;
+      assign_position(std::unordered_map<uint64_t, symbol_type> &position_to_symbol) = 0;
+      virtual std::unordered_set<uint64_t> first_pos() const = 0;
+      virtual std::unordered_set<uint64_t> last_pos() const = 0;
+      virtual std::unordered_map<uint64_t, std::unordered_set<uint64_t>> follow_pos() const = 0;
       virtual std::shared_ptr<syntax_node> simplify() const = 0;
       virtual symbol_string to_string() const = 0;
     };
@@ -52,10 +52,10 @@ namespace cyy::computation {
       bool is_epsilon_node() const override { return false; }
       bool nullable() const noexcept override { return true; }
       void assign_position(
-          std::map<uint64_t, symbol_type> &position_to_symbol) override;
-      std::set<uint64_t> first_pos() const override;
-      std::set<uint64_t> last_pos() const override;
-      std::map<uint64_t, std::set<uint64_t>> follow_pos() const override {
+          std::unordered_map<uint64_t, symbol_type> &position_to_symbol) override;
+      std::unordered_set<uint64_t> first_pos() const override;
+      std::unordered_set<uint64_t> last_pos() const override;
+      std::unordered_map<uint64_t, std::unordered_set<uint64_t>> follow_pos() const override {
         return {};
       }
       std::shared_ptr<syntax_node> simplify() const override { return {}; }
@@ -72,11 +72,11 @@ namespace cyy::computation {
       bool nullable() const noexcept override { return true; }
       bool is_empty_set_node() const override { return false; }
       bool is_epsilon_node() const override { return true; }
-      void assign_position(std::map<uint64_t, symbol_type>
+      void assign_position(std::unordered_map<uint64_t, symbol_type>
                                &position_to_symbol) noexcept override;
-      std::set<uint64_t> first_pos() const override;
-      std::set<uint64_t> last_pos() const override;
-      std::map<uint64_t, std::set<uint64_t>> follow_pos() const override {
+      std::unordered_set<uint64_t> first_pos() const override;
+      std::unordered_set<uint64_t> last_pos() const override;
+      std::unordered_map<uint64_t, std::unordered_set<uint64_t>> follow_pos() const override {
         return {};
       }
       std::shared_ptr<syntax_node> simplify() const override { return {}; }
@@ -94,10 +94,10 @@ namespace cyy::computation {
       bool is_epsilon_node() const override { return false; }
       bool nullable() const noexcept override { return false; }
       void assign_position(
-          std::map<uint64_t, symbol_type> &position_to_symbol) override;
-      std::set<uint64_t> first_pos() const override;
-      std::set<uint64_t> last_pos() const override;
-      std::map<uint64_t, std::set<uint64_t>> follow_pos() const override {
+          std::unordered_map<uint64_t, symbol_type> &position_to_symbol) override;
+      std::unordered_set<uint64_t> first_pos() const override;
+      std::unordered_set<uint64_t> last_pos() const override;
+      std::unordered_map<uint64_t, std::unordered_set<uint64_t>> follow_pos() const override {
         return {};
       }
       std::shared_ptr<syntax_node> simplify() const override { return {}; }
@@ -127,10 +127,10 @@ namespace cyy::computation {
         return left_node->nullable() || right_node->nullable();
       }
       void assign_position(
-          std::map<uint64_t, symbol_type> &position_to_symbol) override;
-      std::set<uint64_t> first_pos() const override;
-      std::set<uint64_t> last_pos() const override;
-      std::map<uint64_t, std::set<uint64_t>> follow_pos() const override;
+          std::unordered_map<uint64_t, symbol_type> &position_to_symbol) override;
+      std::unordered_set<uint64_t> first_pos() const override;
+      std::unordered_set<uint64_t> last_pos() const override;
+      std::unordered_map<uint64_t, std::unordered_set<uint64_t>> follow_pos() const override;
       bool is_empty_set_node() const override;
       bool is_epsilon_node() const override;
       std::shared_ptr<syntax_node> simplify() const override;
@@ -180,10 +180,10 @@ namespace cyy::computation {
         return left_node->nullable() && right_node->nullable();
       }
       void assign_position(
-          std::map<uint64_t, symbol_type> &position_to_symbol) override;
-      std::set<uint64_t> first_pos() const override;
-      std::set<uint64_t> last_pos() const override;
-      std::map<uint64_t, std::set<uint64_t>> follow_pos() const override;
+          std::unordered_map<uint64_t, symbol_type> &position_to_symbol) override;
+      std::unordered_set<uint64_t> first_pos() const override;
+      std::unordered_set<uint64_t> last_pos() const override;
+      std::unordered_map<uint64_t, std::unordered_set<uint64_t>> follow_pos() const override;
       bool is_empty_set_node() const override;
       bool is_epsilon_node() const override;
       std::shared_ptr<syntax_node> simplify() const override;
@@ -210,9 +210,9 @@ namespace cyy::computation {
                  const CFG::nonterminal_type &start_symbol) const override;
       bool nullable() const noexcept override { return true; }
       void assign_position(
-          std::map<uint64_t, symbol_type> &position_to_symbol) override;
-      std::set<uint64_t> first_pos() const override;
-      std::set<uint64_t> last_pos() const override;
+          std::unordered_map<uint64_t, symbol_type> &position_to_symbol) override;
+      std::unordered_set<uint64_t> first_pos() const override;
+      std::unordered_set<uint64_t> last_pos() const override;
       bool is_empty_set_node() const override;
       bool is_epsilon_node() const override;
       std::shared_ptr<syntax_node> simplify() const override;
@@ -228,7 +228,7 @@ namespace cyy::computation {
 
     private:
       std::shared_ptr<syntax_node> inner_node;
-      std::map<uint64_t, std::set<uint64_t>> follow_pos() const override;
+      std::unordered_map<uint64_t, std::unordered_set<uint64_t>> follow_pos() const override;
     };
 
   public:
@@ -252,9 +252,9 @@ namespace cyy::computation {
   private:
     std::shared_ptr<syntax_node> parse(symbol_string_view view) const;
     std::shared_ptr<syntax_node>
-    make_character_class(const std::set<symbol_type> &symbol_set) const;
+    make_character_class(const symbol_set_type &symbol_set) const;
     std::shared_ptr<syntax_node> make_complemented_character_class(
-        const std::set<symbol_type> &symbol_set) const;
+        const symbol_set_type &symbol_set) const;
 
     const LL_grammar &get_grammar() const;
 
