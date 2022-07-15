@@ -32,12 +32,8 @@ namespace cyy::computation {
 
     ~CFG_production() = default;
 
-    bool operator==(const CFG_production &rhs) const {
-      return std::tie(head, body) == std::tie(rhs.head, rhs.body);
-    }
-    auto operator<=>(const CFG_production &rhs) const {
-      return std::tie(head, body) <=> std::tie(rhs.head, rhs.body);
-    }
+    bool operator==(const CFG_production &rhs) const noexcept = default;
+    auto operator<=>(const CFG_production &rhs) const noexcept = default;
     bool is_epsilon() const;
 
     std::string to_string(const ALPHABET &alphabet) const;

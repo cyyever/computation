@@ -22,12 +22,6 @@ namespace cyy::computation {
   class DPDA : public finite_automaton {
   public:
     struct situation_type {
-      situation_type() = default;
-      situation_type(input_symbol_type input_symbol_)
-          : input_symbol{input_symbol_} {}
-      situation_type(std::optional<input_symbol_type> input_symbol_,
-                     stack_symbol_type stack_symbol_)
-          : input_symbol{input_symbol_}, stack_symbol{stack_symbol_} {}
       bool operator==(const situation_type &) const noexcept = default;
       bool has_pop() const { return stack_symbol.has_value(); }
       stack_symbol_type get_poped_symbol() const {
@@ -38,20 +32,6 @@ namespace cyy::computation {
       std::optional<stack_symbol_type> stack_symbol;
     };
 
-    struct situation_hash_type {
-      std::size_t operator()(const situation_type &x) const noexcept {
-        size_t seed = 0;
-        if (x.input_symbol) {
-          boost::hash_combine(seed,
-                              std::hash<input_symbol_type>()(*x.input_symbol));
-        }
-        if (x.stack_symbol) {
-          boost::hash_combine(seed,
-                              std::hash<stack_symbol_type>()(*x.stack_symbol));
-        }
-        return seed;
-      }
-    };
 
     struct action_type {
       action_type() = default;
@@ -71,7 +51,7 @@ namespace cyy::computation {
 
     using __transition_function_type = std::unordered_map<
         state_type,
-        std::unordered_map<situation_type, action_type, situation_hash_type>>;
+        std::unordered_map<situation_type, action_type>>;
     class transition_function_type : public __transition_function_type {
     public:
       using __transition_function_type::__transition_function_type;

@@ -23,47 +23,19 @@ namespace cyy::computation {
   class PDA final : public finite_automaton {
   public:
     struct situation_type {
-      situation_type(state_type state_) : state(state_) {}
-      situation_type(state_type state_, input_symbol_type input_symbol_)
-          : state(state_), input_symbol{input_symbol_} {}
-      situation_type(state_type state_,
-                     std::optional<input_symbol_type> input_symbol_,
-                     stack_symbol_type stack_symbol_)
-          : state(state_), input_symbol{input_symbol_}, stack_symbol{
-                                                            stack_symbol_} {}
       bool use_input() const { return input_symbol.has_value(); }
       auto get_input() const { return input_symbol.value(); }
       bool has_pop() const { return stack_symbol.has_value(); }
       auto get_stack_symbol() const { return stack_symbol.value(); }
       bool operator==(const situation_type &) const noexcept = default;
-      state_type state;
+      state_type state{};
       std::optional<input_symbol_type> input_symbol;
       std::optional<stack_symbol_type> stack_symbol;
     };
 
-    struct situation_hash_type {
-      std::size_t operator()(const situation_type &x) const noexcept {
-        size_t seed = 0;
-        boost::hash_combine(seed, std::hash<state_type>()(x.state));
-        if (x.input_symbol) {
-          boost::hash_combine(seed,
-                              std::hash<input_symbol_type>()(*x.input_symbol));
-        }
-        if (x.stack_symbol) {
-          boost::hash_combine(seed,
-                              std::hash<stack_symbol_type>()(*x.stack_symbol));
-        }
-        return seed;
-      }
-    };
 
     struct action_type {
-      action_type(state_type state_) : state(state_) {}
-      action_type(state_type state_,
-                  std::optional<stack_symbol_type> stack_symbol_)
-          : state(state_), stack_symbol(stack_symbol_) {}
       bool operator==(const action_type &) const noexcept = default;
-      auto operator<=>(const action_type &) const noexcept = default;
       bool has_push() const { return stack_symbol.has_value(); }
       auto get_stack_symbol() const { return stack_symbol.value(); }
       state_type state{};
@@ -71,8 +43,7 @@ namespace cyy::computation {
     };
 
     using transition_function_type =
-        std::unordered_map<situation_type, std::set<action_type>,
-                           situation_hash_type>;
+        std::unordered_map<situation_type, std::unordered_set<action_type>>;
 
     PDA(finite_automaton finite_automaton_, ALPHABET_ptr stack_alphabet_,
         transition_function_type transition_function_)

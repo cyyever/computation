@@ -402,7 +402,7 @@ namespace cyy::computation {
         continue;
       }
 
-      std::unordered_map<situation_type, action_type, situation_hash_type>
+      std::unordered_map<situation_type, action_type>
           new_transitions_of_state;
       std::unordered_map<stack_symbol_type, state_type> stack_to_state;
       for (auto [situation, action] : transfers) {
