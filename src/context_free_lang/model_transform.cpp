@@ -51,8 +51,8 @@ namespace cyy::computation {
         grammar_symbol_to_stack_symbol;
     PDA::stack_symbol_type next_stack_symbol = 0;
     auto get_stack_symbol =
-        [&grammar_symbol_to_stack_symbol, &next_stack_symbol ](
-            const grammar_symbol_type &grammar_symbol) -> auto {
+        [&grammar_symbol_to_stack_symbol, &
+         next_stack_symbol ](const grammar_symbol_type &grammar_symbol) -> auto{
       auto it = grammar_symbol_to_stack_symbol.find(grammar_symbol);
       if (it != grammar_symbol_to_stack_symbol.end()) {
         return it->second;
@@ -129,12 +129,14 @@ namespace cyy::computation {
     pda.prepare_CFG_conversion();
     using from_state_type = PDA::state_type;
     using to_state_type = PDA::state_type;
-    std::unordered_map<PDA::stack_symbol_type,
-             std::vector<std::tuple<PDA::situation_type, to_state_type>>>
+    std::unordered_map<
+        PDA::stack_symbol_type,
+        std::vector<std::tuple<PDA::situation_type, to_state_type>>>
         push_stack_transitions;
 
-    std::unordered_map<PDA::stack_symbol_type,
-             std::vector<std::tuple<PDA::situation_type, to_state_type>>>
+    std::unordered_map<
+        PDA::stack_symbol_type,
+        std::vector<std::tuple<PDA::situation_type, to_state_type>>>
         pop_stack_transitions;
 
     for (auto &[situation, actions] : pda.get_transition_function()) {

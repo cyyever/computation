@@ -69,14 +69,14 @@ namespace cyy::computation {
 
   struct grammar_symbol_string_type : public std::vector<grammar_symbol_type> {
     using std::vector<grammar_symbol_type>::vector;
-    auto get_terminal_view() const -> auto {
+    auto get_terminal_view() const -> auto{
       return *this | std::ranges::views::filter([](auto g) {
         return g.is_terminal();
       }) | std::ranges::views::transform([](auto g) {
         return g.get_terminal();
       });
     }
-    auto get_nonterminal_view() const -> auto {
+    auto get_nonterminal_view() const -> auto{
       return *this | std::ranges::views::filter([](auto g) {
         return g.is_nonterminal();
       }) | std::ranges::views::transform([](auto g) {

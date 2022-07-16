@@ -366,7 +366,7 @@ namespace cyy::computation {
           }
 
           auto next_state = parallel_input_states[input_symbol];
-          new_transfers[{.input_symbol=input_symbol}] = {next_state};
+          new_transfers[{.input_symbol = input_symbol}] = {next_state};
           new_transitions[next_state][{{}, situation.get_poped_symbol()}] =
               std::move(action);
           continue;
@@ -382,7 +382,7 @@ namespace cyy::computation {
         }
 
         auto next_state = parallel_input_states[input_symbol];
-        new_transfers[{.input_symbol=input_symbol}] = {next_state};
+        new_transfers[{.input_symbol = input_symbol}] = {next_state};
         new_transitions[next_state][{}] = std::move(action);
       }
       transfers = std::move(new_transfers);

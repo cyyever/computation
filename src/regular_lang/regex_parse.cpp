@@ -108,7 +108,7 @@ namespace cyy::computation {
     }
 
     symbol_set_type operators{'|', '*', '(', '\\', ')', '+',
-                                           '?', '[', ']', '.',  '^', '-'};
+                              '?', '[', ']', '.',  '^', '-'};
 
     CFG::production_set_type productions;
     productions["rexpr"] = {{"rterm", "rexpr'"}, {}};

@@ -29,17 +29,16 @@ namespace cyy::computation {
       auto get_stack_symbol() const { return stack_symbol.value(); }
       bool operator==(const situation_type &) const noexcept = default;
       state_type state{};
-      std::optional<input_symbol_type> input_symbol;
-      std::optional<stack_symbol_type> stack_symbol;
+      std::optional<input_symbol_type> input_symbol{};
+      std::optional<stack_symbol_type> stack_symbol{};
     };
-
 
     struct action_type {
       bool operator==(const action_type &) const noexcept = default;
       bool has_push() const { return stack_symbol.has_value(); }
       auto get_stack_symbol() const { return stack_symbol.value(); }
       state_type state{};
-      std::optional<stack_symbol_type> stack_symbol;
+      std::optional<stack_symbol_type> stack_symbol{};
     };
 
     using transition_function_type =

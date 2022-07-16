@@ -28,10 +28,9 @@ namespace cyy::computation {
         return stack_symbol.value();
       }
       bool use_input() const { return input_symbol.has_value(); }
-      std::optional<input_symbol_type> input_symbol;
-      std::optional<stack_symbol_type> stack_symbol;
+      std::optional<input_symbol_type> input_symbol{};
+      std::optional<stack_symbol_type> stack_symbol{};
     };
-
 
     struct action_type {
       action_type() = default;
@@ -49,9 +48,9 @@ namespace cyy::computation {
       }
     };
 
-    using __transition_function_type = std::unordered_map<
-        state_type,
-        std::unordered_map<situation_type, action_type>>;
+    using __transition_function_type =
+        std::unordered_map<state_type,
+                           std::unordered_map<situation_type, action_type>>;
     class transition_function_type : public __transition_function_type {
     public:
       using __transition_function_type::__transition_function_type;
@@ -110,7 +109,7 @@ namespace cyy::computation {
 
   protected:
     struct configuration_type {
-      state_type state;
+      state_type state{};
       std::vector<stack_symbol_type> stack;
     };
 

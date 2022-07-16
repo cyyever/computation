@@ -7,8 +7,8 @@
 
 #include "regex.hpp"
 
-#include <vector>
 #include <algorithm>
+#include <vector>
 
 namespace cyy::computation {
 
@@ -20,7 +20,8 @@ namespace cyy::computation {
 
     syntax_tree_with_endmarker->assign_position(position_to_symbol);
 
-    auto final_position =  std::ranges::max(std::views::keys(position_to_symbol));
+    auto final_position =
+        std::ranges::max(std::views::keys(position_to_symbol));
     auto follow_pos_table = syntax_tree_with_endmarker->follow_pos();
 
     std::vector<bool> flags{false};

@@ -584,7 +584,7 @@ namespace cyy::computation {
   std::shared_ptr<map_alphabet<std::string>>
   CFG::get_nonterminal_alphabet() const {
     auto max_symbol = get_alphabet().get_max_symbol();
-    std::map<symbol_type, nonterminal_type> symbol_to_nonterminal;
+    std::unordered_map<symbol_type, nonterminal_type> symbol_to_nonterminal;
     auto nonterminals = get_nonterminals();
     for (auto &nonterminal : nonterminals) {
       max_symbol++;

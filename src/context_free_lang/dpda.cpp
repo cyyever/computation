@@ -364,8 +364,8 @@ namespace cyy::computation {
     }
 
     // FIXME epsilon_transitions
-    std::unordered_map<state_type, symbol_set_type> acceptance_looping_situations,
-        rejection_looping_situations;
+    std::unordered_map<state_type, symbol_set_type>
+        acceptance_looping_situations, rejection_looping_situations;
     for (auto &[s, stack_symbol_set] : looping_situations) {
       assert(!stack_symbol_set.empty());
       for (auto [stack_symbol, can_reach_final] : stack_symbol_set) {
@@ -402,8 +402,7 @@ namespace cyy::computation {
         continue;
       }
 
-      std::unordered_map<situation_type, action_type>
-          new_transitions_of_state;
+      std::unordered_map<situation_type, action_type> new_transitions_of_state;
       std::unordered_map<stack_symbol_type, state_type> stack_to_state;
       for (auto [situation, action] : transfers) {
         if (situation.use_input()) {
@@ -491,7 +490,7 @@ namespace cyy::computation {
 #endif
   }
   std::string DPDA::MMA_draw() const {
-      std::map<
+    std::map<
         std::tuple<state_type, state_type, std::optional<input_symbol_type>>,
         std::vector<std::string>>
         stack_cmds;

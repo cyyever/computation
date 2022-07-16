@@ -31,13 +31,17 @@ namespace cyy::computation {
     if (position_to_symbol.empty()) {
       position = 1;
     } else {
-      position =  std::ranges::max(std::views::keys(position_to_symbol))+1;
+      position = std::ranges::max(std::views::keys(position_to_symbol)) + 1;
     }
     position_to_symbol.insert({position, symbol});
   }
 
-  std::unordered_set<uint64_t> regex::basic_node::first_pos() const { return {position}; }
-  std::unordered_set<uint64_t> regex::basic_node::last_pos() const { return first_pos(); }
+  std::unordered_set<uint64_t> regex::basic_node::first_pos() const {
+    return {position};
+  }
+  std::unordered_set<uint64_t> regex::basic_node::last_pos() const {
+    return first_pos();
+  }
 
   NFA regex::epsilon_node::to_NFA(const ALPHABET_ptr &alphabet,
                                   NFA::state_type start_state) const {
@@ -61,8 +65,12 @@ namespace cyy::computation {
       std::unordered_map<uint64_t, symbol_type> &position_to_symbol
       [[maybe_unused]]) noexcept {}
 
-  std::unordered_set<uint64_t> regex::epsilon_node::first_pos() const { return {}; }
-  std::unordered_set<uint64_t> regex::epsilon_node::last_pos() const { return {}; }
+  std::unordered_set<uint64_t> regex::epsilon_node::first_pos() const {
+    return {};
+  }
+  std::unordered_set<uint64_t> regex::epsilon_node::last_pos() const {
+    return {};
+  }
 
   NFA regex::empty_set_node::to_NFA(const ALPHABET_ptr &,
                                     NFA::state_type) const {
@@ -73,13 +81,17 @@ namespace cyy::computation {
     throw std::logic_error("unsupported");
   }
 
-  void
-  regex::empty_set_node::assign_position(std::unordered_map<uint64_t, symbol_type> &) {
+  void regex::empty_set_node::assign_position(
+      std::unordered_map<uint64_t, symbol_type> &) {
     throw std::logic_error("unsupported");
   }
 
-  std::unordered_set<uint64_t> regex::empty_set_node::first_pos() const { return {}; }
-  std::unordered_set<uint64_t> regex::empty_set_node::last_pos() const { return {}; }
+  std::unordered_set<uint64_t> regex::empty_set_node::first_pos() const {
+    return {};
+  }
+  std::unordered_set<uint64_t> regex::empty_set_node::last_pos() const {
+    return {};
+  }
 
   bool regex::union_node::is_empty_set_node() const {
     return left_node->is_empty_set_node() && right_node->is_empty_set_node();
@@ -158,7 +170,8 @@ namespace cyy::computation {
     tmp.merge(right_node->last_pos());
     return tmp;
   }
-  std::unordered_map<uint64_t, std::unordered_set<uint64_t>> regex::union_node::follow_pos() const {
+  std::unordered_map<uint64_t, std::unordered_set<uint64_t>>
+  regex::union_node::follow_pos() const {
     auto res = left_node->follow_pos();
     res.merge(right_node->follow_pos());
     return res;
