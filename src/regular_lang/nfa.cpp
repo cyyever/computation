@@ -22,14 +22,14 @@ namespace cyy::computation {
     for (const auto &s : T) {
       auto it = transition_function.find({s, a});
       if (it != transition_function.end()) {
-        direct_reachable.insert(it->second.begin(), it->second.end());
+        direct_reachable.merge(state_set_type(it->second));
       }
     }
 
     state_set_type res;
     for (auto const &d : direct_reachable) {
       auto const &closure = get_epsilon_closure(d);
-      res.insert(closure.begin(), closure.end());
+      res.merge(state_set_type(closure));
     }
     return res;
   }

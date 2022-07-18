@@ -253,7 +253,7 @@ namespace cyy::computation {
     CFG to_CFG() const { return syntax_tree->to_CFG(alphabet, "S"); }
     auto get_syntax_tree() const -> const auto & { return syntax_tree; }
 
-    //基于McNaughton-Yamada算法
+    // 基于McNaughton-Yamada算法
     DFA to_DFA() const;
 
   private:

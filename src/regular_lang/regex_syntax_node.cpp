@@ -267,7 +267,7 @@ namespace cyy::computation {
       return res;
     }
     for (auto pos : left_node->last_pos()) {
-      res[pos].insert(tmp.begin(), tmp.end());
+      res[pos].merge(decltype(tmp)(tmp));
     }
     return res;
   }
@@ -356,7 +356,7 @@ namespace cyy::computation {
       return res;
     }
     for (auto pos : inner_node->last_pos()) {
-      res[pos].insert(tmp.begin(), tmp.end());
+      res[pos].merge(decltype(tmp)(tmp));
     }
     return res;
   }
