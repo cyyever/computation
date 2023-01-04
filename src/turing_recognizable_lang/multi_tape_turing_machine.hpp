@@ -13,21 +13,8 @@ namespace cyy::computation {
   class multi_tape_Turing_machine
       : public multi_tape_Turing_machine_base<tape_number> {
   public:
-    using situation_type =
-        typename multi_tape_Turing_machine_base<tape_number>::situation_type;
-    using action_type =
-        typename multi_tape_Turing_machine_base<tape_number>::action_type;
-    using configuration_type = typename multi_tape_Turing_machine_base<
-        tape_number>::configuration_type;
-    using tape_type =
-        typename multi_tape_Turing_machine_base<tape_number>::tape_type;
-    using __transition_function_type =
+    using transition_function_type =
         std::unordered_map<situation_type, action_type, tape_type>;
-
-    class transition_function_type : public __transition_function_type {
-    public:
-      using __transition_function_type::__transition_function_type;
-    };
 
     multi_tape_Turing_machine(finite_automaton finite_automaton_,
                               Turing_machine_base::state_type reject_state_,
