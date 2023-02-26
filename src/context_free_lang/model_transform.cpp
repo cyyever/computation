@@ -51,8 +51,8 @@ namespace cyy::computation {
         grammar_symbol_to_stack_symbol;
     PDA::stack_symbol_type next_stack_symbol = 0;
     auto get_stack_symbol =
-        [&grammar_symbol_to_stack_symbol, &
-         next_stack_symbol ](const grammar_symbol_type &grammar_symbol) -> auto{
+        [&grammar_symbol_to_stack_symbol, &next_stack_symbol](
+            const grammar_symbol_type &grammar_symbol) -> auto {
       auto it = grammar_symbol_to_stack_symbol.find(grammar_symbol);
       if (it != grammar_symbol_to_stack_symbol.end()) {
         return it->second;
@@ -122,7 +122,7 @@ namespace cyy::computation {
     transition_function[{loop_state, {}, get_stack_symbol(ALPHABET::endmarker)}]
         .emplace(final_state, std::optional<PDA::stack_symbol_type>{});
     return {std::move(dpda_automaton), cfg.get_full_alphabet(),
-               std::move(transition_function)};
+            std::move(transition_function)};
   }
 
   CFG PDA_to_CFG(PDA pda) {
@@ -274,8 +274,8 @@ namespace cyy::computation {
     }
     assert(dpda.get_final_states().size() == 1);
     return {dpda.get_alphabet_ptr(),
-                get_nonterminal(dpda.get_start_state(),
-                                *dpda.get_final_states().begin()),
-                std::move(productions)};
+            get_nonterminal(dpda.get_start_state(),
+                            *dpda.get_final_states().begin()),
+            std::move(productions)};
   }
 } // namespace cyy::computation

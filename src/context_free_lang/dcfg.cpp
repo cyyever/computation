@@ -6,7 +6,8 @@ namespace cyy::computation {
   DCFG::DCFG(ALPHABET_ptr alphabet_, nonterminal_type start_symbol_,
              production_set_type productions_)
 
-      : LR_0_grammar(alphabet_, start_symbol_, std::move(productions_)),
+      : LR_0_grammar(std::move(alphabet_), std::move(start_symbol_),
+                     std::move(productions_)),
         dk_dfa_opt(std::make_optional<DK_DFA>(*this)) {
     if (!DK_test()) {
       throw exception::no_DCFG("DK test failed");
@@ -109,8 +110,7 @@ namespace cyy::computation {
       }
     }
     dpda_finite_automaton.replace_final_states(accept_state);
-    return {dpda_finite_automaton, dk_state_set_alphabet,
-                transition_function};
+    return {dpda_finite_automaton, dk_state_set_alphabet, transition_function};
   }
   std::pair<DCFG::collection_type, DCFG::goto_table_type>
   DCFG::get_collection() const {

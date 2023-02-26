@@ -237,7 +237,7 @@ namespace cyy::computation {
       }
     }
     return {dpda_finite_automaton, new_stack_alphabet,
-                dpda_transition_function};
+            dpda_transition_function};
   }
 
   endmarked_DPDA::state_set_type endmarked_DPDA::get_accept_states() const {

@@ -11,7 +11,7 @@ namespace cyy::computation {
            ALPHABET_ptr tape_alphabet_,
            transition_function_type transition_function_)
       : single_tape_Turing_machine(std::move(finite_automaton_), reject_state_,
-                                   tape_alphabet_),
+                                   std::move(tape_alphabet_)),
         transition_function(std::move(transition_function_)) {
 
     for (auto const &[situation, action_set] : transition_function) {

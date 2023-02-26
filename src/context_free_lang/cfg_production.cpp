@@ -34,7 +34,7 @@ namespace cyy::computation {
   }
   std::string CFG_production::MMA_draw(
       const ALPHABET &alphabet, bool emphasize_head,
-      std::function<std::string(size_t)> pos_callback) const {
+      const std::function<std::string(size_t)> &pos_callback) const {
     std::string cmd = "Rule[";
     if (emphasize_head) {
       cmd += "Style[";

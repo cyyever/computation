@@ -43,7 +43,7 @@ namespace cyy::computation {
 
     [[nodiscard]] std::string MMA_draw(
         const ALPHABET &alphabet, bool emphasize_head = false,
-        std::function<std::string(size_t)> pos_callback = [](size_t) {
+        const std::function<std::string(size_t)> &pos_callback = [](size_t) {
           return "";
         }) const;
 

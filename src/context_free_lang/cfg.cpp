@@ -235,7 +235,7 @@ namespace cyy::computation {
               body.erase(body.begin());
               body.emplace_back(new_head);
               new_bodies.emplace(std::move(body));
-              body.clear();
+              body = {};
             }
             return true;
           });
@@ -588,7 +588,7 @@ namespace cyy::computation {
     auto nonterminals = get_nonterminals();
     for (auto &nonterminal : nonterminals) {
       max_symbol++;
-      symbol_to_nonterminal.emplace(max_symbol, std::move(nonterminal));
+      symbol_to_nonterminal.emplace(max_symbol, nonterminal);
     }
 
     auto nonterminal_alphabet_ptr = std::make_shared<map_alphabet<std::string>>(
@@ -607,9 +607,9 @@ namespace cyy::computation {
     return std::make_shared<union_alphabet>(get_terminal_alphabet(),
                                             get_nonterminal_alphabet());
   }
-  void
-  CFG::modify_body_set(production_body_set_type &body_set,
-                       std::function<bool(CFG_production::body_type &)> fun) {
+  void CFG::modify_body_set(
+      production_body_set_type &body_set,
+      const std::function<bool(CFG_production::body_type &)> &fun) {
     std::vector<CFG_production::body_type> body_vector{
         std::move_iterator{body_set.begin()},
         std::move_iterator{body_set.end()}};

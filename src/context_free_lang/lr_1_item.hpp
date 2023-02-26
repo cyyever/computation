@@ -22,8 +22,8 @@ namespace cyy::computation {
     LR_1_item(LR_0_item item, CFG::terminal_type lookahead_symbol)
         : LR_0_item(std::move(item)), lookahead_symbols{lookahead_symbol} {}
     LR_1_item(LR_0_item item, CFG::terminal_set_type lookahead_symbols_)
-        : LR_0_item(std::move(item)), lookahead_symbols{
-                                          std::move(lookahead_symbols_)} {}
+        : LR_0_item(std::move(item)),
+          lookahead_symbols{std::move(lookahead_symbols_)} {}
     LR_1_item(const LR_1_item &) = default;
     LR_1_item &operator=(const LR_1_item &) = default;
     LR_1_item(LR_1_item &&) = default;

@@ -67,8 +67,8 @@ namespace cyy::computation {
     struct stack_node final {
       stack_node(stack_symbol_type content_, size_t index_,
                  std::vector<stack_node> *stack_, size_t prev_index_ = 0)
-          : content{content_}, index{index_},
-            prev_index{prev_index_}, stack{stack_} {}
+          : content{content_}, index{index_}, prev_index{prev_index_},
+            stack{stack_} {}
 
       stack_node pop_and_push(const std::optional<stack_symbol_type> &s) const {
         auto prev_node = pop();
