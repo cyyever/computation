@@ -23,7 +23,7 @@ namespace cyy::computation {
     CFG::production_set_type productions;
     productions[start_symbol] = {{CFG::terminal_type(symbol)}};
 
-    return CFG(alphabet, start_symbol, std::move(productions));
+    return {alphabet, start_symbol, std::move(productions)};
   }
 
   void regex::basic_node::assign_position(
@@ -58,7 +58,7 @@ namespace cyy::computation {
     CFG::production_set_type productions;
     productions[start_symbol] = {{}};
 
-    return CFG(alphabet, start_symbol, std::move(productions));
+    return {alphabet, start_symbol, std::move(productions)};
   }
 
   void regex::epsilon_node::assign_position(
@@ -151,7 +151,7 @@ namespace cyy::computation {
     };
     productions.merge(std::move(left_cfg).get_productions());
     productions.merge(std::move(right_cfg).get_productions());
-    return CFG(alphabet, parent_start_symbol, std::move(productions));
+    return {alphabet, parent_start_symbol, std::move(productions)};
   }
 
   void regex::union_node::assign_position(
@@ -230,7 +230,7 @@ namespace cyy::computation {
     };
     productions.merge(std::move(left_cfg).get_productions());
     productions.merge(std::move(right_cfg).get_productions());
-    return CFG(alphabet, parent_start_symbol, std::move(productions));
+    return {alphabet, parent_start_symbol, std::move(productions)};
   }
 
   void regex::concat_node::assign_position(
@@ -333,7 +333,7 @@ namespace cyy::computation {
     CFG::production_set_type productions;
     productions[parent_start_symbol] = {
         {inner_cfg.get_start_symbol(), start_symbol}, {}};
-    return CFG(alphabet, parent_start_symbol, std::move(productions));
+    return {alphabet, parent_start_symbol, std::move(productions)};
   }
 
   void regex::kleene_closure_node::assign_position(

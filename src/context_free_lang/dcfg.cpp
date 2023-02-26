@@ -109,8 +109,8 @@ namespace cyy::computation {
       }
     }
     dpda_finite_automaton.replace_final_states(accept_state);
-    return DPDA(dpda_finite_automaton, dk_state_set_alphabet,
-                transition_function);
+    return {dpda_finite_automaton, dk_state_set_alphabet,
+                transition_function};
   }
   std::pair<DCFG::collection_type, DCFG::goto_table_type>
   DCFG::get_collection() const {

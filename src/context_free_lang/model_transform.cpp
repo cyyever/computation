@@ -121,8 +121,8 @@ namespace cyy::computation {
     }
     transition_function[{loop_state, {}, get_stack_symbol(ALPHABET::endmarker)}]
         .emplace(final_state, std::optional<PDA::stack_symbol_type>{});
-    return PDA(std::move(dpda_automaton), cfg.get_full_alphabet(),
-               std::move(transition_function));
+    return {std::move(dpda_automaton), cfg.get_full_alphabet(),
+               std::move(transition_function)};
   }
 
   CFG PDA_to_CFG(PDA pda) {
@@ -195,10 +195,10 @@ namespace cyy::computation {
         }
       }
     }
-    return CFG(
+    return {
         pda.get_alphabet_ptr(),
         get_nonterminal(pda.get_start_state(), *pda.get_final_states().begin()),
-        std::move(productions));
+        std::move(productions)};
   }
   DCFG DPDA_to_DCFG(endmarked_DPDA dpda) {
     dpda.prepare_DCFG_conversion();
@@ -273,9 +273,9 @@ namespace cyy::computation {
       }
     }
     assert(dpda.get_final_states().size() == 1);
-    return DCFG(dpda.get_alphabet_ptr(),
+    return {dpda.get_alphabet_ptr(),
                 get_nonterminal(dpda.get_start_state(),
                                 *dpda.get_final_states().begin()),
-                std::move(productions));
+                std::move(productions)};
   }
 } // namespace cyy::computation
