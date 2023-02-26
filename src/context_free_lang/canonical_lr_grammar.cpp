@@ -12,12 +12,6 @@
 #include "endmarked_dpda.hpp"
 
 namespace cyy::computation {
-  canonical_LR_grammar::canonical_LR_grammar(ALPHABET_ptr alphabet_,
-                                             nonterminal_type start_symbol_,
-                                             production_set_type productions_)
-
-      : LR_1_grammar(std::move(alphabet_), start_symbol_,
-                     std::move(productions_)) {}
 
   DPDA canonical_LR_grammar::to_DPDA() const {
     auto dpda_alphabet = std::make_shared<endmarked_alphabet>(alphabet);

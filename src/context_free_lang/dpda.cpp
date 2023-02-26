@@ -523,7 +523,7 @@ namespace cyy::computation {
         sub_cmd += "\\[Epsilon]";
       }
       sub_cmd += ",{";
-      for (auto stack_cmd : v) {
+      for (const auto &stack_cmd : v) {
         sub_cmd += stack_cmd;
         sub_cmd.push_back(',');
       }

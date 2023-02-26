@@ -15,8 +15,7 @@ namespace cyy::computation {
   class canonical_LR_grammar : public LR_1_grammar {
 
   public:
-    canonical_LR_grammar(ALPHABET_ptr alphabet_, nonterminal_type start_symbol_,
-                         production_set_type productions_);
+    using LR_1_grammar::LR_1_grammar;
 
     std::pair<collection_type, goto_table_type> get_collection() const override;
     DPDA to_DPDA() const;
