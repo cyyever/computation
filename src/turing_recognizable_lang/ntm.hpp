@@ -15,7 +15,8 @@ namespace cyy::computation {
   public:
     using action_set_type = std::unordered_set<action_type, action_hash_type>;
     using __transition_function_type =
-        std::unordered_map<situation_type, action_set_type ,situation_hash_type>;
+        std::unordered_map<situation_type, action_set_type,
+                           situation_hash_type>;
 
     class transition_function_type : public __transition_function_type {
     public:

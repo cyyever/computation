@@ -28,7 +28,7 @@ namespace cyy::computation {
 
     // begin from start symbol
     auto const &start_symbol = cfg.get_start_symbol();
-    for (auto const &body : cfg.get_productions().find(start_symbol)->second) {
+    for (auto const &body : cfg.get_productions().at(start_symbol)) {
       LR_1_item init_item(LR_0_item{start_symbol, body}, init_follows);
       auto state = item_to_nfa_state(init_item);
       nfa.add_epsilon_transition(nfa.get_start_state(), {state});

@@ -83,7 +83,7 @@ namespace cyy::computation {
       groups = {get_non_final_states(), final_states};
     } else {
 #ifndef NDEBUG
-      for (auto &g : init_partition) {
+      for (auto &g : groups) {
         for (auto state : g) {
           assert(has_state(state));
         }
