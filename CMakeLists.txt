@@ -19,6 +19,7 @@ add_library(MyComputationLib ${SOURCE})
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   find_package(libcxx REQUIRED)
   target_link_libraries(MyComputationLib PRIVATE libcxx::libcxx)
+  target_compile_definitions(MyComputationLib PUBLIC _LIBCPP_ENABLE_EXPERIMENTAL)
 endif()
 
 target_link_libraries(MyComputationLib PUBLIC Boost::headers)

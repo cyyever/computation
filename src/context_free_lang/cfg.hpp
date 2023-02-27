@@ -12,6 +12,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
+#include <ranges>
 
 #include <cyy/algorithm/alphabet/map_alphabet.hpp>
 
