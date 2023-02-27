@@ -55,7 +55,7 @@ namespace cyy::computation {
         looping_state, dfa.get_start_state()};
 
     auto accept_state = dpda_finite_automaton.add_new_state();
-    auto table = get_goto_table();
+    auto const &table = get_goto_table();
     for (auto const dk_state : state_symbol_set) {
       // shift
       if (!dfa.is_final_state(dk_state)) {
@@ -63,7 +63,7 @@ namespace cyy::computation {
           for (auto from_state : {looping_state, accept_state}) {
             transition_function.check_stack_and_action(
                 from_state, {input_symbol, dk_state},
-                {looping_state, table[{dk_state, input_symbol}]},
+                {looping_state, table.at({dk_state, input_symbol})},
                 dpda_finite_automaton);
           }
         }
@@ -104,7 +104,7 @@ namespace cyy::computation {
           }
           transition_function.check_stack_and_action(
               from_state, {{}, prev_dk_state},
-              {destination_state, table[{prev_dk_state, head}]},
+              {destination_state, table.at({prev_dk_state, head})},
               dpda_finite_automaton);
         }
       }

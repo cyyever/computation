@@ -122,8 +122,8 @@ namespace cyy::computation {
 
   void CFG::to_CNF() {
     auto new_start_symbol = get_new_head(start_symbol);
-    productions[new_start_symbol] = {{start_symbol}};
-    start_symbol = new_start_symbol;
+    productions[new_start_symbol] = {{std::move(start_symbol)}};
+    start_symbol = std::move(new_start_symbol);
     eliminate_single_productions();
 
     std::unordered_map<terminal_type, nonterminal_type> terminal_to_nonterminal;

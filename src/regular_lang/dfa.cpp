@@ -102,8 +102,8 @@ namespace cyy::computation {
       }
 
       has_new_group = false;
-      for (auto it = groups.begin(); it != groups.end(); it++) {
-        auto const &group = *it;
+      for (auto it = groups.begin(); it != groups.end(); ++it) {
+        auto &group = *it;
         if (group.size() <= 1) {
           continue;
         }
@@ -126,7 +126,7 @@ namespace cyy::computation {
           bool flag = true;
           for (auto &[_, sub_group] : sub_groups) {
             if (flag) {
-              *it = std::move(sub_group);
+              group = std::move(sub_group);
               flag = false;
             } else {
               groups.emplace_back(std::move(sub_group));
