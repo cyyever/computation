@@ -30,8 +30,10 @@ namespace cyy::computation {
         continue;
       }
       configuration_opt = go(std::move(configuration));
-      assert(configuration_opt.has_value());
-      configuration = std::move(configuration_opt.value());
+      if (!configuration_opt) {
+        return false;
+      }
+      configuration = std::move(*configuration_opt);
     }
     while (!is_final_state(configuration.state)) {
       auto configuration_opt = go(std::move(configuration));
