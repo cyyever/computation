@@ -426,10 +426,12 @@ namespace cyy::computation {
         }
       }
 
+#ifndef NDEBUG
       auto count = std::erase_if(transfers, [](const auto &transfer) {
         return transfer.first.use_input();
       });
       assert(count > 0);
+#endif
       transfers.merge(std::move(new_transitions_of_state));
     }
     complement_dpda.transition_function.merge(std::move(new_transitions));
