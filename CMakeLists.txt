@@ -7,25 +7,13 @@ include(cmake/all.cmake)
 file(GLOB_RECURSE SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src/**/*.cpp)
 
 find_package(Boost REQUIRED)
-if (NOT MSVC)
-  find_package(fmt REQUIRED)
-endif()
 find_package(spdlog REQUIRED)
 find_package(CyyNaiveLib REQUIRED)
 find_package(CyyAlgorithmLib REQUIRED)
 
 add_library(MyComputationLib ${SOURCE})
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-  find_package(libcxx REQUIRED)
-  target_link_libraries(MyComputationLib PRIVATE libcxx::libcxx)
-  target_compile_definitions(MyComputationLib PUBLIC _LIBCPP_ENABLE_EXPERIMENTAL)
-endif()
-
 target_link_libraries(MyComputationLib PUBLIC Boost::headers)
-if (NOT MSVC)
-  target_link_libraries(MyComputationLib PRIVATE fmt::fmt)
-endif()
 target_link_libraries(MyComputationLib PUBLIC CyyAlgorithmLib)
 
 target_include_directories(
