@@ -52,7 +52,7 @@ namespace cyy::computation {
       transfers.merge(std::move(new_transfers));
     }
 
-    alphabet = std::make_shared<endmarked_alphabet>(alphabet);
+    alphabet = std::make_shared<cyy::algorithm::endmarked_alphabet>(alphabet);
     for (auto s : alphabet->get_view()) {
       transition_function[new_accept_state][{s}] = {reject_state_opt.value()};
     }
@@ -64,20 +64,21 @@ namespace cyy::computation {
     dpda.normalize_transitions();
     auto const &const_endmarked_dpda = dpda;
 
-    auto stack_alphabet_of_state_set = std::make_shared<range_alphabet>(
-        const_endmarked_dpda.stack_alphabet->get_max_symbol() + 1,
-        const_endmarked_dpda.stack_alphabet->get_max_symbol() +
-            (static_cast<size_t>(1)
-             << (const_endmarked_dpda.get_states().size())),
-        "stack_alphabet_of_state_set");
-    auto new_stack_alphabet = std::make_shared<union_alphabet>(
+    auto stack_alphabet_of_state_set =
+        std::make_shared<cyy::algorithm::range_alphabet>(
+            const_endmarked_dpda.stack_alphabet->get_max_symbol() + 1,
+            const_endmarked_dpda.stack_alphabet->get_max_symbol() +
+                (static_cast<size_t>(1)
+                 << (const_endmarked_dpda.get_states().size())),
+            "stack_alphabet_of_state_set");
+    auto new_stack_alphabet = std::make_shared<cyy::algorithm::union_alphabet>(
         const_endmarked_dpda.stack_alphabet, stack_alphabet_of_state_set);
 
     auto dpda_finite_automaton = const_endmarked_dpda.get_finite_automaton();
-    assert(std::dynamic_pointer_cast<endmarked_alphabet>(
+    assert(std::dynamic_pointer_cast<cyy::algorithm::endmarked_alphabet>(
         dpda_finite_automaton.get_alphabet_ptr()));
     dpda_finite_automaton.set_alphabet(
-        std::dynamic_pointer_cast<endmarked_alphabet>(
+        std::dynamic_pointer_cast<cyy::algorithm::endmarked_alphabet>(
             dpda_finite_automaton.get_alphabet_ptr())
             ->original_alphabet());
     transition_function_type dpda_transition_function;
@@ -329,7 +330,7 @@ namespace cyy::computation {
 
       for (auto &[situation, action] : transfers) {
         if (!situation.use_input()) {
-          new_transfers[std::move(situation)] = std::move(action);
+          new_transfers[situation] = std::move(action);
           continue;
         }
         auto input_symbol = situation.input_symbol.value();
@@ -405,7 +406,7 @@ namespace cyy::computation {
         }
         auto next_state = add_new_state();
         if (situation.has_pop()) {
-          new_transfers[std::move(situation)] = {next_state};
+          new_transfers[situation] = {next_state};
           new_transitions[next_state][{}] = std::move(action);
           continue;
         }

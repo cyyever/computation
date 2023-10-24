@@ -22,8 +22,8 @@ namespace cyy::computation {
     DFA(state_set_type states_, ALPHABET_ptr alphabet_, state_type start_state_,
         transition_function_type transition_function_,
         state_set_type final_states_)
-        : finite_automaton(std::move(states_), alphabet_, start_state_,
-                           std::move(final_states_)),
+        : finite_automaton(std::move(states_), std::move(alphabet_),
+                           start_state_, std::move(final_states_)),
           transition_function(std::move(transition_function_)) {
       if (transition_function.size() !=
           alphabet->size() * get_states().size()) {
@@ -53,7 +53,7 @@ namespace cyy::computation {
       return contain_final_state({s});
     }
 
-    std::optional<state_type> go(state_type s, symbol_type a) const {
+    std::optional<state_type> go(state_type s, input_symbol_type a) const {
       auto it = transition_function.find({s, a});
       if (it != transition_function.end()) {
         return {it->second};
@@ -63,6 +63,7 @@ namespace cyy::computation {
 
     const state_set_type &get_live_states() const {
       mark_live_states();
+      assert(live_states_opt.has_value());
       return live_states_opt.value();
     }
 
@@ -81,7 +82,6 @@ namespace cyy::computation {
   private:
     void mark_live_states() const;
 
-  private:
     mutable std::optional<state_set_type> live_states_opt;
     transition_function_type transition_function;
   };

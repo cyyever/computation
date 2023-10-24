@@ -116,7 +116,7 @@ namespace cyy::computation {
     if (has_normalized) {
       return;
     }
-    if (stack_alphabet->contain(ALPHABET::endmarker)) {
+    if (stack_alphabet->contain(cyy::algorithm::ALPHABET::endmarker)) {
       throw std::logic_error(
           "can't normalize DPDA since it has endmarker in stack");
     }
@@ -229,14 +229,15 @@ namespace cyy::computation {
     has_normalized = true;
     reject_state_opt = new_reject_state;
 
-    stack_alphabet = std::make_shared<endmarked_alphabet>(stack_alphabet);
+    stack_alphabet =
+        std::make_shared<cyy::algorithm::endmarked_alphabet>(stack_alphabet);
 #ifndef NDEBUG
     check_transition_fuction();
 #endif
   }
 
-  std::pair<std::unordered_map<DPDA::state_type, symbol_set_type>,
-            std::unordered_map<DPDA::state_type, symbol_set_type>>
+  std::pair<std::unordered_map<DPDA::state_type, DPDA::symbol_set_type>,
+            std::unordered_map<DPDA::state_type, DPDA::symbol_set_type>>
   DPDA::get_looping_situations() const {
     std::unordered_map<state_type, std::set<std::pair<stack_symbol_type, bool>>>
         looping_situations;

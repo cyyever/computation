@@ -16,7 +16,8 @@
 
 namespace cyy::computation {
 
-  NFA::state_set_type NFA::go(const state_set_type &T, symbol_type a) const {
+  NFA::state_set_type NFA::go(const state_set_type &T,
+                              input_symbol_type a) const {
     state_set_type direct_reachable;
 
     for (const auto &s : T) {
@@ -56,8 +57,7 @@ namespace cyy::computation {
       auto const &[subset, state] = *iteraters[dfa_state];
       for (auto a : alphabet->get_view()) {
         auto res = go(subset, a);
-        auto [it, has_emplaced] =
-            nfa_and_dfa_states.insert({std::move(res), next_state});
+        auto [it, has_emplaced] = nfa_and_dfa_states.insert({res, next_state});
         if (has_emplaced) {
           iteraters.emplace_back(it);
           next_state++;
@@ -116,7 +116,7 @@ namespace cyy::computation {
     }
 
     cyy::algorithm::directed_graph<state_type> epsilon_graph;
-    for (auto &[from_state, to_state_set] : epsilon_transition_function) {
+    for (const auto &[from_state, to_state_set] : epsilon_transition_function) {
       for (auto to_state : to_state_set) {
         if (from_state != to_state) {
           epsilon_graph.add_edge({from_state, to_state});

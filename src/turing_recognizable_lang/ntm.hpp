@@ -22,16 +22,16 @@ namespace cyy::computation {
     public:
       using __transition_function_type::__transition_function_type;
       void add_moving_left_transition(state_type from_state,
-                                      symbol_type old_tape_symbol,
+                                      tape_symbol_type old_tape_symbol,
                                       state_type to_state,
-                                      symbol_type new_tape_symbol) {
+                                      tape_symbol_type new_tape_symbol) {
         operator[](situation_type{from_state, old_tape_symbol})
             .emplace(to_state, new_tape_symbol, head_direction::left);
       }
       void add_moving_right_transition(state_type from_state,
-                                       symbol_type old_tape_symbol,
+                                       tape_symbol_type old_tape_symbol,
                                        state_type to_state,
-                                       symbol_type new_tape_symbol) {
+                                       tape_symbol_type new_tape_symbol) {
         operator[](situation_type{from_state, old_tape_symbol})
             .emplace(to_state, new_tape_symbol, head_direction::right);
       }

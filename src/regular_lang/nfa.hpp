@@ -24,8 +24,8 @@ namespace cyy::computation {
         transition_function_type transition_function_,
         state_set_type final_states_,
         epsilon_transition_function_type epsilon_transition_function_ = {})
-        : finite_automaton(std::move(states_), alphabet_, start_state_,
-                           std::move(final_states_)),
+        : finite_automaton(std::move(states_), std::move(alphabet_),
+                           start_state_, std::move(final_states_)),
           transition_function(std::move(transition_function_)),
           epsilon_transition_function(std::move(epsilon_transition_function_)) {
     }
@@ -38,9 +38,9 @@ namespace cyy::computation {
     }
 
     explicit NFA(DFA dfa) : NFA(std::move(dfa).get_finite_automaton(), {}) {
-      for (auto &[situation, next_state] :
-           std::move(dfa.get_transition_function())) {
-        transition_function[std::move(situation)] = {next_state};
+      for (const auto &[situation, next_state] :
+           dfa.get_transition_function()) {
+        transition_function[situation] = {next_state};
       }
     }
 
@@ -122,12 +122,11 @@ namespace cyy::computation {
     const state_set_type &get_start_set() const {
       return get_epsilon_closure(get_start_state());
     }
-    state_set_type go(const state_set_type &T, symbol_type a) const;
+    state_set_type go(const state_set_type &T, input_symbol_type a) const;
 
   private:
     const state_set_type &get_epsilon_closure(state_type s) const;
 
-  private:
     transition_function_type transition_function;
     epsilon_transition_function_type epsilon_transition_function;
     mutable state_set_map_type epsilon_closures;

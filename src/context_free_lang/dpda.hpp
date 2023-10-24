@@ -48,21 +48,21 @@ namespace cyy::computation {
       }
     };
 
-    using __transition_function_type =
+    using super_transition_function_type =
         std::unordered_map<state_type,
                            std::unordered_map<situation_type, action_type>>;
-    class transition_function_type : public __transition_function_type {
+    class transition_function_type : public super_transition_function_type {
     public:
-      using __transition_function_type::__transition_function_type;
+      using super_transition_function_type::super_transition_function_type;
 
       void add_epsilon_transition(state_type from_state, action_type action) {
         auto &transfers = operator[](from_state);
-        transfers.emplace(situation_type{}, std::move(action));
+        transfers.emplace(situation_type{}, action);
       }
 
-      void pop_stack_and_action(state_type from_state,
-                                const action_type &action,
-                                const ALPHABET &stack_alphabet_) {
+      void
+      pop_stack_and_action(state_type from_state, const action_type &action,
+                           const cyy::algorithm::ALPHABET &stack_alphabet_) {
         auto &transfers = operator[](from_state);
         for (auto stack_symbol : stack_alphabet_.get_view()) {
           transfers[{{}, stack_symbol}] = action;
@@ -79,9 +79,11 @@ namespace cyy::computation {
         transfers[situation] = {new_state, situation.stack_symbol};
 
         auto &new_transfers = operator[](new_state);
-        new_transfers[{}] = std::move(action);
+        new_transfers[{}] = action;
       }
-      void make_reject_state(state_type s, ALPHABET_ptr input_alphabet_) {
+      void
+      make_reject_state(state_type s,
+                        const cyy::algorithm::ALPHABET_ptr &input_alphabet_) {
         auto &transfers = operator[](s);
         for (auto a : input_alphabet_->get_view()) {
           transfers[{a}] = {s};
@@ -89,10 +91,11 @@ namespace cyy::computation {
       }
     };
 
-    DPDA(finite_automaton finite_automaton_, ALPHABET_ptr stack_alphabet_,
+    DPDA(finite_automaton finite_automaton_,
+         cyy::algorithm::ALPHABET_ptr stack_alphabet_,
          transition_function_type transition_function_)
         : finite_automaton(std::move(finite_automaton_)),
-          stack_alphabet(stack_alphabet_),
+          stack_alphabet(std::move(stack_alphabet_)),
           transition_function(std::move(transition_function_)) {
       check_transition_fuction();
     }
@@ -113,20 +116,18 @@ namespace cyy::computation {
       std::vector<stack_symbol_type> stack;
     };
 
-  protected:
     std::optional<configuration_type>
     go(configuration_type configuration) const;
     std::optional<configuration_type> go(configuration_type configuration,
                                          input_symbol_type a) const;
 
-    std::pair<std::unordered_map<state_type, symbol_set_type>,
-              std::unordered_map<state_type, symbol_set_type>>
+    std::pair<std::unordered_map<state_type, DPDA::symbol_set_type>,
+              std::unordered_map<state_type, DPDA::symbol_set_type>>
     get_looping_situations() const;
 
     void check_transition_fuction() const;
 
-  protected:
-    ALPHABET_ptr stack_alphabet;
+    cyy::algorithm::ALPHABET_ptr stack_alphabet;
     transition_function_type transition_function;
     bool has_normalized{false};
     std::optional<state_type> reject_state_opt;

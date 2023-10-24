@@ -82,11 +82,12 @@ namespace cyy::computation {
     return is.str();
   }
 
-  symbol_set_type finite_automaton::get_state_symbol_set() const {
+  finite_automaton::symbol_set_type
+  finite_automaton::get_state_symbol_set() const {
     symbol_set_type state_symbol_set;
     for (auto const s : states) {
-      assert(s <= std::numeric_limits<symbol_type>::max());
-      state_symbol_set.insert(static_cast<symbol_type>(s));
+      assert(s <= std::numeric_limits<cyy::algorithm::symbol_type>::max());
+      state_symbol_set.insert(static_cast<cyy::algorithm::symbol_type>(s));
     }
     return state_symbol_set;
   }
