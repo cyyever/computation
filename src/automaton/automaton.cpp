@@ -1,7 +1,6 @@
 
 #include "automaton.hpp"
 
-#include <ranges>
 #include <sstream>
 
 namespace cyy::computation {

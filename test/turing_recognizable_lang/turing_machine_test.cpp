@@ -30,7 +30,7 @@ TEST_CASE("recognize Turing machine") {
   transition_function.add_moving_left_transitions(7, {'0', '1'});
   transition_function.add_moving_right_transitions(7, {'x'}, 1);
   transition_function.add_moving_right_transitions(8, {'x'});
-  transition_function.add_moving_right_transitions(8, {ALPHABET::blank_symbol},
+  transition_function.add_moving_right_transitions(8, {Turing_machine::ALPHABET::blank_symbol},
                                                    0);
 
   Turing_machine tm(automaton, 9, "01x#_set", transition_function);

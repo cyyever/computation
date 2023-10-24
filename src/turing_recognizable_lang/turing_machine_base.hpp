@@ -22,6 +22,10 @@ namespace cyy::computation {
     Turing_machine_base(finite_automaton finite_automaton_,
                         state_type reject_state_, ALPHABET_ptr tape_alphabet_);
 
+    Turing_machine_base(const Turing_machine_base &) = default;
+    Turing_machine_base(Turing_machine_base &&) = default;
+    Turing_machine_base &operator=(const Turing_machine_base &) = default;
+    Turing_machine_base &operator=(Turing_machine_base &&) = default;
     virtual ~Turing_machine_base() = default;
 
     bool operator==(const Turing_machine_base &rhs) const noexcept = default;
