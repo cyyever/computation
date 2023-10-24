@@ -20,14 +20,15 @@
 #include <cyy/algorithm/hash.hpp>
 
 namespace cyy::computation {
-  using namespace cyy::algorithm;
-  struct grammar_symbol_type : public std::variant<symbol_type, std::string> {
+  struct grammar_symbol_type
+      : public std::variant<cyy::algorithm::symbol_type, std::string> {
 
-    using terminal_type = symbol_type;
+    using terminal_type = cyy::algorithm::symbol_type;
     using nonterminal_type = std::string;
-    using std::variant<symbol_type, std::string>::variant;
+    using ALPHABET = cyy::algorithm::ALPHABET;
+    using std::variant<terminal_type, nonterminal_type>::variant;
     grammar_symbol_type(char c)
-        : grammar_symbol_type(static_cast<symbol_type>(c)) {}
+        : grammar_symbol_type(static_cast<terminal_type>(c)) {}
 
     bool is_terminal() const noexcept {
       return std::holds_alternative<terminal_type>(*this);
@@ -69,14 +70,14 @@ namespace cyy::computation {
 
   struct grammar_symbol_string_type : public std::vector<grammar_symbol_type> {
     using std::vector<grammar_symbol_type>::vector;
-    auto get_terminal_view() const -> auto {
+    auto get_terminal_view() const {
       return *this | std::ranges::views::filter([](auto g) {
         return g.is_terminal();
       }) | std::ranges::views::transform([](auto g) {
         return g.get_terminal();
       });
     }
-    auto get_nonterminal_view() const -> auto {
+    auto get_nonterminal_view() const {
       return *this | std::ranges::views::filter([](auto g) {
         return g.is_nonterminal();
       }) | std::ranges::views::transform([](auto g) {
@@ -90,6 +91,7 @@ namespace cyy::computation {
 namespace std {
   template <>
   struct hash<cyy::computation::grammar_symbol_type>
-      : public std::hash<
-            std::variant<cyy::computation::symbol_type, std::string>> {};
+      : public std::hash<std::variant<
+            cyy::computation::grammar_symbol_type::terminal_type,
+            std::computation::grammar_symbol_type::nonterminal_type>> {};
 } // namespace std

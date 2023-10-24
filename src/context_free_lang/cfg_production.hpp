@@ -17,6 +17,7 @@ namespace cyy::computation {
   class CFG_production final {
 
   public:
+    using ALPHABET = cyy::algorithm::ALPHABET;
     using head_type = grammar_symbol_type::nonterminal_type;
     using body_type = grammar_symbol_string_type;
     using body_span_type = grammar_symbol_const_span_type;
