@@ -15,7 +15,7 @@ using namespace cyy::computation;
 TEST_CASE("recognize PDA") {
 
   auto input_alphabet =
-      std::make_shared<set_alphabet>(std::set<symbol_type>{'0', '1'}, "01_set");
+      std::make_shared<cyy::algorithm::set_alphabet>(std::set<symbol_type>{'0', '1'}, "01_set");
   ALPHABET::set(input_alphabet);
 
   auto endmarker = ALPHABET::endmarker;

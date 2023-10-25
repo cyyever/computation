@@ -14,7 +14,7 @@ using namespace cyy::computation;
 TEST_CASE("canonical_LR(1) parse") {
   SUBCASE("parse expression grammar") {
     CFG::production_set_type productions;
-    auto id = static_cast<CFG::terminal_type>(common_token::id);
+    auto id = static_cast<CFG::terminal_type>(cyy::algorithm::common_token::id);
     productions["E"] = {
         {"T", "E'"},
     };

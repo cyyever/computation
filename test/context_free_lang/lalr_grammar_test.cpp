@@ -13,7 +13,7 @@ using namespace cyy::computation;
 TEST_CASE("LALR(1) parse") {
   SUBCASE("parse expression grammar") {
     CFG::production_set_type productions;
-    auto id = static_cast<CFG::terminal_type>(common_token::id);
+    auto id = static_cast<CFG::terminal_type>(cyy::algorithm::common_token::id);
     productions["S"] = {
         {"L", U'=', "R"},
         {"R"},

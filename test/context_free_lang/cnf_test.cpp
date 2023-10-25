@@ -41,7 +41,7 @@ TEST_CASE("eliminate_epsilon_productions") {
 
 TEST_CASE("eliminate_single_productions") {
   CFG::production_set_type productions;
-  auto id = static_cast<CFG::terminal_type>(common_token::id);
+  auto id = static_cast<CFG::terminal_type>(cyy::algorithm::common_token::id);
   productions["E"] = {{"E", '+', "T"}, {"T"}};
   productions["T"] = {{"T", '*', "F"}, {"F"}};
   productions["F"] = {{'(', "E", ')'}, {id}};

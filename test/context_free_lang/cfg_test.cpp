@@ -54,7 +54,7 @@ TEST_CASE("eliminate_useless_symbols") {
 
 TEST_CASE("get_terminals") {
   CFG::production_set_type productions;
-  auto id = static_cast<CFG::terminal_type>(common_token::id);
+  auto id = static_cast<CFG::terminal_type>(cyy::algorithm::common_token::id);
   productions["E"] = {
       {"T", "E'"},
   };
@@ -149,7 +149,7 @@ TEST_CASE("recursive_descent_parse") {
 TEST_CASE("first_and_follow") {
   CFG::production_set_type productions;
   auto endmarker = ALPHABET::endmarker;
-  auto id = static_cast<CFG::terminal_type>(common_token::id);
+  auto id = static_cast<CFG::terminal_type>(cyy::algorithm::common_token::id);
   productions["E"] = {
       {"T", "E'"},
   };
@@ -220,7 +220,7 @@ TEST_CASE("to_PDA") {
 }
 TEST_CASE("MMA_draw") {
   CFG::production_set_type productions;
-  auto id = static_cast<CFG::terminal_type>(common_token::id);
+  auto id = static_cast<CFG::terminal_type>(cyy::algorithm::common_token::id);
   productions["E"] = {
       {"T", "E'"},
   };

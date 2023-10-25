@@ -100,9 +100,8 @@ namespace cyy::computation {
       transition_function[accept_state][{input_symbol}] = {
           reduce_states[input_symbol]};
     }
-    return endmarked_DPDA(std::move(dpda_finite_automaton),
-                          dk_state_set_alphabet, std::move(transition_function))
-        .to_DPDA();
+    return DPDA(std::move(dpda_finite_automaton),
+                          dk_state_set_alphabet, std::move(transition_function));
   }
 
   std::pair<canonical_LR_grammar::collection_type,
