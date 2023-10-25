@@ -65,7 +65,7 @@ namespace cyy::computation {
     auto const &const_endmarked_dpda = dpda;
 
     auto stack_alphabet_of_state_set =
-        std::make_shared<cyy::algorithm::range_alphabet>(
+        std::make_shared<cyy::algorithm::interval_alphabet>(
             const_endmarked_dpda.stack_alphabet->get_max_symbol() + 1,
             const_endmarked_dpda.stack_alphabet->get_max_symbol() +
                 (static_cast<size_t>(1)
