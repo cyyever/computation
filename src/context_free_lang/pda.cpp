@@ -119,16 +119,16 @@ namespace cyy::computation {
     auto placeholder_stack_symbol = stack_alphabet->get_min_symbol();
     for (auto &[situation, actions] : transition_function) {
       transition_function_type::mapped_type new_actions;
-      for (auto &action : actions) {
+      for (const auto &action : actions) {
         if (situation.stack_symbol.has_value() !=
             action.stack_symbol.has_value()) {
-          new_actions.emplace(std::move(action));
+          new_actions.emplace(action);
           continue;
         }
         auto next_state = add_new_state();
         if (situation.has_pop()) {
           new_actions.emplace(next_state);
-          new_transition[{next_state}] = {std::move(action)};
+          new_transition[{next_state}] = {action};
           continue;
         }
         new_actions.emplace(next_state, placeholder_stack_symbol);
@@ -150,7 +150,7 @@ namespace cyy::computation {
     }
 #endif
   }
-  PDA::symbol_set_type PDA::get_in_use_stack_symbols() const {
+  symbol_set_type PDA::get_in_use_stack_symbols() const {
     symbol_set_type res;
     for (auto const &[k, v] : transition_function) {
       auto const &top_symbol = k.stack_symbol;

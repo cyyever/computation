@@ -93,5 +93,5 @@ namespace std {
   struct hash<cyy::computation::grammar_symbol_type>
       : public std::hash<std::variant<
             cyy::computation::grammar_symbol_type::terminal_type,
-            std::computation::grammar_symbol_type::nonterminal_type>> {};
+            cyy::computation::grammar_symbol_type::nonterminal_type>> {};
 } // namespace std

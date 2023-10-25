@@ -168,7 +168,7 @@ namespace cyy::computation {
     }
 
     symbol_set.merge(symbol_set_type(operators));
-    auto regex_alphabet = std::make_shared<set_alphabet>(
+    auto regex_alphabet = std::make_shared<cyy::algorithm::set_alphabet>(
         symbol_set, alphabet->get_name() + "_regex");
     ALPHABET::set(regex_alphabet);
 
@@ -368,7 +368,7 @@ namespace cyy::computation {
   }
 
   std::shared_ptr<regex::syntax_node>
-  regex::make_character_class(const symbol_set_type &symbol_set) const {
+  regex::make_character_class(const symbol_set_type &symbol_set) {
     std::shared_ptr<regex::syntax_node> root{};
     for (auto const symbol : symbol_set) {
       if (!root) {

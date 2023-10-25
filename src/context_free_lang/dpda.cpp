@@ -236,8 +236,8 @@ namespace cyy::computation {
 #endif
   }
 
-  std::pair<std::unordered_map<DPDA::state_type, DPDA::symbol_set_type>,
-            std::unordered_map<DPDA::state_type, DPDA::symbol_set_type>>
+  std::pair<std::unordered_map<DPDA::state_type, symbol_set_type>,
+            std::unordered_map<DPDA::state_type, symbol_set_type>>
   DPDA::get_looping_situations() const {
     std::unordered_map<state_type, std::set<std::pair<stack_symbol_type, bool>>>
         looping_situations;
@@ -499,7 +499,7 @@ namespace cyy::computation {
         std::tuple<state_type, state_type, std::optional<input_symbol_type>>,
         std::vector<std::string>>
         stack_cmds;
-    for (auto &[from_state, transfers] : transition_function) {
+    for (const auto &[from_state, transfers] : transition_function) {
       for (const auto &[situation, action] : transfers) {
         std::string sub_cmd = "{";
         if (situation.has_pop()) {

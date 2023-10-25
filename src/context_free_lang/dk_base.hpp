@@ -29,6 +29,7 @@ namespace cyy::computation {
 
   protected:
     std::shared_ptr<DFA> dfa_ptr;
-    std::shared_ptr<map_alphabet<std::string>> alphabet_of_nonterminals;
+    std::shared_ptr<cyy::algorithm::map_alphabet<std::string>>
+        alphabet_of_nonterminals;
   };
 } // namespace cyy::computation

@@ -65,8 +65,9 @@ namespace cyy::computation {
         return false;
       }
 
-      std::pair<bool, symbol_string_view>
-      match_nonterminal(symbol_string_view view, bool match_all = false) {
+      std::pair<bool, cyy::algorithm::symbol_string_view>
+      match_nonterminal(cyy::algorithm::symbol_string_view view,
+                        bool match_all = false) {
         assert(cur_body_it_opt);
         assert(end_body_it_opt);
         while (cur_body_it_opt != end_body_it_opt) {
@@ -90,7 +91,7 @@ namespace cyy::computation {
             continue;
           }
 
-          std::stack<symbol_string_view> view_stack;
+          std::stack<cyy::algorithm::symbol_string_view> view_stack;
           view_stack.push(view);
           size_t i = 0;
           bool backtrack_succ = true;

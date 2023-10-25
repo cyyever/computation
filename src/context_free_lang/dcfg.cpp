@@ -47,7 +47,8 @@ namespace cyy::computation {
     auto const &dfa = dk_dfa_opt->get_dfa();
     auto state_symbol_set = dfa.get_state_symbol_set();
     auto dk_state_set_alphabet =
-        std::make_shared<number_set_alphabet>(state_symbol_set, "dk_state_set");
+        std::make_shared<cyy::algorithm::number_set_alphabet>(state_symbol_set,
+                                                              "dk_state_set");
 
     DPDA::transition_function_type transition_function;
     auto looping_state = dpda_finite_automaton.add_new_state();

@@ -44,7 +44,7 @@ namespace cyy::computation {
 
     std::vector<state_type> stack{0};
 
-    auto endmarked_view = endmarked_symbol_string(view);
+    auto endmarked_view = cyy::algorithm::endmarked_symbol_string(view);
     bool parsing_succ = false;
     auto terminal_it = endmarked_view.begin();
     while (terminal_it < endmarked_view.end()) {

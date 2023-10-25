@@ -47,19 +47,6 @@ namespace cyy::computation {
     return bitset;
   }
 
-  finite_automaton::state_set_type
-  finite_automaton::from_bitset(const state_bitset_type &bitset) const {
-    state_set_type result;
-    size_t n = 0;
-    for (auto const state : states) {
-      if (bitset.test(n)) {
-        result.emplace(state);
-      }
-      n++;
-    }
-    return result;
-  }
-
   bool
   finite_automaton::state_bitset_contains(const state_bitset_type &state_bitset,
                                           state_type state) const {
@@ -81,8 +68,7 @@ namespace cyy::computation {
     return is.str();
   }
 
-  finite_automaton::symbol_set_type
-  finite_automaton::get_state_symbol_set() const {
+  symbol_set_type finite_automaton::get_state_symbol_set() const {
     symbol_set_type state_symbol_set;
     for (auto const s : states) {
       assert(s <= std::numeric_limits<cyy::algorithm::symbol_type>::max());

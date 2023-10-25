@@ -45,7 +45,7 @@ namespace cyy::computation {
         continue;
       }
 
-      symbol_type symbol;
+      NFA::input_symbol_type symbol;
       auto grammar_symbol = cur_item.get_grammar_symbal();
       if (grammar_symbol.is_terminal()) {
         symbol = grammar_symbol.get_terminal();

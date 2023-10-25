@@ -80,7 +80,7 @@ namespace cyy::computation {
         std::pair<decltype(this->parsing_table)::const_iterator, size_t>>
         callback_arguments_stack;
 
-    auto endmarked_view = endmarked_symbol_string(view);
+    auto endmarked_view = cyy::algorithm::endmarked_symbol_string(view);
     auto terminal_it = endmarked_view.begin();
     while (!stack.empty()) {
       auto top_symbol = std::move(stack.back());

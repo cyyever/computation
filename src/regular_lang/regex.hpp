@@ -238,34 +238,32 @@ namespace cyy::computation {
       follow_pos() const override;
     };
 
-  public:
-    regex(const ALPHABET_ptr &alphabet_, symbol_string_view view)
-        : alphabet(alphabet_) {
+    regex(ALPHABET_ptr alphabet_, symbol_string_view view)
+        : alphabet(std::move(alphabet_)) {
       syntax_tree = parse(view);
     }
-    regex(const ALPHABET_ptr &alphabet_,
+    regex(ALPHABET_ptr alphabet_,
           std::shared_ptr<regex::syntax_node> syntax_tree_)
-        : alphabet(alphabet_), syntax_tree(syntax_tree_) {}
+        : alphabet(std::move(alphabet_)), syntax_tree(std::move(syntax_tree_)) {}
 
     NFA to_NFA(NFA::state_type start_state = 0) const {
       return syntax_tree->to_NFA(alphabet, start_state);
     }
     CFG to_CFG() const { return syntax_tree->to_CFG(alphabet, "S"); }
-    auto get_syntax_tree() const -> const auto & { return syntax_tree; }
+    const auto& get_syntax_tree() const { return syntax_tree; }
 
     // 基于McNaughton-Yamada算法
     DFA to_DFA() const;
 
   private:
     std::shared_ptr<syntax_node> parse(symbol_string_view view) const;
-    std::shared_ptr<syntax_node>
-    make_character_class(const symbol_set_type &symbol_set) const;
+    static std::shared_ptr<syntax_node>
+      make_character_class(const symbol_set_type &symbol_set);
     std::shared_ptr<syntax_node>
     make_complemented_character_class(const symbol_set_type &symbol_set) const;
 
     const LL_grammar &get_grammar() const;
 
-  private:
     ALPHABET_ptr alphabet;
     mutable std::shared_ptr<regex::syntax_node> syntax_tree;
   };

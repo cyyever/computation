@@ -47,7 +47,7 @@ namespace cyy::computation {
         for (auto const &grammar_symbol : body) {
           auto next_item = cur_item;
           next_item.go();
-          symbol_type symbol;
+          NFA::input_symbol_type symbol{};
           auto cur_state = item_to_nfa_state(cur_item);
           if (grammar_symbol.is_terminal()) {
             symbol = grammar_symbol.get_terminal();

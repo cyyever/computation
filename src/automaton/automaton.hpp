@@ -21,14 +21,16 @@
 namespace cyy::computation {
 
   /* using namespace cyy::algorithm; */
+  using ALPHABET_ptr = cyy::algorithm::ALPHABET_ptr;
+  using ALPHABET = cyy::algorithm::ALPHABET;
+  using symbol_type = cyy::algorithm::symbol_type;
+  using symbol_set_type = cyy::algorithm::symbol_set_type;
+  using symbol_string = cyy::algorithm::symbol_string;
+  using symbol_string_view = cyy::algorithm::symbol_string_view;
   class finite_automaton {
   public:
     using state_type = uint64_t;
     using state_bitset_type = boost::dynamic_bitset<>;
-    using ALPHABET_ptr = cyy::algorithm::ALPHABET_ptr;
-    using ALPHABET = cyy::algorithm::ALPHABET;
-    using symbol_set_type = cyy::algorithm::symbol_set_type;
-    using symbol_string_view = cyy::algorithm::symbol_string_view;
     class state_set_type : public std::set<state_type> {
     public:
       using std::set<state_type>::set;
@@ -181,7 +183,6 @@ namespace cyy::computation {
 
     state_bitset_type get_bitset(uint64_t bitset_value) const;
 
-    state_set_type from_bitset(const state_bitset_type &bitset) const;
     [[nodiscard]] bool
     state_bitset_contains(const state_bitset_type &state_bitset,
                           state_type state) const;

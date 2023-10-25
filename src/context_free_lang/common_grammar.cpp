@@ -9,8 +9,9 @@ namespace cyy::computation {
     if (!productions.empty()) {
       return productions;
     }
-    auto id = static_cast<CFG::terminal_type>(common_token::id);
-    auto number = static_cast<CFG::terminal_type>(common_token::number);
+    auto id = static_cast<CFG::terminal_type>(cyy::algorithm::common_token::id);
+    auto number =
+        static_cast<CFG::terminal_type>(cyy::algorithm::common_token::number);
     productions["Logical"] = {
         {"Logical", U'&', U'&', "E"},
         {"Logical", U'|', U'|', "E"},

@@ -14,14 +14,16 @@
 namespace cyy::computation {
 
   DPDA canonical_LR_grammar::to_DPDA() const {
-    auto dpda_alphabet = std::make_shared<endmarked_alphabet>(alphabet);
+    auto dpda_alphabet =
+        std::make_shared<cyy::algorithm::endmarked_alphabet>(alphabet);
     finite_automaton dpda_finite_automaton{{0}, dpda_alphabet, 0, {}};
 
     DK_1_DFA dk_1_dfa(*this);
     auto const &dfa = dk_1_dfa.get_dfa();
     auto state_symbol_set = dfa.get_state_symbol_set();
     auto dk_state_set_alphabet =
-        std::make_shared<number_set_alphabet>(state_symbol_set, "dk_state_set");
+        std::make_shared<cyy::algorithm::number_set_alphabet>(state_symbol_set,
+                                                              "dk_state_set");
 
     DPDA::transition_function_type transition_function;
     auto lookahead_state = dpda_finite_automaton.add_new_state();
@@ -31,7 +33,7 @@ namespace cyy::computation {
     auto dfa_goto_table = dk_1_dfa.get_goto_table();
     auto reject_dfa_state = dk_1_dfa.get_reject_state();
 
-    std::unordered_map<symbol_type, state_type> reduce_states;
+    std::unordered_map<cyy::algorithm::symbol_type, state_type> reduce_states;
     for (auto const input_symbol : dpda_alphabet->get_view()) {
       auto reduce_state = dpda_finite_automaton.add_new_state();
       reduce_states[input_symbol] = reduce_state;
@@ -42,7 +44,7 @@ namespace cyy::computation {
     for (auto const &[input_symbol, reduce_state] : reduce_states) {
       for (auto const dk_state : state_symbol_set) {
         auto const &from_lr_1_item_set = dk_1_dfa.get_LR_1_item_set(dk_state);
-        auto completed_item_ptr =
+        const auto *completed_item_ptr =
             from_lr_1_item_set.get_completed_item(input_symbol);
         if (!completed_item_ptr ||
             !completed_item_ptr->contain_lookahead_symbol(input_symbol)) {
@@ -98,8 +100,9 @@ namespace cyy::computation {
       transition_function[accept_state][{input_symbol}] = {
           reduce_states[input_symbol]};
     }
-    return endmarked_DPDA(dpda_finite_automaton, dk_state_set_alphabet,
-                          transition_function);
+    return endmarked_DPDA(std::move(dpda_finite_automaton),
+                          dk_state_set_alphabet, std::move(transition_function))
+        .to_DPDA();
   }
 
   std::pair<canonical_LR_grammar::collection_type,

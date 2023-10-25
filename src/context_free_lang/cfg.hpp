@@ -26,9 +26,12 @@ namespace cyy::computation {
   public:
     using terminal_type = grammar_symbol_type::terminal_type;
     using nonterminal_type = grammar_symbol_type::nonterminal_type;
+    using symbol_string_view = cyy::algorithm::symbol_string_view;
     using terminal_set_type = std::unordered_set<terminal_type>;
     using nonterminal_set_type = std::unordered_set<nonterminal_type>;
     using production_body_set_type = std::set<CFG_production::body_type>;
+    using ALPHABET_ptr = cyy::algorithm::ALPHABET_ptr;
+    using ALPHABET = cyy::algorithm::ALPHABET;
     using production_set_type =
         std::unordered_map<nonterminal_type, production_body_set_type>;
 
@@ -72,7 +75,8 @@ namespace cyy::computation {
     }
 
     ALPHABET_ptr get_terminal_alphabet() const;
-    std::shared_ptr<map_alphabet<std::string>> get_nonterminal_alphabet() const;
+    std::shared_ptr<cyy::algorithm::map_alphabet<std::string>>
+    get_nonterminal_alphabet() const;
     ALPHABET_ptr get_full_alphabet() const;
 
     auto const &get_alphabet() const noexcept { return *alphabet; }
