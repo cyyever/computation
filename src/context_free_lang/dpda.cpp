@@ -393,7 +393,7 @@ namespace cyy::computation {
     // mark reading states
     transition_function_type new_transitions;
     for (auto &[from_state, transfers] : complement_dpda.transition_function) {
-      bool has_input_epsilon = std::ranges::any_of(
+      bool const has_input_epsilon = std::ranges::any_of(
           transfers, [](auto const p) { return !p.first.use_input(); });
       bool has_input = std::ranges::any_of(
           transfers, [](auto const p) { return p.first.use_input(); });
@@ -428,7 +428,7 @@ namespace cyy::computation {
       }
 
 #ifndef NDEBUG
-      auto count = std::erase_if(transfers, [](const auto &transfer) {
+      auto const count = std::erase_if(transfers, [](const auto &transfer) {
         return transfer.first.use_input();
       });
       assert(count > 0);

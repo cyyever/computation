@@ -75,7 +75,7 @@ namespace cyy::computation {
                                   finite_automaton &automaton) {
         assert(situation.has_pop());
         auto &transfers = operator[](from_state);
-        auto new_state = automaton.add_new_state();
+        const auto new_state = automaton.add_new_state();
         transfers[situation] = {new_state, situation.stack_symbol};
 
         auto &new_transfers = operator[](new_state);

@@ -13,7 +13,7 @@ namespace cyy::computation {
   bool CNF::valid() const {
     for (auto &[head, bodies] : get_productions()) {
       for (auto &body : bodies) {
-        auto body_size = body.size();
+        const auto body_size = body.size();
         if (body_size > 2) {
           return false;
         }

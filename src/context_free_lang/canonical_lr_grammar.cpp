@@ -31,7 +31,7 @@ namespace cyy::computation {
         lookahead_state, dfa.get_start_state()};
 
     auto dfa_goto_table = dk_1_dfa.get_goto_table();
-    auto reject_dfa_state = dk_1_dfa.get_reject_state();
+    const auto reject_dfa_state = dk_1_dfa.get_reject_state();
 
     std::unordered_map<cyy::algorithm::symbol_type, state_type> reduce_states;
     for (auto const input_symbol : dpda_alphabet->get_view()) {

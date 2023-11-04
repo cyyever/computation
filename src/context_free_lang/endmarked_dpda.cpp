@@ -33,7 +33,7 @@ namespace cyy::computation {
         next_state = reject_state_opt.value();
       }
 
-      bool has_input_epsilon = std::ranges::any_of(
+      const bool has_input_epsilon = std::ranges::any_of(
           transfers, [](auto const &p) { return !p.first.input_symbol; });
       if (!has_input_epsilon) {
         transfers[{ALPHABET::endmarker}] = {next_state};
@@ -321,7 +321,7 @@ namespace cyy::computation {
     transition_function_type new_transitions;
     for (auto &[from_state, transfers] : transition_function) {
       transition_function_type::mapped_type new_transfers;
-      bool has_input_epsilon = std::ranges::any_of(
+      bool const has_input_epsilon = std::ranges::any_of(
           transfers, [](auto const &p) { return !p.first.use_input(); });
       bool has_stack_epsilon = std::ranges::any_of(
           transfers, [](auto const &p) { return !p.first.has_pop(); });
@@ -348,7 +348,7 @@ namespace cyy::computation {
           auto next_state = parallel_stack_states[stack_symbol];
           new_transfers[{{}, stack_symbol}] = {next_state};
           if (action.has_push()) {
-            auto next_state2 = add_new_state();
+            auto const next_state2 = add_new_state();
             new_transitions[next_state][{input_symbol}] = {next_state2};
             new_transitions[next_state2][{}] = std::move(action);
           } else {
@@ -395,7 +395,7 @@ namespace cyy::computation {
     // process stack
     for (auto &[from_state, transfers] : transition_function) {
       transition_function_type::mapped_type new_transfers;
-      for (auto &[situation, action] : transfers) {
+      for (auto &[situation, action] : std::move(transfers)) {
         if (situation.has_pop() != action.has_push()) {
           new_transfers[std::move(situation)] = std::move(action);
           continue;
