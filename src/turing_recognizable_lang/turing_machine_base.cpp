@@ -35,7 +35,7 @@ namespace cyy::computation {
     }
     tape_alphabet =
         std::make_shared<cyy::algorithm::alphabet_with_blank_symbol>(
-            tape_alphabet_);
+            std::move(tape_alphabet_));
   }
   Turing_machine_base::tape_type
   Turing_machine_base::create_tape(symbol_string_view view) {

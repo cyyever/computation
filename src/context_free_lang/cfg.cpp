@@ -575,7 +575,7 @@ namespace cyy::computation {
     auto terminal_set = get_terminals();
     if (terminal_set.size() < alphabet->size()) {
       return std::make_shared<sub_alphabet>(
-          alphabet,
+          std::move(alphabet),
           std::set<terminal_type>(terminal_set.begin(), terminal_set.end()));
     }
     return alphabet;
