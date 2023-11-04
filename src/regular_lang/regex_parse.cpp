@@ -163,7 +163,7 @@ namespace cyy::computation {
     }
 
     symbol_set_type symbol_set;
-    for (auto s : alphabet->get_view()) {
+    for (auto const s : alphabet->get_view()) {
       symbol_set.insert(s);
     }
 
@@ -216,7 +216,7 @@ namespace cyy::computation {
                                                       auto const &pos) {
       auto const &head = production.get_head();
       auto const &body = production.get_body();
-      bool finish_production = (pos == body.size());
+      const bool finish_production = (pos == body.size());
 
       // symbol -> 'symbol'
       if (head == "symbol" && finish_production) {
@@ -308,7 +308,7 @@ namespace cyy::computation {
       if (head == "closure-operator" && finish_production) {
         auto const &inner_tree = node_stack.back();
         syntax_node_ptr node;
-        auto closure_operator = body[0].get_terminal();
+        const auto closure_operator = body[0].get_terminal();
         if (closure_operator == '*') {
           node = std::make_shared<regex::kleene_closure_node>(inner_tree);
         } else if (closure_operator == '+') {
@@ -375,7 +375,7 @@ namespace cyy::computation {
         root = std::make_shared<regex::basic_node>(symbol);
       } else {
         root = std::make_shared<regex::union_node>(
-            root, std::make_shared<regex::basic_node>(symbol));
+            std::move(root), std::make_shared<regex::basic_node>(symbol));
       }
     }
 

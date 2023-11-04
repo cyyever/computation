@@ -47,7 +47,7 @@ namespace cyy::computation {
 
   std::optional<DPDA::configuration_type>
   DPDA::go(configuration_type configuration) const {
-    auto state = configuration.state;
+    auto const state = configuration.state;
 
     auto it = transition_function.find(state);
     if (it == transition_function.end()) {

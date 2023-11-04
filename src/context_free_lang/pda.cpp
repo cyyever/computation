@@ -119,7 +119,7 @@ namespace cyy::computation {
     auto placeholder_stack_symbol = stack_alphabet->get_min_symbol();
     for (auto &[situation, actions] : transition_function) {
       transition_function_type::mapped_type new_actions;
-      for (const auto &action : actions) {
+      for (auto &action : actions) {
         if (situation.stack_symbol.has_value() !=
             action.stack_symbol.has_value()) {
           new_actions.emplace(action);

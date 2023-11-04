@@ -15,7 +15,7 @@ namespace cyy::computation {
   DFA regex::to_DFA() const {
     std::unordered_map<uint64_t, symbol_type> position_to_symbol;
 
-    regex::concat_node> syntax_tree_with_endmarker(
+    regex::concat_node syntax_tree_with_endmarker(
         syntax_tree, std::make_shared<regex::basic_node>(ALPHABET::endmarker));
 
     syntax_tree_with_endmarker.assign_position(position_to_symbol);

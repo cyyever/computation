@@ -44,7 +44,7 @@ TEST_CASE("eliminate_useless_symbols") {
 
     bool has_exception = false;
     try {
-      CFG("common_tokens", "S", productions);
+      CFG cfg("common_tokens", "S", productions);
     } catch (...) {
       has_exception = true;
     }

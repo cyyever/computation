@@ -74,7 +74,7 @@ namespace cyy::computation {
                          PDA::state_type from_state, PDA::state_type to_state,
                          const std::optional<CFG::nonterminal_type> &head,
                          const CFG_production::body_type &body) {
-      PDA::state_type new_state, old_state;
+      PDA::state_type new_state{}, old_state{};
       auto it = body.rbegin();
       if (head.has_value()) {
         if (body.size() <= 1) {

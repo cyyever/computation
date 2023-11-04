@@ -119,7 +119,7 @@ namespace cyy::computation {
         right_node->to_NFA(alphabet, *(left_final_states.begin()) + 1);
     auto const &right_final_states = right_NFA.get_final_states();
     auto final_state = (*right_final_states.begin()) + 1;
-    auto right_start_state = right_NFA.get_start_state();
+    const auto right_start_state = right_NFA.get_start_state();
 
     left_NFA.add_new_state(start_state);
     left_NFA.add_new_state(final_state);

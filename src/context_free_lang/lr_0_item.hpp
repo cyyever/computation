@@ -39,7 +39,7 @@ namespace cyy::computation {
     }
     auto const &get_head() const noexcept { return production_ptr->get_head(); }
     auto const &get_body() const noexcept { return production_ptr->get_body(); }
-    size_t get_dot_pos() const { return dot_pos; }
+    size_t get_dot_pos() const noexcept { return dot_pos; }
     bool completed() const noexcept { return dot_pos >= get_body().size(); }
     void go() {
       if (completed()) {
@@ -88,8 +88,8 @@ namespace cyy::computation {
       nonkernel_items.insert(head);
     }
 
-    auto const &get_kernel_items() const { return kernel_items; }
-    auto const &get_nonkernel_items() const { return nonkernel_items; }
+    auto const &get_kernel_items() const noexcept { return kernel_items; }
+    auto const &get_nonkernel_items() const noexcept { return nonkernel_items; }
     auto get_completed_items() const {
       return kernel_items | std::ranges::views::filter(
                                 [](auto const &p) { return p.completed(); });

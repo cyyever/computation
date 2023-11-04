@@ -45,7 +45,7 @@ namespace cyy::computation {
         continue;
       }
 
-      NFA::input_symbol_type symbol;
+      NFA::input_symbol_type symbol{};
       auto grammar_symbol = cur_item.get_grammar_symbal();
       if (grammar_symbol.is_terminal()) {
         symbol = grammar_symbol.get_terminal();
@@ -86,14 +86,12 @@ namespace cyy::computation {
   }
 
   DK_1_DFA::state_type DK_1_DFA::get_reject_state() const {
-    std::optional<state_type> reject_state;
     for (auto const &[state, item_set] : collection) {
       if (item_set.empty()) {
-        reject_state = state;
-        break;
+        return state;
       }
     }
-    return reject_state.value();
+    throw std::logic_error("No reject state");
   }
 
   std::string DK_1_DFA::MMA_draw(const CFG &cfg) const {

@@ -52,7 +52,7 @@ namespace cyy::computation {
       transfers.merge(std::move(new_transfers));
     }
 
-    alphabet = std::make_shared<cyy::algorithm::endmarked_alphabet>(alphabet);
+    alphabet = std::make_shared<cyy::algorithm::endmarked_alphabet>(std::move(alphabet));
     for (auto s : alphabet->get_view()) {
       transition_function[new_accept_state][{s}] = {reject_state_opt.value()};
     }
