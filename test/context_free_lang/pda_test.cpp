@@ -5,7 +5,7 @@
  */
 #include <doctest/doctest.h>
 
-#include "alphabet/set_alphabet.hpp"
+#include "alphabet/range_alphabet.hpp"
 #include "context_free_lang/cnf.hpp"
 #include "context_free_lang/model_transform.hpp"
 #include "context_free_lang/pda.hpp"
