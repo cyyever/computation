@@ -51,11 +51,11 @@ namespace cyy::computation {
                                                               "dk_state_set");
 
     DPDA::transition_function_type transition_function;
-    auto looping_state = dpda_finite_automaton.add_new_state();
+    const auto looping_state = dpda_finite_automaton.add_new_state();
     transition_function[dpda_finite_automaton.get_start_state()][{}] = {
         looping_state, dfa.get_start_state()};
 
-    auto accept_state = dpda_finite_automaton.add_new_state();
+    const auto accept_state = dpda_finite_automaton.add_new_state();
     auto const &table = get_goto_table();
     for (auto const dk_state : state_symbol_set) {
       // shift
@@ -83,7 +83,7 @@ namespace cyy::computation {
       for (auto from_state : {looping_state, accept_state}) {
         // pop body states from stack
         for (size_t i = 0; i < body.size(); i++) {
-          auto to_state = dpda_finite_automaton.add_new_state();
+          const auto to_state = dpda_finite_automaton.add_new_state();
 
           if (i == 0) {
             transition_function[from_state][{{}, dk_final_state}] = {to_state};

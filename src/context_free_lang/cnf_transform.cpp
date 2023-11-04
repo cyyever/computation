@@ -154,8 +154,8 @@ namespace cyy::computation {
                                  if (!symbol.is_terminal()) {
                                    continue;
                                  }
-                                 auto s = symbol.get_terminal();
-                                 symbol = get_terminal_head(s);
+                                 symbol =
+                                     get_terminal_head(symbol.get_terminal());
                                }
 
                                if (body.size() == 2) {
