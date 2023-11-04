@@ -123,7 +123,7 @@ namespace cyy::computation {
     }
 
     state_type add_new_state() {
-      auto new_state = get_max_state() + 1;
+      const auto new_state = get_max_state() + 1;
       states.insert(new_state);
       return new_state;
     }

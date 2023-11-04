@@ -15,18 +15,18 @@ namespace cyy::computation {
   DFA regex::to_DFA() const {
     std::unordered_map<uint64_t, symbol_type> position_to_symbol;
 
-    auto syntax_tree_with_endmarker = std::make_shared<regex::concat_node>(
+    regex::concat_node> syntax_tree_with_endmarker(
         syntax_tree, std::make_shared<regex::basic_node>(ALPHABET::endmarker));
 
-    syntax_tree_with_endmarker->assign_position(position_to_symbol);
+    syntax_tree_with_endmarker.assign_position(position_to_symbol);
 
     auto final_position =
         std::ranges::max(std::views::keys(position_to_symbol));
-    auto follow_pos_table = syntax_tree_with_endmarker->follow_pos();
+    auto follow_pos_table = syntax_tree_with_endmarker.follow_pos();
 
     std::vector<bool> flags{false};
     std::vector<std::unordered_set<uint64_t>> position_sets{
-        syntax_tree_with_endmarker->first_pos()};
+        syntax_tree_with_endmarker.first_pos()};
     DFA::state_set_type DFA_states{0};
     DFA::transition_function_type DFA_transition_function;
     DFA::state_set_type DFA_final_states;
