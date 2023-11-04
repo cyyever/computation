@@ -443,7 +443,7 @@ namespace cyy::computation {
   void endmarked_DPDA::prepare_DCFG_conversion() {
 
     assert(final_states.size() == 1);
-    auto state_of_clearing_stack = add_new_state();
+    auto const state_of_clearing_stack = add_new_state();
     for (auto final_state : final_states) {
       transition_function.erase(final_state);
       transition_function.add_epsilon_transition(final_state,

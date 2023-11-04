@@ -97,11 +97,11 @@ namespace cyy::computation {
         }
         terminal_it++;
       } else {
-        auto ptr = top_symbol.get_nonterminal_ptr();
-        auto it = parsing_table.find({terminal, *ptr});
+        auto nonterminal = top_symbol.get_nonterminal();
+        auto it = parsing_table.find({terminal, nonterminal});
         if (it == parsing_table.end()) {
           std::cerr << fmt::format("no rule for parsing {} for {} \n",
-                                   alphabet->to_string(terminal), *ptr);
+                                   alphabet->to_string(terminal), nonterminal);
           return false;
         }
 
@@ -119,7 +119,7 @@ namespace cyy::computation {
         auto const &head = it->first.second;
         auto const &body = it->second;
         match_callback({head, body}, pos);
-        bool finish_production = (pos == body.size());
+        bool const finish_production = (pos == body.size());
         callback_arguments_stack.pop_back();
         if (!finish_production) {
           break;

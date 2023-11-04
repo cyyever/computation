@@ -36,7 +36,7 @@ namespace cyy::computation {
     class state_set_type : public boost::container::flat_set<state_type> {
     public:
       using boost::container::flat_set<state_type>::flat_set;
-      bool operator==(const state_set_type &rhs) const = default;
+      bool operator==(const state_set_type &rhs) const noexcept = default;
       [[nodiscard]] bool has_intersection(const state_set_type &rhs) const;
       [[nodiscard]] bool includes(const state_set_type &rhs) const {
         return std::ranges::includes(*this, rhs);
@@ -91,7 +91,7 @@ namespace cyy::computation {
     auto const &get_alphabet() const noexcept { return *alphabet; }
     auto const &get_alphabet_ptr() const noexcept { return alphabet; }
     auto const &get_final_states() const noexcept { return final_states; }
-    auto get_non_final_states() const noexcept {
+    auto get_non_final_states() const {
       state_set_type non_final_states;
       std::ranges::set_difference(
           states, final_states,

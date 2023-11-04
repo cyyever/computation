@@ -51,7 +51,7 @@ namespace cyy::computation {
 
     for (size_t len = 2; len <= view.size(); len++) {
       for (size_t i = 0; i + len - 1 < view.size(); i++) {
-        auto j = i + len - 1;
+        const auto j = i + len - 1;
         for (size_t k = i; k < j; k++) {
           auto const &first_heads = table[i][k];
           auto const &second_heads = table[k + 1][j];

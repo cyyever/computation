@@ -7,7 +7,7 @@
 
 #include <cassert>
 
-#include "alphabet/set_alphabet.hpp"
+#include <cyy/algorithm/alphabet/range_alphabet.hpp>
 #include "context_free_lang/cfg_production.hpp"
 #include "context_free_lang/ll_grammar.hpp"
 #include "exception.hpp"
@@ -208,7 +208,7 @@ namespace cyy::computation {
     bool in_complemented_class = false;
     bool in_escape_sequence = false;
     character_class cls;
-    auto parse_res = get_grammar().parse(view, [&node_stack, &escape_symbol,
+    auto const parse_res = get_grammar().parse(view, [&node_stack, &escape_symbol,
                                                 &in_class, &cls,
                                                 &in_complemented_class,
                                                 &in_escape_sequence,
@@ -389,7 +389,7 @@ namespace cyy::computation {
 
     symbol_set_type complemented_symbol_set;
 
-    for (auto a : alphabet->get_view()) {
+    for (const auto a : alphabet->get_view()) {
       if (!symbol_set.contains(a)) {
         complemented_symbol_set.insert(a);
       }

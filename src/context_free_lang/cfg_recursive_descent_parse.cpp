@@ -182,10 +182,9 @@ namespace cyy::computation {
         return false;
       }
     }
-    auto node =
-        std::make_shared<recursive_descent_parse_node>(*this, start_symbol);
+    recursive_descent_parse_node node(*this, start_symbol);
     while (true) {
-      auto [res, remain_view] = node->match_nonterminal(view, true);
+      auto [res, remain_view] = node.match_nonterminal(view, true);
       if (!res) {
         return false;
       }
@@ -193,7 +192,7 @@ namespace cyy::computation {
         return true;
       }
 
-      if (!node->use_next_body()) {
+      if (!node.use_next_body()) {
         break;
       }
     }

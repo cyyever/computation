@@ -36,7 +36,7 @@ namespace cyy::computation {
         if (head == cfg.get_start_symbol()) {
           nfa.add_epsilon_transition(nfa.get_start_state(), {state});
         }
-        head_states[head].insert(state);
+        head_states[head].emplace(std::move(state));
       }
     }
 

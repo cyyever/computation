@@ -39,8 +39,8 @@ namespace cyy::computation {
 
     std::string to_string(const ALPHABET &alphabet) const;
 
-    auto const &get_head() const { return head; }
-    auto const &get_body() const { return body; }
+    auto const &get_head() const noexcept { return head; }
+    auto const &get_body() const noexcept { return body; }
 
     [[nodiscard]] std::string MMA_draw(
         const ALPHABET &alphabet, bool emphasize_head = false,
