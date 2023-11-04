@@ -29,7 +29,7 @@ namespace cyy::computation {
       throw cyy::algorithm::exception::invalid_alphabet(
           "input alphabet must not contain the blank symbol");
     }
-    if (!tape_alphabet_->contain(get_alphabet())) {
+    if (!tape_alphabet_->contain_alphabet(get_alphabet())) {
       throw cyy::algorithm::exception::invalid_alphabet(
           "tape alphabet must contain input alphabet");
     }
