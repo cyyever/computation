@@ -7,8 +7,8 @@
 
 #include "canonical_lr_grammar.hpp"
 
-#include "alphabet/endmarked_alphabet.hpp"
-#include "alphabet/number_set_alphabet.hpp"
+#include  <cyy/algorithm/alphabet/endmarked_alphabet.hpp>
+#include  <cyy/algorithm/alphabet/number_set_alphabet.hpp>
 #include "endmarked_dpda.hpp"
 
 namespace cyy::computation {
