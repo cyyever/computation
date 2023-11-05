@@ -479,7 +479,7 @@ namespace cyy::computation {
         // no pop and push
         if (!situation.has_pop()) {
           assert(!action.has_push());
-          auto new_state = add_new_state();
+          const auto new_state = add_new_state();
           // push
           new_transfers.emplace(
               situation, action_type{new_state, placeholder_stack_symbol});

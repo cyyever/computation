@@ -60,7 +60,7 @@ namespace cyy::computation {
 namespace std {
   template <> struct hash<cyy::computation::CFG_production> {
     std::size_t
-    operator()(const cyy::computation::CFG_production &x) const noexcept {
+    operator()(const cyy::computation::CFG_production &x) const {
       size_t seed = 0;
       auto const &head = x.get_head();
       auto const &body = x.get_body();

@@ -88,7 +88,7 @@ namespace cyy::computation {
 
       auto terminal = *terminal_it;
       if (top_symbol.is_terminal()) {
-        auto s = top_symbol.get_terminal();
+        const auto s = top_symbol.get_terminal();
         if (terminal != s) {
           std::cerr << fmt::format("symbol does not match terminal:{} {}\n",
                                    alphabet->to_string(terminal),

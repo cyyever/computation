@@ -175,7 +175,7 @@ namespace cyy::computation {
     }
     auto live_states = final_states;
     while (true) {
-      auto live_state_size = live_states.size();
+      const auto live_state_size = live_states.size();
       state_set_type new_live_states;
       for (auto s : live_states) {
         new_live_states.merge(state_set_type(state_dep[s]));

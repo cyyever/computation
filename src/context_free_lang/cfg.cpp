@@ -574,9 +574,7 @@ namespace cyy::computation {
   ALPHABET_ptr CFG::get_terminal_alphabet() const {
     auto terminal_set = get_terminals();
     if (terminal_set.size() < alphabet->size()) {
-      return std::make_shared<sub_alphabet>(
-          std::move(alphabet),
-          std::set<terminal_type>(terminal_set.begin(), terminal_set.end()));
+      return std::make_shared<sub_alphabet>(std::move(alphabet), std::move(terminal_set));
     }
     return alphabet;
   }
@@ -596,9 +594,9 @@ namespace cyy::computation {
     nonterminal_alphabet_ptr->set_MMA_draw_fun(
         [](auto const &nonterminal_alphabet, auto symbol) {
           return grammar_symbol_type(
-                     reinterpret_cast<const map_alphabet<std::string> *>(
-                         &nonterminal_alphabet)
-                         ->get_data(symbol))
+                     dynamic_cast<const map_alphabet<std::string>&>(
+                         nonterminal_alphabet)
+                         .get_data(symbol))
               .MMA_draw(nonterminal_alphabet);
         });
     return nonterminal_alphabet_ptr;
