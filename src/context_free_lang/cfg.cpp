@@ -119,7 +119,7 @@ namespace cyy::computation {
     // eliminate unreachable heads from start symbol
     nonterminal_set_type reachable_heads{start_symbol};
     while (true) {
-      auto prev_size = reachable_heads.size();
+      const auto prev_size = reachable_heads.size();
       for (const auto &[head, bodies] : productions) {
         if (!reachable_heads.contains(head)) {
           continue;
@@ -498,7 +498,7 @@ namespace cyy::computation {
           if (it == result.end()) {
             continue;
           }
-          auto prev_size = v_set.size();
+          const auto prev_size = v_set.size();
           v_set.merge(CFG::nonterminal_set_type(it->second));
           if (v_set.size() > prev_size) {
             flag = true;
@@ -574,7 +574,7 @@ namespace cyy::computation {
   ALPHABET_ptr CFG::get_terminal_alphabet() const {
     auto terminal_set = get_terminals();
     if (terminal_set.size() < alphabet->size()) {
-      return std::make_shared<sub_alphabet>(std::move(alphabet), std::move(terminal_set));
+      return std::make_shared<sub_alphabet>(alphabet, std::move(terminal_set));
     }
     return alphabet;
   }
