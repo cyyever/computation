@@ -7,8 +7,6 @@
 
 #include "nfa.hpp"
 
-#include <algorithm>
-#include <cassert>
 #include <sstream>
 #include <vector>
 
