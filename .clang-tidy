@@ -1,5 +1,4 @@
 ---
 Checks: ' *, -altera*, -abseil*, -bugprone-easily-swappable-parameters, -bugprone-swapped-arguments,
-  -cppcoreguidelines-non-private-member-variables-in-classes,-fuchsia-overloaded-operator,-readability-identifier-length, -llvmlibc*, -misc-non-private-member-variables-in-classes, -modernize-use-nodiscard,-modernize-use-trailing-return-type, -*default-argument* '
-AnalyzeTemporaryDtors: false
+  -cppcoreguidelines-non-private-member-variables-in-classes,-fuchsia-overloaded-operator,-readability-identifier-length, -llvmlibc*, -misc-non-private-member-variables-in-classes, -modernize-use-nodiscard,-modernize-use-trailing-return-type, -*default-argument*, -misc-include-cleaner, -llvm-header-guard '
 WarningsAsErrors: '*'
