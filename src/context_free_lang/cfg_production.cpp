@@ -15,7 +15,7 @@
 
 namespace cyy::computation {
 
-  bool CFG_production::is_epsilon() const { return body.empty(); }
+  bool CFG_production::is_epsilon() const noexcept { return body.empty(); }
 
   std::string CFG_production::to_string(const ALPHABET &alphabet) const {
     return fmt::format("{} -> {}\n", head, body_to_string(alphabet));

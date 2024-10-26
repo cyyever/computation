@@ -56,7 +56,7 @@ namespace cyy::computation {
       follow_pos() const override {
         return {};
       }
-      std::shared_ptr<syntax_node> simplify() const override { return {}; }
+      std::shared_ptr<syntax_node> simplify() const noexcept override { return {}; }
       symbol_string to_string() const override { return {}; }
     };
 

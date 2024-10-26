@@ -99,7 +99,7 @@ namespace cyy::computation {
     }
     state_type get_start_state() const noexcept { return start_state; }
 
-    void set_alphabet(cyy::algorithm::ALPHABET_ptr alphabet_) {
+    void set_alphabet(cyy::algorithm::ALPHABET_ptr alphabet_) noexcept {
       alphabet = std::move(alphabet_);
     }
     [[nodiscard]] bool contain_final_state(const state_set_type &T) const {

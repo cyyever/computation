@@ -121,7 +121,7 @@ namespace cyy::computation {
         }
       }
     }
-    auto s_index = epsilon_graph.get_vertex_index(s);
+    const    auto s_index = epsilon_graph.get_vertex_index(s);
     bool has_cycle = false;
     state_set_type connect_component;
     epsilon_graph.recursive_depth_first_search(

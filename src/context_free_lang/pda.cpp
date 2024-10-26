@@ -110,7 +110,7 @@ namespace cyy::computation {
       transition_function[{state_of_clearing_stack, {}, used_stack_symbol}] = {
           {state_of_clearing_stack}};
     }
-    auto new_final_state = add_new_state();
+    const auto new_final_state = add_new_state();
     transition_function[{state_of_clearing_stack, {}, ALPHABET::endmarker}] = {
         {new_final_state}};
     replace_final_states(new_final_state);

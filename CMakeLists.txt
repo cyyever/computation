@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 20)
 include(cmake/all.cmake)
 
 file(GLOB_RECURSE SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src/**/*.cpp)
+file(GLOB_RECURSE headers ${CMAKE_CURRENT_SOURCE_DIR}/src/**/*.hpp)
 
 find_package(Boost CONFIG REQUIRED)
 find_package(spdlog REQUIRED)
@@ -17,6 +18,16 @@ add_library(MyComputationLib ${SOURCE})
 target_link_libraries(MyComputationLib PUBLIC Boost::headers)
 target_link_libraries(MyComputationLib PUBLIC CyyAlgorithmLib)
 
+target_sources(
+  MyComputationLib
+  PUBLIC FILE_SET
+         public_headers
+         TYPE
+         HEADERS
+         BASE_DIRS
+         src
+         FILES
+         ${headers})
 target_include_directories(
   MyComputationLib PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
                           $<INSTALL_INTERFACE:include/cyy/computation>)
@@ -33,17 +44,8 @@ endif()
 install(
   TARGETS MyComputationLib
   EXPORT MyComputationLibConfig
-  RUNTIME DESTINATION bin
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib COMPONENT library
-  INCLUDES
-  DESTINATION include)
-
-install(
-  DIRECTORY src/
-  DESTINATION include/cyy/computation
-  FILES_MATCHING
-  PATTERN "*.hpp")
+  FILE_SET public_headers)
 
 # install cmake config file
-install(EXPORT MyComputationLibConfig DESTINATION lib/cmake/MyComputationLib)
+install(EXPORT MyComputationLibConfig
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/MyComputationLib)

@@ -39,7 +39,7 @@ namespace cyy::computation {
     using parse_node_ptr = std::shared_ptr<parse_node>;
     struct parse_node {
     public:
-      explicit parse_node(grammar_symbol_type grammar_symbol_)
+      explicit parse_node(grammar_symbol_type grammar_symbol_) noexcept
           : grammar_symbol(std::move(grammar_symbol_)) {}
 
       [[nodiscard]] std::string MMA_draw(const ALPHABET &alphabet) const;
@@ -70,7 +70,7 @@ namespace cyy::computation {
     bool has_production(const CFG_production &production) const;
 
     nonterminal_set_type get_heads() const;
-    auto get_head_view() const {
+    auto get_head_view() const noexcept {
       return productions | std::ranges::views::keys;
     }
 
