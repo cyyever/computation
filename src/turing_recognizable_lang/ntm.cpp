@@ -32,7 +32,7 @@ namespace cyy::computation {
         configuration_type(get_start_state(), create_tape(view))};
     while (true) {
       if (std::ranges::any_of(configuration_set,
-                              [=, this](auto const &configuration) {
+                              [this](auto const &configuration) {
                                 return configuration.state == accept_state;
                               })) {
         break;
