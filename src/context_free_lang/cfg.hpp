@@ -70,7 +70,7 @@ namespace cyy::computation {
     bool has_production(const CFG_production &production) const;
 
     nonterminal_set_type get_heads() const;
-    auto get_head_view() noexcept const {
+    auto get_head_view() const noexcept {
       return productions | std::ranges::views::keys;
     }
 

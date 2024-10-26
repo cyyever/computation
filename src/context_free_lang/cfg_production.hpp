@@ -35,7 +35,7 @@ namespace cyy::computation {
 
     bool operator==(const CFG_production &rhs) const noexcept = default;
     auto operator<=>(const CFG_production &rhs) const noexcept = default;
-    bool is_epsilon() const;
+    bool is_epsilon() const noexcept;
 
     std::string to_string(const ALPHABET &alphabet) const;
 
