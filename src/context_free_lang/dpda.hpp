@@ -27,7 +27,7 @@ namespace cyy::computation {
       stack_symbol_type get_poped_symbol() const {
         return stack_symbol.value();
       }
-      bool use_input() const { return input_symbol.has_value(); }
+      bool use_input() const noexcept { return input_symbol.has_value(); }
       std::optional<input_symbol_type> input_symbol{};
       std::optional<stack_symbol_type> stack_symbol{};
     };
@@ -36,7 +36,7 @@ namespace cyy::computation {
       action_type() = default;
       action_type(state_type state_) : state(state_) {}
       action_type(state_type state_,
-                  std::optional<stack_symbol_type> stack_symbol_)
+                  std::optional<stack_symbol_type> stack_symbol_) noexcept
           : state(state_), stack_symbol(stack_symbol_) {}
       state_type state{};
       std::optional<stack_symbol_type> stack_symbol;

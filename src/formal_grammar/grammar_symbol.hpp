@@ -27,7 +27,7 @@ namespace cyy::computation {
     using nonterminal_type = std::string;
     using ALPHABET = cyy::algorithm::ALPHABET;
     using std::variant<terminal_type, nonterminal_type>::variant;
-    grammar_symbol_type(char c)
+    grammar_symbol_type(char c) noexcept
         : grammar_symbol_type(static_cast<terminal_type>(c)) {}
 
     bool is_terminal() const noexcept {
@@ -70,8 +70,8 @@ namespace cyy::computation {
 
   struct grammar_symbol_string_type : public std::vector<grammar_symbol_type> {
     using std::vector<grammar_symbol_type>::vector;
-    auto get_terminal_view() const {
-      return *this | std::ranges::views::filter([](auto g) {
+    auto get_terminal_view() const noexcept {
+      return *this | std::ranges::views::filter([](auto g) noexcept {
         return g.is_terminal();
       }) | std::ranges::views::transform([](auto g) {
         return g.get_terminal();

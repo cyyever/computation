@@ -22,7 +22,7 @@ namespace cyy::computation {
     using body_type = grammar_symbol_string_type;
     using body_span_type = grammar_symbol_const_span_type;
 
-    CFG_production(head_type head_, body_type body_)
+    CFG_production(head_type head_, body_type body_) noexcept
         : head{std::move(head_)}, body{std::move(body_)} {}
 
     CFG_production(const CFG_production &) = default;

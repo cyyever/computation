@@ -21,7 +21,7 @@ namespace cyy::computation {
                               &nfa](const LR_0_item &item) {
       auto it = item_and_nfa_state.left.find(item);
       if (it == item_and_nfa_state.left.end()) {
-        auto new_state = nfa.add_new_state();
+        const auto new_state = nfa.add_new_state();
         item_and_nfa_state.insert({item, new_state});
         return new_state;
       }
@@ -48,7 +48,7 @@ namespace cyy::computation {
           auto next_item = cur_item;
           next_item.go();
           NFA::input_symbol_type symbol{};
-          auto cur_state = item_to_nfa_state(cur_item);
+          const auto cur_state = item_to_nfa_state(cur_item);
           if (grammar_symbol.is_terminal()) {
             symbol = grammar_symbol.get_terminal();
           } else {
