@@ -229,8 +229,8 @@ namespace cyy::computation {
     has_normalized = true;
     reject_state_opt = new_reject_state;
 
-    stack_alphabet =
-        std::make_shared<cyy::algorithm::endmarked_alphabet>(std::move(stack_alphabet));
+    stack_alphabet = std::make_shared<cyy::algorithm::endmarked_alphabet>(
+        std::move(stack_alphabet));
 #ifndef NDEBUG
     check_transition_fuction();
 #endif

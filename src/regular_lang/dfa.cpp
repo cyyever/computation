@@ -158,7 +158,7 @@ namespace cyy::computation {
       }
     }
     return {DFA{std::move(minimize_DFA_states), alphabet,
-                std::move(minimize_DFA_start_state),
+                minimize_DFA_start_state,
                 std::move(minimize_DFA_transition_function),
                 std::move(minimize_DFA_final_states)},
             std::move(groups)};

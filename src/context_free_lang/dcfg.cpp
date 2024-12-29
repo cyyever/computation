@@ -1,6 +1,6 @@
 #include "dcfg.hpp"
 
-#include  <cyy/algorithm/alphabet/range_alphabet.hpp>
+#include <cyy/algorithm/alphabet/range_alphabet.hpp>
 
 namespace cyy::computation {
   DCFG::DCFG(ALPHABET_ptr alphabet_, nonterminal_type start_symbol_,

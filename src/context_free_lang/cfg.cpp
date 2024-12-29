@@ -594,7 +594,7 @@ namespace cyy::computation {
     nonterminal_alphabet_ptr->set_MMA_draw_fun(
         [](auto const &nonterminal_alphabet, auto symbol) {
           return grammar_symbol_type(
-                     dynamic_cast<const map_alphabet<std::string>&>(
+                     dynamic_cast<const map_alphabet<std::string> &>(
                          nonterminal_alphabet)
                          .get_data(symbol))
               .MMA_draw(nonterminal_alphabet);

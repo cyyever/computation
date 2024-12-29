@@ -8,6 +8,7 @@
 #include <cassert>
 
 #include <cyy/algorithm/alphabet/range_alphabet.hpp>
+
 #include "context_free_lang/cfg_production.hpp"
 #include "context_free_lang/ll_grammar.hpp"
 #include "exception.hpp"
@@ -107,8 +108,8 @@ namespace cyy::computation {
       return *regex_grammar;
     }
 
-    symbol_set_type operators{'|', '*', '(', '\\', ')', '+',
-                              '?', '[', ']', '.',  '^', '-'};
+    symbol_set_type const operators{'|', '*', '(', '\\', ')', '+',
+                                    '?', '[', ']', '.',  '^', '-'};
 
     CFG::production_set_type productions;
     productions["rexpr"] = {{"rterm", "rexpr'"}, {}};
@@ -208,156 +209,156 @@ namespace cyy::computation {
     bool in_complemented_class = false;
     bool in_escape_sequence = false;
     character_class cls;
-    auto const parse_res = get_grammar().parse(view, [&node_stack, &escape_symbol,
-                                                &in_class, &cls,
-                                                &in_complemented_class,
-                                                &in_escape_sequence,
-                                                this](auto const &production,
-                                                      auto const &pos) {
-      auto const &head = production.get_head();
-      auto const &body = production.get_body();
-      const bool finish_production = (pos == body.size());
+    auto const parse_res = get_grammar().parse(
+        view,
+        [&node_stack, &escape_symbol, &in_class, &cls, &in_complemented_class,
+         &in_escape_sequence, this](auto const &production, auto const &pos) {
+          auto const &head = production.get_head();
+          auto const &body = production.get_body();
+          const bool finish_production = (pos == body.size());
 
-      // symbol -> 'symbol'
-      if (head == "symbol" && finish_production) {
-        auto s = body[0].get_terminal();
-        if (in_escape_sequence) {
-          s = escape_symbol(s);
-        }
+          // symbol -> 'symbol'
+          if (head == "symbol" && finish_production) {
+            auto s = body[0].get_terminal();
+            if (in_escape_sequence) {
+              s = escape_symbol(s);
+            }
 
-        if (in_class) {
-          cls.add_symbol(s);
-        } else {
-          node_stack.emplace_back(std::make_shared<regex::basic_node>(s));
-        }
-        return;
-      }
-
-      // escape-sequence -> '\' symbol
-      if (head == "escape-sequence") {
-        in_escape_sequence = (pos == 1);
-      }
-
-      // character-class-element -> 'symbol except backslash and ]'
-      if (head == "character-class-element") {
-        if (finish_production && body[0].is_terminal()) {
-          cls.add_symbol(body[0].get_terminal());
-        }
-      }
-
-      // character-class -> '^' character-class'
-      if (head == "character-class" && pos == 0 && body[0] == '^') {
-        in_complemented_class = true;
-      }
-
-      // character-class' -> '-' character-class-element
-      // character-class'
-      if (head == "character-class'") {
-        if (pos == 1 && body[0] == '-') {
-          if (!cls.set_last_symbol_in_range()) {
-            throw cyy::computation::exception::no_regular_expression(
-                std::string("invalid character range "));
-          }
-        }
-      }
-
-      if (head == "rprimary") {
-        // rprimary -> 'non-operator-char'
-        // rprimary -> '.'
-        if (finish_production && body.size() == 1 && body[0].is_terminal()) {
-          auto symbol = body[0].get_terminal();
-          if (symbol == '.') {
-            if (alphabet->support_ASCII_escape_sequence()) {
-              node_stack.emplace_back(
-                  make_complemented_character_class({'\n', '\r'}));
+            if (in_class) {
+              cls.add_symbol(s);
             } else {
-              node_stack.emplace_back(make_complemented_character_class({}));
+              node_stack.emplace_back(std::make_shared<regex::basic_node>(s));
             }
-          } else {
-            node_stack.emplace_back(
-                std::make_shared<regex::basic_node>(symbol));
-          }
-          return;
-        }
-
-        // rprimary -> '[' character-class ']'
-        if (body[0] == '[') {
-          if (pos == 1) {
-            cls.reset();
-            in_class = true;
-            in_complemented_class = false;
-          } else if (pos == 3) {
-            in_class = false;
-            const auto &class_content = cls.get_content();
-            if (class_content.empty()) {
-              throw cyy::computation::exception::no_regular_expression(
-                  "empty character class");
-            }
-
-            if (in_complemented_class) {
-              node_stack.push_back(
-                  make_complemented_character_class(class_content));
-              return;
-            }
-            node_stack.push_back(make_character_class(class_content));
             return;
           }
-          return;
-        }
-      }
-      if (head == "closure-operator" && finish_production) {
-        auto const &inner_tree = node_stack.back();
-        syntax_node_ptr node;
-        const auto closure_operator = body[0].get_terminal();
-        if (closure_operator == '*') {
-          node = std::make_shared<regex::kleene_closure_node>(inner_tree);
-        } else if (closure_operator == '+') {
-          node = std::make_shared<regex::concat_node>(
-              inner_tree,
-              std::make_shared<regex::kleene_closure_node>(inner_tree));
-        } else if (closure_operator == '?') {
-          node = std::make_shared<regex::union_node>(
-              std::make_shared<regex::epsilon_node>(), inner_tree);
-        } else {
-          assert(0);
-        }
-        node_stack.back() = node;
-      }
 
-      if (head == "rterm'") {
-        // rterm' -> rfactor rterm'
-        if (body.size() == 2 && pos == 1) {
-          assert(node_stack.size() >= 2);
-          auto right_node = node_stack.back();
-          node_stack.pop_back();
-          auto left_node = node_stack.back();
-          node_stack.pop_back();
-          node_stack.emplace_back(
-              std::make_shared<regex::concat_node>(left_node, right_node));
-        }
-      }
+          // escape-sequence -> '\' symbol
+          if (head == "escape-sequence") {
+            in_escape_sequence = (pos == 1);
+          }
 
-      if (head == "rexpr'") {
-        // rexpr' -> '|' rterm rexpr'
-        if (body.size() == 3 && pos == 2) {
-          assert(node_stack.size() >= 2);
-          auto right_node = node_stack.back();
-          node_stack.pop_back();
-          auto left_node = node_stack.back();
-          node_stack.pop_back();
-          node_stack.emplace_back(
-              std::make_shared<regex::union_node>(left_node, right_node));
-        }
-      }
+          // character-class-element -> 'symbol except backslash and ]'
+          if (head == "character-class-element") {
+            if (finish_production && body[0].is_terminal()) {
+              cls.add_symbol(body[0].get_terminal());
+            }
+          }
 
-      if (head == "rexpr") {
-        // rexpr-> epsilon
-        if (pos == 0 && body.empty()) {
-          node_stack.emplace_back(std::make_shared<regex::epsilon_node>());
-          return;
-        }
-      }
-    });
+          // character-class -> '^' character-class'
+          if (head == "character-class" && pos == 0 && body[0] == '^') {
+            in_complemented_class = true;
+          }
+
+          // character-class' -> '-' character-class-element
+          // character-class'
+          if (head == "character-class'") {
+            if (pos == 1 && body[0] == '-') {
+              if (!cls.set_last_symbol_in_range()) {
+                throw cyy::computation::exception::no_regular_expression(
+                    std::string("invalid character range "));
+              }
+            }
+          }
+
+          if (head == "rprimary") {
+            // rprimary -> 'non-operator-char'
+            // rprimary -> '.'
+            if (finish_production && body.size() == 1 &&
+                body[0].is_terminal()) {
+              auto symbol = body[0].get_terminal();
+              if (symbol == '.') {
+                if (alphabet->support_ASCII_escape_sequence()) {
+                  node_stack.emplace_back(
+                      make_complemented_character_class({'\n', '\r'}));
+                } else {
+                  node_stack.emplace_back(
+                      make_complemented_character_class({}));
+                }
+              } else {
+                node_stack.emplace_back(
+                    std::make_shared<regex::basic_node>(symbol));
+              }
+              return;
+            }
+
+            // rprimary -> '[' character-class ']'
+            if (body[0] == '[') {
+              if (pos == 1) {
+                cls.reset();
+                in_class = true;
+                in_complemented_class = false;
+              } else if (pos == 3) {
+                in_class = false;
+                const auto &class_content = cls.get_content();
+                if (class_content.empty()) {
+                  throw cyy::computation::exception::no_regular_expression(
+                      "empty character class");
+                }
+
+                if (in_complemented_class) {
+                  node_stack.push_back(
+                      make_complemented_character_class(class_content));
+                  return;
+                }
+                node_stack.push_back(make_character_class(class_content));
+                return;
+              }
+              return;
+            }
+          }
+          if (head == "closure-operator" && finish_production) {
+            auto const &inner_tree = node_stack.back();
+            syntax_node_ptr node;
+            const auto closure_operator = body[0].get_terminal();
+            if (closure_operator == '*') {
+              node = std::make_shared<regex::kleene_closure_node>(inner_tree);
+            } else if (closure_operator == '+') {
+              node = std::make_shared<regex::concat_node>(
+                  inner_tree,
+                  std::make_shared<regex::kleene_closure_node>(inner_tree));
+            } else if (closure_operator == '?') {
+              node = std::make_shared<regex::union_node>(
+                  std::make_shared<regex::epsilon_node>(), inner_tree);
+            } else {
+              assert(0);
+            }
+            node_stack.back() = node;
+          }
+
+          if (head == "rterm'") {
+            // rterm' -> rfactor rterm'
+            if (body.size() == 2 && pos == 1) {
+              assert(node_stack.size() >= 2);
+              auto right_node = node_stack.back();
+              node_stack.pop_back();
+              auto left_node = node_stack.back();
+              node_stack.pop_back();
+              node_stack.emplace_back(
+                  std::make_shared<regex::concat_node>(left_node, right_node));
+            }
+          }
+
+          if (head == "rexpr'") {
+            // rexpr' -> '|' rterm rexpr'
+            if (body.size() == 3 && pos == 2) {
+              assert(node_stack.size() >= 2);
+              auto right_node = node_stack.back();
+              node_stack.pop_back();
+              auto left_node = node_stack.back();
+              node_stack.pop_back();
+              node_stack.emplace_back(
+                  std::make_shared<regex::union_node>(left_node, right_node));
+            }
+          }
+
+          if (head == "rexpr") {
+            // rexpr-> epsilon
+            if (pos == 0 && body.empty()) {
+              node_stack.emplace_back(std::make_shared<regex::epsilon_node>());
+              return;
+            }
+          }
+        });
 
     if (!parse_res) {
       throw cyy::computation::exception::no_regular_expression("");
@@ -385,7 +386,7 @@ namespace cyy::computation {
 
   std::shared_ptr<regex::syntax_node> regex::make_complemented_character_class(
       const symbol_set_type &symbol_set) const {
-    std::shared_ptr<regex::syntax_node> root{};
+    std::shared_ptr<regex::syntax_node> const root{};
 
     symbol_set_type complemented_symbol_set;
 

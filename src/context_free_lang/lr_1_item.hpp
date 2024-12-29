@@ -35,7 +35,9 @@ namespace cyy::computation {
     const auto &get_lookahead_symbols() const & noexcept {
       return lookahead_symbols;
     }
-    auto &&get_lookahead_symbols() && noexcept { return std::move(lookahead_symbols); }
+    auto &&get_lookahead_symbols() && noexcept {
+      return std::move(lookahead_symbols);
+    }
 
     void add_lookahead_symbol(CFG::terminal_type lookahead_symbol);
     bool contain_lookahead_symbol(CFG::terminal_type lookahead_symbol) const {

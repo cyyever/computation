@@ -7,8 +7,9 @@
 
 #include "canonical_lr_grammar.hpp"
 
-#include  <cyy/algorithm/alphabet/endmarked_alphabet.hpp>
-#include  <cyy/algorithm/alphabet/range_alphabet.hpp>
+#include <cyy/algorithm/alphabet/endmarked_alphabet.hpp>
+#include <cyy/algorithm/alphabet/range_alphabet.hpp>
+
 #include "endmarked_dpda.hpp"
 
 namespace cyy::computation {
@@ -100,8 +101,8 @@ namespace cyy::computation {
       transition_function[accept_state][{input_symbol}] = {
           reduce_states[input_symbol]};
     }
-    return DPDA(std::move(dpda_finite_automaton),
-                          dk_state_set_alphabet, std::move(transition_function));
+    return DPDA(std::move(dpda_finite_automaton), dk_state_set_alphabet,
+                std::move(transition_function));
   }
 
   std::pair<canonical_LR_grammar::collection_type,
