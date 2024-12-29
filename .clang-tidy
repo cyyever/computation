@@ -3,6 +3,7 @@ Checks:
 '
 *,
 -altera*,
+-altera-unroll-loops,
 -abseil*,
 -bugprone-easily-swappable-parameters,
 -bugprone-swapped-arguments,
