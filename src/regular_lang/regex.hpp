@@ -19,7 +19,6 @@ namespace cyy::computation {
   public:
     class syntax_node {
     public:
-      syntax_node() = default;
       virtual ~syntax_node() = default;
       virtual NFA to_NFA(const ALPHABET_ptr &alphabet,
                          NFA::state_type start_state) const = 0;
@@ -255,6 +254,7 @@ namespace cyy::computation {
     DFA to_DFA() const;
 
   private:
+    symbol_type escape_symbol(symbol_type symbol) const;
     std::shared_ptr<syntax_node> parse(symbol_string_view view) const;
     static std::shared_ptr<syntax_node>
     make_character_class(const symbol_set_type &symbol_set);

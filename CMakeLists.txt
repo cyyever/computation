@@ -47,5 +47,4 @@ install(
   FILE_SET public_headers)
 
 # install cmake config file
-install(EXPORT MyComputationLibConfig
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/MyComputationLib)
+install(EXPORT MyComputationLibConfig DESTINATION lib/cmake/MyComputationLib)

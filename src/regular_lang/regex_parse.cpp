@@ -178,30 +178,30 @@ namespace cyy::computation {
     return *regex_grammar;
   }
 
+  symbol_type regex::escape_symbol(symbol_type symbol) const {
+    if (alphabet->support_ASCII_escape_sequence()) {
+      switch (symbol) {
+        case 'f':
+          return '\f';
+        case 'n':
+          return '\n';
+        case 'r':
+          return '\r';
+        case 't':
+          return '\t';
+        case 'v':
+          return '\v';
+        default:
+          return symbol;
+      }
+    }
+    return symbol;
+  }
+
   std::shared_ptr<regex::syntax_node>
   regex::parse(symbol_string_view view) const {
 
     using syntax_node_ptr = std::shared_ptr<regex::syntax_node>;
-
-    auto escape_symbol = [this](symbol_type symbol) -> symbol_type {
-      if (alphabet->support_ASCII_escape_sequence()) {
-        switch (symbol) {
-          case 'f':
-            return '\f';
-          case 'n':
-            return '\n';
-          case 'r':
-            return '\r';
-          case 't':
-            return '\t';
-          case 'v':
-            return '\v';
-          default:
-            return symbol;
-        }
-      }
-      return symbol;
-    };
 
     std::vector<std::shared_ptr<regex::syntax_node>> node_stack;
 
@@ -211,7 +211,7 @@ namespace cyy::computation {
     character_class cls;
     auto const parse_res = get_grammar().parse(
         view,
-        [&node_stack, &escape_symbol, &in_class, &cls, &in_complemented_class,
+        [&node_stack, &in_class, &cls, &in_complemented_class,
          &in_escape_sequence, this](auto const &production, auto const &pos) {
           auto const &head = production.get_head();
           auto const &body = production.get_body();
