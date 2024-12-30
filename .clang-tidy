@@ -18,6 +18,7 @@ Checks:
 -modernize-use-nodiscard,
 -modernize-use-trailing-return-type,
 -readability-identifier-length,
+-readability-implicit-bool-conversion,
 -readability-math-missing-parentheses,
 -*default-argument*
 '
