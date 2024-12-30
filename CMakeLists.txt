@@ -5,8 +5,10 @@ project(MyComputationLib LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 include(cmake/all.cmake)
 
-file(GLOB_RECURSE SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src/**/*.cpp)
-file(GLOB_RECURSE headers ${CMAKE_CURRENT_SOURCE_DIR}/src/**/*.hpp)
+file(GLOB_RECURSE SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src/**/*.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
+file(GLOB_RECURSE headers ${CMAKE_CURRENT_SOURCE_DIR}/src/**/*.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp)
 
 find_package(Boost CONFIG REQUIRED)
 find_package(spdlog REQUIRED)
