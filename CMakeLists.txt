@@ -28,9 +28,6 @@ target_sources(
          src
          FILES
          ${headers})
-target_include_directories(
-  MyComputationLib PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
-                          $<INSTALL_INTERFACE:include/cyy/computation>)
 
 # test
 add_subdirectory(test)
@@ -44,7 +41,8 @@ endif()
 install(
   TARGETS MyComputationLib
   EXPORT MyComputationLibConfig
-  FILE_SET public_headers)
+  FILE_SET public_headers
+  DESTINATION include/cyy/computation)
 
 # install cmake config file
 install(EXPORT MyComputationLibConfig DESTINATION lib/cmake/MyComputationLib)
