@@ -78,7 +78,7 @@ namespace cyy::computation {
       auto it2 = goto_table.find({stack.back(), terminal});
       if (it2 == goto_table.end()) {
         std::cerr << "no action for state " << stack.back() << " and terminal "
-                  << alphabet->to_string(terminal) << std::endl;
+                  << alphabet->to_string(terminal) << '\n';
         return false;
       }
       stack.push_back(it2->second);
@@ -88,7 +88,7 @@ namespace cyy::computation {
     if (parsing_succ) {
       return true;
     }
-    std::cerr << "parsing ended at state" << stack.back() << std::endl;
+    std::cerr << "parsing ended at state" << stack.back() << '\n';
     return false;
   }
 

@@ -63,10 +63,10 @@ namespace cyy::computation {
       return stack_symbol;
     };
 
-    PDA::state_type start_state = 0;
-    PDA::state_type loop_state = 1;
-    PDA::state_type final_state = 2;
-    PDA::state_set_type states{start_state, loop_state, final_state};
+    PDA::state_type const start_state = 0;
+    PDA::state_type const loop_state = 1;
+    PDA::state_type const final_state = 2;
+    PDA::state_set_type const states{start_state, loop_state, final_state};
     finite_automaton dpda_automaton(states, cfg.get_alphabet_ptr(), start_state,
                                     {final_state});
     PDA::transition_function_type transition_function;

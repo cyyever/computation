@@ -24,12 +24,12 @@ namespace cyy::computation {
       return it->second;
     };
 
-    CFG::terminal_set_type init_follows = {ALPHABET::endmarker};
+    CFG::terminal_set_type const init_follows = {ALPHABET::endmarker};
 
     // begin from start symbol
     auto const &start_symbol = cfg.get_start_symbol();
     for (auto const &body : cfg.get_productions().at(start_symbol)) {
-      LR_1_item init_item(LR_0_item{start_symbol, body}, init_follows);
+      LR_1_item const init_item(LR_0_item{start_symbol, body}, init_follows);
       auto state = item_to_nfa_state(init_item);
       nfa.add_epsilon_transition(nfa.get_start_state(), {state});
     }
@@ -54,13 +54,13 @@ namespace cyy::computation {
         symbol = alphabet_of_nonterminals->get_symbol(head);
         auto follow_set = cur_item.follow_of_dot(cfg);
         for (auto const &body : cfg.get_bodies(head)) {
-          LR_1_item item(LR_0_item{head, body}, follow_set);
+          LR_1_item const item(LR_0_item{head, body}, follow_set);
           nfa.add_epsilon_transition(cur_state, {item_to_nfa_state(item)});
         }
       }
       auto next_item = cur_item;
       next_item.go();
-      nfa.add_transition({cur_state, symbol}, {item_to_nfa_state(next_item)});
+      nfa.add_transition({.state=cur_state, .input_symbol=symbol}, {item_to_nfa_state(next_item)});
     }
 
     auto [dfa, dfa_to_nfa_state_map] = nfa.to_DFA_with_mapping();

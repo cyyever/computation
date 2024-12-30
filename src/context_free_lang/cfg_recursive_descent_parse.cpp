@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <cassert>
 #include <optional>
+#include <ranges>
 #include <stack>
 #include <utility>
 
@@ -83,10 +84,9 @@ namespace cyy::computation {
             return {true, view};
           }
 
-          if (static_cast<size_t>(
-                  std::count_if(body.begin(), body.end(), [](auto const &g) {
-                    return g.is_terminal();
-                  })) > view.size()) {
+          if (static_cast<size_t>(std::ranges::count_if(
+                  body, [](auto const &g) { return g.is_terminal(); })) >
+              view.size()) {
             use_next_body_of_root();
             continue;
           }
@@ -152,7 +152,6 @@ namespace cyy::computation {
       std::optional<iter_type> cur_body_it_opt;
       std::optional<iter_type> end_body_it_opt;
 
-    private:
       void reset_iter() {
         if (grammar_symbol.is_nonterminal()) {
           cur_body_it_opt = begin_body_it_opt;

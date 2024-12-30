@@ -56,7 +56,8 @@ namespace cyy::computation {
       }
       edge_cmd +=
           std::to_string(vertex_id) + "->" + std::to_string(last_vertex_id + 1);
-      std::string sub_vertex_cmd, sub_edge_cmd;
+      std::string sub_vertex_cmd;
+      std::string sub_edge_cmd;
       std::tie(sub_vertex_cmd, sub_edge_cmd, last_vertex_id) =
           children[i]->MMA_draw_edge(alphabet_, last_vertex_id + 1);
       vertex_cmd += "," + sub_vertex_cmd;

@@ -92,13 +92,13 @@ namespace cyy::computation {
     return result;
   }
   void PDA::add_epsilon_transition(state_type from_state, state_type to_state) {
-    transition_function[{from_state}] = {{to_state}};
+    transition_function[{from_state}] = {{.state = to_state}};
   }
 
   void PDA::prepare_CFG_conversion() {
     auto new_start_state = add_new_state();
     transition_function[{new_start_state}] = {
-        {get_start_state(), ALPHABET::endmarker}};
+        {.state = get_start_state(), .stack_symbol = ALPHABET::endmarker}};
     change_start_state(new_start_state);
 
     auto state_of_clearing_stack = add_new_state();
@@ -108,18 +108,18 @@ namespace cyy::computation {
 
     for (auto const used_stack_symbol : get_in_use_stack_symbols()) {
       transition_function[{state_of_clearing_stack, {}, used_stack_symbol}] = {
-          {state_of_clearing_stack}};
+          {.state = state_of_clearing_stack}};
     }
     const auto new_final_state = add_new_state();
     transition_function[{state_of_clearing_stack, {}, ALPHABET::endmarker}] = {
-        {new_final_state}};
+        {.state = new_final_state}};
     replace_final_states(new_final_state);
 
     transition_function_type new_transition;
     auto placeholder_stack_symbol = stack_alphabet->get_min_symbol();
     for (auto &[situation, actions] : transition_function) {
       transition_function_type::mapped_type new_actions;
-      for (auto &action : actions) {
+      for (const auto &action : actions) {
         if (situation.stack_symbol.has_value() !=
             action.stack_symbol.has_value()) {
           new_actions.emplace(action);
@@ -132,8 +132,7 @@ namespace cyy::computation {
           continue;
         }
         new_actions.emplace(next_state, placeholder_stack_symbol);
-        new_transition[{next_state, {}, placeholder_stack_symbol}] = {
-            std::move(action)};
+        new_transition[{next_state, {}, placeholder_stack_symbol}] = {action};
       }
       actions = std::move(new_actions);
     }
@@ -245,8 +244,7 @@ namespace cyy::computation {
           auto to_state = state_set_product[{next_pda_state, next_dfa_state}];
           auto result_action = action;
           result_action.state = to_state;
-          result_transition_function[result_situation].emplace(
-              std::move(result_action));
+          result_transition_function[result_situation].emplace(result_action);
         }
       }
     }
