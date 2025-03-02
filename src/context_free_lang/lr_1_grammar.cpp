@@ -12,7 +12,7 @@
 
 namespace cyy::computation {
   bool LR_1_grammar::DK_1_test(const collection_type &collection) const {
-    for (auto &[_, item_set] : collection) {
+    for (const auto &[_, item_set] : collection) {
       if (!item_set.has_completed_items()) {
         continue;
       }
@@ -118,7 +118,7 @@ namespace cyy::computation {
       auto it = action_table.find({stack.back(), terminal});
       if (it == action_table.end()) {
         std::cerr << "no action for state " << stack.back() << " and terminal "
-                  << alphabet->to_string(terminal) << std::endl;
+                  << alphabet->to_string(terminal) << '\n';
         return false;
       }
 
@@ -148,7 +148,7 @@ namespace cyy::computation {
       stack.resize(stack.size() - body.size());
       auto it2 = goto_table.find({stack.back(), head});
       if (it2 == goto_table.end()) {
-        std::cerr << "goto table no find for head:" << head << std::endl;
+        std::cerr << "goto table no find for head:" << head << '\n';
         return false;
       }
       stack.push_back(it2->second);

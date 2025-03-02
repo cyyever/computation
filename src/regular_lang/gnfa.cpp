@@ -101,6 +101,5 @@ namespace cyy::computation {
                p.first.second == removed_state;
       });
     }
-    return;
   }
 } // namespace cyy::computation

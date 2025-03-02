@@ -36,7 +36,7 @@ namespace cyy::computation {
 
     goto_table_type new_goto_table;
 
-    for (auto [from_config, to_state] : old_goto_table) {
+    for (const auto& [from_config, to_state] : old_goto_table) {
       new_goto_table.try_emplace(
           {state_map[from_config.first], from_config.second},
           state_map[to_state]);

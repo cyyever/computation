@@ -30,8 +30,9 @@ namespace cyy::computation {
     return productions;
   }
   std::shared_ptr<SLR_grammar> get_expression_grammar() {
-    static std::shared_ptr<SLR_grammar> grammar = std::make_shared<SLR_grammar>(
-        "common_tokens", "E", get_expression_productions());
+    static std::shared_ptr<SLR_grammar> const grammar =
+        std::make_shared<SLR_grammar>("common_tokens", "E",
+                                      get_expression_productions());
     return grammar;
   }
 

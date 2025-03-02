@@ -13,7 +13,7 @@ namespace cyy::computation {
 
   std::pair<SLR_grammar::collection_type, SLR_grammar::goto_table_type>
   SLR_grammar::get_collection() const {
-    DK_DFA dk(*this);
+    DK_DFA const dk(*this);
     collection_type collection;
     auto follow_sets = follow();
     for (auto const &[state, lr_0_item_set] :

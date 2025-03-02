@@ -19,7 +19,6 @@ namespace cyy::computation {
   public:
     class syntax_node {
     public:
-      syntax_node() = default;
       virtual ~syntax_node() = default;
       virtual NFA to_NFA(const ALPHABET_ptr &alphabet,
                          NFA::state_type start_state) const = 0;
@@ -56,7 +55,9 @@ namespace cyy::computation {
       follow_pos() const override {
         return {};
       }
-      std::shared_ptr<syntax_node> simplify() const noexcept override { return {}; }
+      std::shared_ptr<syntax_node> simplify() const noexcept override {
+        return {};
+      }
       symbol_string to_string() const override { return {}; }
     };
 
@@ -240,21 +241,23 @@ namespace cyy::computation {
     }
     regex(ALPHABET_ptr alphabet_,
           std::shared_ptr<regex::syntax_node> syntax_tree_)
-        : alphabet(std::move(alphabet_)), syntax_tree(std::move(syntax_tree_)) {}
+        : alphabet(std::move(alphabet_)), syntax_tree(std::move(syntax_tree_)) {
+    }
 
     NFA to_NFA(NFA::state_type start_state = 0) const {
       return syntax_tree->to_NFA(alphabet, start_state);
     }
     CFG to_CFG() const { return syntax_tree->to_CFG(alphabet, "S"); }
-    const auto& get_syntax_tree() const { return syntax_tree; }
+    const auto &get_syntax_tree() const { return syntax_tree; }
 
     // 基于McNaughton-Yamada算法
     DFA to_DFA() const;
 
   private:
+    symbol_type escape_symbol(symbol_type symbol) const;
     std::shared_ptr<syntax_node> parse(symbol_string_view view) const;
     static std::shared_ptr<syntax_node>
-      make_character_class(const symbol_set_type &symbol_set);
+    make_character_class(const symbol_set_type &symbol_set);
     std::shared_ptr<syntax_node>
     make_complemented_character_class(const symbol_set_type &symbol_set) const;
 

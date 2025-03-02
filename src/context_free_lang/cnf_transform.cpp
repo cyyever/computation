@@ -69,7 +69,7 @@ namespace cyy::computation {
     bool has_new_nullable_nonterminals = true;
     while (has_new_nullable_nonterminals) {
       has_new_nullable_nonterminals = false;
-      for (auto &[head, bodies] : productions) {
+      for (const auto &[head, bodies] : productions) {
         for (auto const &body : bodies) {
           if (std::ranges::all_of(body, [&](auto const &symbol) {
                 return symbol.is_nonterminal() &&

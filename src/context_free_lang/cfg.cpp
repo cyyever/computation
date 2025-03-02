@@ -200,7 +200,7 @@ namespace cyy::computation {
     // eliminate productions A => A
     for (auto &[head, bodies] : productions) {
       auto const &real_head = head;
-      std::erase_if(bodies, [&real_head](const auto body) {
+      std::erase_if(bodies, [&real_head](const auto& body) {
         return body.size() == 1 && body[0] == real_head;
       });
     }
@@ -209,7 +209,7 @@ namespace cyy::computation {
     auto head_dependency = get_head_dependency();
     for (auto const &[head, derivations] : head_dependency) {
       if (derivations.contains(head)) {
-        std::cerr << "left recursion head is " << head << std::endl;
+        std::cerr << std::format("left recursion head is {}\n", head);
         return true;
       }
     }
@@ -490,7 +490,7 @@ namespace cyy::computation {
     while (flag) {
       flag = false;
       for (auto &[k, v_set] : result) {
-        for (auto &v : v_set) {
+        for (const auto &v : v_set) {
           if (v == k) {
             continue;
           }
@@ -516,7 +516,6 @@ namespace cyy::computation {
     start_symbol = get_new_head(start_symbol);
     productions[start_symbol].emplace(
         CFG_production::body_type{old_start_symbol});
-    return;
   }
   void CFG::remove_head(const nonterminal_type &head) {
     productions.erase(head);
@@ -584,7 +583,7 @@ namespace cyy::computation {
     auto max_symbol = get_alphabet().get_max_symbol();
     std::unordered_map<symbol_type, nonterminal_type> symbol_to_nonterminal;
     auto nonterminals = get_nonterminals();
-    for (auto &nonterminal : nonterminals) {
+    for (const auto &nonterminal : nonterminals) {
       max_symbol++;
       symbol_to_nonterminal.emplace(max_symbol, nonterminal);
     }
@@ -594,7 +593,7 @@ namespace cyy::computation {
     nonterminal_alphabet_ptr->set_MMA_draw_fun(
         [](auto const &nonterminal_alphabet, auto symbol) {
           return grammar_symbol_type(
-                     dynamic_cast<const map_alphabet<std::string>&>(
+                     dynamic_cast<const map_alphabet<std::string> &>(
                          nonterminal_alphabet)
                          .get_data(symbol))
               .MMA_draw(nonterminal_alphabet);

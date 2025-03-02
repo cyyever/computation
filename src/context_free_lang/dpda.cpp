@@ -18,7 +18,7 @@
 
 namespace cyy::computation {
   bool DPDA::recognize(symbol_string_view view) const {
-    configuration_type configuration{get_start_state(), {}};
+    configuration_type configuration{.state = get_start_state(), .stack = {}};
 
     size_t i = 0;
     while (i < view.size()) {
@@ -229,8 +229,8 @@ namespace cyy::computation {
     has_normalized = true;
     reject_state_opt = new_reject_state;
 
-    stack_alphabet =
-        std::make_shared<cyy::algorithm::endmarked_alphabet>(std::move(stack_alphabet));
+    stack_alphabet = std::make_shared<cyy::algorithm::endmarked_alphabet>(
+        std::move(stack_alphabet));
 #ifndef NDEBUG
     check_transition_fuction();
 #endif
@@ -346,7 +346,8 @@ namespace cyy::computation {
                 flag = true;
               }
               continue;
-            } else if (!can_reach_final) {
+            }
+            if (!can_reach_final) {
               if (it3->second) {
                 new_looping_situations[looping_state].emplace(stack_symbol,
                                                               true);
@@ -368,7 +369,9 @@ namespace cyy::computation {
 
     // FIXME epsilon_transitions
     std::unordered_map<state_type, symbol_set_type>
-        acceptance_looping_situations, rejection_looping_situations;
+        acceptance_looping_situations;
+    std::unordered_map<state_type, symbol_set_type>
+        rejection_looping_situations;
     for (auto &[s, stack_symbol_set] : looping_situations) {
       assert(!stack_symbol_set.empty());
       for (auto [stack_symbol, can_reach_final] : stack_symbol_set) {
@@ -395,7 +398,7 @@ namespace cyy::computation {
     for (auto &[from_state, transfers] : complement_dpda.transition_function) {
       bool const has_input_epsilon = std::ranges::any_of(
           transfers, [](auto const p) { return !p.first.use_input(); });
-      bool has_input = std::ranges::any_of(
+      bool const has_input = std::ranges::any_of(
           transfers, [](auto const p) { return p.first.use_input(); });
       if (!has_input_epsilon) {
         reading_states.insert(from_state);

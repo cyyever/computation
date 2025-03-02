@@ -7,9 +7,8 @@
 
 #include "canonical_lr_grammar.hpp"
 
-#include  <cyy/algorithm/alphabet/endmarked_alphabet.hpp>
-#include  <cyy/algorithm/alphabet/range_alphabet.hpp>
-#include "endmarked_dpda.hpp"
+#include <cyy/algorithm/alphabet/endmarked_alphabet.hpp>
+#include <cyy/algorithm/alphabet/range_alphabet.hpp>
 
 namespace cyy::computation {
 
@@ -18,7 +17,7 @@ namespace cyy::computation {
         std::make_shared<cyy::algorithm::endmarked_alphabet>(alphabet);
     finite_automaton dpda_finite_automaton{{0}, dpda_alphabet, 0, {}};
 
-    DK_1_DFA dk_1_dfa(*this);
+    DK_1_DFA const dk_1_dfa(*this);
     auto const &dfa = dk_1_dfa.get_dfa();
     auto state_symbol_set = dfa.get_state_symbol_set();
     auto dk_state_set_alphabet =
@@ -56,7 +55,7 @@ namespace cyy::computation {
           }
 
           transition_function.check_stack_and_action(
-              reduce_state, {{}, dk_state}, {lookahead_state, to_dfa_state},
+              reduce_state, {.input_symbol={}, .stack_symbol=dk_state}, {lookahead_state, to_dfa_state},
               dpda_finite_automaton);
           continue;
         }
@@ -88,7 +87,7 @@ namespace cyy::computation {
             destination_state = accept_state;
           }
           transition_function.check_stack_and_action(
-              from_state, {{}, prev_dk_state},
+              from_state, {.input_symbol={}, .stack_symbol=prev_dk_state},
               {destination_state, dfa_goto_table[{prev_dk_state, head}]},
               dpda_finite_automaton);
         }
@@ -100,14 +99,14 @@ namespace cyy::computation {
       transition_function[accept_state][{input_symbol}] = {
           reduce_states[input_symbol]};
     }
-    return DPDA(std::move(dpda_finite_automaton),
-                          dk_state_set_alphabet, std::move(transition_function));
+    return {std::move(dpda_finite_automaton), dk_state_set_alphabet,
+            std::move(transition_function)};
   }
 
   std::pair<canonical_LR_grammar::collection_type,
             canonical_LR_grammar::goto_table_type>
   canonical_LR_grammar::get_collection() const {
-    DK_1_DFA dk_1_dfa(*this);
+    DK_1_DFA const dk_1_dfa(*this);
     return {dk_1_dfa.get_LR_1_item_set_collection(), dk_1_dfa.get_goto_table()};
   }
 

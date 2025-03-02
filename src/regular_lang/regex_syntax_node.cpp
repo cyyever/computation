@@ -14,14 +14,14 @@ namespace cyy::computation {
     return {{start_state, start_state + 1},
             alphabet,
             start_state,
-            {{{start_state, symbol}, {start_state + 1}}},
+            {{{.state=start_state, .input_symbol=symbol}, {start_state + 1}}},
             {start_state + 1}};
   }
   CFG regex::basic_node::to_CFG(
       const ALPHABET_ptr &alphabet,
       const CFG::nonterminal_type &start_symbol) const {
     CFG::production_set_type productions;
-    productions[start_symbol] = {{CFG::terminal_type(symbol)}};
+    productions[start_symbol] = {{static_cast<CFG::terminal_type>(symbol)}};
 
     return {alphabet, start_symbol, std::move(productions)};
   }
@@ -72,17 +72,17 @@ namespace cyy::computation {
     return {};
   }
 
-  NFA regex::empty_set_node::to_NFA(const ALPHABET_ptr &,
-                                    NFA::state_type) const {
+  NFA regex::empty_set_node::to_NFA(const ALPHABET_ptr & /*alphabet*/,
+                                    NFA::state_type /*start_state*/) const {
     throw std::logic_error("unsupported");
   }
-  CFG regex::empty_set_node::to_CFG(const ALPHABET_ptr &,
-                                    const CFG::nonterminal_type &) const {
+  CFG regex::empty_set_node::to_CFG(const ALPHABET_ptr & /*alphabet*/,
+                                    const CFG::nonterminal_type & /*start_symbol*/) const {
     throw std::logic_error("unsupported");
   }
 
   void regex::empty_set_node::assign_position(
-      std::unordered_map<uint64_t, symbol_type> &) {
+      std::unordered_map<uint64_t, symbol_type> & /*position_to_symbol*/) {
     throw std::logic_error("unsupported");
   }
 

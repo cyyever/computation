@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <map>
+
 #include "cfg.hpp"
 #include "exception.hpp"
 
@@ -45,7 +47,6 @@ namespace cyy::computation {
     bool valid() const;
     void make_reverse_productions() const;
 
-  private:
     mutable std::map<CFG_production::body_type, std::set<nonterminal_type>>
         reverse_productions;
   };

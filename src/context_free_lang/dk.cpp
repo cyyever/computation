@@ -31,12 +31,12 @@ namespace cyy::computation {
     std::unordered_map<CFG::nonterminal_type, state_set_type> head_states;
     for (auto const &[head, bodies] : cfg.get_productions()) {
       for (auto const &body : bodies) {
-        cyy::computation::LR_0_item init_item(head, body);
+        cyy::computation::LR_0_item const init_item(head, body);
         auto state = item_to_nfa_state(init_item);
         if (head == cfg.get_start_symbol()) {
           nfa.add_epsilon_transition(nfa.get_start_state(), {state});
         }
-        head_states[head].emplace(std::move(state));
+        head_states[head].emplace(state);
       }
     }
 
@@ -58,7 +58,7 @@ namespace cyy::computation {
             symbol = alphabet_of_nonterminals->get_symbol(
                 grammar_symbol.get_nonterminal());
           }
-          nfa.add_transition({cur_state, symbol},
+          nfa.add_transition({.state=cur_state, .input_symbol=symbol},
                              {item_to_nfa_state(next_item)});
           cur_item = next_item;
         }

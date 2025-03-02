@@ -63,10 +63,10 @@ namespace cyy::computation {
       return stack_symbol;
     };
 
-    PDA::state_type start_state = 0;
-    PDA::state_type loop_state = 1;
-    PDA::state_type final_state = 2;
-    PDA::state_set_type states{start_state, loop_state, final_state};
+    PDA::state_type const start_state = 0;
+    PDA::state_type const loop_state = 1;
+    PDA::state_type const final_state = 2;
+    PDA::state_set_type const states{start_state, loop_state, final_state};
     finite_automaton dpda_automaton(states, cfg.get_alphabet_ptr(), start_state,
                                     {final_state});
     PDA::transition_function_type transition_function;
@@ -74,7 +74,8 @@ namespace cyy::computation {
                          PDA::state_type from_state, PDA::state_type to_state,
                          const std::optional<CFG::nonterminal_type> &head,
                          const CFG_production::body_type &body) {
-      PDA::state_type new_state{}, old_state{};
+      PDA::state_type new_state{};
+      PDA::state_type old_state{};
       auto it = body.rbegin();
       if (head.has_value()) {
         if (body.size() <= 1) {
@@ -139,7 +140,7 @@ namespace cyy::computation {
         std::vector<std::tuple<PDA::situation_type, to_state_type>>>
         pop_stack_transitions;
 
-    for (auto &[situation, actions] : pda.get_transition_function()) {
+    for (const auto &[situation, actions] : pda.get_transition_function()) {
       auto const &top_symbol = situation.stack_symbol;
       for (auto const &action : actions) {
         if (top_symbol.has_value()) {
@@ -147,8 +148,8 @@ namespace cyy::computation {
                                                           action.state);
           continue;
         }
-        push_stack_transitions[*action.stack_symbol].emplace_back(situation,
-                                                                  action.state);
+        push_stack_transitions[action.stack_symbol.value()].emplace_back(
+            situation, action.state);
       }
     }
 
@@ -219,7 +220,7 @@ namespace cyy::computation {
                             to_state_type>>>
         pop_stack_transitions;
 
-    for (auto &[from_state, transfers] : dpda.get_transition_function()) {
+    for (const auto &[from_state, transfers] : dpda.get_transition_function()) {
       for (const auto &[situation, action] : transfers) {
         auto next_state = action.state;
         auto const &top_symbol = situation.stack_symbol;

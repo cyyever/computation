@@ -5,8 +5,10 @@ project(MyComputationLib LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 include(cmake/all.cmake)
 
-file(GLOB_RECURSE SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src/**/*.cpp)
-file(GLOB_RECURSE headers ${CMAKE_CURRENT_SOURCE_DIR}/src/**/*.hpp)
+file(GLOB_RECURSE SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src/**/*.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
+file(GLOB_RECURSE headers ${CMAKE_CURRENT_SOURCE_DIR}/src/**/*.hpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp)
 
 find_package(Boost CONFIG REQUIRED)
 find_package(spdlog REQUIRED)
@@ -28,9 +30,6 @@ target_sources(
          src
          FILES
          ${headers})
-target_include_directories(
-  MyComputationLib PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
-                          $<INSTALL_INTERFACE:include/cyy/computation>)
 
 # test
 add_subdirectory(test)
@@ -44,8 +43,8 @@ endif()
 install(
   TARGETS MyComputationLib
   EXPORT MyComputationLibConfig
-  FILE_SET public_headers)
+  FILE_SET public_headers
+  DESTINATION include/cyy/computation)
 
 # install cmake config file
-install(EXPORT MyComputationLibConfig
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/MyComputationLib)
+install(EXPORT MyComputationLibConfig DESTINATION lib/cmake/MyComputationLib)
