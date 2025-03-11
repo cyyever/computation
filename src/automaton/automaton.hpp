@@ -11,7 +11,6 @@
 #include <string>
 #include <unordered_map>
 
-#include <boost/container/flat_map.hpp>
 #include <boost/container/flat_set.hpp>
 #include <boost/dynamic_bitset.hpp>
 #include <cyy/algorithm/alphabet/alphabet.hpp>
@@ -21,7 +20,6 @@
 
 namespace cyy::computation {
 
-  /* using namespace cyy::algorithm; */
   using ALPHABET_ptr = cyy::algorithm::ALPHABET_ptr;
   using ALPHABET = cyy::algorithm::ALPHABET;
   using symbol_type = cyy::algorithm::symbol_type;
