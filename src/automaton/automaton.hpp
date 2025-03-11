@@ -11,7 +11,7 @@
 #include <string>
 #include <unordered_map>
 
-#include <boost/container/flat_set.hpp>
+#include <flat_set>
 #include <boost/dynamic_bitset.hpp>
 #include <cyy/algorithm/alphabet/alphabet.hpp>
 #include <cyy/algorithm/hash.hpp>
@@ -30,9 +30,9 @@ namespace cyy::computation {
   public:
     using state_type = uint64_t;
     using state_bitset_type = boost::dynamic_bitset<>;
-    class state_set_type : public boost::container::flat_set<state_type> {
+    class state_set_type : public std::flat_set<state_type> {
     public:
-      using boost::container::flat_set<state_type>::flat_set;
+      using std::flat_set<state_type>::flat_set;
       bool operator==(const state_set_type &rhs) const noexcept = default;
       [[nodiscard]] bool has_intersection(const state_set_type &rhs) const;
       [[nodiscard]] bool includes(const state_set_type &rhs) const {
