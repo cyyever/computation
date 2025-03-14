@@ -58,10 +58,10 @@ namespace cyy::computation {
       add_final_states(rhs.final_states);
 
       for (auto &[k, v] : rhs.transition_function) {
-        transition_function[k].merge(std::move(v));
+        transition_function[k].insert_range(std::move(v));
       }
       for (auto &[from_state, to_state_set] : rhs.epsilon_transition_function) {
-        epsilon_transition_function[from_state].merge(std::move(to_state_set));
+        epsilon_transition_function[from_state].insert_range(std::move(to_state_set));
       }
     }
 
@@ -90,7 +90,7 @@ namespace cyy::computation {
               std::to_string(state));
         }
       }
-      transition_function[situation].merge(end_states);
+      transition_function[situation].insert_range(end_states);
     }
 
     void add_epsilon_transition(state_type from_state,
@@ -105,7 +105,7 @@ namespace cyy::computation {
               std::to_string(state));
         }
       }
-      epsilon_transition_function[from_state].merge(end_states);
+      epsilon_transition_function[from_state].insert_range(end_states);
       epsilon_closures.clear();
       epsilon_closure_refresh.clear();
     }

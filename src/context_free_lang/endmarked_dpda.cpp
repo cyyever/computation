@@ -155,7 +155,7 @@ namespace cyy::computation {
                 }
               }
             }
-            new_accept_states.merge(
+            new_accept_states.insert_range(
                 state_set_type(accept_states_in_empty_stack));
           }
           dpda_transition_function[new_state2][{}] = {

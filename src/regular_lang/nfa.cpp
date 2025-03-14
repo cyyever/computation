@@ -21,14 +21,14 @@ namespace cyy::computation {
     for (const auto &s : T) {
       auto it = transition_function.find({s, a});
       if (it != transition_function.end()) {
-        direct_reachable.merge(state_set_type(it->second));
+        direct_reachable.insert_range(state_set_type(it->second));
       }
     }
 
     state_set_type res;
     for (auto const &d : direct_reachable) {
       auto const &closure = get_epsilon_closure(d);
-      res.merge(state_set_type(closure));
+      res.insert_range(state_set_type(closure));
     }
     return res;
   }
@@ -139,11 +139,11 @@ namespace cyy::computation {
           auto &v_closure = epsilon_closures[v_vertex];
           closure.insert(u_vertex);
           v_closure.insert(v_vertex);
-          closure.merge(state_set_type(epsilon_closures[v_vertex]));
+          closure.insert_range(state_set_type(epsilon_closures[v_vertex]));
           return false;
         });
     if (!has_cycle) {
-      epsilon_closure_refresh.merge(connect_component);
+      epsilon_closure_refresh.insert_range(connect_component);
     }
     epsilon_closure_refresh.insert(s);
 

@@ -176,9 +176,9 @@ namespace cyy::computation {
       const auto live_state_size = live_states.size();
       state_set_type new_live_states;
       for (auto s : live_states) {
-        new_live_states.merge(state_set_type(state_dep[s]));
+        new_live_states.insert_range(state_set_type(state_dep[s]));
       }
-      live_states.merge(std::move(new_live_states));
+      live_states.insert_range(std::move(new_live_states));
       if (live_states.size() == live_state_size) {
         break;
       }
