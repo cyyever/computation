@@ -8,10 +8,9 @@
 #include "ll_grammar.hpp"
 
 #include <cassert>
+#include <format>
 #include <iostream>
 #include <ranges>
-
-#include <format>
 
 #include "exception.hpp"
 
@@ -32,7 +31,7 @@ namespace cyy::computation {
                   std::pair{follow_terminal, head}, body);
               // not LL1
               if (!has_inserted) {
-                std::cerr << fmt::format(
+                std::cerr << std::format(
                     "follow terminal {} confliction for production:\n {}",
                     alphabet->to_string(follow_terminal),
                     CFG_production(it2->first.second, it2->second)
@@ -47,7 +46,7 @@ namespace cyy::computation {
               parsing_table.try_emplace(std::pair{terminal, head}, body);
           // not LL1
           if (!has_inserted) {
-            std::cerr << fmt::format(
+            std::cerr << std::format(
                 "first terminal {} confliction for production:\n{}\n and "
                 "production:\n{}",
                 alphabet->to_string(terminal),
@@ -85,7 +84,7 @@ namespace cyy::computation {
       if (top_symbol.is_terminal()) {
         const auto s = top_symbol.get_terminal();
         if (terminal != s) {
-          std::cerr << fmt::format("symbol does not match terminal:{} {}\n",
+          std::cerr << std::format("symbol does not match terminal:{} {}\n",
                                    alphabet->to_string(terminal),
                                    alphabet->to_string(s));
           return false;
@@ -95,7 +94,7 @@ namespace cyy::computation {
         auto nonterminal = top_symbol.get_nonterminal();
         auto it = parsing_table.find({terminal, nonterminal});
         if (it == parsing_table.end()) {
-          std::cerr << fmt::format("no rule for parsing {} for {} \n",
+          std::cerr << std::format("no rule for parsing {} for {} \n",
                                    alphabet->to_string(terminal), nonterminal);
           return false;
         }
