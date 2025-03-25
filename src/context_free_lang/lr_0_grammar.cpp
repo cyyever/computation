@@ -19,7 +19,7 @@ namespace cyy::computation {
         // conflict
         auto it = reduction_table.find(state);
         if (it != reduction_table.end()) {
-          throw cyy::computation::exception::no_LR_grammar(fmt::format(
+          throw cyy::computation::exception::no_LR_grammar(std::format(
               "state {} with production {} conflict with {}", state,
               it->second.to_string(get_alphabet()), item.get_head()));
         }
