@@ -1,12 +1,12 @@
 /*!
  * \file dk_test.cpp
  */
-#include <iostream>
 
 #include <doctest/doctest.h>
 
 #include "alphabet/alphabet.hpp"
 #include "context_free_lang/dk.hpp"
+import std;
 
 using namespace cyy::computation;
 TEST_CASE("DK") {

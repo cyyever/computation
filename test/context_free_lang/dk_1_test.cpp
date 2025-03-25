@@ -3,12 +3,12 @@
  *
  * \brief
  */
-#include <iostream>
 
 #include <doctest/doctest.h>
 
 #include "alphabet/alphabet.hpp"
 #include "context_free_lang/dk_1.hpp"
+import std;
 
 using namespace cyy::computation;
 TEST_CASE("DK_1") {
