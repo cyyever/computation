@@ -6,19 +6,14 @@
  */
 
 #include "cfg_production.hpp"
-#ifdef __cpp_lib_format
 #include <format>
-#define fmt std
-#else
-#include <fmt/format.h>
-#endif
 
 namespace cyy::computation {
 
   bool CFG_production::is_epsilon() const noexcept { return body.empty(); }
 
   std::string CFG_production::to_string(const ALPHABET &alphabet) const {
-    return fmt::format("{} -> {}\n", head, body_to_string(alphabet));
+    return std::format("{} -> {}\n", head, body_to_string(alphabet));
   }
 
   std::string CFG_production::body_to_string(const ALPHABET &alphabet) const {
