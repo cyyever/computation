@@ -6,6 +6,7 @@ set(CMAKE_CXX_MODULE_STD 1)
 
 project(MyComputationLib LANGUAGES CXX)
 include(cmake/all.cmake)
+find_package(libcxx REQUIRED)
 
 file(GLOB_RECURSE SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src/**/*.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
@@ -21,6 +22,7 @@ add_library(MyComputationLib ${SOURCE})
 
 target_link_libraries(MyComputationLib PUBLIC Boost::headers)
 target_link_libraries(MyComputationLib PUBLIC CyyAlgorithmLib)
+target_link_libraries(MyComputationLib PUBLIC libcxx::libcxx)
 
 target_sources(
   MyComputationLib
