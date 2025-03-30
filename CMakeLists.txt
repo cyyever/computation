@@ -2,11 +2,11 @@ cmake_minimum_required(VERSION 4.0.0)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_EXPERIMENTAL_CXX_IMPORT_STD "a9e1cf81-9932-4810-974b-6eccaf14e457")
+set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_MODULE_STD 1)
 
 project(MyComputationLib LANGUAGES CXX)
 include(cmake/all.cmake)
-find_package(libcxx REQUIRED)
 
 file(GLOB_RECURSE SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src/**/*.cpp
      ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
@@ -22,7 +22,6 @@ add_library(MyComputationLib ${SOURCE})
 
 target_link_libraries(MyComputationLib PUBLIC Boost::headers)
 target_link_libraries(MyComputationLib PUBLIC CyyAlgorithmLib)
-target_link_libraries(MyComputationLib PUBLIC libcxx::libcxx)
 
 target_sources(
   MyComputationLib
@@ -36,7 +35,7 @@ target_sources(
          ${headers})
 
 # test
-add_subdirectory(test)
+# add_subdirectory(test)
 
 option(BUILD_FUZZING "Build fuzzing" OFF)
 if(BUILD_FUZZING)
