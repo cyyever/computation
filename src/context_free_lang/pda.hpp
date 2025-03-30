@@ -7,14 +7,6 @@
 
 #pragma once
 
-#include <optional>
-#include <set>
-#include <string>
-#include <string_view>
-#include <unordered_map>
-#include <unordered_set>
-
-#include "../automaton/automaton.hpp"
 #include "../exception.hpp"
 #include "../regular_lang/dfa.hpp"
 

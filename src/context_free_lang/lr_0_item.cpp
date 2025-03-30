@@ -4,8 +4,6 @@
 
 #include "lr_0_item.hpp"
 
-#include <iostream>
-
 namespace cyy::computation {
   std::unordered_set<LR_0_item>
   LR_0_item_set::expand_nonkernel_items(const CFG &cfg) const {

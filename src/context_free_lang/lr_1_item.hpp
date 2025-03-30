@@ -7,10 +7,6 @@
 
 #pragma once
 
-#include <memory>
-#include <set>
-#include <unordered_map>
-
 #include "cfg.hpp"
 #include "lr_0_item.hpp"
 

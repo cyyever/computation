@@ -5,15 +5,8 @@
  * \date 2018-03-04
  */
 
-#include <algorithm>
-#include <cassert>
-#include <optional>
-#include <ranges>
-#include <stack>
-#include <utility>
-
-#include "../exception.hpp"
 #include "cfg.hpp"
+#include "../exception.hpp"
 
 namespace cyy::computation {
   namespace {

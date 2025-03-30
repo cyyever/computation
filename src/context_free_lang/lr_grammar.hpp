@@ -7,9 +7,6 @@
 
 #pragma once
 
-#include <functional>
-#include <utility>
-
 #include "automaton/automaton.hpp"
 #include "cfg.hpp"
 

@@ -6,8 +6,6 @@
 
 #include "turing_machine.hpp"
 
-#include <utility>
-
 #include "exception.hpp"
 namespace cyy::computation {
 

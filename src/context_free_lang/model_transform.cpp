@@ -7,9 +7,6 @@
 
 #include "model_transform.hpp"
 
-#include <unordered_map>
-#include <vector>
-
 #include "automaton/automaton.hpp"
 #include "cfg_production.hpp"
 

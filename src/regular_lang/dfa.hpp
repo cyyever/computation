@@ -7,10 +7,6 @@
 
 #pragma once
 
-#include <optional>
-#include <string>
-#include <unordered_map>
-
 #include "automaton/automaton.hpp"
 
 namespace cyy::computation {

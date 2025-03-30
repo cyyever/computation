@@ -7,9 +7,6 @@
 
 #include "regex.hpp"
 
-#include <algorithm>
-#include <vector>
-
 namespace cyy::computation {
 
   DFA regex::to_DFA() const {

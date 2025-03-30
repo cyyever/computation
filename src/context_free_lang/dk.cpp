@@ -58,7 +58,7 @@ namespace cyy::computation {
             symbol = alphabet_of_nonterminals->get_symbol(
                 grammar_symbol.get_nonterminal());
           }
-          nfa.add_transition({.state=cur_state, .input_symbol=symbol},
+          nfa.add_transition({.state = cur_state, .input_symbol = symbol},
                              {item_to_nfa_state(next_item)});
           cur_item = next_item;
         }

@@ -7,11 +7,6 @@
 
 #include "pda.hpp"
 
-#include <cassert>
-#include <iterator>
-#include <sstream>
-#include <vector>
-
 namespace cyy::computation {
   bool PDA::recognize(symbol_string_view view) const {
     std::vector<stack_node> stack;

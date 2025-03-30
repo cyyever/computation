@@ -5,7 +5,6 @@
 
 #pragma once
 
-
 #include "cfg.hpp"
 #include "exception.hpp"
 import std;

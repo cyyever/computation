@@ -4,8 +4,6 @@
 
 #include "lr_0_grammar.hpp"
 
-#include <format>
-
 #include "exception.hpp"
 
 namespace cyy::computation {

@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include <functional>
-
 #include "cfg.hpp"
 
 namespace cyy::computation {

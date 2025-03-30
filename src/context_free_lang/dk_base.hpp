@@ -2,7 +2,6 @@
  * \file dk.hpp
  */
 #pragma once
-#include <memory>
 
 #include <cyy/algorithm/alphabet/map_alphabet.hpp>
 

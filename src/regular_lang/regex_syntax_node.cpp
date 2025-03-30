@@ -11,11 +11,12 @@ namespace cyy::computation {
 
   NFA regex::basic_node::to_NFA(const ALPHABET_ptr &alphabet,
                                 NFA::state_type start_state) const {
-    return {{start_state, start_state + 1},
-            alphabet,
-            start_state,
-            {{{.state=start_state, .input_symbol=symbol}, {start_state + 1}}},
-            {start_state + 1}};
+    return {
+        {start_state, start_state + 1},
+        alphabet,
+        start_state,
+        {{{.state = start_state, .input_symbol = symbol}, {start_state + 1}}},
+        {start_state + 1}};
   }
   CFG regex::basic_node::to_CFG(
       const ALPHABET_ptr &alphabet,
@@ -76,8 +77,9 @@ namespace cyy::computation {
                                     NFA::state_type /*start_state*/) const {
     throw std::logic_error("unsupported");
   }
-  CFG regex::empty_set_node::to_CFG(const ALPHABET_ptr & /*alphabet*/,
-                                    const CFG::nonterminal_type & /*start_symbol*/) const {
+  CFG regex::empty_set_node::to_CFG(
+      const ALPHABET_ptr & /*alphabet*/,
+      const CFG::nonterminal_type & /*start_symbol*/) const {
     throw std::logic_error("unsupported");
   }
 

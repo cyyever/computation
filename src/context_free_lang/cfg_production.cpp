@@ -6,7 +6,6 @@
  */
 
 #include "cfg_production.hpp"
-#include <format>
 
 namespace cyy::computation {
 

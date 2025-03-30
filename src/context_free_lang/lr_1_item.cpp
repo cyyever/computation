@@ -7,8 +7,6 @@
 
 #include "lr_1_item.hpp"
 
-#include <cstddef>
-
 namespace cyy::computation {
   CFG::terminal_set_type LR_1_item::follow_of_dot(const CFG &cfg) const {
     assert(!completed());

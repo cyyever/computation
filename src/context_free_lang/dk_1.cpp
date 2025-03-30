@@ -60,7 +60,8 @@ namespace cyy::computation {
       }
       auto next_item = cur_item;
       next_item.go();
-      nfa.add_transition({.state=cur_state, .input_symbol=symbol}, {item_to_nfa_state(next_item)});
+      nfa.add_transition({.state = cur_state, .input_symbol = symbol},
+                         {item_to_nfa_state(next_item)});
     }
 
     auto [dfa, dfa_to_nfa_state_map] = nfa.to_DFA_with_mapping();

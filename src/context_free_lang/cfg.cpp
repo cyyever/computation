@@ -195,7 +195,7 @@ namespace cyy::computation {
     // eliminate productions A => A
     for (auto &[head, bodies] : productions) {
       auto const &real_head = head;
-      std::erase_if(bodies, [&real_head](const auto& body) {
+      std::erase_if(bodies, [&real_head](const auto &body) {
         return body.size() == 1 && body[0] == real_head;
       });
     }

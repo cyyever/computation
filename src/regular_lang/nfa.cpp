@@ -7,9 +7,6 @@
 
 #include "nfa.hpp"
 
-#include <sstream>
-#include <vector>
-
 #include <cyy/algorithm/graph/graph.hpp>
 
 namespace cyy::computation {

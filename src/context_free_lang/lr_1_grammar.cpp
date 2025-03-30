@@ -5,9 +5,6 @@
 
 #include "lr_1_grammar.hpp"
 
-#include <iostream>
-#include <sstream>
-
 #include "../exception.hpp"
 
 namespace cyy::computation {

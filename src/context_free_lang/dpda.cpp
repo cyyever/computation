@@ -7,12 +7,6 @@
 
 #include "dpda.hpp"
 
-#include <cassert>
-#include <memory>
-#include <sstream>
-#include <stdexcept>
-#include <unordered_map>
-
 #include "alphabet/endmarked_alphabet.hpp"
 #include "alphabet/union_alphabet.hpp"
 

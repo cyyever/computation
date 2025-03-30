@@ -15,7 +15,8 @@ namespace cyy::computation {
   }
 
   bool DCFG::DK_test() const {
-    for (const auto &[_, item_set] : dk_dfa_opt->get_LR_0_item_set_collection()) {
+    for (const auto &[_, item_set] :
+         dk_dfa_opt->get_LR_0_item_set_collection()) {
       if (!item_set.has_completed_items()) {
         continue;
       }
@@ -63,7 +64,8 @@ namespace cyy::computation {
         for (auto const input_symbol : alphabet->get_view()) {
           for (auto from_state : {looping_state, accept_state}) {
             transition_function.check_stack_and_action(
-                from_state, {.input_symbol=input_symbol, .stack_symbol=dk_state},
+                from_state,
+                {.input_symbol = input_symbol, .stack_symbol = dk_state},
                 {looping_state, table.at({dk_state, input_symbol})},
                 dpda_finite_automaton);
           }
@@ -104,7 +106,7 @@ namespace cyy::computation {
             destination_state = accept_state;
           }
           transition_function.check_stack_and_action(
-              from_state, {.input_symbol={}, .stack_symbol=prev_dk_state},
+              from_state, {.input_symbol = {}, .stack_symbol = prev_dk_state},
               {destination_state, table.at({prev_dk_state, head})},
               dpda_finite_automaton);
         }

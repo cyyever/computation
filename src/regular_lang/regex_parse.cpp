@@ -5,8 +5,6 @@
  * \date 2018-03-04
  */
 
-#include <cassert>
-
 #include <cyy/algorithm/alphabet/range_alphabet.hpp>
 
 #include "context_free_lang/cfg_production.hpp"

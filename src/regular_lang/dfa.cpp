@@ -7,12 +7,6 @@
 
 #include "dfa.hpp"
 
-#include <algorithm>
-#include <iostream>
-#include <iterator>
-#include <sstream>
-#include <vector>
-
 #include "exception.hpp"
 
 namespace cyy::computation {

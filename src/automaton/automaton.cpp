@@ -1,8 +1,6 @@
 
 #include "automaton.hpp"
 
-#include <sstream>
-
 namespace cyy::computation {
   bool finite_automaton::state_set_type::has_intersection(
       const state_set_type &rhs) const {

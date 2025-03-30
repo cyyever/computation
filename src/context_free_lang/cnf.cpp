@@ -6,9 +6,6 @@
 
 #include "cnf.hpp"
 
-#include <algorithm>
-#include <vector>
-
 namespace cyy::computation {
   bool CNF::valid() const {
     for (const auto &[head, bodies] : get_productions()) {

@@ -7,12 +7,10 @@
 
 #pragma once
 
-
 #include <cyy/algorithm/alphabet/map_alphabet.hpp>
 
 #include "cfg_production.hpp"
 #include "formal_grammar/grammar_symbol.hpp"
-import std;
 
 namespace cyy::computation {
 
@@ -125,11 +123,10 @@ namespace cyy::computation {
     [[nodiscard]] std::string MMA_draw() const;
 
     nonterminal_type get_new_head(nonterminal_type advise_head) const {
+      advise_head.push_back('\'');
+      while (productions.contains(advise_head)) {
         advise_head.push_back('\'');
-    while (productions.contains(advise_head)) {
-        advise_head.push_back('\'');
-
-    }
+      }
       return advise_head;
     }
     static void modify_body_set(
@@ -141,6 +138,7 @@ namespace cyy::computation {
     void eliminate_epsilon_productions();
     void eliminate_single_productions();
     nonterminal_set_type nullable() const;
+
   protected:
     void normalize_start_symbol();
 

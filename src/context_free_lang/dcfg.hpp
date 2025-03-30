@@ -5,8 +5,6 @@
 
 #pragma once
 
-#include <optional>
-
 #include "dk.hpp"
 #include "dpda.hpp"
 #include "lr_0_grammar.hpp"

@@ -55,8 +55,8 @@ namespace cyy::computation {
           }
 
           transition_function.check_stack_and_action(
-              reduce_state, {.input_symbol={}, .stack_symbol=dk_state}, {lookahead_state, to_dfa_state},
-              dpda_finite_automaton);
+              reduce_state, {.input_symbol = {}, .stack_symbol = dk_state},
+              {lookahead_state, to_dfa_state}, dpda_finite_automaton);
           continue;
         }
 
@@ -87,7 +87,7 @@ namespace cyy::computation {
             destination_state = accept_state;
           }
           transition_function.check_stack_and_action(
-              from_state, {.input_symbol={}, .stack_symbol=prev_dk_state},
+              from_state, {.input_symbol = {}, .stack_symbol = prev_dk_state},
               {destination_state, dfa_goto_table[{prev_dk_state, head}]},
               dpda_finite_automaton);
         }
