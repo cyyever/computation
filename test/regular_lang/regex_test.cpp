@@ -5,7 +5,6 @@
  */
 #include <doctest/doctest.h>
 
-#include "exception.hpp"
 #include "regular_lang/regex.hpp"
 
 using namespace cyy::computation;
