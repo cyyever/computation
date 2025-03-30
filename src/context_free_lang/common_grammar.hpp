@@ -1,7 +1,6 @@
 
 #pragma once
 
-#include <memory>
 
 #include "context_free_lang/slr_grammar.hpp"
 

@@ -7,10 +7,9 @@
 
 #pragma once
 
-#include <functional>
-#include <iostream>
 
 #include "../formal_grammar/grammar_symbol.hpp"
+import std;
 
 namespace cyy::computation {
 

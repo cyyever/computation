@@ -7,16 +7,11 @@
 
 #include "cfg.hpp"
 
-#include <algorithm>
-#include <cassert>
-#include <iostream>
-#include <unordered_map>
-#include <utility>
-
 #include <cyy/algorithm/alphabet/sub_alphabet.hpp>
 #include <cyy/algorithm/alphabet/union_alphabet.hpp>
 
 #include "exception.hpp"
+import std;
 
 namespace cyy::computation {
   using namespace cyy::algorithm;

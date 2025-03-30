@@ -29,9 +29,9 @@ namespace cyy::computation {
 
     void prepare_DCFG_conversion();
 
+    void normalize_transitions();
   private:
     state_set_type get_accept_states() const;
-    void normalize_transitions();
 
   private:
     bool transition_normalized{};

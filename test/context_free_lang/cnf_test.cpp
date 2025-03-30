@@ -4,16 +4,12 @@
  * \brief 测试cfg
  */
 #include <doctest/doctest.h>
-#if !defined(_MSC_VER)
-#define private public
-#endif
 
 #include "alphabet/common_tokens.hpp"
 #include "context_free_lang/cnf.hpp"
 
 using namespace cyy::computation;
 
-#if !defined(_MSC_VER)
 TEST_CASE("eliminate_epsilon_productions") {
   CFG::production_set_type productions;
   productions["S'"] = {{"S"}};
@@ -57,7 +53,6 @@ TEST_CASE("eliminate_single_productions") {
   new_productions["T"] = {{"T", '*', "F"}, {'(', "E", ')'}, {id}};
   CHECK_EQ(cfg, CFG("common_tokens", "E", new_productions));
 }
-#endif
 
 TEST_CASE("to_CNF") {
   CFG::production_set_type productions;

@@ -4,9 +4,6 @@
  * \brief
  */
 #include <doctest/doctest.h>
-#if !defined(_MSC_VER)
-#define private public
-#endif
 
 #include "alphabet/alphabet.hpp"
 #include "context_free_lang/cnf.hpp"
@@ -109,7 +106,6 @@ TEST_CASE("endmarked DPDA") {
     }
 
     SUBCASE("to DPDA") {
-#if !defined(_MSC_VER)
       SUBCASE("normalize_functions") {
         endmarked_dpda.normalize_transitions();
         SUBCASE("recognize") {
@@ -128,7 +124,6 @@ TEST_CASE("endmarked DPDA") {
           }
         }
       }
-#endif
       auto reverted_dpda = endmarked_dpda.to_DPDA();
       SUBCASE("recognize") {
         for (auto str : {U"0", U"1"}) {

@@ -7,17 +7,12 @@
 
 #pragma once
 
-#include <memory>
-#include <ranges>
-#include <string>
-#include <unordered_map>
-#include <unordered_set>
-#include <vector>
 
 #include <cyy/algorithm/alphabet/map_alphabet.hpp>
 
 #include "cfg_production.hpp"
 #include "formal_grammar/grammar_symbol.hpp"
+import std;
 
 namespace cyy::computation {
 
@@ -130,15 +125,22 @@ namespace cyy::computation {
     [[nodiscard]] std::string MMA_draw() const;
 
     nonterminal_type get_new_head(nonterminal_type advise_head) const {
-      do {
         advise_head.push_back('\'');
-      } while (productions.contains(advise_head));
+    while (productions.contains(advise_head)) {
+        advise_head.push_back('\'');
+
+    }
       return advise_head;
     }
     static void modify_body_set(
         production_body_set_type &body_set,
         const std::function<bool(CFG_production::body_type &)> &fun);
 
+    void normalize_productions();
+    void eliminate_useless_symbols();
+    void eliminate_epsilon_productions();
+    void eliminate_single_productions();
+    nonterminal_set_type nullable() const;
   protected:
     void normalize_start_symbol();
 
@@ -153,13 +155,8 @@ namespace cyy::computation {
     friend std::ostream &operator<<(std::ostream &os, const CFG &cfg);
 
   private:
-    void normalize_productions();
     std::unordered_map<nonterminal_type, nonterminal_set_type>
     get_head_dependency() const;
-    void eliminate_useless_symbols();
-    void eliminate_epsilon_productions();
-    void eliminate_single_productions();
-    nonterminal_set_type nullable() const;
 
   protected:
     ALPHABET_ptr alphabet;
