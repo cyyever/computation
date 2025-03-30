@@ -4,11 +4,10 @@
  * \author cyy
  * \date 2018-03-03
  */
-
 #pragma once
 
-#include "../exception.hpp"
 #include "../regular_lang/dfa.hpp"
+#include "../exception.hpp"
 
 namespace cyy::computation {
 
