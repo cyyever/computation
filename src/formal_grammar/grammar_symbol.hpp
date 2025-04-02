@@ -7,9 +7,8 @@
 
 #pragma once
 
-#include <alphabet/symbol.hpp>
-#include <cyy/algorithm/alphabet/alphabet.hpp>
 #include <cyy/algorithm/hash.hpp>
+#include <cyy/algorithm/alphabet/alphabet.hpp>
 import std;
 
 namespace cyy::computation {
