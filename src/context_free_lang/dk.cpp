@@ -3,10 +3,10 @@
  *
  */
 
-#include "dk.hpp"
 
 #include <boost/bimap.hpp>
 
+#include "dk.hpp"
 #include "cfg.hpp"
 #include "regular_lang/nfa.hpp"
 
