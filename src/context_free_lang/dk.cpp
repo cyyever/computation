@@ -3,10 +3,8 @@
  *
  */
 
-
-#include <boost/bimap.hpp>
-
 #include "dk.hpp"
+
 #include "cfg.hpp"
 #include "regular_lang/nfa.hpp"
 
@@ -14,15 +12,15 @@ namespace cyy::computation {
   DK_DFA::DK_DFA(const CFG &cfg) : DK_DFA_base(cfg) {
     using state_set_type = NFA::state_set_type;
 
-    boost::bimap<LR_0_item, state_type> item_and_nfa_state;
+    std::unordered_map<LR_0_item, state_type> item_to_nfa_state_map;
 
     NFA nfa{{0}, cfg.get_full_alphabet(), 0, {}, {}};
-    auto item_to_nfa_state = [&item_and_nfa_state,
+    auto item_to_nfa_state = [&item_to_nfa_state_map,
                               &nfa](const LR_0_item &item) {
-      auto it = item_and_nfa_state.left.find(item);
-      if (it == item_and_nfa_state.left.end()) {
+      auto it = item_to_nfa_state_map.find(item);
+      if (it == item_to_nfa_state_map.end()) {
         const auto new_state = nfa.add_new_state();
-        item_and_nfa_state.insert({item, new_state});
+        item_to_nfa_state_map.emplace(item, new_state);
         return new_state;
       }
       return it->second;
@@ -66,13 +64,17 @@ namespace cyy::computation {
         nfa.add_final_state(item_to_nfa_state(cur_item));
       }
     }
+    std::unordered_map<state_type, LR_0_item> nfa_state_to_item_map;
+    for (auto &[k, v] : std::move(item_to_nfa_state_map)) {
+      nfa_state_to_item_map.emplace(std::move(v), std::move(k));
+    }
 
     auto [dfa, dfa_to_nfa_state_map] = nfa.to_DFA_with_mapping();
     for (auto const &[nfa_state_set, dfa_state] : dfa_to_nfa_state_map) {
       auto &item_set = collection[dfa_state];
       for (auto const &nfa_state : nfa_state_set) {
-        auto it = item_and_nfa_state.right.find(nfa_state);
-        if (it != item_and_nfa_state.right.end()) {
+        auto it = nfa_state_to_item_map.find(nfa_state);
+        if (it != nfa_state_to_item_map.end()) {
           item_set.add_item(it->second);
         }
       }

@@ -22,7 +22,7 @@ namespace cyy::computation {
     using symbol_string_view = cyy::algorithm::symbol_string_view;
     using terminal_set_type = std::unordered_set<terminal_type>;
     using nonterminal_set_type = std::unordered_set<nonterminal_type>;
-    using production_body_set_type = std::set<CFG_production::body_type>;
+    using production_body_set_type = std::unordered_set<CFG_production::body_type>;
     using ALPHABET_ptr = cyy::algorithm::ALPHABET_ptr;
     using ALPHABET = cyy::algorithm::ALPHABET;
     using production_set_type =

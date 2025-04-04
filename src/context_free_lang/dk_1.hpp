@@ -5,7 +5,6 @@
 
 #include "dk_base.hpp"
 #include "lr_1_item.hpp"
-#include "regular_lang/dfa.hpp"
 
 namespace cyy::computation {
   class DK_1_DFA final : public DK_DFA_base {

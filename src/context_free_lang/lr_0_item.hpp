@@ -30,10 +30,6 @@ namespace cyy::computation {
       return dot_pos == rhs.dot_pos && (production_ptr == rhs.production_ptr ||
                                         *production_ptr == *rhs.production_ptr);
     }
-    auto operator<=>(const LR_0_item &rhs) const {
-      return std::tie(dot_pos, *production_ptr) <=>
-             std::tie(rhs.dot_pos, *rhs.production_ptr);
-    }
     auto const &get_head() const noexcept { return production_ptr->get_head(); }
     auto const &get_body() const noexcept { return production_ptr->get_body(); }
     size_t get_dot_pos() const noexcept { return dot_pos; }

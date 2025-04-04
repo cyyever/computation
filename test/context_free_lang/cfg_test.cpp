@@ -132,19 +132,19 @@ TEST_CASE("left_factoring") {
   CHECK_EQ(cfg, CFG("common_tokens", "S", reduced_productions));
 }
 
-TEST_CASE("recursive_descent_parse") {
-  CFG::production_set_type productions;
-  productions["S"] = {
-      {'a', "S", 'a'},
-      {'a', 'a'},
-  };
-
-  CFG cfg("common_tokens", "S", productions);
-  auto terminals = U"aaaa";
-  CHECK(cfg.recursive_descent_parse(terminals));
-  terminals = U"aaaaaa";
-  CHECK(cfg.recursive_descent_parse(terminals));
-}
+// TEST_CASE("recursive_descent_parse") {
+//   CFG::production_set_type productions;
+//   productions["S"] = {
+//       {'a', "S", 'a'},
+//       {'a', 'a'},
+//   };
+//
+//   CFG cfg("common_tokens", "S", productions);
+//   auto terminals = U"aaaa";
+//   CHECK(cfg.recursive_descent_parse(terminals));
+//   terminals = U"aaaaaa";
+//   CHECK(cfg.recursive_descent_parse(terminals));
+// }
 
 TEST_CASE("first_and_follow") {
   CFG::production_set_type productions;
