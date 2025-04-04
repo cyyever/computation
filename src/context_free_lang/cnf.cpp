@@ -40,7 +40,7 @@ namespace cyy::computation {
     if (view.empty()) {
       return reverse_productions[{}].contains(get_start_symbol());
     }
-    std::vector<std::vector<std::set<nonterminal_type>>> table(view.size());
+    std::vector<std::vector<std::unordered_set<nonterminal_type>>> table(view.size());
     for (size_t i = 0; i < view.size(); i++) {
       table[i].resize(view.size());
       table[i][i] = reverse_productions[{view[i]}];
@@ -55,7 +55,7 @@ namespace cyy::computation {
           for (auto const &A : first_heads) {
             for (auto const &B : second_heads) {
               table[i][j].merge(
-                  std::set<nonterminal_type>(reverse_productions[{A, B}]));
+                  std::unordered_set<nonterminal_type>(reverse_productions[{A, B}]));
             }
           }
         }

@@ -233,7 +233,7 @@ namespace cyy::computation {
   std::pair<std::unordered_map<DPDA::state_type, symbol_set_type>,
             std::unordered_map<DPDA::state_type, symbol_set_type>>
   DPDA::get_looping_situations() const {
-    std::unordered_map<state_type, std::set<std::pair<stack_symbol_type, bool>>>
+    std::unordered_map<state_type, std::unordered_set<std::pair<stack_symbol_type, bool>>>
         looping_situations;
 
     state_set_map_type epsilon_transitions;
@@ -295,7 +295,7 @@ namespace cyy::computation {
           } else {
             // reach to final
             if (it3->second) {
-              std::set<std::pair<stack_symbol_type, bool>> new_set;
+              std::unordered_set<std::pair<stack_symbol_type, bool>> new_set;
               for (auto tmp : new_looping_situations[looping_state]) {
                 if (!tmp.second) {
                   tmp.second = true;
