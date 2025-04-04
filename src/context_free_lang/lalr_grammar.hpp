@@ -7,8 +7,6 @@
 
 #pragma once
 
-/* #include <unordered_map> */
-
 #include "canonical_lr_grammar.hpp"
 
 namespace cyy::computation {

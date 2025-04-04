@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include <unordered_map>
 
 #include "single_tape_turing_machine.hpp"
 
