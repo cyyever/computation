@@ -5,6 +5,7 @@
  * \date 2018-03-04
  */
 
+#include <cassert>
 #include "ll_grammar.hpp"
 
 #include "exception.hpp"

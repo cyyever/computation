@@ -5,9 +5,9 @@
  * \date 2018-03-04
  */
 
+#include <cyy/algorithm/hash.hpp>
 #include "cfg_production.hpp"
 
-#include <cyy/algorithm/hash.hpp>
 
 namespace cyy::computation {
 
