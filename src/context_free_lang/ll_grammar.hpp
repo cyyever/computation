@@ -17,7 +17,7 @@ namespace cyy::computation {
 
     [[nodiscard]] bool
     parse(symbol_string_view view,
-          const std::function<void(const CFG_production &, size_t pos)>
+          const std::function<void(const CFG_production &, std::size_t pos)>
               &match_callback) const;
 
     parse_node_ptr get_parse_tree(symbol_string_view view) const;

@@ -46,7 +46,8 @@ namespace cyy::computation {
     bool valid() const;
     void make_reverse_productions() const;
 
-    mutable std::unordered_map<CFG_production::body_type, std::unordered_set<nonterminal_type>>
+    mutable std::unordered_map<CFG_production::body_type,
+                               std::unordered_set<nonterminal_type>>
         reverse_productions;
   };
 } // namespace cyy::computation

@@ -14,7 +14,7 @@ namespace cyy::computation {
   bool DPDA::recognize(symbol_string_view view) const {
     configuration_type configuration{.state = get_start_state(), .stack = {}};
 
-    size_t i = 0;
+    std::size_t i = 0;
     while (i < view.size()) {
       auto const &symbol = view[i];
       auto configuration_opt = go(configuration, symbol);
@@ -233,7 +233,8 @@ namespace cyy::computation {
   std::pair<std::unordered_map<DPDA::state_type, symbol_set_type>,
             std::unordered_map<DPDA::state_type, symbol_set_type>>
   DPDA::get_looping_situations() const {
-    std::unordered_map<state_type, std::unordered_set<std::pair<stack_symbol_type, bool>>>
+    std::unordered_map<state_type,
+                       std::unordered_set<std::pair<stack_symbol_type, bool>>>
         looping_situations;
 
     state_set_map_type epsilon_transitions;
@@ -465,7 +466,7 @@ namespace cyy::computation {
       auto const &state_transition_function = it->second;
       for (auto input_symbol : alphabet->get_view()) {
         for (auto stack_symbol : stack_alphabet->get_view()) {
-          size_t cnt = 0;
+          std::size_t cnt = 0;
           cnt += state_transition_function.count({});
           cnt += state_transition_function.count({input_symbol});
           cnt += state_transition_function.count({{}, stack_symbol});

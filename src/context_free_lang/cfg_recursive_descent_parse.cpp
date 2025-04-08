@@ -5,8 +5,10 @@
  * \date 2018-03-04
  */
 
-#include "cfg.hpp"
+#include <cassert>
+
 #include "../exception.hpp"
+#include "cfg.hpp"
 
 namespace cyy::computation {
   namespace {
@@ -77,7 +79,7 @@ namespace cyy::computation {
             return {true, view};
           }
 
-          if (static_cast<size_t>(std::ranges::count_if(
+          if (static_cast<std::size_t>(std::ranges::count_if(
                   body, [](auto const &g) { return g.is_terminal(); })) >
               view.size()) {
             use_next_body_of_root();
@@ -86,7 +88,7 @@ namespace cyy::computation {
 
           std::stack<cyy::algorithm::symbol_string_view> view_stack;
           view_stack.push(view);
-          size_t i = 0;
+          std::size_t i = 0;
           bool backtrack_succ = true;
           while (i < body.size()) {
             assert(view_stack.size() == i + 1);

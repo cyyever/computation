@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <cyy/algorithm/hash.hpp>
 #include <cyy/algorithm/alphabet/alphabet.hpp>
 import std;
 

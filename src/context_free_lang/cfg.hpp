@@ -22,7 +22,8 @@ namespace cyy::computation {
     using symbol_string_view = cyy::algorithm::symbol_string_view;
     using terminal_set_type = std::unordered_set<terminal_type>;
     using nonterminal_set_type = std::unordered_set<nonterminal_type>;
-    using production_body_set_type = std::unordered_set<CFG_production::body_type>;
+    using production_body_set_type =
+        std::unordered_set<CFG_production::body_type>;
     using ALPHABET_ptr = cyy::algorithm::ALPHABET_ptr;
     using ALPHABET = cyy::algorithm::ALPHABET;
     using production_set_type =
@@ -43,8 +44,8 @@ namespace cyy::computation {
       std::vector<parse_node_ptr> children;
 
     private:
-      std::tuple<std::string, std::string, size_t>
-      MMA_draw_edge(const ALPHABET &alphabet, size_t vertex_id) const;
+      std::tuple<std::string, std::string, std::size_t>
+      MMA_draw_edge(const ALPHABET &alphabet, std::size_t vertex_id) const;
     };
 
     CFG(ALPHABET_ptr alphabet_, nonterminal_type start_symbol_,

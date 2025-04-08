@@ -5,6 +5,8 @@
 
 #include "dk.hpp"
 
+#include <cyy/algorithm/hash.hpp>
+
 #include "cfg.hpp"
 #include "regular_lang/nfa.hpp"
 

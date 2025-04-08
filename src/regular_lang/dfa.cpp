@@ -94,7 +94,7 @@ namespace cyy::computation {
       }
 
       has_new_group = false;
-      for (auto &group:groups) {
+      for (auto &group : groups) {
         if (group.size() <= 1) {
           continue;
         }

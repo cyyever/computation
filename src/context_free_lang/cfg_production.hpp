@@ -40,9 +40,8 @@ namespace cyy::computation {
 
     [[nodiscard]] std::string MMA_draw(
         const ALPHABET &alphabet, bool emphasize_head = false,
-        const std::function<std::string(size_t)> &pos_callback = [](size_t) {
-          return "";
-        }) const;
+        const std::function<std::string(std::size_t)> &pos_callback =
+            [](std::size_t) { return ""; }) const;
 
   private:
     std::string body_to_string(const ALPHABET &alphabet) const;
@@ -53,15 +52,6 @@ namespace cyy::computation {
 } // namespace cyy::computation
 namespace std {
   template <> struct hash<cyy::computation::CFG_production> {
-    std::size_t operator()(const cyy::computation::CFG_production &x) const {
-      size_t seed = 0;
-      auto const &head = x.get_head();
-      auto const &body = x.get_body();
-      boost::hash_combine(
-          seed, std::hash<cyy::computation::CFG_production::head_type>()(head));
-      boost::hash_combine(
-          seed, std::hash<cyy::computation::CFG_production::body_type>()(body));
-      return seed;
-    }
+    std::size_t operator()(const cyy::computation::CFG_production &x) const;
   };
 } // namespace std

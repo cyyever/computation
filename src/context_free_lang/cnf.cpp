@@ -3,8 +3,9 @@
  *
  * \brief
  */
-
 #include "cnf.hpp"
+
+#include <cyy/algorithm/hash.hpp>
 
 namespace cyy::computation {
   bool CNF::valid() const {
@@ -40,7 +41,8 @@ namespace cyy::computation {
     if (view.empty()) {
       return reverse_productions[{}].contains(get_start_symbol());
     }
-    std::vector<std::vector<std::unordered_set<nonterminal_type>>> table(view.size());
+    std::vector<std::vector<std::unordered_set<nonterminal_type>>> table(
+        view.size());
     for (size_t i = 0; i < view.size(); i++) {
       table[i].resize(view.size());
       table[i][i] = reverse_productions[{view[i]}];
@@ -54,8 +56,8 @@ namespace cyy::computation {
           auto const &second_heads = table[k + 1][j];
           for (auto const &A : first_heads) {
             for (auto const &B : second_heads) {
-              table[i][j].merge(
-                  std::unordered_set<nonterminal_type>(reverse_productions[{A, B}]));
+              table[i][j].merge(std::unordered_set<nonterminal_type>(
+                  reverse_productions[{A, B}]));
             }
           }
         }

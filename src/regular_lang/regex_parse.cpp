@@ -5,10 +5,10 @@
  * \date 2018-03-04
  */
 
-
-#include "regex.hpp"
 #include <cyy/algorithm/alphabet/range_alphabet.hpp>
+
 #include "exception.hpp"
+#include "regex.hpp"
 
 namespace cyy::computation {
 

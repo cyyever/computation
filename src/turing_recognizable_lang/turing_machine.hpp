@@ -5,7 +5,6 @@
 
 #pragma once
 
-
 #include "single_tape_turing_machine.hpp"
 
 namespace cyy::computation {

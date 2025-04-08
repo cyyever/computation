@@ -14,12 +14,12 @@
 namespace cyy::computation {
   class LR_0_item {
   public:
-    LR_0_item(CFG_production production, size_t dot_pos_ = 0)
+    LR_0_item(CFG_production production, std::size_t dot_pos_ = 0)
         : production_ptr{std::make_shared<CFG_production>(
               std::move(production))},
           dot_pos{dot_pos_} {}
     LR_0_item(CFG_production::head_type head, CFG_production::body_type body,
-              size_t dot_pos_ = 0)
+              std::size_t dot_pos_ = 0)
         : LR_0_item(CFG_production{std::move(head), std::move(body)},
                     dot_pos_) {}
     LR_0_item(const LR_0_item &) = default;
@@ -32,7 +32,7 @@ namespace cyy::computation {
     }
     auto const &get_head() const noexcept { return production_ptr->get_head(); }
     auto const &get_body() const noexcept { return production_ptr->get_body(); }
-    size_t get_dot_pos() const noexcept { return dot_pos; }
+    std::size_t get_dot_pos() const noexcept { return dot_pos; }
     bool completed() const noexcept { return dot_pos >= get_body().size(); }
     void go() {
       if (completed()) {
@@ -52,13 +52,14 @@ namespace cyy::computation {
 
   private:
     std::shared_ptr<CFG_production> production_ptr;
-    size_t dot_pos;
+    std::size_t dot_pos;
   };
 
 } // namespace cyy::computation
 namespace std {
   template <> struct hash<cyy::computation::LR_0_item> {
-    size_t operator()(const cyy::computation::LR_0_item &x) const noexcept {
+    std::size_t
+    operator()(const cyy::computation::LR_0_item &x) const noexcept {
       std::size_t seed = 0;
       boost::hash_combine(seed, x.get_head());
       boost::hash_combine(seed, x.get_dot_pos());
@@ -107,7 +108,8 @@ namespace cyy::computation {
 } // namespace cyy::computation
 namespace std {
   template <> struct hash<cyy::computation::LR_0_item_set> {
-    size_t operator()(const cyy::computation::LR_0_item_set &x) const noexcept {
+    std::size_t
+    operator()(const cyy::computation::LR_0_item_set &x) const noexcept {
       std::size_t seed = 0;
       boost::hash_combine(seed, x.get_kernel_items().size());
       boost::hash_combine(seed, x.get_nonkernel_items().size());

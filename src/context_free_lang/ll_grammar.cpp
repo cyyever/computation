@@ -57,7 +57,7 @@ namespace cyy::computation {
 
   bool LL_grammar::parse(
       symbol_string_view view,
-      const std::function<void(const CFG_production &, size_t pos)>
+      const std::function<void(const CFG_production &, std::size_t pos)>
           &match_callback) const {
 
     if (parsing_table.empty()) {
@@ -98,7 +98,6 @@ namespace cyy::computation {
       }
 
       for (std::size_t pos = 0; pos <= body.size() + 1; pos++) {
-
         match_callback({head, body}, pos);
       }
     }

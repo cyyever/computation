@@ -5,6 +5,8 @@
  * \date 2018-03-04
  */
 
+#include <cassert>
+
 #include "cfg.hpp"
 
 namespace cyy::computation {

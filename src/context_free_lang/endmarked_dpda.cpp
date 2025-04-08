@@ -240,7 +240,8 @@ namespace cyy::computation {
   }
 
   endmarked_DPDA::state_set_type endmarked_DPDA::get_accept_states() const {
-    std::unordered_map<state_type, std::unordered_set<std::vector<stack_symbol_type>>>
+    std::unordered_map<state_type,
+                       std::unordered_set<std::vector<stack_symbol_type>>>
         accept_states_and_stacks;
 
     // found states one step to finial states
