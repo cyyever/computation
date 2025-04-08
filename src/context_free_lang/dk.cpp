@@ -5,8 +5,7 @@
 
 #include <cyy/algorithm/hash.hpp>
 #include "dk.hpp"
-// #include "cfg.hpp"
-// #include "regular_lang/nfa.hpp"
+#include "regular_lang/nfa.hpp"
 
 namespace cyy::computation {
   DK_DFA::DK_DFA(const CFG &cfg) : DK_DFA_base(cfg) {

@@ -58,17 +58,3 @@ namespace cyy::computation {
     return cmd;
   }
 } // namespace cyy::computation
-namespace std {
-  template <> struct hash<cyy::computation::CFG_production> {
-    std::size_t operator()(const cyy::computation::CFG_production &x) const {
-      size_t seed = 0;
-      auto const &head = x.get_head();
-      auto const &body = x.get_body();
-      boost::hash_combine(
-          seed, std::hash<cyy::computation::CFG_production::head_type>()(head));
-      boost::hash_combine(
-          seed, std::hash<cyy::computation::CFG_production::body_type>()(body));
-      return seed;
-    }
-  };
-} // namespace std

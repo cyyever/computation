@@ -7,6 +7,7 @@
 
 #include <cassert>
 
+#include <cyy/algorithm/hash.hpp>
 #include "../exception.hpp"
 #include "cfg.hpp"
 
