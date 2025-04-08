@@ -27,9 +27,9 @@ namespace cyy::computation {
         "},VertexStyle -> {0->Orange},EdgeStyle->Thin,ImageSize->Large]";
     return cmd;
   }
-  std::tuple<std::string, std::string, size_t>
+  std::tuple<std::string, std::string, std::size_t>
   CFG::parse_node::MMA_draw_edge(const ALPHABET &alphabet_,
-                                 size_t vertex_id) const {
+                                 std::size_t vertex_id) const {
     auto vertex_cmd = std::to_string(vertex_id) + "->" +
                       grammar_symbol_type(grammar_symbol).MMA_draw(alphabet_);
     if (children.empty()) {
@@ -44,7 +44,7 @@ namespace cyy::computation {
     }
     std::string edge_cmd;
     auto last_vertex_id = vertex_id;
-    for (size_t i = 0; i < children.size(); i++) {
+    for (std::size_t i = 0; i < children.size(); i++) {
       if (i != 0) {
         edge_cmd.push_back(',');
       }
