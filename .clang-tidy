@@ -2,6 +2,8 @@
 Checks:
 '
 *,
+-*default-argument*
+-*magic-numbers*,
 -altera*,
 -altera-unroll-loops,
 -abseil*,
@@ -14,11 +16,10 @@ Checks:
 -llvm-header-guard,
 -llvm*,
 -misc-non-private-member-variables-in-classes,
--modernize-use-trailing-return-type,
 -modernize-use-nodiscard,
+-modernize-use-trailing-return-type,
 -readability-identifier-length,
 -readability-math-missing-parentheses,
--*default-argument*
 '
 CheckOptions:
   cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor: true
