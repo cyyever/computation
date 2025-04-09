@@ -10,15 +10,13 @@ Checks:
 -cert*,
 -cppcoreguidelines-non-private-member-variables-in-classes,
 -fuchsia*,
--hicpp-special-member-functions,
 -llvmlibc*,
 -llvm-header-guard,
+-llvm*,
 -misc-non-private-member-variables-in-classes,
--misc-include-cleaner,
--modernize-use-nodiscard,
 -modernize-use-trailing-return-type,
+-modernize-use-nodiscard,
 -readability-identifier-length,
--readability-implicit-bool-conversion,
 -readability-math-missing-parentheses,
 -*default-argument*
 '
