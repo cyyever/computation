@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "../std_prelude.hpp"
+
 #include "dfa.hpp"
 #include "regex.hpp"
 

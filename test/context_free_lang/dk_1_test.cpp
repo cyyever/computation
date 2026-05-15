@@ -1,3 +1,4 @@
+#include "std_prelude.hpp"
 /*!
  * \file dcfg_test.cpp
  *
@@ -8,7 +9,6 @@
 
 #include "alphabet/alphabet.hpp"
 #include "context_free_lang/dk_1.hpp"
-import std;
 
 using namespace cyy::computation;
 TEST_CASE("DK_1") {

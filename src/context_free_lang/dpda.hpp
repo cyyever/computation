@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "../std_prelude.hpp"
+
 #include "../automaton/automaton.hpp"
 #include "../exception.hpp"
 

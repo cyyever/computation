@@ -1,3 +1,5 @@
+#include "../std_prelude.hpp"
+
 /*!
  * \file lr_0_item.cpp
  */

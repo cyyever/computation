@@ -1,3 +1,5 @@
+#include "../std_prelude.hpp"
+
 /*!
  * \file nfa.cpp
  *
@@ -40,24 +42,27 @@ namespace cyy::computation {
     return contain_final_state(s);
   }
 
-  std::pair<DFA, boost::bimap<NFA::state_set_type, DFA::state_type>>
+  std::pair<DFA, std::unordered_map<NFA::state_set_type, DFA::state_type>>
   NFA::to_DFA_with_mapping() const {
     DFA::transition_function_type DFA_transition_function;
-    boost::bimap<state_set_type, state_type> nfa_and_dfa_states;
-    nfa_and_dfa_states.insert({get_epsilon_closure(get_start_state()), 0});
+    std::unordered_map<state_set_type, state_type> nfa_and_dfa_states;
+    auto [start_it, _] = nfa_and_dfa_states.emplace(
+        get_epsilon_closure(get_start_state()), 0);
 
     state_type next_state = 1;
-    std::vector iteraters{nfa_and_dfa_states.begin()};
+    // Pointers to map keys remain valid across rehashes; iterators do not.
+    std::vector<const state_set_type *> subsets{&start_it->first};
     for (state_type dfa_state = 0; dfa_state < next_state; dfa_state++) {
-      auto const &[subset, state] = *iteraters[dfa_state];
+      auto const &subset = *subsets[dfa_state];
       for (auto a : alphabet->get_view()) {
         auto res = go(subset, a);
-        auto [it, has_emplaced] = nfa_and_dfa_states.insert({res, next_state});
+        auto [it, has_emplaced] =
+            nfa_and_dfa_states.emplace(std::move(res), next_state);
         if (has_emplaced) {
-          iteraters.emplace_back(it);
+          subsets.emplace_back(&it->first);
           next_state++;
         }
-        DFA_transition_function[{dfa_state, a}] = it->right;
+        DFA_transition_function[{dfa_state, a}] = it->second;
       }
     }
 

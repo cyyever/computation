@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include "../std_prelude.hpp"
+
 #include "context_free_lang/slr_grammar.hpp"
 
 namespace cyy::computation {

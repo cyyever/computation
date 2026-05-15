@@ -1,12 +1,9 @@
-cmake_minimum_required(VERSION 4.1.0)
+cmake_minimum_required(VERSION 4.3.0)
 
 set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_EXPERIMENTAL_CXX_IMPORT_STD "d0edc3af-4c50-42ea-a356-e2862fe7a444")
+set(CMAKE_EXPERIMENTAL_CXX_IMPORT_STD "451f2fe2-a8a2-47c3-bc32-94786d8fc91b")
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_MODULE_STD 1)
-if(NOT WIN32)
-  set(CMAKE_CXX_COMPILER clang++)
-endif()
 
 project(MyComputationLib LANGUAGES CXX)
 include(cmake/all.cmake)
@@ -23,7 +20,6 @@ find_package(CyyAlgorithmLib REQUIRED)
 
 add_library(MyComputationLib ${SOURCE})
 
-target_link_libraries(MyComputationLib PUBLIC Boost::headers)
 target_link_libraries(MyComputationLib PUBLIC CyyAlgorithmLib)
 
 target_sources(

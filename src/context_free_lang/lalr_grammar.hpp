@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "../std_prelude.hpp"
+
 #include "canonical_lr_grammar.hpp"
 
 namespace cyy::computation {

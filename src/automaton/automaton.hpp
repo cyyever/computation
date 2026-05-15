@@ -7,11 +7,13 @@
 
 #pragma once
 
+#include "../std_prelude.hpp"
+
 #include <flat_set>
-#include <boost/dynamic_bitset.hpp>
 #include <cyy/algorithm/alphabet/alphabet.hpp>
 #include <cyy/algorithm/hash.hpp>
 
+#include "../dynamic_bitset.hpp"
 #include "../exception.hpp"
 
 namespace cyy::computation {
@@ -25,7 +27,7 @@ namespace cyy::computation {
   class finite_automaton {
   public:
     using state_type = uint64_t;
-    using state_bitset_type = boost::dynamic_bitset<>;
+    using state_bitset_type = cyy::computation::dynamic_bitset;
     class state_set_type : public std::flat_set<state_type> {
     public:
       using std::flat_set<state_type>::flat_set;

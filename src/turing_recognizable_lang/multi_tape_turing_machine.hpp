@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include "../std_prelude.hpp"
+
 #include "exception.hpp"
 #include "multi_tape_turing_machine_base.hpp"
 

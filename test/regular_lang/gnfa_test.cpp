@@ -1,3 +1,5 @@
+#include "std_prelude.hpp"
+
 /*!
  * \file gnfa_test.cpp
  */

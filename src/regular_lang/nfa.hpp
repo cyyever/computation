@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <boost/bimap.hpp>
+#include "../std_prelude.hpp"
 
 #include "dfa.hpp"
 
@@ -111,7 +111,7 @@ namespace cyy::computation {
     bool recognize(symbol_string_view view) const;
 
     // use subset construction
-    std::pair<DFA, boost::bimap<state_set_type, state_type>>
+    std::pair<DFA, std::unordered_map<state_set_type, state_type>>
     to_DFA_with_mapping() const;
     DFA to_DFA() const;
 

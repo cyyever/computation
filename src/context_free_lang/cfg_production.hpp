@@ -6,9 +6,12 @@
  */
 
 #pragma once
+
+#include "../std_prelude.hpp"
 #include <cyy/algorithm/hash.hpp>
 
 #include "../formal_grammar/grammar_symbol.hpp"
+#include "../hash_combine.hpp"
 
 namespace cyy::computation {
 
@@ -57,10 +60,8 @@ namespace std {
       size_t seed = 0;
       auto const &head = x.get_head();
       auto const &body = x.get_body();
-      boost::hash_combine(
-          seed, std::hash<cyy::computation::CFG_production::head_type>()(head));
-      boost::hash_combine(
-          seed, std::hash<cyy::computation::CFG_production::body_type>()(body));
+      cyy::computation::hash_combine(seed, head);
+      cyy::computation::hash_combine(seed, body);
       return seed;
     }
   };

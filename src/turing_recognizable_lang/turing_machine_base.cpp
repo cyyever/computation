@@ -1,3 +1,5 @@
+#include "../std_prelude.hpp"
+
 /*!
  * \file turing_machine_base.cpp
  *

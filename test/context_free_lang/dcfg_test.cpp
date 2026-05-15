@@ -1,3 +1,4 @@
+#include "std_prelude.hpp"
 /*!
  * \file dcfg_test.cpp
  *
@@ -10,7 +11,6 @@
 #include "context_free_lang/dcfg.hpp"
 #include "context_free_lang/dk.hpp"
 
-import std;
 using namespace cyy::computation;
 TEST_CASE("DCFG") {
   SUBCASE("parse") {

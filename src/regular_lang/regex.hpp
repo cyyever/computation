@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "../std_prelude.hpp"
+
 #include "context_free_lang/ll_grammar.hpp"
 #include "dfa.hpp"
 #include "exception.hpp"

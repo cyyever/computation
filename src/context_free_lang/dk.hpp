@@ -3,6 +3,8 @@
  */
 #pragma once
 
+#include "../std_prelude.hpp"
+
 #include "dk_base.hpp"
 #include "lr_0_item.hpp"
 #include "regular_lang/dfa.hpp"

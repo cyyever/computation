@@ -5,6 +5,9 @@
 
 #pragma once
 
+#include "../std_prelude.hpp"
+
+#include "../hash_combine.hpp"
 #include "turing_machine_base.hpp"
 
 namespace cyy::computation {
@@ -31,9 +34,8 @@ namespace cyy::computation {
     struct situation_hash_type {
       std::size_t operator()(const situation_type &x) const noexcept {
         size_t seed = 0;
-        boost::hash_combine(seed, std::hash<state_type>()(x.state));
-        boost::hash_combine(
-            seed, std::hash<tape_symbol_column_type>()(x.tape_symbols));
+        cyy::computation::hash_combine(seed, x.state);
+        cyy::computation::hash_combine(seed, x.tape_symbols);
         return seed;
       }
     };
@@ -65,11 +67,9 @@ namespace cyy::computation {
     struct action_hash_type {
       std::size_t operator()(const action_type &x) const noexcept {
         size_t seed = 0;
-        boost::hash_combine(seed, std::hash<state_type>()(x.state));
-        boost::hash_combine(
-            seed, std::hash<tape_symbol_column_type>()(x.tape_symbols));
-        boost::hash_combine(seed,
-                            std::hash<direction_column_type>()(x.directions));
+        cyy::computation::hash_combine(seed, x.state);
+        cyy::computation::hash_combine(seed, x.tape_symbols);
+        cyy::computation::hash_combine(seed, x.directions);
         return seed;
       }
     };
@@ -132,9 +132,9 @@ namespace cyy::computation {
       }
       std::size_t get_hash() const noexcept {
         size_t seed = 0;
-        boost::hash_combine(seed, std::hash<state_type>()(state));
+        cyy::computation::hash_combine(seed, state);
         for (size_t i = 0; i < tape_number; i++) {
-          boost::hash_combine(seed, std::hash<size_t>()(head_locations[i]));
+          cyy::computation::hash_combine(seed, head_locations[i]);
         }
         return seed;
       }

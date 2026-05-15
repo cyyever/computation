@@ -5,9 +5,10 @@
 
 #pragma once
 
+#include "../std_prelude.hpp"
+
 #include "cfg.hpp"
 #include "exception.hpp"
-import std;
 
 namespace cyy::computation {
 

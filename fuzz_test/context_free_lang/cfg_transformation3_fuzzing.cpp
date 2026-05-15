@@ -1,3 +1,5 @@
+#include "std_prelude.hpp"
+
 /*!
  * \file canonical_lr_grammar_fuzzing.cpp
  *

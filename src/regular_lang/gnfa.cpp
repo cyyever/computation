@@ -1,3 +1,4 @@
+#include "../std_prelude.hpp"
 /*!
  * \file nfa.hpp
  *
@@ -6,8 +7,6 @@
  */
 
 #include "gnfa.hpp"
-
-import std;
 
 namespace cyy::computation {
   GNFA::GNFA(DFA dfa)

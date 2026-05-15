@@ -7,7 +7,10 @@
 
 #pragma once
 
+#include "../std_prelude.hpp"
+
 #include <cyy/algorithm/hash.hpp>
+#include "../hash_combine.hpp"
 #include "cfg.hpp"
 #include "cfg_production.hpp"
 #include "exception.hpp"
@@ -62,8 +65,8 @@ namespace std {
     std::size_t
     operator()(const cyy::computation::LR_0_item &x) const noexcept {
       std::size_t seed = 0;
-      boost::hash_combine(seed, x.get_head());
-      boost::hash_combine(seed, x.get_dot_pos());
+      cyy::computation::hash_combine(seed, x.get_head());
+      cyy::computation::hash_combine(seed, x.get_dot_pos());
       return seed;
     }
   };
@@ -112,8 +115,8 @@ namespace std {
     std::size_t
     operator()(const cyy::computation::LR_0_item_set &x) const noexcept {
       std::size_t seed = 0;
-      boost::hash_combine(seed, x.get_kernel_items().size());
-      boost::hash_combine(seed, x.get_nonkernel_items().size());
+      cyy::computation::hash_combine(seed, x.get_kernel_items().size());
+      cyy::computation::hash_combine(seed, x.get_nonkernel_items().size());
       return seed;
     }
   };

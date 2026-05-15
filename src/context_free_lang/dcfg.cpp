@@ -1,3 +1,5 @@
+#include "../std_prelude.hpp"
+
 #include "dcfg.hpp"
 
 #include <cyy/algorithm/alphabet/range_alphabet.hpp>

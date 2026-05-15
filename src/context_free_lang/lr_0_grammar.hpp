@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include "../std_prelude.hpp"
+
 #include "lr_0_item.hpp"
 #include "lr_grammar.hpp"
 

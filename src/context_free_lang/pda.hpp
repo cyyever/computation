@@ -6,6 +6,8 @@
  */
 #pragma once
 
+#include "../std_prelude.hpp"
+
 #include "../exception.hpp"
 #include "../regular_lang/dfa.hpp"
 

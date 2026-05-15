@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "../std_prelude.hpp"
+
 #include <cyy/algorithm/alphabet/map_alphabet.hpp>
 
 #include "cfg_production.hpp"

@@ -1,3 +1,4 @@
+#include "../std_prelude.hpp"
 /*!
  * \file grammar.cpp
  *
@@ -11,7 +12,6 @@
 #include <cyy/algorithm/alphabet/union_alphabet.hpp>
 
 #include "exception.hpp"
-import std;
 
 namespace cyy::computation {
   using namespace cyy::algorithm;

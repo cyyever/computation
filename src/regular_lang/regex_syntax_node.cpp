@@ -1,3 +1,5 @@
+#include "../std_prelude.hpp"
+
 /*!
  * \file regex.cpp
  *

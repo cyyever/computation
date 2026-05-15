@@ -5,7 +5,8 @@
 
 #pragma once
 
-import std;
+#include "std_prelude.hpp"
+
 namespace cyy::computation::exception {
   class unmatched_alphabets : public std::invalid_argument {
   public:

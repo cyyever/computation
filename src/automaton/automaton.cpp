@@ -1,3 +1,5 @@
+#include "../std_prelude.hpp"
+
 
 #include "automaton.hpp"
 

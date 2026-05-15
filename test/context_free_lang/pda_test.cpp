@@ -1,3 +1,5 @@
+#include "std_prelude.hpp"
+
 /*!
  * \file pda_test.cpp
  *

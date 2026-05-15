@@ -7,6 +7,8 @@
  */
 #pragma once
 
+#include "std_prelude.hpp"
+
 #include "context_free_lang/cfg.hpp"
 #include "regular_lang/nfa.hpp"
 

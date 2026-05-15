@@ -7,8 +7,9 @@
 
 #pragma once
 
+#include "../std_prelude.hpp"
+
 #include <cyy/algorithm/alphabet/alphabet.hpp>
-import std;
 
 namespace cyy::computation {
   struct grammar_symbol_type
