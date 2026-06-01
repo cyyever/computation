@@ -6,6 +6,7 @@
  */
 
 #include <cassert>
+#include <ranges>
 
 #include "cfg.hpp"
 
