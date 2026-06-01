@@ -8,6 +8,7 @@
 #pragma once
 
 #include <cyy/algorithm/alphabet/map_alphabet.hpp>
+#include <unordered_set>
 
 #include "cfg_production.hpp"
 #include "formal_grammar/grammar_symbol.hpp"
