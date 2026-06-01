@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <unordered_set>
+
 #include "single_tape_turing_machine.hpp"
 
 namespace cyy::computation {

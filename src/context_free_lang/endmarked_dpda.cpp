@@ -4,6 +4,8 @@
 
 #include "endmarked_dpda.hpp"
 
+#include <unordered_set>
+
 #include "alphabet/endmarked_alphabet.hpp"
 #include "alphabet/range_alphabet.hpp"
 #include "alphabet/union_alphabet.hpp"

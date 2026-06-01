@@ -34,6 +34,7 @@ namespace cyy::computation {
       [[nodiscard]] bool includes(const state_set_type &rhs) const {
         return std::ranges::includes(*this, rhs);
       }
+      void merge(const state_set_type &rhs) { insert(rhs.begin(), rhs.end()); }
     };
     using state_set_map_type = std::unordered_map<state_type, state_set_type>;
     using state_set_product_type =

@@ -5,6 +5,8 @@
  */
 #include "cnf.hpp"
 
+#include <algorithm>
+
 #include <cyy/algorithm/hash.hpp>
 
 namespace cyy::computation {

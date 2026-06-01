@@ -7,6 +7,9 @@
 
 #include "dpda.hpp"
 
+#include <map>
+#include <unordered_set>
+
 #include "alphabet/endmarked_alphabet.hpp"
 #include "alphabet/union_alphabet.hpp"
 

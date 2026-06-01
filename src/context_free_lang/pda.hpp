@@ -6,6 +6,8 @@
  */
 #pragma once
 
+#include <unordered_set>
+
 #include "../exception.hpp"
 #include "../regular_lang/dfa.hpp"
 

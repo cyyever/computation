@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <algorithm>
+
 #include <cyy/algorithm/hash.hpp>
 #include "cfg.hpp"
 #include "cfg_production.hpp"

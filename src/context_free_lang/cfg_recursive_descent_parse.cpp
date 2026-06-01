@@ -5,7 +5,9 @@
  * \date 2018-03-04
  */
 
+#include <algorithm>
 #include <cassert>
+#include <stack>
 
 #include <cyy/algorithm/hash.hpp>
 #include "../exception.hpp"
