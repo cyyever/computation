@@ -6,6 +6,10 @@
  */
 
 #include <cassert>
+#include <ranges>
+#include <utility>
+#include <variant>
+
 #include "ll_grammar.hpp"
 
 #include "exception.hpp"
@@ -64,18 +68,30 @@ namespace cyy::computation {
     if (parsing_table.empty()) {
       construct_parsing_table();
     }
-    std::vector<grammar_symbol_type> stack{ALPHABET::endmarker,
-                                           get_start_symbol()};
-    std::vector<
-        std::pair<decltype(this->parsing_table)::const_iterator, std::size_t>>
-        callback_arguments_stack;
+    using callback_argument_type =
+        std::pair<decltype(this->parsing_table)::const_iterator, std::size_t>;
+    // A single stack holds both the grammar symbols still to be matched and the
+    // pending match_callback invocations. Interleaving them ensures each
+    // (production, pos) callback fires only once the symbol at that position has
+    // been fully parsed -- the property 307e984 lost by firing every position
+    // up front, before the child symbols were parsed.
+    std::vector<std::variant<grammar_symbol_type, callback_argument_type>> stack;
+    stack.emplace_back(grammar_symbol_type(ALPHABET::endmarker));
+    stack.emplace_back(grammar_symbol_type(get_start_symbol()));
 
     auto endmarked_view = cyy::algorithm::endmarked_symbol_string(view);
     auto terminal_it = endmarked_view.begin();
     while (!stack.empty()) {
-      auto top_symbol = std::move(stack.back());
+      auto top = std::move(stack.back());
       stack.pop_back();
 
+      if (auto *argument = std::get_if<callback_argument_type>(&top)) {
+        auto const &[it, pos] = *argument;
+        match_callback({it->first.second, it->second}, pos);
+        continue;
+      }
+
+      auto const &top_symbol = std::get<grammar_symbol_type>(top);
       auto terminal = *terminal_it;
       if (top_symbol.is_terminal()) {
         const auto s = top_symbol.get_terminal();
@@ -86,37 +102,29 @@ namespace cyy::computation {
           return false;
         }
         terminal_it++;
-      } else {
-        auto nonterminal = top_symbol.get_nonterminal();
-        auto it = parsing_table.find({terminal, nonterminal});
-        if (it == parsing_table.end()) {
-          std::cerr << std::format("no rule for parsing {} for {} \n",
-                                   alphabet->to_string(terminal), nonterminal);
-          return false;
-        }
-
-        auto pos = it->second.size();
-        for (auto rit = it->second.rbegin(); rit != it->second.rend();
-             rit++, pos--) {
-          stack.push_back(*rit);
-          callback_arguments_stack.emplace_back(it, pos);
-        }
-        callback_arguments_stack.emplace_back(it, 0);
+        continue;
       }
 
-      while (!callback_arguments_stack.empty()) {
-        auto const &[it, pos] = callback_arguments_stack.back();
-        auto const &head = it->first.second;
-        auto const &body = it->second;
-        match_callback({head, body}, pos);
-        bool const finish_production = (pos == body.size());
-        callback_arguments_stack.pop_back();
-        if (!finish_production) {
-          break;
-        }
+      auto nonterminal = top_symbol.get_nonterminal();
+      auto it = parsing_table.find({terminal, nonterminal});
+      if (it == parsing_table.end()) {
+        std::cerr << std::format("no rule for parsing {} for {} \n",
+                                 alphabet->to_string(terminal), nonterminal);
+        return false;
+      }
+
+      // Push bottom-up so callback(pos=0) ends up on top, each body symbol
+      // trailed by the callback for its position:
+      //   callback(n), X_n, callback(n-1), ..., X_1, callback(0)
+      auto const &body = it->second;
+      stack.emplace_back(callback_argument_type{it, body.size()});
+      for (auto const &[index, symbol] :
+           body | std::views::enumerate | std::views::reverse) {
+        stack.emplace_back(symbol);
+        stack.emplace_back(
+            callback_argument_type{it, static_cast<std::size_t>(index)});
       }
     }
-    assert(callback_arguments_stack.empty());
     assert(terminal_it == endmarked_view.end());
     return true;
   }
