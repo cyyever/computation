@@ -70,11 +70,8 @@ namespace cyy::computation {
     }
     using callback_argument_type =
         std::pair<decltype(this->parsing_table)::const_iterator, std::size_t>;
-    // A single stack holds both the grammar symbols still to be matched and the
-    // pending match_callback invocations. Interleaving them ensures each
-    // (production, pos) callback fires only once the symbol at that position has
-    // been fully parsed -- the property 307e984 lost by firing every position
-    // up front, before the child symbols were parsed.
+    // Stack holds symbols to match and pending callbacks, interleaved so each
+    // callback fires only after its body symbol is parsed.
     std::vector<std::variant<grammar_symbol_type, callback_argument_type>> stack;
     stack.emplace_back(grammar_symbol_type(ALPHABET::endmarker));
     stack.emplace_back(grammar_symbol_type(get_start_symbol()));
@@ -113,9 +110,7 @@ namespace cyy::computation {
         return false;
       }
 
-      // Push bottom-up so callback(pos=0) ends up on top, each body symbol
-      // trailed by the callback for its position:
-      //   callback(n), X_n, callback(n-1), ..., X_1, callback(0)
+      // Push so callback(0) is on top: callback(n), X_n, ..., X_1, callback(0)
       auto const &body = it->second;
       stack.emplace_back(callback_argument_type{it, body.size()});
       for (auto const &[index, symbol] :
