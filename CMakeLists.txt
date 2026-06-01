@@ -18,6 +18,7 @@ file(GLOB_RECURSE headers ${CMAKE_CURRENT_SOURCE_DIR}/src/**/*.hpp
 
 find_package(Boost CONFIG REQUIRED)
 find_package(CyyAlgorithmLib REQUIRED)
+find_package(CyyNaiveLib)
 
 add_library(MyComputationLib ${SOURCE})
 
