@@ -7,7 +7,7 @@
 
 #include "gnfa.hpp"
 
-import std;
+#include <memory>
 
 namespace cyy::computation {
   GNFA::GNFA(DFA dfa)

@@ -7,8 +7,16 @@
 
 #pragma once
 
+#include <iostream>
+#include <ranges>
+#include <span>
+#include <string>
+#include <string_view>
+#include <utility>
+#include <variant>
+#include <vector>
+
 #include <cyy/algorithm/alphabet/alphabet.hpp>
-import std;
 
 namespace cyy::computation {
   struct grammar_symbol_type

@@ -6,7 +6,8 @@
 
 #include "alphabet/alphabet.hpp"
 #include "context_free_lang/dk.hpp"
-import std;
+
+#include <iostream>
 
 using namespace cyy::computation;
 TEST_CASE("DK") {
