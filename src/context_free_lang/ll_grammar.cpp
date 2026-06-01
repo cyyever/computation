@@ -66,9 +66,13 @@ namespace cyy::computation {
     }
     std::vector<grammar_symbol_type> stack{ALPHABET::endmarker,
                                            get_start_symbol()};
+    std::vector<
+        std::pair<decltype(this->parsing_table)::const_iterator, std::size_t>>
+        callback_arguments_stack;
+
     auto endmarked_view = cyy::algorithm::endmarked_symbol_string(view);
     auto terminal_it = endmarked_view.begin();
-    while (!stack.empty() && terminal_it != endmarked_view.end()) {
+    while (!stack.empty()) {
       auto top_symbol = std::move(stack.back());
       stack.pop_back();
 
@@ -82,26 +86,37 @@ namespace cyy::computation {
           return false;
         }
         terminal_it++;
-        continue;
-      }
-      auto nonterminal = top_symbol.get_nonterminal();
-      auto it = parsing_table.find({terminal, nonterminal});
-      if (it == parsing_table.end()) {
-        std::cerr << std::format("no rule for parsing {} for {} \n",
-                                 alphabet->to_string(terminal), nonterminal);
-        return false;
+      } else {
+        auto nonterminal = top_symbol.get_nonterminal();
+        auto it = parsing_table.find({terminal, nonterminal});
+        if (it == parsing_table.end()) {
+          std::cerr << std::format("no rule for parsing {} for {} \n",
+                                   alphabet->to_string(terminal), nonterminal);
+          return false;
+        }
+
+        auto pos = it->second.size();
+        for (auto rit = it->second.rbegin(); rit != it->second.rend();
+             rit++, pos--) {
+          stack.push_back(*rit);
+          callback_arguments_stack.emplace_back(it, pos);
+        }
+        callback_arguments_stack.emplace_back(it, 0);
       }
 
-      auto const &head = it->first.second;
-      auto const &body = it->second;
-      for (auto symbol : body | std::views::reverse) {
-        stack.emplace_back(std::move(symbol));
-      }
-
-      for (std::size_t pos = 0; pos <= body.size() + 1; pos++) {
+      while (!callback_arguments_stack.empty()) {
+        auto const &[it, pos] = callback_arguments_stack.back();
+        auto const &head = it->first.second;
+        auto const &body = it->second;
         match_callback({head, body}, pos);
+        bool const finish_production = (pos == body.size());
+        callback_arguments_stack.pop_back();
+        if (!finish_production) {
+          break;
+        }
       }
     }
+    assert(callback_arguments_stack.empty());
     assert(terminal_it == endmarked_view.end());
     return true;
   }
