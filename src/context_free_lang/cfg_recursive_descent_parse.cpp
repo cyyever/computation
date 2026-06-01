@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <ranges>
 #include <stack>
 
 #include <cyy/algorithm/hash.hpp>
@@ -159,11 +160,10 @@ namespace cyy::computation {
       void set_children() {
         assert(cur_body_it_opt != end_body_it_opt);
         auto const &body = *(*cur_body_it_opt);
-        children.clear();
-        for (auto const &s : body) {
-          children.push_back(
-              std::make_shared<recursive_descent_parse_node>(cfg, s));
-        }
+        children = body | std::views::transform([this](auto const &s) {
+                     return std::make_shared<recursive_descent_parse_node>(cfg, s);
+                   }) |
+                   std::ranges::to<std::vector<recursive_descent_parse_node_ptr>>();
       }
     };
 

@@ -5,6 +5,8 @@
  * \date 2018-03-04
  */
 
+#include <ranges>
+
 #include "cfg.hpp"
 
 namespace cyy::computation {
@@ -14,10 +16,10 @@ namespace cyy::computation {
                                    CFG_production::body_span_type body) {
 
     auto node = std::make_shared<parse_node>(std::move(head));
-    node->children.reserve(body.size());
-    for (auto const &grammar_symbol : body) {
-      node->children.push_back(std::make_shared<parse_node>(grammar_symbol));
-    }
+    node->children = body | std::views::transform([](auto const &grammar_symbol) {
+                       return std::make_shared<parse_node>(grammar_symbol);
+                     }) |
+                     std::ranges::to<std::vector<parse_node_ptr>>();
     return node;
   }
   std::string CFG::parse_node::MMA_draw(const ALPHABET &alphabet_) const {

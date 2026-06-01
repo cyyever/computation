@@ -1,0 +1,308 @@
+[
+{
+  "directory": "/home/cyy/computation/build26",
+  "command": "/usr/bin/g++ -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/MyComputationLib.dir/src/automaton/automaton.cpp.o -c /home/cyy/computation/src/automaton/automaton.cpp",
+  "file": "/home/cyy/computation/src/automaton/automaton.cpp",
+  "output": "CMakeFiles/MyComputationLib.dir/src/automaton/automaton.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26",
+  "command": "/usr/bin/g++ -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/MyComputationLib.dir/src/context_free_lang/canonical_lr_grammar.cpp.o -c /home/cyy/computation/src/context_free_lang/canonical_lr_grammar.cpp",
+  "file": "/home/cyy/computation/src/context_free_lang/canonical_lr_grammar.cpp",
+  "output": "CMakeFiles/MyComputationLib.dir/src/context_free_lang/canonical_lr_grammar.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26",
+  "command": "/usr/bin/g++ -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/MyComputationLib.dir/src/context_free_lang/cfg.cpp.o -c /home/cyy/computation/src/context_free_lang/cfg.cpp",
+  "file": "/home/cyy/computation/src/context_free_lang/cfg.cpp",
+  "output": "CMakeFiles/MyComputationLib.dir/src/context_free_lang/cfg.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26",
+  "command": "/usr/bin/g++ -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/MyComputationLib.dir/src/context_free_lang/cfg_production.cpp.o -c /home/cyy/computation/src/context_free_lang/cfg_production.cpp",
+  "file": "/home/cyy/computation/src/context_free_lang/cfg_production.cpp",
+  "output": "CMakeFiles/MyComputationLib.dir/src/context_free_lang/cfg_production.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26",
+  "command": "/usr/bin/g++ -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/MyComputationLib.dir/src/context_free_lang/cfg_recursive_descent_parse.cpp.o -c /home/cyy/computation/src/context_free_lang/cfg_recursive_descent_parse.cpp",
+  "file": "/home/cyy/computation/src/context_free_lang/cfg_recursive_descent_parse.cpp",
+  "output": "CMakeFiles/MyComputationLib.dir/src/context_free_lang/cfg_recursive_descent_parse.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26",
+  "command": "/usr/bin/g++ -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/MyComputationLib.dir/src/context_free_lang/cnf.cpp.o -c /home/cyy/computation/src/context_free_lang/cnf.cpp",
+  "file": "/home/cyy/computation/src/context_free_lang/cnf.cpp",
+  "output": "CMakeFiles/MyComputationLib.dir/src/context_free_lang/cnf.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26",
+  "command": "/usr/bin/g++ -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/MyComputationLib.dir/src/context_free_lang/cnf_transform.cpp.o -c /home/cyy/computation/src/context_free_lang/cnf_transform.cpp",
+  "file": "/home/cyy/computation/src/context_free_lang/cnf_transform.cpp",
+  "output": "CMakeFiles/MyComputationLib.dir/src/context_free_lang/cnf_transform.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26",
+  "command": "/usr/bin/g++ -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/MyComputationLib.dir/src/context_free_lang/common_grammar.cpp.o -c /home/cyy/computation/src/context_free_lang/common_grammar.cpp",
+  "file": "/home/cyy/computation/src/context_free_lang/common_grammar.cpp",
+  "output": "CMakeFiles/MyComputationLib.dir/src/context_free_lang/common_grammar.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26",
+  "command": "/usr/bin/g++ -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/MyComputationLib.dir/src/context_free_lang/dcfg.cpp.o -c /home/cyy/computation/src/context_free_lang/dcfg.cpp",
+  "file": "/home/cyy/computation/src/context_free_lang/dcfg.cpp",
+  "output": "CMakeFiles/MyComputationLib.dir/src/context_free_lang/dcfg.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26",
+  "command": "/usr/bin/g++ -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/MyComputationLib.dir/src/context_free_lang/dk.cpp.o -c /home/cyy/computation/src/context_free_lang/dk.cpp",
+  "file": "/home/cyy/computation/src/context_free_lang/dk.cpp",
+  "output": "CMakeFiles/MyComputationLib.dir/src/context_free_lang/dk.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26",
+  "command": "/usr/bin/g++ -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/MyComputationLib.dir/src/context_free_lang/dk_1.cpp.o -c /home/cyy/computation/src/context_free_lang/dk_1.cpp",
+  "file": "/home/cyy/computation/src/context_free_lang/dk_1.cpp",
+  "output": "CMakeFiles/MyComputationLib.dir/src/context_free_lang/dk_1.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26",
+  "command": "/usr/bin/g++ -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/MyComputationLib.dir/src/context_free_lang/dk_base.cpp.o -c /home/cyy/computation/src/context_free_lang/dk_base.cpp",
+  "file": "/home/cyy/computation/src/context_free_lang/dk_base.cpp",
+  "output": "CMakeFiles/MyComputationLib.dir/src/context_free_lang/dk_base.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26",
+  "command": "/usr/bin/g++ -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/MyComputationLib.dir/src/context_free_lang/dpda.cpp.o -c /home/cyy/computation/src/context_free_lang/dpda.cpp",
+  "file": "/home/cyy/computation/src/context_free_lang/dpda.cpp",
+  "output": "CMakeFiles/MyComputationLib.dir/src/context_free_lang/dpda.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26",
+  "command": "/usr/bin/g++ -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/MyComputationLib.dir/src/context_free_lang/endmarked_dpda.cpp.o -c /home/cyy/computation/src/context_free_lang/endmarked_dpda.cpp",
+  "file": "/home/cyy/computation/src/context_free_lang/endmarked_dpda.cpp",
+  "output": "CMakeFiles/MyComputationLib.dir/src/context_free_lang/endmarked_dpda.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26",
+  "command": "/usr/bin/g++ -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/MyComputationLib.dir/src/context_free_lang/lalr_grammar.cpp.o -c /home/cyy/computation/src/context_free_lang/lalr_grammar.cpp",
+  "file": "/home/cyy/computation/src/context_free_lang/lalr_grammar.cpp",
+  "output": "CMakeFiles/MyComputationLib.dir/src/context_free_lang/lalr_grammar.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26",
+  "command": "/usr/bin/g++ -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/MyComputationLib.dir/src/context_free_lang/ll_grammar.cpp.o -c /home/cyy/computation/src/context_free_lang/ll_grammar.cpp",
+  "file": "/home/cyy/computation/src/context_free_lang/ll_grammar.cpp",
+  "output": "CMakeFiles/MyComputationLib.dir/src/context_free_lang/ll_grammar.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26",
+  "command": "/usr/bin/g++ -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/MyComputationLib.dir/src/context_free_lang/lr_0_grammar.cpp.o -c /home/cyy/computation/src/context_free_lang/lr_0_grammar.cpp",
+  "file": "/home/cyy/computation/src/context_free_lang/lr_0_grammar.cpp",
+  "output": "CMakeFiles/MyComputationLib.dir/src/context_free_lang/lr_0_grammar.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26",
+  "command": "/usr/bin/g++ -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/MyComputationLib.dir/src/context_free_lang/lr_0_item.cpp.o -c /home/cyy/computation/src/context_free_lang/lr_0_item.cpp",
+  "file": "/home/cyy/computation/src/context_free_lang/lr_0_item.cpp",
+  "output": "CMakeFiles/MyComputationLib.dir/src/context_free_lang/lr_0_item.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26",
+  "command": "/usr/bin/g++ -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/MyComputationLib.dir/src/context_free_lang/lr_1_grammar.cpp.o -c /home/cyy/computation/src/context_free_lang/lr_1_grammar.cpp",
+  "file": "/home/cyy/computation/src/context_free_lang/lr_1_grammar.cpp",
+  "output": "CMakeFiles/MyComputationLib.dir/src/context_free_lang/lr_1_grammar.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26",
+  "command": "/usr/bin/g++ -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/MyComputationLib.dir/src/context_free_lang/lr_1_item.cpp.o -c /home/cyy/computation/src/context_free_lang/lr_1_item.cpp",
+  "file": "/home/cyy/computation/src/context_free_lang/lr_1_item.cpp",
+  "output": "CMakeFiles/MyComputationLib.dir/src/context_free_lang/lr_1_item.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26",
+  "command": "/usr/bin/g++ -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/MyComputationLib.dir/src/context_free_lang/lr_grammar.cpp.o -c /home/cyy/computation/src/context_free_lang/lr_grammar.cpp",
+  "file": "/home/cyy/computation/src/context_free_lang/lr_grammar.cpp",
+  "output": "CMakeFiles/MyComputationLib.dir/src/context_free_lang/lr_grammar.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26",
+  "command": "/usr/bin/g++ -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/MyComputationLib.dir/src/context_free_lang/model_transform.cpp.o -c /home/cyy/computation/src/context_free_lang/model_transform.cpp",
+  "file": "/home/cyy/computation/src/context_free_lang/model_transform.cpp",
+  "output": "CMakeFiles/MyComputationLib.dir/src/context_free_lang/model_transform.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26",
+  "command": "/usr/bin/g++ -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/MyComputationLib.dir/src/context_free_lang/parse_tree.cpp.o -c /home/cyy/computation/src/context_free_lang/parse_tree.cpp",
+  "file": "/home/cyy/computation/src/context_free_lang/parse_tree.cpp",
+  "output": "CMakeFiles/MyComputationLib.dir/src/context_free_lang/parse_tree.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26",
+  "command": "/usr/bin/g++ -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/MyComputationLib.dir/src/context_free_lang/pda.cpp.o -c /home/cyy/computation/src/context_free_lang/pda.cpp",
+  "file": "/home/cyy/computation/src/context_free_lang/pda.cpp",
+  "output": "CMakeFiles/MyComputationLib.dir/src/context_free_lang/pda.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26",
+  "command": "/usr/bin/g++ -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/MyComputationLib.dir/src/context_free_lang/slr_grammar.cpp.o -c /home/cyy/computation/src/context_free_lang/slr_grammar.cpp",
+  "file": "/home/cyy/computation/src/context_free_lang/slr_grammar.cpp",
+  "output": "CMakeFiles/MyComputationLib.dir/src/context_free_lang/slr_grammar.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26",
+  "command": "/usr/bin/g++ -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/MyComputationLib.dir/src/regular_lang/dfa.cpp.o -c /home/cyy/computation/src/regular_lang/dfa.cpp",
+  "file": "/home/cyy/computation/src/regular_lang/dfa.cpp",
+  "output": "CMakeFiles/MyComputationLib.dir/src/regular_lang/dfa.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26",
+  "command": "/usr/bin/g++ -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/MyComputationLib.dir/src/regular_lang/gnfa.cpp.o -c /home/cyy/computation/src/regular_lang/gnfa.cpp",
+  "file": "/home/cyy/computation/src/regular_lang/gnfa.cpp",
+  "output": "CMakeFiles/MyComputationLib.dir/src/regular_lang/gnfa.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26",
+  "command": "/usr/bin/g++ -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/MyComputationLib.dir/src/regular_lang/nfa.cpp.o -c /home/cyy/computation/src/regular_lang/nfa.cpp",
+  "file": "/home/cyy/computation/src/regular_lang/nfa.cpp",
+  "output": "CMakeFiles/MyComputationLib.dir/src/regular_lang/nfa.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26",
+  "command": "/usr/bin/g++ -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/MyComputationLib.dir/src/regular_lang/regex.cpp.o -c /home/cyy/computation/src/regular_lang/regex.cpp",
+  "file": "/home/cyy/computation/src/regular_lang/regex.cpp",
+  "output": "CMakeFiles/MyComputationLib.dir/src/regular_lang/regex.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26",
+  "command": "/usr/bin/g++ -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/MyComputationLib.dir/src/regular_lang/regex_parse.cpp.o -c /home/cyy/computation/src/regular_lang/regex_parse.cpp",
+  "file": "/home/cyy/computation/src/regular_lang/regex_parse.cpp",
+  "output": "CMakeFiles/MyComputationLib.dir/src/regular_lang/regex_parse.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26",
+  "command": "/usr/bin/g++ -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/MyComputationLib.dir/src/regular_lang/regex_syntax_node.cpp.o -c /home/cyy/computation/src/regular_lang/regex_syntax_node.cpp",
+  "file": "/home/cyy/computation/src/regular_lang/regex_syntax_node.cpp",
+  "output": "CMakeFiles/MyComputationLib.dir/src/regular_lang/regex_syntax_node.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26",
+  "command": "/usr/bin/g++ -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/MyComputationLib.dir/src/turing_recognizable_lang/ntm.cpp.o -c /home/cyy/computation/src/turing_recognizable_lang/ntm.cpp",
+  "file": "/home/cyy/computation/src/turing_recognizable_lang/ntm.cpp",
+  "output": "CMakeFiles/MyComputationLib.dir/src/turing_recognizable_lang/ntm.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26",
+  "command": "/usr/bin/g++ -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/MyComputationLib.dir/src/turing_recognizable_lang/turing_machine.cpp.o -c /home/cyy/computation/src/turing_recognizable_lang/turing_machine.cpp",
+  "file": "/home/cyy/computation/src/turing_recognizable_lang/turing_machine.cpp",
+  "output": "CMakeFiles/MyComputationLib.dir/src/turing_recognizable_lang/turing_machine.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26",
+  "command": "/usr/bin/g++ -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/MyComputationLib.dir/src/turing_recognizable_lang/turing_machine_base.cpp.o -c /home/cyy/computation/src/turing_recognizable_lang/turing_machine_base.cpp",
+  "file": "/home/cyy/computation/src/turing_recognizable_lang/turing_machine_base.cpp",
+  "output": "CMakeFiles/MyComputationLib.dir/src/turing_recognizable_lang/turing_machine_base.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26/test",
+  "command": "/usr/bin/g++ -DDOCTEST_CONFIG_IMPLEMENT_WITH_MAIN -DDOCTEST_CONFIG_NO_EXCEPTIONS_BUT_WITH_ALL_ASSERTS -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/canonical_lr_grammar_test.dir/context_free_lang/canonical_lr_grammar_test.cpp.o -c /home/cyy/computation/test/context_free_lang/canonical_lr_grammar_test.cpp",
+  "file": "/home/cyy/computation/test/context_free_lang/canonical_lr_grammar_test.cpp",
+  "output": "test/CMakeFiles/canonical_lr_grammar_test.dir/context_free_lang/canonical_lr_grammar_test.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26/test",
+  "command": "/usr/bin/g++ -DDOCTEST_CONFIG_IMPLEMENT_WITH_MAIN -DDOCTEST_CONFIG_NO_EXCEPTIONS_BUT_WITH_ALL_ASSERTS -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/cfg_test.dir/context_free_lang/cfg_test.cpp.o -c /home/cyy/computation/test/context_free_lang/cfg_test.cpp",
+  "file": "/home/cyy/computation/test/context_free_lang/cfg_test.cpp",
+  "output": "test/CMakeFiles/cfg_test.dir/context_free_lang/cfg_test.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26/test",
+  "command": "/usr/bin/g++ -DDOCTEST_CONFIG_IMPLEMENT_WITH_MAIN -DDOCTEST_CONFIG_NO_EXCEPTIONS_BUT_WITH_ALL_ASSERTS -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/cnf_test.dir/context_free_lang/cnf_test.cpp.o -c /home/cyy/computation/test/context_free_lang/cnf_test.cpp",
+  "file": "/home/cyy/computation/test/context_free_lang/cnf_test.cpp",
+  "output": "test/CMakeFiles/cnf_test.dir/context_free_lang/cnf_test.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26/test",
+  "command": "/usr/bin/g++ -DDOCTEST_CONFIG_IMPLEMENT_WITH_MAIN -DDOCTEST_CONFIG_NO_EXCEPTIONS_BUT_WITH_ALL_ASSERTS -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/dcfg_test.dir/context_free_lang/dcfg_test.cpp.o -c /home/cyy/computation/test/context_free_lang/dcfg_test.cpp",
+  "file": "/home/cyy/computation/test/context_free_lang/dcfg_test.cpp",
+  "output": "test/CMakeFiles/dcfg_test.dir/context_free_lang/dcfg_test.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26/test",
+  "command": "/usr/bin/g++ -DDOCTEST_CONFIG_IMPLEMENT_WITH_MAIN -DDOCTEST_CONFIG_NO_EXCEPTIONS_BUT_WITH_ALL_ASSERTS -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/dk_1_test.dir/context_free_lang/dk_1_test.cpp.o -c /home/cyy/computation/test/context_free_lang/dk_1_test.cpp",
+  "file": "/home/cyy/computation/test/context_free_lang/dk_1_test.cpp",
+  "output": "test/CMakeFiles/dk_1_test.dir/context_free_lang/dk_1_test.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26/test",
+  "command": "/usr/bin/g++ -DDOCTEST_CONFIG_IMPLEMENT_WITH_MAIN -DDOCTEST_CONFIG_NO_EXCEPTIONS_BUT_WITH_ALL_ASSERTS -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/dk_test.dir/context_free_lang/dk_test.cpp.o -c /home/cyy/computation/test/context_free_lang/dk_test.cpp",
+  "file": "/home/cyy/computation/test/context_free_lang/dk_test.cpp",
+  "output": "test/CMakeFiles/dk_test.dir/context_free_lang/dk_test.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26/test",
+  "command": "/usr/bin/g++ -DDOCTEST_CONFIG_IMPLEMENT_WITH_MAIN -DDOCTEST_CONFIG_NO_EXCEPTIONS_BUT_WITH_ALL_ASSERTS -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/dpda_test.dir/context_free_lang/dpda_test.cpp.o -c /home/cyy/computation/test/context_free_lang/dpda_test.cpp",
+  "file": "/home/cyy/computation/test/context_free_lang/dpda_test.cpp",
+  "output": "test/CMakeFiles/dpda_test.dir/context_free_lang/dpda_test.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26/test",
+  "command": "/usr/bin/g++ -DDOCTEST_CONFIG_IMPLEMENT_WITH_MAIN -DDOCTEST_CONFIG_NO_EXCEPTIONS_BUT_WITH_ALL_ASSERTS -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/endmarked_dpda_test.dir/context_free_lang/endmarked_dpda_test.cpp.o -c /home/cyy/computation/test/context_free_lang/endmarked_dpda_test.cpp",
+  "file": "/home/cyy/computation/test/context_free_lang/endmarked_dpda_test.cpp",
+  "output": "test/CMakeFiles/endmarked_dpda_test.dir/context_free_lang/endmarked_dpda_test.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26/test",
+  "command": "/usr/bin/g++ -DDOCTEST_CONFIG_IMPLEMENT_WITH_MAIN -DDOCTEST_CONFIG_NO_EXCEPTIONS_BUT_WITH_ALL_ASSERTS -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/lalr_grammar_test.dir/context_free_lang/lalr_grammar_test.cpp.o -c /home/cyy/computation/test/context_free_lang/lalr_grammar_test.cpp",
+  "file": "/home/cyy/computation/test/context_free_lang/lalr_grammar_test.cpp",
+  "output": "test/CMakeFiles/lalr_grammar_test.dir/context_free_lang/lalr_grammar_test.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26/test",
+  "command": "/usr/bin/g++ -DDOCTEST_CONFIG_IMPLEMENT_WITH_MAIN -DDOCTEST_CONFIG_NO_EXCEPTIONS_BUT_WITH_ALL_ASSERTS -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/ll_grammar_test.dir/context_free_lang/ll_grammar_test.cpp.o -c /home/cyy/computation/test/context_free_lang/ll_grammar_test.cpp",
+  "file": "/home/cyy/computation/test/context_free_lang/ll_grammar_test.cpp",
+  "output": "test/CMakeFiles/ll_grammar_test.dir/context_free_lang/ll_grammar_test.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26/test",
+  "command": "/usr/bin/g++ -DDOCTEST_CONFIG_IMPLEMENT_WITH_MAIN -DDOCTEST_CONFIG_NO_EXCEPTIONS_BUT_WITH_ALL_ASSERTS -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/pda_test.dir/context_free_lang/pda_test.cpp.o -c /home/cyy/computation/test/context_free_lang/pda_test.cpp",
+  "file": "/home/cyy/computation/test/context_free_lang/pda_test.cpp",
+  "output": "test/CMakeFiles/pda_test.dir/context_free_lang/pda_test.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26/test",
+  "command": "/usr/bin/g++ -DDOCTEST_CONFIG_IMPLEMENT_WITH_MAIN -DDOCTEST_CONFIG_NO_EXCEPTIONS_BUT_WITH_ALL_ASSERTS -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/slr_grammar_test.dir/context_free_lang/slr_grammar_test.cpp.o -c /home/cyy/computation/test/context_free_lang/slr_grammar_test.cpp",
+  "file": "/home/cyy/computation/test/context_free_lang/slr_grammar_test.cpp",
+  "output": "test/CMakeFiles/slr_grammar_test.dir/context_free_lang/slr_grammar_test.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26/test",
+  "command": "/usr/bin/g++ -DDOCTEST_CONFIG_IMPLEMENT_WITH_MAIN -DDOCTEST_CONFIG_NO_EXCEPTIONS_BUT_WITH_ALL_ASSERTS -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/dfa_test.dir/regular_lang/dfa_test.cpp.o -c /home/cyy/computation/test/regular_lang/dfa_test.cpp",
+  "file": "/home/cyy/computation/test/regular_lang/dfa_test.cpp",
+  "output": "test/CMakeFiles/dfa_test.dir/regular_lang/dfa_test.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26/test",
+  "command": "/usr/bin/g++ -DDOCTEST_CONFIG_IMPLEMENT_WITH_MAIN -DDOCTEST_CONFIG_NO_EXCEPTIONS_BUT_WITH_ALL_ASSERTS -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/gnfa_test.dir/regular_lang/gnfa_test.cpp.o -c /home/cyy/computation/test/regular_lang/gnfa_test.cpp",
+  "file": "/home/cyy/computation/test/regular_lang/gnfa_test.cpp",
+  "output": "test/CMakeFiles/gnfa_test.dir/regular_lang/gnfa_test.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26/test",
+  "command": "/usr/bin/g++ -DDOCTEST_CONFIG_IMPLEMENT_WITH_MAIN -DDOCTEST_CONFIG_NO_EXCEPTIONS_BUT_WITH_ALL_ASSERTS -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/nfa_test.dir/regular_lang/nfa_test.cpp.o -c /home/cyy/computation/test/regular_lang/nfa_test.cpp",
+  "file": "/home/cyy/computation/test/regular_lang/nfa_test.cpp",
+  "output": "test/CMakeFiles/nfa_test.dir/regular_lang/nfa_test.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26/test",
+  "command": "/usr/bin/g++ -DDOCTEST_CONFIG_IMPLEMENT_WITH_MAIN -DDOCTEST_CONFIG_NO_EXCEPTIONS_BUT_WITH_ALL_ASSERTS -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/regex_test.dir/regular_lang/regex_test.cpp.o -c /home/cyy/computation/test/regular_lang/regex_test.cpp",
+  "file": "/home/cyy/computation/test/regular_lang/regex_test.cpp",
+  "output": "test/CMakeFiles/regex_test.dir/regular_lang/regex_test.cpp.o"
+},
+{
+  "directory": "/home/cyy/computation/build26/test",
+  "command": "/usr/bin/g++ -DDOCTEST_CONFIG_IMPLEMENT_WITH_MAIN -DDOCTEST_CONFIG_NO_EXCEPTIONS_BUT_WITH_ALL_ASSERTS -DSPDLOG_FWRITE_UNLOCKED -DSPDLOG_USE_STD_FORMAT -D_GLIBCXX_SANITIZE_VECTOR -I/home/cyy/computation/src -isystem /home/cyy/opt/include/cyy/algorithm -isystem /home/cyy/opt/include/cyy/naive_lib -isystem /home/cyy/opt/include  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -std=c++26 -fdiagnostics-color=always -o CMakeFiles/turing_machine_test.dir/turing_recognizable_lang/turing_machine_test.cpp.o -c /home/cyy/computation/test/turing_recognizable_lang/turing_machine_test.cpp",
+  "file": "/home/cyy/computation/test/turing_recognizable_lang/turing_machine_test.cpp",
+  "output": "test/CMakeFiles/turing_machine_test.dir/turing_recognizable_lang/turing_machine_test.cpp.o"
+}
+]

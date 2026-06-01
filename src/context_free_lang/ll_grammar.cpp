@@ -135,10 +135,12 @@ namespace cyy::computation {
             auto node = std::move(stack.back());
             stack.pop_back();
 
-            for (auto const &grammar_symbol : production.get_body()) {
-              node->children.push_back(
-                  std::make_shared<parse_node>(grammar_symbol));
-            }
+            node->children =
+                production.get_body() |
+                std::views::transform([](auto const &grammar_symbol) {
+                  return std::make_shared<parse_node>(grammar_symbol);
+                }) |
+                std::ranges::to<std::vector<parse_node_ptr>>();
 
             for (auto const &child : node->children | std::views::reverse) {
               if (child->grammar_symbol.is_nonterminal()) {

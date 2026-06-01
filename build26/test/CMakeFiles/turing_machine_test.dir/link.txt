@@ -1,0 +1,2 @@
+/usr/bin/g++  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -Wl,--no-as-needed -Wl,--dependency-file=CMakeFiles/turing_machine_test.dir/link.d CMakeFiles/turing_machine_test.dir/turing_recognizable_lang/turing_machine_test.cpp.o -o turing_machine_test  -Wl,-rpath,/home/cyy/opt/lib ../libMyComputationLib.a /home/cyy/opt/lib/libCyyAlgorithmLib.so /home/cyy/opt/lib/libcyy_naive_lib_util.so /home/cyy/opt/lib/libcyy_naive_lib_log.so
+/usr/bin/cmake -E __run_co_compile --lwyu="ldd;-u;-r" --source=turing_machine_test

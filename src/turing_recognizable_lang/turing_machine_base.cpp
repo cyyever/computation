@@ -6,6 +6,8 @@
 
 #include "turing_machine_base.hpp"
 
+#include <ranges>
+
 #include <cyy/algorithm/alphabet/alphabet_with_blank_symbol.hpp>
 #include <cyy/algorithm/alphabet/exception.hpp>
 namespace cyy::computation {
@@ -39,12 +41,7 @@ namespace cyy::computation {
   }
   Turing_machine_base::tape_type
   Turing_machine_base::create_tape(symbol_string_view view) {
-    tape_type tape;
-    tape.reserve(view.size());
-    for (auto s : view) {
-      tape.push_back(s);
-    }
-    return tape;
+    return view | std::ranges::to<tape_type>();
   }
 
 } // namespace cyy::computation

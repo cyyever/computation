@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <ranges>
+
 #include "exception.hpp"
 #include "multi_tape_turing_machine_base.hpp"
 
@@ -38,11 +40,7 @@ namespace cyy::computation {
     operator==(const multi_tape_Turing_machine &rhs) const noexcept = default;
 
     bool recognize(symbol_string_view view) const override {
-      tape_type tape;
-      tape.reserve(view.size());
-      for (auto s : view) {
-        tape.push_back(s);
-      }
+      auto tape = view | std::ranges::to<tape_type>();
       configuration_type configuration(this->get_start_state(),
                                        std::move(tape));
       while (true) {

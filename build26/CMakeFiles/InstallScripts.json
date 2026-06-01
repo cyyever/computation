@@ -1,0 +1,8 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/cyy/computation/build26/cmake_install.cmake",
+		"/home/cyy/computation/build26/test/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

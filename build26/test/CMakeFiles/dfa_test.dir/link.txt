@@ -1,0 +1,2 @@
+/usr/bin/g++  -Wall -Wextra -fmax-errors=1 -Wshadow -Wnon-virtual-dtor -Wpedantic -g -Wl,--no-as-needed -Wl,--dependency-file=CMakeFiles/dfa_test.dir/link.d CMakeFiles/dfa_test.dir/regular_lang/dfa_test.cpp.o -o dfa_test  -Wl,-rpath,/home/cyy/opt/lib ../libMyComputationLib.a /home/cyy/opt/lib/libCyyAlgorithmLib.so /home/cyy/opt/lib/libcyy_naive_lib_util.so /home/cyy/opt/lib/libcyy_naive_lib_log.so
+/usr/bin/cmake -E __run_co_compile --lwyu="ldd;-u;-r" --source=dfa_test
