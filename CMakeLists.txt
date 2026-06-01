@@ -17,8 +17,6 @@ file(GLOB_RECURSE headers ${CMAKE_CURRENT_SOURCE_DIR}/src/**/*.hpp
      ${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp)
 
 find_package(Boost CONFIG REQUIRED)
-find_package(spdlog REQUIRED)
-find_package(CyyNaiveLib REQUIRED)
 find_package(CyyAlgorithmLib REQUIRED)
 
 add_library(MyComputationLib ${SOURCE})
@@ -50,8 +48,7 @@ install(
   TARGETS MyComputationLib
   EXPORT MyComputationLibConfig
   FILE_SET public_headers
-  DESTINATION include/cyy/computation
-  EXPORT_PACKAGE_DEPENDENCIES)
+  DESTINATION include/cyy/computation)
 
 # install cmake config file
-install(EXPORT MyComputationLibConfig DESTINATION lib/cmake/MyComputationLib)
+install(EXPORT MyComputationLibConfig DESTINATION lib/cmake/MyComputationLib EXPORT_PACKAGE_DEPENDENCIES)
