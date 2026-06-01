@@ -1,7 +1,9 @@
-cmake_minimum_required(VERSION 4.1.0)
+cmake_minimum_required(VERSION 4.3.0)
 
 set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_EXPERIMENTAL_CXX_IMPORT_STD "d0edc3af-4c50-42ea-a356-e2862fe7a444")
+set(CMAKE_EXPERIMENTAL_CXX_IMPORT_STD "451f2fe2-a8a2-47c3-bc32-94786d8fc91b")
+set(CMAKE_EXPERIMENTAL_EXPORT_PACKAGE_DEPENDENCIES
+    "1942b4fa-b2c5-4546-9385-83f254070067")
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_MODULE_STD 1)
 
@@ -47,7 +49,8 @@ install(
   TARGETS MyComputationLib
   EXPORT MyComputationLibConfig
   FILE_SET public_headers
-  DESTINATION include/cyy/computation)
+  DESTINATION include/cyy/computation
+  EXPORT_PACKAGE_DEPENDENCIES)
 
 # install cmake config file
 install(EXPORT MyComputationLibConfig DESTINATION lib/cmake/MyComputationLib)
